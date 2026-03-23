@@ -210,6 +210,87 @@ app.delete('/api/projects/:pid/chapters/:cid', (req, res) => {
     }
 });
 
+// ── TEMPLATE GENERATION ───────────────────────────────────────────────────────
+// Generate a brand-new template + schema from a description and optionally
+// fill it for a specific scene (returns filled TSX code immediately).
+app.post('/api/templates/generate', async (req, res) => {
+    try {
+        const { description, suggestedName, category, theme, content } = req.body;
+        if (!description) return res.status(400).json({ error: 'description is required' });
+
+        const { generateTemplate } = await import('./templateGenerator.js');
+        const generated = await generateTemplate(description, { suggestedName, category: category || 'generated' });
+
+        // Optionally fill the template immediately if content is provided
+        let code = null;
+        if (content && theme) {
+            const { fillTemplate } = await import('./templateFiller.js');
+            try {
+                code = fillTemplate(generated.template, theme, content);
+            } catch (fillErr) {
+                console.warn('⚠️ Template fill after generation failed:', fillErr.message);
+            }
+        }
+
+        res.json({
+            success: true,
+            template: generated.template,
+            schema: generated.schema,
+            code,
+        });
+    } catch (err) {
+        console.error('❌ Template generation error:', err.stack || err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Generate a template and immediately update a scene with the result
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/generate-template', async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        const scene = chapter.scenes[parseInt(idx)];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+
+        const { generateTemplate } = await import('./templateGenerator.js');
+        const { fillTemplate } = await import('./templateFiller.js');
+        const { fuzzyMapFields } = await import('./templateSystem.js');
+        const { loadSchema } = await import('./templateRouter.js');
+
+        const description = req.body.description ||
+            `${scene.reasoning || scene.script}\nVisualization type: ${scene.template || 'custom'}\nContent: ${JSON.stringify(scene.content || {})}`;
+
+        const generated = await generateTemplate(description, {
+            suggestedName: scene.template || undefined,
+            category: 'scene-generated',
+        });
+
+        // Fill with scene content
+        const schema = loadSchema(generated.template);
+        const schemaFields = schema?.fields || {};
+        const mappedContent = fuzzyMapFields(scene.content || {}, schemaFields);
+        Object.keys(schemaFields).forEach(k => { if (!(k in mappedContent)) mappedContent[k] = '' });
+
+        const code = fillTemplate(generated.template, scene.theme || 'THREAT', mappedContent);
+
+        // Persist back to scene
+        const result = updateScene(pid, cid, parseInt(idx), {
+            template: generated.template,
+            content: mappedContent,
+            code,
+            error: null,
+        });
+
+        res.json({ success: true, scene: result.scene, template: generated.template });
+    } catch (err) {
+        console.error('❌ Scene generate-template error:', err.stack || err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 app.post('/api/projects/:pid/chapters/:cid/reanalyze', async (req, res) => {
     try {
         const project = getProject(req.params.pid);

@@ -22,7 +22,8 @@ import {
     Lock as LockIcon,
     Warning as WarningIcon,
     Delete as DeleteIcon,
-    Autorenew as RegenerateIcon
+    Autorenew as RegenerateIcon,
+    AutoFixHigh as GenerateTemplateIcon
 } from '@mui/icons-material';
 
 interface Scene {
@@ -461,6 +462,23 @@ const ProjectDirectorView: React.FC = () => {
         );
     };
 
+    const handleGenerateTemplate = async (chapterId: string, sceneIndex: number) => {
+        if (!selectedProject) return;
+        setSceneRenderStatus(chapterId, sceneIndex, 'rendering');
+        try {
+            const res = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/generate-template`,
+                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) }
+            );
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setSceneRenderStatus(chapterId, sceneIndex, 'idle');
+            loadProjectDetails(selectedProject.id);
+        } catch (err: any) {
+            setSceneRenderStatus(chapterId, sceneIndex, 'error', err.message);
+        }
+    };
+
     const handleExportProject = () => {
         if (!selectedProject) return;
         window.open(`/api/projects/${selectedProject.id}/export`, '_blank');
@@ -807,6 +825,25 @@ const ProjectDirectorView: React.FC = () => {
                                                                                 <RefreshIcon />
                                                                             </IconButton>
                                                                         </Tooltip>
+                                                                    </Box>
+                                                                )}
+
+                                                                {/* Generate Template button — shown when TEMPLATE scene has no code or has an error */}
+                                                                {!isLocked && scene.type === 'TEMPLATE' && (!scene.code || scene.renderStatus === 'error') && (
+                                                                    <Box sx={{ mt: 1 }}>
+                                                                        <Button
+                                                                            size="small"
+                                                                            variant="outlined"
+                                                                            startIcon={<GenerateTemplateIcon />}
+                                                                            onClick={() => handleGenerateTemplate(chapter.id, idx)}
+                                                                            disabled={scene.renderStatus === 'rendering'}
+                                                                            sx={{ borderColor: '#7b5ea7', color: '#b39ddb', '&:hover': { borderColor: '#b39ddb', bgcolor: 'rgba(123,94,167,0.1)' } }}
+                                                                        >
+                                                                            {scene.renderStatus === 'rendering' ? 'Generating...' : 'Generate Template'}
+                                                                        </Button>
+                                                                        <Typography variant="caption" sx={{ display: 'block', color: 'var(--text-secondary)', mt: 0.5 }}>
+                                                                            {scene.template ? `Template "${scene.template}" not found — click to create it` : 'No template assigned — click to generate one'}
+                                                                        </Typography>
                                                                     </Box>
                                                                 )}
 
