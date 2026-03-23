@@ -455,6 +455,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
             isCached = true;
             // console.log('   📦 Using cached bundle');
             progressBar.update(100, { phase: 'Cached Bundle' });
+            if (onProgress) onProgress({ phase: 'bundling', progress: 30 });
         } catch (e) {
             isCached = false;
         }
@@ -476,6 +477,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
 
         // console.log('   🎥 Selecting composition...');
         progressBar.update(0, { phase: 'Selecting Composition' });
+        if (onProgress) onProgress({ phase: 'bundling', progress: 32 });
         const composition = await selectComposition({
             serveUrl: bundleLocation,
             id: 'Animation',
@@ -484,6 +486,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
 
         // console.log('   🎬 Rendering video...');
         progressBar.update(0, { phase: 'Rendering Video' });
+        if (onProgress) onProgress({ phase: 'rendering', progress: 35 });
         await renderMedia({
             composition,
             serveUrl: bundleLocation,
