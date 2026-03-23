@@ -277,6 +277,29 @@ export async function validateAndFix(code, settings = {}) {
     // ======== PHASE 8: SEQUENCE SAFETY ========
     fixed = fixSequenceSafety(fixed, fixes, warnings);
 
+    // ======== PHASE 8.1: ROOT OVERFLOW GUARD ========
+    // Root 1920×1080 container MUST have overflow:'hidden' to clip out-of-frame elements.
+    fixed = enforceRootOverflowHidden(fixed, fixes);
+
+    // ======== PHASE 8.2: FONT SIZE CLAMP (12–144px) ========
+    // Fonts outside this range are either unreadable or overflow their containers.
+    fixed = clampFontSizes(fixed, fixes, warnings);
+
+    // ======== PHASE 8.3: TEXT CONTAINER WIDTH GUARD ========
+    // Text containers without explicit width/maxWidth can stretch off-screen when
+    // content is longer than expected (especially with placeholders replaced at fill time).
+    fixed = guardTextContainerWidths(fixed, fixes, warnings);
+
+    // ======== PHASE 8.4: CSS ANIMATION REMOVAL ========
+    // CSS animation: and transition: properties don't work in Remotion's renderer.
+    // Replace them with static equivalents so elements at least appear.
+    fixed = removeCSSAnimations(fixed, fixes);
+
+    // ======== PHASE 8.5: SAFE ZONE ENFORCEMENT ========
+    // Absolute-positioned elements within 40px of any edge may be clipped on some displays.
+    // Warn (don't auto-fix — layout intent is unknown) when edge values are too tight.
+    fixed = warnSafeZoneViolations(fixed, warnings);
+
     // ======== PHASE 9: FINAL SYNTAX BALANCING ========
     // CRITICAL: Must be last to catch any structural errors introduced by previous phases
     const originalPreBalance = fixed;
@@ -1902,3 +1925,165 @@ function fixSVGOverlays(code, fixes) {
     return fixed;
 }
 
+
+// ====================================================================
+// PHASE 8.1: ROOT OVERFLOW GUARD
+// ====================================================================
+// The 1920×1080 root container MUST clip content with overflow:'hidden'.
+// Without it, absolutely-positioned elements that animate from off-screen
+// remain visible during the entire scene, producing streaks and artifacts.
+
+function enforceRootOverflowHidden(code, fixes) {
+    let fixed = code;
+
+    // Find the first AbsoluteFill or the root div with width:1920
+    const rootPatterns = [
+        // AbsoluteFill style={{ ... }}
+        { tag: 'AbsoluteFill', re: /(<AbsoluteFill\s+style=\{\{)([\s\S]*?)(\}\})/ },
+        // Root div style={{ position:'absolute', top:0, left:0, width:1920, height:1080 ... }}
+        { tag: 'div', re: /(<div\s+style=\{\{)([^}]*width:\s*1920[^}]*)(\}\})/ },
+    ];
+
+    for (const { re } of rootPatterns) {
+        if (re.test(fixed)) {
+            fixed = fixed.replace(re, (match, open, styles, close) => {
+                if (/overflow:\s*['"]hidden['"]/.test(styles)) return match;
+                fixes.push('Added overflow:hidden to root container (prevents out-of-frame artifacts)');
+                return `${open}${styles}, overflow: 'hidden'${close}`;
+            });
+            break;
+        }
+    }
+
+    return fixed;
+}
+
+// ====================================================================
+// PHASE 8.2: FONT SIZE CLAMP
+// ====================================================================
+// Remotion renders at exactly 1920×1080 — font sizes below 12px are
+// invisible and above 144px almost always overflow their containers.
+
+function clampFontSizes(code, fixes, warnings) {
+    let fixed = code;
+    let clamped = 0;
+
+    fixed = fixed.replace(/fontSize:\s*(\d+)/g, (match, size) => {
+        const px = parseInt(size);
+        if (px > 144) {
+            clamped++;
+            return `fontSize: 144`;
+        }
+        // Below 12px is already handled by fixTypography (bumps to 24px),
+        // but catch anything that slipped through
+        if (px > 0 && px < 12) {
+            clamped++;
+            return `fontSize: 18`;
+        }
+        return match;
+    });
+
+    if (clamped > 0) fixes.push(`Clamped ${clamped} font size(s) to 12–144px safe range`);
+    return fixed;
+}
+
+// ====================================================================
+// PHASE 8.3: TEXT CONTAINER WIDTH GUARD
+// ====================================================================
+// Text nodes that have no width or maxWidth can overflow the canvas
+// when placeholder values are replaced with longer strings at fill time.
+
+function guardTextContainerWidths(code, fixes, warnings) {
+    let fixed = code;
+
+    // Count text elements without explicit width/maxWidth
+    const textTags = ['<Typography', '<p ', '<span ', '<h1 ', '<h2 ', '<h3 ', '<h4 '];
+    let unconstrained = 0;
+
+    for (const tag of textTags) {
+        // Find style blocks on these tags and check for width/maxWidth
+        const re = new RegExp(`${tag.replace('<', '<').replace(' ', '\\s+')}[^>]*style=\\{\\{([^}]*)\\}\\}`, 'g');
+        for (const m of fixed.matchAll(re)) {
+            const styles = m[1];
+            if (!styles.includes('width') && !styles.includes('maxWidth')) {
+                unconstrained++;
+            }
+        }
+    }
+
+    if (unconstrained > 3) {
+        warnings.push(
+            `${unconstrained} text element(s) have no width/maxWidth — long placeholder values may overflow. ` +
+            `Add maxWidth or overflow:'hidden' to each text container.`
+        );
+    }
+
+    return fixed;
+}
+
+// ====================================================================
+// PHASE 8.4: CSS ANIMATION REMOVAL
+// ====================================================================
+// CSS animation: and transition: are ignored by Remotion's renderer.
+// They cause elements to appear frozen (at frame 0 of the CSS keyframe)
+// or produce unexpected static states.
+
+function removeCSSAnimations(code, fixes) {
+    let fixed = code;
+    let removed = 0;
+
+    // animation: 'fadeIn 2s ease' or animation: `...`  or animation: "..."
+    fixed = fixed.replace(/\banimation:\s*(['"`][^'"`]*['"`]|[\w-]+\s[\d.]+s[^,}]*)/g, () => {
+        removed++;
+        return '/* animation removed — use interpolate(frame,...) instead */';
+    });
+
+    // transition: 'all 0.3s ease'  — CSS transitions also don't work in renders
+    fixed = fixed.replace(/\btransition:\s*(['"`][^'"`]*['"`])/g, () => {
+        removed++;
+        return '/* transition removed — use interpolate(frame,...) instead */';
+    });
+
+    // @keyframes blocks in JSX template literals or style strings
+    fixed = fixed.replace(/@keyframes\s+\w+\s*\{[^}]*\}/g, () => {
+        removed++;
+        return '/* keyframes removed */';
+    });
+
+    if (removed > 0) {
+        fixes.push(`Removed ${removed} CSS animation/transition property(ies) — use interpolate(frame,...) for Remotion`);
+    }
+
+    return fixed;
+}
+
+// ====================================================================
+// PHASE 8.5: SAFE ZONE WARNINGS
+// ====================================================================
+// Content within 40px of any edge may be cut off on displays with
+// overscan. We warn but don't auto-reposition (layout intent unknown).
+
+function warnSafeZoneViolations(code, warnings) {
+    const EDGE_THRESHOLD = 40;
+    const violations = [];
+
+    // Scan for top: N, left: N, right: N, bottom: N with small values
+    const edgeRe = /\b(top|left|right|bottom):\s*(\d+)/g;
+    for (const m of code.matchAll(edgeRe)) {
+        const prop = m[1];
+        const val = parseInt(m[2]);
+        if (val < EDGE_THRESHOLD && val >= 0) {
+            violations.push(`${prop}:${val}`);
+        }
+    }
+
+    if (violations.length > 0) {
+        const unique = [...new Set(violations)].slice(0, 5).join(', ');
+        warnings.push(
+            `Safe zone: ${violations.length} position(s) within ${EDGE_THRESHOLD}px of edge (${unique}...). ` +
+            `Keep critical content ≥96px from edges for broadcast safe area.`
+        );
+    }
+
+    return code; // warnings only — no mutation
+}
