@@ -184,6 +184,9 @@ function mergeShortRenderScenes(scenes) {
 // Main function: script text → scene array
 // ─────────────────────────────────────────────
 export async function generateScenes(scriptText) {
+  if (!scriptText || typeof scriptText !== 'string' || scriptText.trim().length === 0) {
+    throw new Error('scriptText is empty or missing — the chapter has no script to analyze')
+  }
   console.log(`\n🎬 Auto-Scene: Processing ${scriptText.length} chars of script...`)
 
   const model = googleAI.getGenerativeModel({

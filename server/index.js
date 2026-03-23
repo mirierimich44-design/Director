@@ -217,13 +217,14 @@ app.post('/api/projects/:pid/chapters/:cid/reanalyze', async (req, res) => {
         const chapter = project.chapters.find(c => c.id === req.params.cid);
         if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
 
+        console.log(`   📄 Chapter scriptText: ${chapter.scriptText?.length ?? 'MISSING'} chars`)
         const { generateScenes } = await import('./autoScene.js');
         const processedScenes = await generateScenes(chapter.scriptText);
         const result = updateChapterScenes(req.params.pid, req.params.cid, processedScenes);
         res.json({ success: true, project: result.project, chapter: result.chapter });
     } catch (err) {
-        console.error('❌ Reanalyze error:', err);
-        res.status(500).json({ success: false, error: err.message });
+        console.error('❌ Reanalyze error:', err.stack || err.message);
+        res.status(500).json({ success: false, error: err.message, stack: err.stack?.split('\n')[0] });
     }
 });
 
