@@ -79,11 +79,13 @@ CLEAN (white bg, navy/red) → informational stats (use sparingly)
 TEMPLATE CATALOG (name [description]: fields):
 ${TEMPLATE_CATALOG}
 
-ABSOLUTE RULE — ZERO TOLERANCE:
-- EVERY SINGLE SENTENCE of the script MUST produce exactly ONE scene. NO exceptions.
-- Do NOT skip, ignore, merge, or summarize any sentence. The total number of scenes MUST equal the total number of sentences.
-- If two consecutive sentences describe the exact same context (same stat, same entity, same event), you MAY combine them into one scene — but NEVER combine 3+ sentences, and combining should be rare.
-- The "script" field in each scene MUST contain the EXACT, VERBATIM sentence(s) from the input. Do not paraphrase.
+SENTENCE COMBINING RULES:
+- SHORT sentences (under 10 words) that flow together as a sequence, build the same mood, or describe the same moment MUST be combined into a single scene. Do not give each tiny fragment its own scene.
+- You MAY combine up to 4 consecutive short sentences into one scene if they share the same cinematic beat (e.g. "The phone: silent." + "Not crashed." + "Not frozen." → one 3D_RENDER scene).
+- LONGER sentences (10+ words) that introduce a new concept, statistic, or entity should each get their own scene — unless two consecutive ones describe the same stat or organization, in which case combining is fine.
+- Never combine sentences that would need fundamentally different templates (e.g. a map template and a terminal template).
+- The "script" field MUST contain ALL combined sentences verbatim, in order. Do not paraphrase or skip any sentence.
+- Every sentence from the input must appear in exactly one scene's "script" field. Do NOT drop any sentence.
 
 CONTENT RULES:
 - Fill EVERY field from the schema using EXACT field names from the catalog above.
@@ -141,15 +143,23 @@ export async function generateScenes(scriptText) {
     .map(s => s.trim())
     .filter(s => s.length > 5)
 
+  // Classify sentences by word count for the prompt hint
+  const shortSentences = sentences.filter(s => s.split(/\s+/).length < 10)
+  const longSentences = sentences.filter(s => s.split(/\s+/).length >= 10)
+
   const userPrompt = `Analyze this script and generate the complete scene breakdown. Use EXACT field names from the template catalog.
 
-CRITICAL: This script contains ${sentences.length} sentences. You MUST produce at least ${sentences.length} scenes (one per sentence). If you combine 2 sentences into one scene, that is acceptable only if they share the same context — but you must still cover every sentence. Do NOT skip any.
+CRITICAL RULES:
+- This script has ${sentences.length} sentences total (${shortSentences.length} short, ${longSentences.length} long).
+- SHORT sentences (under 10 words) should be COMBINED with adjacent short sentences into a single scene — do NOT give each tiny fragment its own scene.
+- The final scene count will likely be FEWER than ${sentences.length} due to combining. That is correct and expected.
+- Every sentence must appear verbatim in exactly one scene's "script" field. Do NOT drop any.
 
 SCRIPT:
 ${scriptText}
 
 SENTENCES (for your reference — each must appear in exactly one scene):
-${sentences.map((s, i) => `${i + 1}. ${s}`).join('\n')}`
+${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — combine if possible' : 'LONG — own scene'}] ${s}`).join('\n')}`
 
   let rawResponse
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -183,7 +193,8 @@ ${sentences.map((s, i) => `${i + 1}. ${s}`).join('\n')}`
     scenes = [scenes]
   }
 
-  console.log(`   ✅ Gemini returned ${scenes.length} scene(s) for ${sentences.length} sentence(s)`)
+  const shortCount = sentences.filter(s => s.split(/\s+/).length < 10).length
+  console.log(`   ✅ Gemini returned ${scenes.length} scene(s) for ${sentences.length} sentence(s) (${shortCount} short — combining expected)`)
 
   // Verify coverage — check that every sentence appears in at least one scene
   const coveredSentences = new Set()
