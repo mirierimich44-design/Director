@@ -119,6 +119,68 @@ OUTPUT FORMAT — Return ONLY a JSON array, no markdown:
 ]`
 
 // ─────────────────────────────────────────────
+// Merge consecutive short 3D_RENDER scenes
+// Runs after LLM response as a guaranteed pass.
+// Short = script under SHORT_WORD_LIMIT words.
+// ─────────────────────────────────────────────
+const SHORT_WORD_LIMIT = 10
+const MAX_GROUP_SIZE = 4
+
+function mergeShortRenderScenes(scenes) {
+  const merged = []
+  let i = 0
+
+  while (i < scenes.length) {
+    const scene = scenes[i]
+
+    // Only try to merge 3D_RENDER scenes with short scripts
+    const isShortRender = scene.type === '3D_RENDER' &&
+      scene.script && scene.script.split(/\s+/).length < SHORT_WORD_LIMIT
+
+    if (!isShortRender) {
+      merged.push(scene)
+      i++
+      continue
+    }
+
+    // Collect consecutive short 3D_RENDER neighbours
+    const group = [scene]
+    let j = i + 1
+    while (
+      j < scenes.length &&
+      group.length < MAX_GROUP_SIZE &&
+      scenes[j].type === '3D_RENDER' &&
+      scenes[j].script &&
+      scenes[j].script.split(/\s+/).length < SHORT_WORD_LIMIT
+    ) {
+      group.push(scenes[j])
+      j++
+    }
+
+    if (group.length === 1) {
+      // Nothing to merge
+      merged.push(scene)
+    } else {
+      // Merge: join scripts, keep first scene's visual fields as base
+      const combinedScript = group.map(s => s.script).join(' ')
+      const base = group[0]
+      const longestDuration = Math.max(...group.map(s => s.duration || 5))
+      merged.push({
+        ...base,
+        script: combinedScript,
+        duration: longestDuration + (group.length - 1) * 1, // add 1s per extra sentence
+        _merged: group.length,
+      })
+      console.log(`   🔗 Merged ${group.length} short 3D_RENDER scenes into one`)
+    }
+
+    i = j
+  }
+
+  return merged
+}
+
+// ─────────────────────────────────────────────
 // Main function: script text → scene array
 // ─────────────────────────────────────────────
 export async function generateScenes(scriptText) {
@@ -195,6 +257,10 @@ ${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — 
 
   const shortCount = sentences.filter(s => s.split(/\s+/).length < 10).length
   console.log(`   ✅ Gemini returned ${scenes.length} scene(s) for ${sentences.length} sentence(s) (${shortCount} short — combining expected)`)
+
+  // ── Post-process: merge consecutive short 3D_RENDER scenes ──────────────────
+  // The LLM sometimes ignores combining instructions; this guarantees it happens.
+  scenes = mergeShortRenderScenes(scenes)
 
   // Verify coverage — check that every sentence appears in at least one scene
   const coveredSentences = new Set()
