@@ -19,6 +19,7 @@ import { getSettings, updateSettings, MODEL_OPTIONS, getGoogleKey, getImageModel
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { renderVideo as renderRemotion } from './engines/remotion/renderer.js';
 import { auditTemplate, applyFix, TEMPLATES_DIR, AUDIT_DIR, REPORT_PATH } from './templateAuditor.js';
+import { generateAdjustment, diffSummary, getAllPresets } from './adjustmentPresets.js';
 import {
     listProjects, getProject, createProject, updateProject, deleteProject,
     addChapter, updateChapter, deleteChapter, updateChapterScenes,
@@ -712,6 +713,56 @@ app.post('/api/audit/fix', async (req, res) => {
 
         const fixed = await applyFix(result);
         res.json({ success: true, fixed, issuesFound: result.issues.length });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ── TEMPLATE ADJUSTMENTS ──────────────────────────────────────────────────────
+
+// GET /api/templates/adjustment-presets — return the preset library
+app.get('/api/templates/adjustment-presets', (_req, res) => {
+    res.json({ presets: getAllPresets() });
+});
+
+// POST /api/templates/adjust — preview adjustments, returns new code without saving
+app.post('/api/templates/adjust', async (req, res) => {
+    const { filename, presetIds = [], customPrompt = '' } = req.body;
+    if (!filename) return res.status(400).json({ error: 'filename required' });
+    if (presetIds.length === 0 && !customPrompt.trim()) {
+        return res.status(400).json({ error: 'select at least one preset or provide a custom prompt' });
+    }
+
+    const filePath = join(TEMPLATES_DIR, filename);
+    try {
+        const originalCode = await fs.readFile(filePath, 'utf-8');
+        const allPresets = getAllPresets();
+        const selectedPresets = presetIds.map(id => allPresets.find(p => p.id === id)).filter(Boolean);
+
+        const newCode = await generateAdjustment(originalCode, selectedPresets, customPrompt, filename.replace('.tsx', ''));
+        const diff = diffSummary(originalCode, newCode);
+
+        res.json({ success: true, originalCode, newCode, diff });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/templates/adjust/apply — save previously-previewed adjusted code
+app.post('/api/templates/adjust/apply', async (req, res) => {
+    const { filename, code } = req.body;
+    if (!filename || !code) return res.status(400).json({ error: 'filename and code required' });
+    if (!code.includes('AnimationComponent') || !code.includes('useCurrentFrame')) {
+        return res.status(400).json({ error: 'Invalid component code — missing AnimationComponent or useCurrentFrame' });
+    }
+
+    const filePath = join(TEMPLATES_DIR, filename);
+    try {
+        // Back up original before saving
+        const original = await fs.readFile(filePath, 'utf-8');
+        await fs.writeFile(filePath + '.bak', original, 'utf-8');
+        await fs.writeFile(filePath, code, 'utf-8');
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
