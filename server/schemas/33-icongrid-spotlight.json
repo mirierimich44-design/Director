@@ -1,0 +1,25 @@
+{
+  "template": "33-icongrid-spotlight",
+  "description": "One spotlighted central node surrounded by 8 orbiting icon nodes",
+  "fields": {
+    "TITLE_TEXT": "THREAT ACTOR CAPABILITIES",
+    "COUNT_VALUE": "8",
+    "COUNT_LABEL": "TECHNIQUES",
+    "SUB_LABEL": "MITRE ATT&CK",
+    "ICON_LABEL_1": "Spearphishing",
+    "ICON_LABEL_2": "Credential Dump",
+    "ICON_LABEL_3": "Lateral Move",
+    "ICON_LABEL_4": "Data Staging",
+    "ICON_LABEL_5": "Exfiltration",
+    "ICON_LABEL_6": "Persistence",
+    "ICON_LABEL_7": "Defense Evasion",
+    "ICON_LABEL_8": "C2 Comms"
+  },
+  "name": "33-icongrid-spotlight",
+  "category": "grid",
+  "duration": 10,
+  "tags": [
+    "grid",
+    "icons"
+  ]
+}

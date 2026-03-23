@@ -1,0 +1,11 @@
+{
+  "template": "71-splitword-assembly",
+  "description": "Two words slide in from opposite sides and assemble together — cinematic chapter reveal",
+  "fields": {
+    "CHAPTER_WORD": "Small chapter label, e.g. 'CHAPTER SIX'",
+    "WORD_1": "First word sliding from left, e.g. 'DARK'",
+    "WORD_2": "Second word sliding from right, e.g. 'WEB'",
+    "CHAPTER_SUB": "Subtitle appearing after assembly, e.g. 'THE MARKETPLACE'",
+    "CONTEXT_TEXT": "Supporting context line below"
+  }
+}

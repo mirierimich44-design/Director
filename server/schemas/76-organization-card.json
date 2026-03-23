@@ -1,0 +1,17 @@
+{
+  "template": "76-organization-card",
+  "description": "Organization profile card with logo placeholder, name, industry, tags, three stats, and bio",
+  "fields": {
+    "TITLE_TEXT": "Small top label, e.g. 'TARGET ORGANIZATION' or 'VICTIM PROFILE'",
+    "LABEL_1": "Organization name, e.g. 'MGM RESORTS'",
+    "LABEL_2": "Industry or sector, e.g. 'HOSPITALITY & GAMING'",
+    "LABEL_3": "HQ location or context, e.g. 'Las Vegas, NV — Founded 1986'",
+    "TAG_1": "First tag, e.g. 'FORTUNE 500'",
+    "TAG_2": "Second tag, e.g. 'BREACHED'",
+    "TAG_3": "Third tag, e.g. 'CRITICAL INFRA'",
+    "STAT_VALUE_1": "First stat, e.g. '75,000'",
+    "STAT_VALUE_2": "Second stat, e.g. '$14.6B'",
+    "STAT_VALUE_3": "Third stat, e.g. '1986'",
+    "CONTEXT_TEXT": "2-3 sentence description of the organization and its role in the story"
+  }
+}

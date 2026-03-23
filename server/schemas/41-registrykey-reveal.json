@@ -1,0 +1,13 @@
+{
+  "template": "41-registrykey-reveal",
+  "description": "Windows registry editor style panel with key path and highlighted suspicious entry",
+  "fields": {
+    "TITLE_TEXT": "Title above panel, e.g. 'REGISTRY PERSISTENCE'",
+    "KEY_PATH": "Registry path, e.g. 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run'",
+    "LOG_LINE_1": "Registry key name 1, e.g. 'WindowsUpdate'",
+    "LOG_LINE_2": "Registry key name 2",
+    "LOG_LINE_3": "Registry key name 3",
+    "LOG_LINE_4": "Malicious registry key name (highlighted), e.g. 'SvcHost32'",
+    "KEY_VALUE": "The malicious value data, e.g. 'C:\\Windows\\Temp\\payload.exe'"
+  }
+}

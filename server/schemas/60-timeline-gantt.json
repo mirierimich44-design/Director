@@ -1,0 +1,20 @@
+{
+  "template": "60-timeline-gantt",
+  "description": "Gantt chart with 6 rows showing task durations across a shared timeline",
+  "fields": {
+    "TITLE_TEXT": "OPERATION TIMELINE",
+    "PHASE_1": "Reconnaissance",
+    "PHASE_2": "Initial Access",
+    "PHASE_3": "Persistence",
+    "PHASE_4": "Privilege Escalation",
+    "STEP_1": "Lateral Movement",
+    "STEP_2": "Exfiltration"
+  },
+  "name": "60-timeline-gantt",
+  "category": "timeline",
+  "duration": 10,
+  "tags": [
+    "timeline",
+    "events"
+  ]
+}

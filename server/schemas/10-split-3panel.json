@@ -1,0 +1,22 @@
+{
+  "template": "10-split-3panel",
+  "description": "Three equal panels side by side each with heading, tag, and three sub-lines",
+  "fields": {
+    "TITLE_TEXT": "Title above panels",
+    "LEFT_HEAD": "Panel 1 heading",
+    "RIGHT_HEAD": "Panel 2 heading",
+    "VERDICT_TEXT": "Panel 3 heading",
+    "TAG_1": "Panel 1 tag line",
+    "TAG_2": "Panel 2 tag line",
+    "TAG_3": "Panel 3 tag line",
+    "LEFT_SUB1": "Panel 1 line 1",
+    "LEFT_SUB2": "Panel 1 line 2",
+    "LEFT_SUB3": "Panel 1 line 3",
+    "RIGHT_SUB1": "Panel 2 line 1",
+    "RIGHT_SUB2": "Panel 2 line 2",
+    "RIGHT_SUB3": "Panel 2 line 3",
+    "SUB_1": "Panel 3 line 1",
+    "SUB_2": "Panel 3 line 2",
+    "SUB_3": "Panel 3 line 3"
+  }
+}

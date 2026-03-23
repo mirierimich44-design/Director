@@ -1,0 +1,16 @@
+{
+  "template": "73-ticker-scroll",
+  "description": "Two hero stats with a scrolling news ticker bar below",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'BREACH SUMMARY'",
+    "STAT_VALUE_1": "Left hero stat, e.g. '$200M'",
+    "LABEL_1": "Left stat label, e.g. 'TOTAL LOSSES'",
+    "STAT_VALUE_2": "Right hero stat, e.g. '100+'",
+    "LABEL_2": "Right stat label, e.g. 'VICTIMS'",
+    "CONTEXT_TEXT": "Context line below stats",
+    "EVENT_1": "Ticker item 1, e.g. 'MGM Resorts breach confirmed'",
+    "EVENT_2": "Ticker item 2",
+    "EVENT_3": "Ticker item 3",
+    "EVENT_4": "Ticker item 4"
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "timestamp": "2026-03-23T10:09:29.644Z",
+  "scriptLength": 1380,
+  "scriptPreview": "In the early hours of March 11, 2026, an employee at Stryker Corporation's Irish hub woke up to a ghost in their machine. They didn't see a notification or an incoming call. They saw a factory reset i",
+  "scriptFull": "In the early hours of March 11, 2026, an employee at Stryker Corporation's Irish hub woke up to a ghost in their machine. They didn't see a notification or an incoming call. They saw a factory reset in progress.\nBefore they were fully awake, it was done. The phone: silent. The laptop in the next room: already dark, its fan winding down to nothing. Not crashed. Not frozen. Gone.\nAnd simultaneously — across nearly eighty countries, on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who never thought twice about connecting them to the company network — two hundred thousand devices were wiping themselves. A decade of work. Plans, correspondence, secrets — disappearing in real time.\nNo ransom note. No countdown timer. Just silence, spreading from device to device across the globe, as if a switch had been thrown somewhere in the dark.\nA twenty-five billion dollar company had just been erased.\nThis is the story of the most surgical corporate cyberattack ever documented. A wiper attack conducted entirely without a wiper. And it begins not with a line of malicious code, but with a stolen key — and a door that should never have opened from the outside.\nThis story is based on the factual reporting of Krebs on Security. Full sources and technical documentation are available in the video description.\n",
+  "totalScenes": 20,
+  "templateCount": 11,
+  "renderCount": 9,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "In the early hours of March 11, 2026, an employee at Stryker Corporation's Irish hub woke up to a ghost in their machine.",
+      "template": "76-organization-card",
+      "theme": "INTEL",
+      "reasoning": "Introducing the victim organization.",
+      "content": {
+        "TITLE_TEXT": "STRYKER CORPORATION",
+        "LABEL_1": "LOCATION",
+        "LABEL_2": "INDUSTRY",
+        "LABEL_3": "STATUS",
+        "TAG_1": "IRELAND",
+        "TAG_2": "MEDICAL TECH",
+        "TAG_3": "COMPROMISED",
+        "STAT_VALUE_1": "2026",
+        "STAT_VALUE_2": "MARCH 11",
+        "STAT_VALUE_3": "04:00 AM",
+        "CONTEXT_TEXT": "Irish hub employee reports anomalous device behavior."
+      },
+      "duration": 6
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "They didn't see a notification or an incoming call.",
+      "prompt": "Close up of a modern smartphone resting on a dark wooden nightstand in a dimly lit bedroom, screen is black and inactive, no notifications or lights, cinematic depth of field, high detail, photorealistic.",
+      "environment": "bedroom",
+      "camera": "close-up",
+      "motion": "Static shot, subtle ambient light shift.",
+      "lower_third": {
+        "text": "NO ALERTS RECEIVED",
+        "attribution": "SYSTEM LOGS",
+        "tone": "#00FFFF"
+      },
+      "duration": 4
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "They saw a factory reset in progress.",
+      "template": "39-terminal-typewriter",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the system command.",
+      "content": {
+        "TITLE_TEXT": "SYSTEM WIPE",
+        "KEY_PATH": "/ROOT/SYSTEM/RESET",
+        "LOG_LINE_1": "INITIATING FACTORY RESET...",
+        "LOG_LINE_2": "ERASING USER PARTITION...",
+        "LOG_LINE_3": "CLEARING CACHE...",
+        "LOG_LINE_4": "UNMOUNTING VOLUMES...",
+        "LOG_LINE_5": "SYSTEM HALT.",
+        "LOG_LINE_6": "POWER OFF."
+      },
+      "duration": 5
+    },
+    {
+      "index": 4,
+      "type": "3D_RENDER",
+      "script": "Before they were fully awake, it was done.",
+      "prompt": "A smartphone screen on a nightstand suddenly goes completely dark, reflecting the dim blue light of a pre-dawn room, sharp focus on the glass surface, cinematic atmosphere.",
+      "environment": "bedroom",
+      "camera": "dolly out",
+      "motion": "Slow dolly out from the phone to reveal the dark room.",
+      "lower_third": {
+        "text": "PROCESS COMPLETE",
+        "attribution": "SYSTEM STATUS",
+        "tone": "#FF0000"
+      },
+      "duration": 4
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "The phone: silent.",
+      "prompt": "Macro shot of a smartphone lying on a desk, completely dark and silent, no LEDs blinking, high contrast, dark aesthetic.",
+      "environment": "bedroom",
+      "camera": "static",
+      "motion": "Static, slight camera drift.",
+      "lower_third": {
+        "text": "DEVICE SILENCE",
+        "attribution": "NETWORK STATUS",
+        "tone": "#00FFFF"
+      },
+      "duration": 3
+    },
+    {
+      "index": 6,
+      "type": "3D_RENDER",
+      "script": "The laptop in the next room: already dark, its fan winding down to nothing.",
+      "prompt": "A high-end laptop on a desk in a dark office, screen is black, faint dust motes visible in the air, cinematic lighting, focus on the cooling vents.",
+      "environment": "office",
+      "camera": "dolly forward",
+      "motion": "Slow dolly forward toward the laptop.",
+      "lower_third": {
+        "text": "HARDWARE SHUTDOWN",
+        "attribution": "SYSTEM LOGS",
+        "tone": "#FF0000"
+      },
+      "duration": 5
+    },
+    {
+      "index": 7,
+      "type": "3D_RENDER",
+      "script": "Not crashed.",
+      "prompt": "Close up of a laptop screen showing a clean black surface, no error messages, no blue screen, just total darkness.",
+      "environment": "office",
+      "camera": "close-up",
+      "motion": "Static.",
+      "lower_third": {
+        "text": "NO CRASH LOGS",
+        "attribution": "DIAGNOSTICS",
+        "tone": "#00FF00"
+      },
+      "duration": 3
+    },
+    {
+      "index": 8,
+      "type": "3D_RENDER",
+      "script": "Not frozen.",
+      "prompt": "Close up of a laptop keyboard, no lights, no activity, completely unresponsive, cinematic dark lighting.",
+      "environment": "office",
+      "camera": "close-up",
+      "motion": "Static.",
+      "lower_third": {
+        "text": "SYSTEM UNRESPONSIVE",
+        "attribution": "DIAGNOSTICS",
+        "tone": "#00FF00"
+      },
+      "duration": 3
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "And simultaneously — across nearly eighty countries, on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who never thought twice about connecting them to the company network — two hundred thousand devices were wiping themselves.",
+      "template": "37-map-spread",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the global scale of the attack.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL WIPE EVENT",
+        "ORIGIN_LABEL": "IRELAND",
+        "COUNT_VALUE": "200,000",
+        "COUNT_LABEL": "DEVICES WIPED",
+        "MAP_LABEL_1": "MICHIGAN",
+        "MAP_LABEL_2": "SINGAPORE",
+        "DURATION_SECONDS": "5"
+      },
+      "duration": 8
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "A decade of work.",
+      "template": "44-chapter-countup",
+      "theme": "INTEL",
+      "reasoning": "Quantifying the loss.",
+      "content": {
+        "TITLE_TEXT": "DATA LOSS",
+        "COUNT_VALUE": "10",
+        "COUNT_LABEL": "YEARS OF WORK",
+        "SUB_LABEL": "ERASED",
+        "CONTEXT_TEXT": "Total loss of corporate history."
+      },
+      "duration": 4
+    },
+    {
+      "index": 11,
+      "type": "3D_RENDER",
+      "script": "Plans, correspondence, secrets — disappearing in real time.",
+      "prompt": "Abstract visualization of digital files, documents, and folders dissolving into glowing particles and fading into darkness, cinematic, high-tech, dark background.",
+      "environment": "abstract",
+      "camera": "orbit",
+      "motion": "Orbit around the dissolving data stream.",
+      "lower_third": {
+        "text": "DATA PERMANENTLY DELETED",
+        "attribution": "SYSTEM STATUS",
+        "tone": "#FF0000"
+      },
+      "duration": 5
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "No ransom note.",
+      "template": "01-statcluster-3box",
+      "theme": "THREAT",
+      "reasoning": "Highlighting the lack of typical ransomware indicators.",
+      "content": {
+        "STAT_VALUE_1": "0",
+        "STAT_VALUE_2": "0",
+        "STAT_VALUE_3": "0",
+        "LABEL_1": "RANSOM NOTES",
+        "LABEL_2": "COUNTDOWN TIMERS",
+        "LABEL_3": "DEMANDS",
+        "SUB_1": "FOUND",
+        "SUB_2": "FOUND",
+        "SUB_3": "FOUND",
+        "VERDICT_TEXT": "NON-RANSOMWARE EVENT"
+      },
+      "duration": 5
+    },
+    {
+      "index": 13,
+      "type": "3D_RENDER",
+      "script": "No countdown timer.",
+      "prompt": "A dark, empty digital interface screen, no clocks, no timers, just a blinking cursor in the void, cinematic, dark aesthetic.",
+      "environment": "abstract",
+      "camera": "static",
+      "motion": "Static, cursor blinks.",
+      "lower_third": {
+        "text": "NO COUNTDOWN",
+        "attribution": "FORENSICS",
+        "tone": "#00FFFF"
+      },
+      "duration": 3
+    },
+    {
+      "index": 14,
+      "type": "3D_RENDER",
+      "script": "Just silence, spreading from device to device across the globe, as if a switch had been thrown somewhere in the dark.",
+      "prompt": "A digital map of the world with glowing nodes turning off one by one, spreading from a central point, cinematic, dark background, high-tech.",
+      "environment": "abstract",
+      "camera": "zoom out",
+      "motion": "Fast zoom out from a single node to the entire globe.",
+      "lower_third": {
+        "text": "SILENT PROPAGATION",
+        "attribution": "NETWORK ANALYSIS",
+        "tone": "#FF0000"
+      },
+      "duration": 6
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "A twenty-five billion dollar company had just been erased.",
+      "template": "72-countup-hero",
+      "theme": "THREAT",
+      "reasoning": "Highlighting the financial impact.",
+      "content": {
+        "TITLE_TEXT": "TOTAL LOSS",
+        "COUNT_VALUE": "$25B",
+        "COUNT_LABEL": "MARKET VALUE",
+        "SUB_LABEL": "ERASED",
+        "CONTEXT_TEXT": "Stryker Corporation valuation wiped."
+      },
+      "duration": 6
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "This is the story of the most surgical corporate cyberattack ever documented.",
+      "template": "42-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Chapter opener.",
+      "content": {
+        "CHAPTER_WORD": "SURGICAL",
+        "CHAPTER_SUB": "CYBERATTACK",
+        "CONTEXT_TEXT": "The most precise attack ever documented."
+      },
+      "duration": 5
+    },
+    {
+      "index": 17,
+      "type": "TEMPLATE",
+      "script": "A wiper attack conducted entirely without a wiper.",
+      "template": "09-split-2panel",
+      "theme": "INTEL",
+      "reasoning": "Contrasting the attack type.",
+      "content": {
+        "LEFT_HEAD": "ATTACK TYPE",
+        "LEFT_SUB1": "WIPER",
+        "LEFT_SUB2": "MALWARE",
+        "LEFT_SUB3": "DESTRUCTIVE",
+        "RIGHT_HEAD": "REALITY",
+        "RIGHT_SUB1": "NO WIPER",
+        "RIGHT_SUB2": "NATIVE TOOLS",
+        "RIGHT_SUB3": "SURGICAL",
+        "VERDICT_TEXT": "ANOMALOUS ATTACK VECTOR"
+      },
+      "duration": 6
+    },
+    {
+      "index": 18,
+      "type": "TEMPLATE",
+      "script": "And it begins not with a line of malicious code, but with a stolen key — and a door that should never have opened from the outside.",
+      "template": "58-flowdiagram-branching",
+      "theme": "TECHNICAL",
+      "reasoning": "Explaining the attack origin.",
+      "content": {
+        "TITLE_TEXT": "ATTACK ORIGIN",
+        "ORIGIN_LABEL": "STOLEN KEY",
+        "PHASE_1": "ACCESS",
+        "PHASE_2": "AUTHENTICATION",
+        "PHASE_3": "EXECUTION",
+        "TAG_1": "EXTERNAL",
+        "TAG_2": "DOOR OPENED",
+        "TAG_3": "NO MALWARE",
+        "STEP_1": "KEY THEFT",
+        "STEP_2": "DOOR OPEN",
+        "STEP_3": "SYSTEM WIPE"
+      },
+      "duration": 7
+    },
+    {
+      "index": 19,
+      "type": "TEMPLATE",
+      "script": "This story is based on the factual reporting of Krebs on Security.",
+      "template": "78-evidence-item",
+      "theme": "INTEL",
+      "reasoning": "Citing sources.",
+      "content": {
+        "TITLE_TEXT": "KREBS ON SECURITY",
+        "LABEL_1": "SOURCE",
+        "LABEL_2": "REPORTING",
+        "LABEL_3": "VERIFIED",
+        "TAG_1": "FACTUAL",
+        "TAG_2": "DOCUMENTED",
+        "CONTEXT_TEXT": "All details based on investigative reporting.",
+        "ALERT_TEXT": "SOURCE VERIFIED"
+      },
+      "duration": 5
+    },
+    {
+      "index": 20,
+      "type": "TEMPLATE",
+      "script": "Full sources and technical documentation are available in the video description.",
+      "template": "81-transition-fade-title",
+      "theme": "DARK",
+      "reasoning": "Closing transition.",
+      "content": {
+        "TITLE_TEXT": "SOURCES",
+        "CHAPTER_WORD": "DOCUMENTATION",
+        "CHAPTER_SUB": "SEE DESCRIPTION",
+        "TAG_1": "END"
+      },
+      "duration": 4
+    }
+  ]
+}

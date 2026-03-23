@@ -1,0 +1,15 @@
+{
+  "template": "68-split-reveal-wipe",
+  "description": "Three horizontal panels wiping in sequentially from left, each revealing a statement",
+  "fields": {
+    "LEFT_HEAD": "Panel 1 headline, e.g. 'INITIAL ACCESS'",
+    "LEFT_SUB1": "Panel 1 supporting line",
+    "TAG_1": "Panel 1 tag",
+    "RIGHT_HEAD": "Panel 2 headline, e.g. 'LATERAL MOVEMENT'",
+    "RIGHT_SUB1": "Panel 2 supporting line",
+    "TAG_2": "Panel 2 tag",
+    "VERDICT_TEXT": "Panel 3 verdict headline, e.g. 'Full Domain Compromise'",
+    "CONTEXT_TEXT": "Panel 3 context line",
+    "TAG_3": "Panel 3 tag"
+  }
+}

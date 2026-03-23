@@ -1,0 +1,60 @@
+{
+  "template": "85-person-profile",
+  "description": "Person profile card with uploaded photo, name, role, bio lines, and tags",
+  "fields": {
+    "PERSON_NAME": {
+      "type": "string",
+      "description": "Full name of the person",
+      "example": "Marcus Webb"
+    },
+    "PERSON_ROLE": {
+      "type": "string",
+      "description": "Job title or role",
+      "example": "Chief Technology Officer"
+    },
+    "ORG_LABEL": {
+      "type": "string",
+      "description": "Organisation or context label shown above name",
+      "example": "NEXUS CORP"
+    },
+    "BIO_LINE_1": {
+      "type": "string",
+      "description": "First biography or detail line",
+      "example": "Former NSA analyst, 2009–2015"
+    },
+    "BIO_LINE_2": {
+      "type": "string",
+      "description": "Second biography or detail line",
+      "example": "Oversaw Pegasus deployment operations"
+    },
+    "BIO_LINE_3": {
+      "type": "string",
+      "description": "Third biography or detail line",
+      "example": "Wanted in 3 jurisdictions since 2021"
+    },
+    "TAG_1": {
+      "type": "string",
+      "description": "First tag/badge label",
+      "example": "SUSPECT"
+    },
+    "TAG_2": {
+      "type": "string",
+      "description": "Second tag/badge label",
+      "example": "FUGITIVE"
+    },
+    "TAG_3": {
+      "type": "string",
+      "description": "Third tag/badge label",
+      "example": "HIGH VALUE"
+    },
+    "IMAGE_SRC": {
+      "type": "string",
+      "description": "Path to image file inside Remotion public/ folder",
+      "example": "person.jpg"
+    }
+  },
+  "name": "85-person-profile",
+  "category": "profile",
+  "duration": 10,
+  "tags": []
+}

@@ -1,0 +1,17 @@
+{
+  "template": "24-nodenetwork-hierarchy",
+  "description": "Three-tier hierarchy — root node at top, three mid nodes, six leaf nodes",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'ATTACK INFRASTRUCTURE'",
+    "ORIGIN_LABEL": "Root node label, e.g. 'C2 SERVER'",
+    "TAG_1": "Left mid node label, e.g. 'BANKING'",
+    "TAG_2": "Center mid node label, e.g. 'CRYPTO'",
+    "TAG_3": "Right mid node label, e.g. 'GOVERNMENT'",
+    "NODE_LABEL_1": "Leaf node 1",
+    "NODE_LABEL_2": "Leaf node 2",
+    "NODE_LABEL_3": "Leaf node 3",
+    "NODE_LABEL_4": "Leaf node 4",
+    "NODE_LABEL_5": "Leaf node 5",
+    "NODE_LABEL_6": "Leaf node 6"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "template": "19-nodenetwork-centered",
+  "name": "Centered Node Network",
+  "description": "Central node connected to six outer nodes in a radial spoke pattern",
+  "category": "network",
+  "duration": 9,
+  "tags": ["network", "connections", "hub", "spokes"],
+  "fields": {
+    "TITLE_TEXT": "Title above the network, e.g. 'THREAT ACTOR CONNECTIONS'",
+    "ORIGIN_LABEL": "Label on the center node, e.g. 'LAZARUS' or 'C2 SERVER'",
+    "NODE_LABEL_1": "Label for outer node 1",
+    "NODE_LABEL_2": "Label for outer node 2",
+    "NODE_LABEL_3": "Label for outer node 3",
+    "NODE_LABEL_4": "Label for outer node 4",
+    "NODE_LABEL_5": "Label for outer node 5",
+    "NODE_LABEL_6": "Label for outer node 6"
+  }
+}

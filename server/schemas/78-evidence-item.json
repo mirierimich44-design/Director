@@ -1,0 +1,14 @@
+{
+  "template": "78-evidence-item",
+  "description": "Document-style evidence card with header, tags, title, body text, metadata row, and alert bar",
+  "fields": {
+    "TITLE_TEXT": "Document header label, e.g. 'EXHIBIT A — FORENSIC REPORT'",
+    "LABEL_1": "Main evidence headline, e.g. 'Backdoor Installed on 47 Servers'",
+    "LABEL_2": "Metadata item 1, e.g. 'DATE: March 14, 2024'",
+    "LABEL_3": "Metadata item 2, e.g. 'SOURCE: FBI Forensics Division'",
+    "TAG_1": "First classification tag, e.g. 'CLASSIFIED'",
+    "TAG_2": "Second classification tag, e.g. 'EXHIBIT A'",
+    "CONTEXT_TEXT": "2-3 sentence description of the evidence item",
+    "ALERT_TEXT": "Bottom alert bar text, e.g. 'CAUTION: Contents subject to ongoing investigation'"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "template": "08-waterfall-chart",
+  "description": "Five-bar waterfall chart showing cumulative gains and losses",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'FINANCIAL IMPACT BREAKDOWN'",
+    "WATERFALL_1": "Label for bar 1, e.g. 'Starting Value'",
+    "WATERFALL_2": "Label for bar 2, e.g. 'Revenue Loss'",
+    "WATERFALL_3": "Label for bar 3, e.g. 'Recovery'",
+    "WATERFALL_4": "Label for bar 4, e.g. 'Legal Costs'",
+    "WATERFALL_5": "Label for bar 5, e.g. 'Final Impact'",
+    "BAR_VALUE_1": "Value for bar 1, e.g. '$14.6B'",
+    "BAR_VALUE_2": "Value for bar 2, e.g. '-$1.2B'",
+    "BAR_VALUE_3": "Value for bar 3, e.g. '+$400M'",
+    "BAR_VALUE_4": "Value for bar 4, e.g. '-$200M'",
+    "BAR_VALUE_5": "Value for bar 5, e.g. '$13.6B'"
+  }
+}

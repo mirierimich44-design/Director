@@ -1,0 +1,15 @@
+{
+  "template": "67-split-morph",
+  "description": "Left state shown first, then morphs/wipes to reveal right state — before/after transformation",
+  "fields": {
+    "COMPARE_LABEL_1": "Left state label, e.g. 'BEFORE BREACH'",
+    "COMPARE_VALUE_1": "Left state value, e.g. '$14.6B'",
+    "LEFT_SUB1": "Left supporting line 1",
+    "LEFT_SUB2": "Left supporting line 2",
+    "COMPARE_LABEL_2": "Right state label, e.g. 'AFTER BREACH'",
+    "COMPARE_VALUE_2": "Right state value, e.g. '$13.1B'",
+    "RIGHT_SUB1": "Right supporting line 1",
+    "RIGHT_SUB2": "Right supporting line 2",
+    "CONTEXT_TEXT": "Source or context line at bottom"
+  }
+}

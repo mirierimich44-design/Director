@@ -1,0 +1,13 @@
+{
+  "template": "56-expanding-pulse",
+  "description": "Center node with expanding pulse rings that reveal five outer nodes as they pass",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'INFECTION SPREAD'",
+    "ORIGIN_LABEL": "Center label, e.g. 'SOURCE'",
+    "NODE_LABEL_1": "Node 1 label",
+    "NODE_LABEL_2": "Node 2 label",
+    "NODE_LABEL_3": "Node 3 label",
+    "NODE_LABEL_4": "Node 4 label",
+    "NODE_LABEL_5": "Node 5 label"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "template": "34b-map-country-zoom",
+  "description": "Single country outline with animated border draw, pulse rings, stats, and context panel. Supports: USA, UK, RUSSIA, CHINA, NORTHKOREA, IRAN, UKRAINE, ISRAEL, KENYA, GERMANY",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'THREAT ACTOR ORIGIN'",
+    "MAP_LABEL_1": "Country key — must be one of: USA, UK, RUSSIA, CHINA, NORTHKOREA, IRAN, UKRAINE, ISRAEL, KENYA, GERMANY",
+    "TAG_1": "Tag line under country name, e.g. 'STATE-SPONSORED ACTOR' or 'PRIMARY TARGET'",
+    "STAT_VALUE_1": "Left stat value, e.g. '$3.8B'",
+    "LABEL_1": "Left stat label, e.g. 'STOLEN IN 2023'",
+    "STAT_VALUE_2": "Right stat value, e.g. '45+'",
+    "LABEL_2": "Right stat label, e.g. 'COUNTRIES TARGETED'",
+    "CONTEXT_TEXT": "2-3 sentence context about the country and its role in the story"
+  }
+}

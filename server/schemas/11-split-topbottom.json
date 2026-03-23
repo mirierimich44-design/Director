@@ -1,0 +1,14 @@
+{
+  "template": "11-split-topbottom",
+  "description": "Top dark panel and bottom light panel split horizontally with content in each",
+  "fields": {
+    "LEFT_HEAD": "Top panel main headline",
+    "LEFT_SUB1": "Top panel line 1",
+    "LEFT_SUB2": "Top panel line 2",
+    "RIGHT_HEAD": "Bottom panel headline",
+    "RIGHT_SUB1": "Top panel right stat",
+    "RIGHT_SUB2": "Top panel right sub",
+    "VERDICT_TEXT": "Bottom panel main text",
+    "CONTEXT_TEXT": "Bottom panel supporting line"
+  }
+}

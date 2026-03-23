@@ -1,0 +1,9 @@
+{
+  "template": "42-chapter-word-drop",
+  "description": "Full-screen chapter card with a large drop word, chapter label, and supporting context line",
+  "fields": {
+    "CHAPTER_WORD": "Chapter identifier shown small, e.g. 'CHAPTER ONE' or 'PART TWO'",
+    "CHAPTER_SUB": "The large hero word that drops in, e.g. 'INFILTRATION' or 'THE BREACH'",
+    "CONTEXT_TEXT": "One sentence of context shown below the hero word, e.g. 'In early 2020, attackers gained their first foothold.'"
+  }
+}

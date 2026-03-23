@@ -1,0 +1,10 @@
+{
+  "template": "05-donutchart-fill",
+  "description": "Single donut chart that fills from 0 to the target percentage with value and label in the center",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'PHISHING SHARE OF ALL ATTACKS'",
+    "DONUT_VALUE": "The percentage shown in the center, e.g. '44%'",
+    "DONUT_LABEL": "Short label below the value, e.g. 'OF ALL BREACHES'",
+    "CONTEXT_TEXT": "One line of context shown below the chart, e.g. 'Based on IBM Cost of a Data Breach Report 2024'"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "template": "79-timeline-incident",
+  "description": "Vertical incident timeline with 4 events, date on left, event card on right, last item highlighted",
+  "fields": {
+    "TITLE_TEXT": "Title above the timeline, e.g. 'INCIDENT TIMELINE'",
+    "DATE_1": "Date for event 1, e.g. 'JAN 14'",
+    "DATE_2": "Date for event 2, e.g. 'FEB 3'",
+    "DATE_3": "Date for event 3, e.g. 'MAR 22'",
+    "DATE_4": "Date for event 4 (highlighted), e.g. 'APR 9'",
+    "EVENT_1": "Description of event 1, e.g. 'Initial phishing email sent to 3,000 employees'",
+    "EVENT_2": "Description of event 2, e.g. 'Credentials harvested from 47 accounts'",
+    "EVENT_3": "Description of event 3, e.g. 'Lateral movement detected across 12 servers'",
+    "EVENT_4": "Description of event 4 (critical), e.g. 'Data exfiltration begins — 4.5TB transferred'",
+    "TAG_1": "Tag for event 1, e.g. 'INITIAL'",
+    "TAG_2": "Tag for event 2, e.g. 'BREACH'",
+    "TAG_3": "Tag for event 3, e.g. 'PIVOT'",
+    "TAG_4": "Tag for event 4, e.g. 'CRITICAL'"
+  }
+}

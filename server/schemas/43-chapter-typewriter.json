@@ -1,0 +1,9 @@
+{
+  "template": "43-chapter-typewriter",
+  "description": "Chapter card with typewriter effect revealing the hero word character by character",
+  "fields": {
+    "CHAPTER_WORD": "Chapter identifier, e.g. 'CHAPTER TWO'",
+    "CHAPTER_SUB": "The word that types in, e.g. 'INFILTRATION'",
+    "CONTEXT_TEXT": "Supporting context line below"
+  }
+}

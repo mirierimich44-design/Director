@@ -1,0 +1,10 @@
+{
+  "template": "81-transition-fade-title",
+  "description": "Full screen dark title card that fades in, used as a transition between documentary segments",
+  "fields": {
+    "TITLE_TEXT": "Large title shown center screen, e.g. 'THE BREACH'",
+    "CHAPTER_WORD": "Small label above title, e.g. 'PART ONE'",
+    "CHAPTER_SUB": "Subtitle below title, e.g. 'How it all began'",
+    "TAG_1": "Small tag below subtitle, e.g. 'ARXXIS ORIGINALS'"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "template": "63-phase-numbered",
+  "description": "Four numbered phases in a vertical list with large number circles and descriptions",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'HOW THE ATTACK UNFOLDED'",
+    "PHASE_1": "Phase 1 name",
+    "PHASE_2": "Phase 2 name",
+    "PHASE_3": "Phase 3 name",
+    "PHASE_4": "Phase 4 name",
+    "STEP_1": "Description for phase 1",
+    "STEP_2": "Description for phase 2",
+    "STEP_3": "Description for phase 3",
+    "STEP_4": "Description for phase 4"
+  }
+}

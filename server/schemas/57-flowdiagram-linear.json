@@ -1,0 +1,15 @@
+{
+  "template": "57-flowdiagram-linear",
+  "description": "Four-step linear flow diagram with labeled blocks, arrows, and step descriptions",
+  "fields": {
+    "TITLE_TEXT": "Title above the flow, e.g. 'ATTACK FLOW' or 'KILL CHAIN'",
+    "STEP_1": "Title of step 1, e.g. 'Phishing Email'",
+    "STEP_2": "Title of step 2, e.g. 'Credential Theft'",
+    "STEP_3": "Title of step 3, e.g. 'Lateral Movement'",
+    "STEP_4": "Title of step 4, e.g. 'Data Exfiltration'",
+    "PHASE_1": "Sub-label for step 1, e.g. 'INITIAL ACCESS'",
+    "PHASE_2": "Sub-label for step 2, e.g. 'PERSISTENCE'",
+    "PHASE_3": "Sub-label for step 3, e.g. 'PRIVILEGE ESC.'",
+    "PHASE_4": "Sub-label for step 4, e.g. 'IMPACT'"
+  }
+}

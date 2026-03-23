@@ -1,0 +1,15 @@
+{
+  "template": "47-barchart-horizontal",
+  "description": "Four-bar horizontal bar chart growing left to right with value labels",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'TOP ATTACK VECTORS'",
+    "BAR_LABEL_1": "Label for bar 1, e.g. 'Phishing'",
+    "BAR_LABEL_2": "Label for bar 2, e.g. 'Credential Theft'",
+    "BAR_LABEL_3": "Label for bar 3, e.g. 'Ransomware'",
+    "BAR_LABEL_4": "Label for bar 4, e.g. 'Supply Chain'",
+    "BAR_VALUE_1": "Value for bar 1, e.g. '36%'",
+    "BAR_VALUE_2": "Value for bar 2, e.g. '28%'",
+    "BAR_VALUE_3": "Value for bar 3, e.g. '22%'",
+    "BAR_VALUE_4": "Value for bar 4, e.g. '14%'"
+  }
+}

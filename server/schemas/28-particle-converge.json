@@ -1,0 +1,11 @@
+{
+  "template": "28-particle-converge",
+  "description": "Particles converging from all edges toward a central target node with impact flash",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'COORDINATED ATTACK'",
+    "ORIGIN_LABEL": "Center target label, e.g. 'MGM RESORTS'",
+    "COUNT_VALUE": "Count bottom left, e.g. '60'",
+    "COUNT_LABEL": "Count label, e.g. 'ATTACK VECTORS'",
+    "ALERT_TEXT": "Alert badge, e.g. 'UNDER ATTACK'"
+  }
+}

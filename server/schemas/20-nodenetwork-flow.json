@@ -1,0 +1,17 @@
+{
+  "template": "20-nodenetwork-flow",
+  "description": "Five nodes connected in a flow network with labels and tags below each node",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'NETWORK FLOW'",
+    "NODE_LABEL_1": "Label for node 1",
+    "NODE_LABEL_2": "Label for node 2",
+    "NODE_LABEL_3": "Label for node 3",
+    "NODE_LABEL_4": "Label for node 4",
+    "NODE_LABEL_5": "Label for node 5",
+    "TAG_1": "Tag for node 1",
+    "TAG_2": "Tag for node 2",
+    "TAG_3": "Tag for node 3",
+    "TAG_4": "Tag for node 4",
+    "TAG_5": "Tag for node 5"
+  }
+}

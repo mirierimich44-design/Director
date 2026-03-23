@@ -1,0 +1,10 @@
+{
+  "template": "25-particle-burst",
+  "description": "Central node bursting outward with particles and expanding rings, with a count below",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'MALWARE PROPAGATION' or 'BREACH IMPACT'",
+    "ORIGIN_LABEL": "Label on center node, e.g. 'ZERO-DAY' or 'RANSOMWARE'",
+    "COUNT_VALUE": "Large number shown below burst, e.g. '1,400'",
+    "COUNT_LABEL": "Label next to count, e.g. 'SYSTEMS INFECTED'"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "template": "44-chapter-countup",
+  "description": "Large number that counts up from zero to the target value with label and context",
+  "fields": {
+    "TITLE_TEXT": "Title above the count, e.g. 'TOTAL VICTIMS'",
+    "COUNT_VALUE": "The final value to count to, e.g. '247' or '1,400'",
+    "COUNT_LABEL": "Short label above the number, e.g. 'CONFIRMED BREACHES'",
+    "SUB_LABEL": "Label below the number, e.g. 'IN 2024 ALONE'",
+    "CONTEXT_TEXT": "One line source or context, e.g. 'Source: FBI IC3 Report 2024'"
+  }
+}

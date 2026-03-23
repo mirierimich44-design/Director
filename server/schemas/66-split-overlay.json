@@ -1,0 +1,16 @@
+{
+  "template": "66-split-overlay",
+  "description": "Full-width dark overlay panel slides down from top revealing title, then two columns below",
+  "fields": {
+    "TITLE_TEXT": "Large title in overlay, e.g. 'THE BREACH'",
+    "LEFT_HEAD": "Left column headline",
+    "RIGHT_HEAD": "Right column headline",
+    "LEFT_SUB1": "Left column line 1",
+    "LEFT_SUB2": "Left column line 2",
+    "RIGHT_SUB1": "Right column line 1",
+    "RIGHT_SUB2": "Right column line 2",
+    "STAT_VALUE_1": "Left stat value",
+    "STAT_VALUE_2": "Right stat value",
+    "CONTEXT_TEXT": "Subtitle in overlay panel"
+  }
+}

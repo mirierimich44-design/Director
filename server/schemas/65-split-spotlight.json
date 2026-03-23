@@ -1,0 +1,14 @@
+{
+  "template": "65-split-spotlight",
+  "description": "Dark screen with spotlight glow on left subject, info panel on right",
+  "fields": {
+    "TITLE_TEXT": "Right panel header, e.g. 'THREAT ASSESSMENT'",
+    "LABEL_1": "Main spotlight subject, e.g. 'LAZARUS GROUP'",
+    "LABEL_2": "Sub-line 1 in spotlight",
+    "LABEL_3": "Sub-line 2 in spotlight",
+    "TAG_1": "Tag in spotlight, e.g. 'STATE-SPONSORED'",
+    "STAT_VALUE_1": "Left stat value",
+    "STAT_VALUE_2": "Right stat value",
+    "CONTEXT_TEXT": "Context paragraph on right panel"
+  }
+}

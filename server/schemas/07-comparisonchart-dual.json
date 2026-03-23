@@ -1,0 +1,12 @@
+{
+  "template": "07-comparisonchart-dual",
+  "description": "Two bar comparison chart side by side with VS divider and value labels",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'BEFORE VS AFTER'",
+    "COMPARE_LABEL_1": "Left bar label, e.g. 'BEFORE BREACH'",
+    "COMPARE_LABEL_2": "Right bar label, e.g. 'AFTER BREACH'",
+    "COMPARE_VALUE_1": "Left bar value, e.g. '$2.1M'",
+    "COMPARE_VALUE_2": "Right bar value, e.g. '$4.5M'",
+    "CONTEXT_TEXT": "Source or context line below chart"
+  }
+}

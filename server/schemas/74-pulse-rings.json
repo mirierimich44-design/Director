@@ -1,0 +1,11 @@
+{
+  "template": "74-pulse-rings",
+  "description": "Continuously pulsing concentric rings from a central node with count and alert label",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'ACTIVE THREAT DETECTED'",
+    "ORIGIN_LABEL": "Label on center node, e.g. 'C2 SERVER' or 'BEACON'",
+    "COUNT_VALUE": "Large number bottom left, e.g. '1,847'",
+    "COUNT_LABEL": "Label under count, e.g. 'CONNECTIONS ACTIVE'",
+    "ALERT_TEXT": "Alert badge bottom right, e.g. 'LIVE THREAT'"
+  }
+}

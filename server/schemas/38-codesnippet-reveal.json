@@ -1,0 +1,17 @@
+{
+  "template": "38-codesnippet-reveal",
+  "description": "Code block with lines revealing one by one, a highlighted key line, and a callout value below",
+  "fields": {
+    "TITLE_TEXT": "Title above the code panel, e.g. 'MALICIOUS PAYLOAD' or 'BACKDOOR CODE'",
+    "KEY_PATH": "File path shown in the tab bar, e.g. '/etc/cron.d/updater' or 'config.php'",
+    "CODE_LINE_1": "Line of code or config, e.g. 'import subprocess'",
+    "CODE_LINE_2": "Line of code or config",
+    "CODE_LINE_3": "Line of code or config",
+    "CODE_LINE_4": "Line of code or config",
+    "CODE_LINE_5": "The KEY highlighted line, e.g. 'exec(base64_decode($payload))'",
+    "CODE_LINE_6": "Line of code or config",
+    "CODE_LINE_7": "Line of code or config",
+    "CODE_LINE_8": "Line of code or config",
+    "KEY_VALUE": "Annotation shown below the highlight, e.g. '← decoded payload executes remote shell'"
+  }
+}

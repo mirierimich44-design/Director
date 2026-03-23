@@ -1,0 +1,11 @@
+{
+  "template": "27-particle-scatter",
+  "description": "Particles scattering in all directions from a central origin node",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'MALWARE SCATTER'",
+    "ORIGIN_LABEL": "Center node label, e.g. 'ZERO-DAY'",
+    "COUNT_VALUE": "Count bottom left, e.g. '80'",
+    "COUNT_LABEL": "Count label, e.g. 'TARGETS HIT'",
+    "ALERT_TEXT": "Alert badge, e.g. 'SPREADING'"
+  }
+}

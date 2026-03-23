@@ -1,0 +1,15 @@
+{
+  "template": "18-phase-circular",
+  "description": "Four phase boxes arranged in a circle with curved arrows between them",
+  "fields": {
+    "TITLE_TEXT": "Title above and center label, e.g. 'ATTACK CYCLE'",
+    "PHASE_1": "Top phase label, e.g. 'Reconnaissance'",
+    "PHASE_2": "Right phase label, e.g. 'Initial Access'",
+    "PHASE_3": "Bottom phase label, e.g. 'Exfiltration'",
+    "PHASE_4": "Left phase label, e.g. 'Persistence'",
+    "STEP_1": "Sub-label for phase 1",
+    "STEP_2": "Sub-label for phase 2",
+    "STEP_3": "Sub-label for phase 3",
+    "STEP_4": "Sub-label for phase 4"
+  }
+}

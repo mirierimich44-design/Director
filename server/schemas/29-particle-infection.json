@@ -1,0 +1,11 @@
+{
+  "template": "29-particle-infection",
+  "description": "Grid of nodes that progressively become infected spreading from top-left origin",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'MALWARE SPREAD'",
+    "ORIGIN_LABEL": "Label on origin node, e.g. 'PATIENT ZERO'",
+    "COUNT_VALUE": "Number shown below grid, e.g. '40'",
+    "COUNT_LABEL": "Label next to count, e.g. 'SYSTEMS INFECTED'",
+    "ALERT_TEXT": "Alert text, e.g. 'PROPAGATION ACTIVE'"
+  }
+}

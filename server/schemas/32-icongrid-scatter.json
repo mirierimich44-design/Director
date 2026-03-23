@@ -1,0 +1,22 @@
+{
+  "template": "32-icongrid-scatter",
+  "name": "Icon Grid Scatter",
+  "description": "9 icon cards scattered across canvas with connector lines",
+  "category": "grid",
+  "duration": 10,
+  "tags": ["grid", "icons", "scatter"],
+  "fields": {
+    "TITLE_TEXT": "ATTACK SURFACE MAP",
+    "COUNT_VALUE": "9",
+    "COUNT_LABEL": "ENTRY VECTORS",
+    "ICON_LABEL_1": "Email Phishing",
+    "ICON_LABEL_2": "VPN Exploit",
+    "ICON_LABEL_3": "Supply Chain",
+    "ICON_LABEL_4": "USB Drop",
+    "ICON_LABEL_5": "Web App",
+    "ICON_LABEL_6": "Insider Threat",
+    "ICON_LABEL_7": "Zero Day",
+    "ICON_LABEL_8": "Cloud Miscfg",
+    "ICON_LABEL_9": "Social Eng."
+  }
+}

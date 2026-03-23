@@ -1,0 +1,13 @@
+{
+  "template": "48-scatterplot",
+  "name": "Scatter Plot",
+  "description": "Scatter plot with two color groups and animated point reveal",
+  "category": "charts",
+  "duration": 10,
+  "tags": ["chart", "scatter", "data"],
+  "fields": {
+    "TITLE_TEXT": "VULNERABILITY RISK DISTRIBUTION",
+    "LINE_LABEL_1": "Exploit Complexity",
+    "LINE_LABEL_2": "Impact Score"
+  }
+}

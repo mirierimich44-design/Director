@@ -1,0 +1,10 @@
+{
+  "template": "70-glitchreveal-full",
+  "description": "Full screen dark title with RGB glitch effect and scanline reveal",
+  "fields": {
+    "TITLE_TEXT": "Large hero text, e.g. 'SCATTERED SPIDER'",
+    "CHAPTER_SUB": "Subtitle below hero text, e.g. 'THE INSIDE STORY'",
+    "CONTEXT_TEXT": "Supporting context line",
+    "TAG_1": "Tag bottom right, e.g. 'ARXXIS ORIGINALS'"
+  }
+}

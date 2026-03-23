@@ -1,0 +1,15 @@
+{
+  "template": "03-barchart-vertical",
+  "description": "Four-bar vertical bar chart with value labels above each bar and x-axis labels below",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'RANSOMWARE ATTACKS BY YEAR'",
+    "BAR_LABEL_1": "X-axis label for bar 1, e.g. '2022'",
+    "BAR_LABEL_2": "X-axis label for bar 2, e.g. '2023'",
+    "BAR_LABEL_3": "X-axis label for bar 3, e.g. '2024'",
+    "BAR_LABEL_4": "X-axis label for bar 4, e.g. '2025'",
+    "BAR_VALUE_1": "Value shown above bar 1, e.g. '1,200'",
+    "BAR_VALUE_2": "Value shown above bar 2, e.g. '1,900'",
+    "BAR_VALUE_3": "Value shown above bar 3, e.g. '2,400'",
+    "BAR_VALUE_4": "Value shown above bar 4, e.g. '3,100'"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "template": "40-logstream-highlight",
+  "description": "Log stream with level badges, highlighted critical line, and callout annotation",
+  "fields": {
+    "TITLE_TEXT": "Title above log panel, e.g. 'SYSTEM LOG — BREACH DAY'",
+    "KEY_PATH": "Log file path shown in header, e.g. '/var/log/auth.log'",
+    "LOG_LINE_1": "Log line 1 — include [INFO]/[WARN]/[ERROR] prefix",
+    "LOG_LINE_2": "Log line 2",
+    "LOG_LINE_3": "Log line 3",
+    "LOG_LINE_4": "Log line 4 — this line gets highlighted",
+    "LOG_LINE_5": "Log line 5",
+    "LOG_LINE_6": "Log line 6",
+    "KEY_VALUE": "Annotation below highlighted line, e.g. '← unauthorized sudo escalation detected'"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "template": "83-transition-zoom-reveal",
+  "description": "Cinematic zoom-in transition revealing a title on a dark overlay",
+  "fields": {
+    "TITLE_TEXT": "Large title, e.g. 'THE BREACH'",
+    "CHAPTER_WORD": "Small label above title, e.g. 'PART THREE'",
+    "CHAPTER_SUB": "Subtitle below title, e.g. 'When everything changed'",
+    "TAG_1": "Tag below subtitle, e.g. 'ARXXIS ORIGINALS'"
+  }
+}

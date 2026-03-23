@@ -1,0 +1,12 @@
+{
+  "template": "26-particle-stream",
+  "description": "Continuous stream of particles flowing from a source node to a target node",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'DATA EXFILTRATION STREAM'",
+    "ORIGIN_LABEL": "Source node label, e.g. 'VICTIM NETWORK'",
+    "ARC_TO": "Target node label, e.g. 'ATTACKER SERVER'",
+    "ARC_FROM": "Supporting context",
+    "COUNT_VALUE": "Count shown bottom left, e.g. '4.5TB'",
+    "COUNT_LABEL": "Count label, e.g. 'DATA STOLEN'"
+  }
+}

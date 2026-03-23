@@ -1,0 +1,17 @@
+{
+  "template": "35b-map-country-compare",
+  "description": "Three country cards side by side each with animated border draw, stat, and label. Each card uses a different theme color.",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'TOP STATE-SPONSORED THREAT ACTORS'",
+    "MAP_LABEL_1": "Country 1 key: USA, UK, RUSSIA, CHINA, NORTHKOREA, IRAN, UKRAINE, ISRAEL, KENYA, GERMANY",
+    "MAP_LABEL_2": "Country 2 key",
+    "MAP_LABEL_3": "Country 3 key",
+    "STAT_VALUE_1": "Stat for country 1, e.g. '$3.8B'",
+    "LABEL_1": "Stat label for country 1, e.g. 'STOLEN IN 2023'",
+    "STAT_VALUE_2": "Stat for country 2",
+    "LABEL_2": "Stat label for country 2",
+    "STAT_VALUE_3": "Stat for country 3",
+    "LABEL_3": "Stat label for country 3",
+    "CONTEXT_TEXT": "Source or context line below the three cards"
+  }
+}

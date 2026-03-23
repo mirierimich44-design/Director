@@ -1,0 +1,13 @@
+{
+  "template": "21-nodenetwork-attack",
+  "description": "Attack network showing source node firing lines toward four target nodes",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'LATERAL MOVEMENT'",
+    "ORIGIN_LABEL": "Source node label, e.g. 'ATTACKER'",
+    "TARGET_1": "Label for target 1",
+    "TARGET_2": "Label for target 2",
+    "TARGET_3": "Label for target 3",
+    "TARGET_4": "Label for target 4",
+    "ALERT_TEXT": "Alert badge text, e.g. 'BREACH IN PROGRESS'"
+  }
+}

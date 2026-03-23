@@ -1,0 +1,18 @@
+{
+  "template": "64-split-quadrant",
+  "description": "Four quadrant layout, each panel with tag, headline and sub-line",
+  "fields": {
+    "TITLE_TEXT": "Title above quadrants",
+    "LEFT_HEAD": "Top-left panel headline",
+    "RIGHT_HEAD": "Top-right panel headline",
+    "VERDICT_TEXT": "Bottom-left panel headline",
+    "TAG_1": "Top-left panel tag",
+    "TAG_2": "Top-right panel tag",
+    "TAG_3": "Bottom-left panel tag",
+    "TAG_4": "Bottom-right panel tag",
+    "LEFT_SUB1": "Top-left sub line",
+    "RIGHT_SUB1": "Top-right sub line",
+    "LEFT_SUB2": "Bottom-left sub line",
+    "RIGHT_SUB2": "Bottom-right sub line"
+  }
+}

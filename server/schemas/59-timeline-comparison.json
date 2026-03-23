@@ -1,0 +1,32 @@
+{
+  "template": "59-timeline-comparison",
+  "description": "Two parallel timelines comparing two sequences of events",
+  "fields": {
+    "TITLE_TEXT": "ATTACK VS DEFENCE TIMELINE",
+    "COMPARE_LABEL_1": "ATTACKER ACTIONS",
+    "COMPARE_LABEL_2": "DEFENDER RESPONSE",
+    "EVENT_1": "Phishing Email",
+    "DATE_1": "DAY 1",
+    "EVENT_2": "Credentials Stolen",
+    "DATE_2": "DAY 3",
+    "EVENT_3": "Lateral Movement",
+    "DATE_3": "DAY 7",
+    "EVENT_4": "Data Exfiltrated",
+    "DATE_4": "DAY 12",
+    "EVENT_5": "Alert Triggered",
+    "DATE_5": "DAY 4",
+    "EVENT_6": "Investigation Opened",
+    "DATE_6": "DAY 5",
+    "STEP_1": "Containment",
+    "PHASE_1": "DAY 9",
+    "STEP_2": "Remediation",
+    "PHASE_2": "DAY 14"
+  },
+  "name": "59-timeline-comparison",
+  "category": "timeline",
+  "duration": 10,
+  "tags": [
+    "timeline",
+    "events"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "template": "58-flowdiagram-branching",
+  "description": "Branching flow diagram with root node splitting into three branches each with a leaf card",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'ATTACK BRANCHES'",
+    "ORIGIN_LABEL": "Root node label, e.g. 'INITIAL ACCESS'",
+    "PHASE_1": "Branch 1 label, e.g. 'Phishing'",
+    "PHASE_2": "Branch 2 label, e.g. 'Exploit'",
+    "PHASE_3": "Branch 3 label, e.g. 'Supply Chain'",
+    "TAG_1": "Leaf tag for branch 1, e.g. 'VECTOR ONE'",
+    "TAG_2": "Leaf tag for branch 2, e.g. 'VECTOR TWO'",
+    "TAG_3": "Leaf tag for branch 3, e.g. 'VECTOR THREE'",
+    "STEP_1": "Leaf description for branch 1",
+    "STEP_2": "Leaf description for branch 2",
+    "STEP_3": "Leaf description for branch 3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "template": "69-morphshape-transform",
+  "description": "Circle morphs into an irregular polygon representing transformation from safe to threat state",
+  "fields": {
+    "COMPARE_LABEL_1": "Label for initial shape state, e.g. 'NORMAL'",
+    "COMPARE_VALUE_1": "Value shown during initial state, e.g. 'SECURE'",
+    "COMPARE_LABEL_2": "Label for transformed state, e.g. 'THREAT DETECTED'",
+    "COMPARE_VALUE_2": "Value shown after morph, e.g. 'BREACHED'",
+    "CONTEXT_TEXT": "Context or source line at bottom"
+  }
+}

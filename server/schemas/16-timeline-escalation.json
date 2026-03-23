@@ -1,0 +1,22 @@
+{
+  "template": "16-timeline-escalation",
+  "description": "Five-event vertical timeline with escalating severity colors from green to red",
+  "fields": {
+    "TITLE_TEXT": "Title above timeline, e.g. 'ESCALATION TIMELINE'",
+    "DATE_1": "Date for event 1 (lowest severity)",
+    "DATE_2": "Date for event 2",
+    "DATE_3": "Date for event 3",
+    "DATE_4": "Date for event 4",
+    "DATE_5": "Date for event 5 (highest severity)",
+    "EVENT_1": "Description of event 1",
+    "EVENT_2": "Description of event 2",
+    "EVENT_3": "Description of event 3",
+    "EVENT_4": "Description of event 4",
+    "EVENT_5": "Description of event 5",
+    "TAG_1": "Severity tag 1, e.g. 'LOW'",
+    "TAG_2": "Severity tag 2, e.g. 'MEDIUM'",
+    "TAG_3": "Severity tag 3, e.g. 'HIGH'",
+    "TAG_4": "Severity tag 4, e.g. 'CRITICAL'",
+    "TAG_5": "Severity tag 5, e.g. 'BREACH'"
+  }
+}

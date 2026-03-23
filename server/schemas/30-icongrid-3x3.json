@@ -1,0 +1,16 @@
+{
+  "template": "30-icongrid-3x3",
+  "description": "3x3 grid of icon cells appearing with stagger, center cell highlighted, each with a label",
+  "fields": {
+    "TITLE_TEXT": "Title above the grid, e.g. 'ATTACK VECTORS' or 'KEY FINDINGS'",
+    "ICON_LABEL_1": "Label for cell 1 (top left)",
+    "ICON_LABEL_2": "Label for cell 2 (top center)",
+    "ICON_LABEL_3": "Label for cell 3 (top right)",
+    "ICON_LABEL_4": "Label for cell 4 (middle left)",
+    "ICON_LABEL_5": "Label for cell 5 (center — highlighted)",
+    "ICON_LABEL_6": "Label for cell 6 (middle right)",
+    "ICON_LABEL_7": "Label for cell 7 (bottom left)",
+    "ICON_LABEL_8": "Label for cell 8 (bottom center)",
+    "ICON_LABEL_9": "Label for cell 9 (bottom right)"
+  }
+}

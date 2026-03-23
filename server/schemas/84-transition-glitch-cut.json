@@ -1,0 +1,9 @@
+{
+  "template": "84-transition-glitch-cut",
+  "description": "Hard cut glitch transition with color panels flashing before settling on title",
+  "fields": {
+    "TITLE_TEXT": "Large title text, e.g. 'ZERO DAY'",
+    "CHAPTER_SUB": "Subtitle, e.g. 'THE FINAL CHAPTER'",
+    "TAG_1": "Tag line, e.g. 'ARXXIS ORIGINALS'"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "template": "39-terminal-typewriter",
+  "description": "Terminal window with lines typing in sequentially with color-coded output",
+  "fields": {
+    "TITLE_TEXT": "Title above terminal, e.g. 'ATTACKER COMMANDS'",
+    "KEY_PATH": "Terminal tab label, e.g. 'bash — root@c2server'",
+    "LOG_LINE_1": "Terminal line 1, e.g. 'nmap -sS -p 22,80,443 192.168.1.0/24'",
+    "LOG_LINE_2": "Terminal line 2",
+    "LOG_LINE_3": "Terminal line 3 (shown in yellow — warning)",
+    "LOG_LINE_4": "Terminal line 4 (shown in red — error/critical)",
+    "LOG_LINE_5": "Terminal line 5",
+    "LOG_LINE_6": "Terminal line 6"
+  }
+}

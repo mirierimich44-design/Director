@@ -1,0 +1,10 @@
+{
+  "template": "52-gaugechart",
+  "description": "Half-circle gauge chart with colored zones and animated needle",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'THREAT SEVERITY SCORE'",
+    "PERCENT_VALUE": "Score shown in center, e.g. '74'",
+    "PERCENT_LABEL": "Label below score, e.g. 'RISK SCORE'",
+    "CONTEXT_TEXT": "Context line below gauge, e.g. 'Based on CVSS 3.1 scoring'"
+  }
+}

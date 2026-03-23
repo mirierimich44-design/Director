@@ -1,0 +1,10 @@
+{
+  "template": "82-transition-wipe-chapter",
+  "description": "Dark panel wipes in from left revealing a large chapter title — cinematic transition",
+  "fields": {
+    "CHAPTER_WORD": "Small label, e.g. 'CHAPTER FOUR'",
+    "CHAPTER_SUB": "Large hero word, e.g. 'AFTERMATH'",
+    "CONTEXT_TEXT": "Subtitle or context line",
+    "TAG_1": "Tag bottom right, e.g. 'PART FOUR'"
+  }
+}

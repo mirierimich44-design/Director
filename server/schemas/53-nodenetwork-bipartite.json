@@ -1,0 +1,23 @@
+{
+  "template": "53-nodenetwork-bipartite",
+  "description": "Bipartite node network connecting two groups with animated edges",
+  "fields": {
+    "TITLE_TEXT": "ACTOR TO TARGET MAPPING",
+    "LEFT_HEAD": "THREAT ACTORS",
+    "RIGHT_HEAD": "TARGET SYSTEMS",
+    "NODE_LABEL_1": "APT-29",
+    "NODE_LABEL_2": "Lazarus Group",
+    "NODE_LABEL_3": "APT-41",
+    "NODE_LABEL_4": "Sandworm",
+    "NODE_LABEL_5": "Finance Portal",
+    "NODE_LABEL_6": "HR Database",
+    "NODE_LABEL_7": "SCADA Network"
+  },
+  "name": "53-nodenetwork-bipartite",
+  "category": "network",
+  "duration": 10,
+  "tags": [
+    "network",
+    "connections"
+  ]
+}

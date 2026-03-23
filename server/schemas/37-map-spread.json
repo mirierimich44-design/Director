@@ -1,0 +1,13 @@
+{
+  "template": "37-map-spread",
+  "description": "World map with dots spreading outward from an origin point to show geographic spread",
+  "fields": {
+    "TITLE_TEXT": "Title above map, e.g. 'RANSOMWARE SPREAD — 30 COUNTRIES'",
+    "ORIGIN_LABEL": "Origin point label, e.g. 'ORIGIN'",
+    "COUNT_VALUE": "Final count shown bottom left, e.g. '30'",
+    "COUNT_LABEL": "Count label, e.g. 'COUNTRIES AFFECTED'",
+    "MAP_LABEL_1": "Bottom right label 1, e.g. 'LOCKBIT 3.0'",
+    "MAP_LABEL_2": "Bottom right label 2, e.g. 'Active 2022-2024'",
+    "DURATION_SECONDS": "Animation duration in seconds (1-20), e.g. '5'"
+  }
+}

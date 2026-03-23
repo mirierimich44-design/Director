@@ -1,0 +1,15 @@
+{
+  "template": "51-funnelchart",
+  "description": "Four-stage funnel chart narrowing from top to bottom with value labels",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'ATTACK FUNNEL'",
+    "PHASE_1": "Stage 1 label, e.g. 'Initial Targets'",
+    "PHASE_2": "Stage 2 label, e.g. 'Compromised'",
+    "PHASE_3": "Stage 3 label, e.g. 'Exfiltrated'",
+    "PHASE_4": "Stage 4 label, e.g. 'Ransomed'",
+    "BAR_VALUE_1": "Value for stage 1, e.g. '10,000'",
+    "BAR_VALUE_2": "Value for stage 2, e.g. '3,400'",
+    "BAR_VALUE_3": "Value for stage 3, e.g. '890'",
+    "BAR_VALUE_4": "Value for stage 4, e.g. '247'"
+  }
+}

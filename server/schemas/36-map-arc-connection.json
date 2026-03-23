@@ -1,0 +1,12 @@
+{
+  "template": "36-map-arc-connection",
+  "description": "World map with animated arc lines from a source node to four target locations",
+  "fields": {
+    "TITLE_TEXT": "Title above map, e.g. 'GLOBAL ATTACK TARGETS'",
+    "ARC_FROM": "Source node label, e.g. 'NORTH KOREA'",
+    "MAP_LABEL_1": "Target 1 label, e.g. 'United States'",
+    "MAP_LABEL_2": "Target 2 label, e.g. 'European Union'",
+    "MAP_LABEL_3": "Target 3 label, e.g. 'West Africa'",
+    "MAP_LABEL_4": "Target 4 label, e.g. 'Australia'"
+  }
+}

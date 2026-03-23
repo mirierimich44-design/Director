@@ -1,0 +1,10 @@
+{
+  "template": "06-percentagefill-single",
+  "description": "Single large percentage number with a horizontal fill bar animating to the target value",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'SHARE OF ATTACKS USING PHISHING'",
+    "PERCENT_VALUE": "The number only, no % sign, e.g. '44'",
+    "PERCENT_LABEL": "Short label below the bar, e.g. 'OF ALL DATA BREACHES IN 2024'",
+    "CONTEXT_TEXT": "One line source or context, e.g. 'Source: Verizon DBIR 2024'"
+  }
+}

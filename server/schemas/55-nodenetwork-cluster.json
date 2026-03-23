@@ -1,0 +1,26 @@
+{
+  "template": "55-nodenetwork-cluster",
+  "description": "Three node clusters each with a hub and satellites, connected by inter-cluster edges",
+  "fields": {
+    "TITLE_TEXT": "THREAT ACTOR NETWORK CLUSTERS",
+    "NODE_LABEL_1": "Cluster Alpha",
+    "NODE_LABEL_2": "Malware Drop",
+    "NODE_LABEL_3": "C2 Server",
+    "NODE_LABEL_4": "Proxy Layer",
+    "NODE_LABEL_5": "Cluster Beta",
+    "NODE_LABEL_6": "Phishing Kit",
+    "LABEL_1": "Credential Store",
+    "LABEL_2": "Exfil Node",
+    "LABEL_3": "Cluster Gamma",
+    "TAG_1": "Money Mule",
+    "TAG_2": "Crypto Wallet",
+    "TAG_3": "Drop Account"
+  },
+  "name": "55-nodenetwork-cluster",
+  "category": "network",
+  "duration": 10,
+  "tags": [
+    "network",
+    "connections"
+  ]
+}

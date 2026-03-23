@@ -1,0 +1,13 @@
+{
+  "template": "61-timeline-circular",
+  "description": "Six events arranged around a circular timeline ring that draws itself",
+  "fields": {
+    "TITLE_TEXT": "Center and top label, e.g. 'ATTACK CYCLE'",
+    "DATE_1": "Date for event 1 (top)", "DATE_2": "Date for event 2",
+    "DATE_3": "Date for event 3", "DATE_4": "Date for event 4",
+    "DATE_5": "Date for event 5", "DATE_6": "Date for event 6",
+    "EVENT_1": "Event 1 description", "EVENT_2": "Event 2 description",
+    "EVENT_3": "Event 3 description", "EVENT_4": "Event 4 description",
+    "EVENT_5": "Event 5 description", "EVENT_6": "Event 6 description"
+  }
+}

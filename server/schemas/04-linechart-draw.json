@@ -1,0 +1,17 @@
+{
+  "template": "04-linechart-draw",
+  "description": "Five-point line chart that draws itself left to right with area fill and data point labels",
+  "fields": {
+    "TITLE_TEXT": "Chart title, e.g. 'BREACH COSTS OVER TIME'",
+    "DATE_1": "X-axis label for point 1, e.g. '2021'",
+    "DATE_2": "X-axis label for point 2, e.g. '2022'",
+    "DATE_3": "X-axis label for point 3, e.g. '2023'",
+    "DATE_4": "X-axis label for point 4, e.g. '2024'",
+    "DATE_5": "X-axis label for point 5, e.g. '2025'",
+    "LINE_VALUE_1": "Value at point 1, e.g. '$3.2M'",
+    "LINE_VALUE_2": "Value at point 2, e.g. '$4.1M'",
+    "LINE_VALUE_3": "Value at point 3, e.g. '$4.8M'",
+    "LINE_VALUE_4": "Value at point 4, e.g. '$5.3M'",
+    "LINE_VALUE_5": "Value at point 5, e.g. '$6.1M'"
+  }
+}

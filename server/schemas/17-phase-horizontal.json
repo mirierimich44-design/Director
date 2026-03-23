@@ -1,0 +1,15 @@
+{
+  "template": "17-phase-horizontal",
+  "description": "Four sequential phase boxes with arrows between them and descriptive text below each",
+  "fields": {
+    "TITLE_TEXT": "Title above the phases, e.g. 'ATTACK LIFECYCLE' or 'OPERATION PHASES'",
+    "PHASE_1": "Short name for phase 1, e.g. 'Reconnaissance'",
+    "PHASE_2": "Short name for phase 2, e.g. 'Initial Access'",
+    "PHASE_3": "Short name for phase 3, e.g. 'Lateral Movement'",
+    "PHASE_4": "Short name for phase 4, e.g. 'Exfiltration'",
+    "STEP_1": "One-line description of phase 1 activity",
+    "STEP_2": "One-line description of phase 2 activity",
+    "STEP_3": "One-line description of phase 3 activity",
+    "STEP_4": "One-line description of phase 4 activity"
+  }
+}

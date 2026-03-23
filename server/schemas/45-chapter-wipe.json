@@ -1,0 +1,9 @@
+{
+  "template": "45-chapter-wipe",
+  "description": "Chapter card with a colored bar wiping in from left revealing the hero word",
+  "fields": {
+    "CHAPTER_WORD": "Chapter identifier, e.g. 'CHAPTER THREE'",
+    "CHAPTER_SUB": "Hero word revealed by wipe, e.g. 'EXFILTRATION'",
+    "CONTEXT_TEXT": "Supporting context line below"
+  }
+}

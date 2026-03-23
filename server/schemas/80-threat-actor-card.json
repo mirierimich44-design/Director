@@ -1,0 +1,17 @@
+{
+  "template": "80-threat-actor-card",
+  "description": "Threat actor profile card with name, nation state, tags, two stats, bio, and threat level panel",
+  "fields": {
+    "TITLE_TEXT": "Small top label, e.g. 'THREAT ACTOR PROFILE'",
+    "LABEL_1": "Threat actor name, e.g. 'SCATTERED SPIDER'",
+    "LABEL_2": "Group or affiliation, e.g. 'UNC3944 / OCTO TEMPEST'",
+    "LABEL_3": "Origin or context, e.g. 'English-speaking, US/UK based, est. 2022'",
+    "TAG_1": "First tag, e.g. 'ACTIVE'",
+    "TAG_2": "Second tag, e.g. 'INDICTED'",
+    "TAG_3": "Third tag shown on right panel, e.g. 'NATION STATE'",
+    "STAT_VALUE_1": "First stat value, e.g. '100+'",
+    "STAT_VALUE_2": "Second stat value, e.g. '$200M'",
+    "CONTEXT_TEXT": "2-3 sentence description of the threat actor",
+    "ALERT_TEXT": "Badge text in header, e.g. 'HIGH RISK'"
+  }
+}

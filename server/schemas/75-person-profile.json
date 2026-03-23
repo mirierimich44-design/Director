@@ -1,0 +1,18 @@
+{
+  "template": "75-person-profile",
+  "name": "Person Profile Card",
+  "description": "Person profile card with avatar placeholder, name, role, affiliation, tags, and bio context",
+  "category": "profile",
+  "duration": 8,
+  "tags": ["profile", "person", "identity"],
+  "fields": {
+    "TITLE_TEXT": "Small label at top, e.g. 'THREAT ACTOR PROFILE' or 'KEY FIGURE'",
+    "LABEL_1": "Person's name, e.g. 'JOHN BINNS'",
+    "LABEL_2": "Role or title, e.g. 'HACKER' or 'RINGLEADER'",
+    "LABEL_3": "Affiliation or location, e.g. 'Scattered Spider / UNC3944'",
+    "TAG_1": "First tag badge, e.g. 'INDICTED'",
+    "TAG_2": "Second tag badge, e.g. 'AT LARGE'",
+    "TAG_3": "Third tag badge, e.g. 'USA'",
+    "CONTEXT_TEXT": "2-3 sentence bio or description of the person and their role in the story"
+  }
+}

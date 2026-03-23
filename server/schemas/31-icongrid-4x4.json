@@ -1,0 +1,15 @@
+{
+  "template": "31-icongrid-4x4",
+  "description": "4x4 grid of 16 icon cells appearing with stagger",
+  "fields": {
+    "TITLE_TEXT": "Title above grid",
+    "ICON_LABEL_1": "Cell 1 label", "ICON_LABEL_2": "Cell 2 label",
+    "ICON_LABEL_3": "Cell 3 label", "ICON_LABEL_4": "Cell 4 label",
+    "ICON_LABEL_5": "Cell 5 label", "ICON_LABEL_6": "Cell 6 label",
+    "ICON_LABEL_7": "Cell 7 label", "ICON_LABEL_8": "Cell 8 label",
+    "ICON_LABEL_9": "Cell 9 label", "LABEL_1": "Cell 10 label",
+    "LABEL_2": "Cell 11 label", "LABEL_3": "Cell 12 label",
+    "LABEL_4": "Cell 13 label", "LABEL_5": "Cell 14 label",
+    "LABEL_6": "Cell 15 label", "LABEL_7": "Cell 16 label"
+  }
+}

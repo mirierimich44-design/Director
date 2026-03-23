@@ -1,0 +1,22 @@
+{
+  "template": "15-timeline-vertical",
+  "description": "Five-event vertical timeline with date on left, event card on right",
+  "fields": {
+    "TITLE_TEXT": "Title above timeline",
+    "DATE_1": "Date for event 1, e.g. 'JAN 2023'",
+    "DATE_2": "Date for event 2",
+    "DATE_3": "Date for event 3",
+    "DATE_4": "Date for event 4",
+    "DATE_5": "Date for event 5",
+    "EVENT_1": "Description of event 1",
+    "EVENT_2": "Description of event 2",
+    "EVENT_3": "Description of event 3",
+    "EVENT_4": "Description of event 4",
+    "EVENT_5": "Description of event 5 (highlighted)",
+    "TAG_1": "Tag for event 1",
+    "TAG_2": "Tag for event 2",
+    "TAG_3": "Tag for event 3",
+    "TAG_4": "Tag for event 4",
+    "TAG_5": "Tag for event 5"
+  }
+}

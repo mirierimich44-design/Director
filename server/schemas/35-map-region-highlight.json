@@ -1,0 +1,11 @@
+{
+  "template": "35-map-region-highlight",
+  "description": "World map with a highlighted and pulsing region box, stat card, and label",
+  "fields": {
+    "TITLE_TEXT": "Title above map, e.g. 'ATTACK ORIGIN — EAST ASIA'",
+    "ARC_TO": "Label on the highlighted region box, e.g. 'NORTH KOREA'",
+    "MAP_LABEL_1": "Bottom right label, e.g. 'LAZARUS GROUP'",
+    "STAT_VALUE_1": "Stat shown bottom left, e.g. '$3.8B'",
+    "LABEL_1": "Stat label, e.g. 'STOLEN IN 2023'"
+  }
+}

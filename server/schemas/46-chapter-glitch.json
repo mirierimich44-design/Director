@@ -1,0 +1,9 @@
+{
+  "template": "46-chapter-glitch",
+  "description": "Chapter card with RGB glitch effect on the hero word during entry",
+  "fields": {
+    "CHAPTER_WORD": "Chapter identifier, e.g. 'CHAPTER FIVE'",
+    "CHAPTER_SUB": "Hero word with glitch, e.g. 'DARKWEB'",
+    "CONTEXT_TEXT": "Supporting context line below"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "template": "62-phase-vertical",
+  "description": "Four vertical phase boxes stacked with down arrows and descriptions to the right",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'KILL CHAIN'",
+    "PHASE_1": "Phase 1 label",
+    "PHASE_2": "Phase 2 label",
+    "PHASE_3": "Phase 3 label",
+    "PHASE_4": "Phase 4 label",
+    "STEP_1": "Description for phase 1",
+    "STEP_2": "Description for phase 2",
+    "STEP_3": "Description for phase 3",
+    "STEP_4": "Description for phase 4"
+  }
+}

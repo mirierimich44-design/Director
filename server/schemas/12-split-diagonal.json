@@ -1,0 +1,16 @@
+{
+  "template": "12-split-diagonal",
+  "description": "Two panels split by a diagonal line — left dark, right light, with headings, tags, and sub-lines",
+  "fields": {
+    "LEFT_HEAD": "Left panel headline",
+    "RIGHT_HEAD": "Right panel headline",
+    "TAG_1": "Left panel tag, e.g. 'BEFORE BREACH'",
+    "TAG_2": "Right panel tag, e.g. 'AFTER BREACH'",
+    "LEFT_SUB1": "Left panel line 1",
+    "LEFT_SUB2": "Left panel line 2",
+    "LEFT_SUB3": "Left panel line 3",
+    "RIGHT_SUB1": "Right panel line 1",
+    "RIGHT_SUB2": "Right panel line 2",
+    "RIGHT_SUB3": "Right panel line 3"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "template": "23-expanding-web",
+  "description": "Two-ring expanding web from center node, inner ring of 4, outer ring of 6",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'THREAT NETWORK'",
+    "ORIGIN_LABEL": "Center node label, e.g. 'C2 SERVER'",
+    "NODE_LABEL_1": "Outer ring node 1 label",
+    "NODE_LABEL_2": "Outer ring node 2 label",
+    "NODE_LABEL_3": "Outer ring node 3 label",
+    "NODE_LABEL_4": "Outer ring node 4 label",
+    "NODE_LABEL_5": "Outer ring node 5 label",
+    "NODE_LABEL_6": "Outer ring node 6 label"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "template": "13-split-percentage",
+  "description": "Frame split proportionally by two values — left panel sized 65%, right 35%, each showing its value",
+  "fields": {
+    "TITLE_TEXT": "Title above, e.g. 'SHARE OF ATTACKS'",
+    "COMPARE_LABEL_1": "Left label, e.g. 'PHISHING'",
+    "COMPARE_VALUE_1": "Left value, e.g. '65%'",
+    "COMPARE_LABEL_2": "Right label, e.g. 'OTHER VECTORS'",
+    "COMPARE_VALUE_2": "Right value, e.g. '35%'",
+    "CONTEXT_TEXT": "Source or context line"
+  }
+}

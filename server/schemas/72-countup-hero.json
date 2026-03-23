@@ -1,0 +1,11 @@
+{
+  "template": "72-countup-hero",
+  "description": "Full-screen hero countup with giant animated number, left-aligned with ghost number background",
+  "fields": {
+    "TITLE_TEXT": "Small label at top center, e.g. 'DAMAGE ASSESSMENT'",
+    "COUNT_VALUE": "Final number to land on, e.g. '247' or '4500'",
+    "COUNT_LABEL": "Label above the number, e.g. 'CONFIRMED VICTIMS'",
+    "SUB_LABEL": "Bold text below number, e.g. 'ORGANIZATIONS COMPROMISED'",
+    "CONTEXT_TEXT": "Source or context line, e.g. 'Source: CISA Advisory 2024'"
+  }
+}
