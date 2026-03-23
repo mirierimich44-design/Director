@@ -23,8 +23,10 @@ import {
     Warning as WarningIcon,
     Delete as DeleteIcon,
     Autorenew as RegenerateIcon,
-    AutoFixHigh as GenerateTemplateIcon
+    AutoFixHigh as GenerateTemplateIcon,
+    Tune as TuneIcon,
 } from '@mui/icons-material';
+import AdjustDialog from '../components/AdjustDialog';
 
 interface Scene {
     index: number;
@@ -107,6 +109,9 @@ const ProjectDirectorView: React.FC = () => {
     const [dialogAction, setDialogAction] = useState<(() => void) | null>(null);
     const [dialogCancelText, setDialogCancelText] = useState('Cancel');
     const [dialogConfirmText, setDialogConfirmText] = useState('Confirm');
+
+    // Adjust dialog: { filename, chapterId, sceneIdx } or null when closed
+    const [adjustTarget, setAdjustTarget] = useState<{ filename: string; chapterId: string; sceneIdx: number } | null>(null);
 
     const selectedProjectRef = useRef<Project | null>(null);
     useEffect(() => { selectedProjectRef.current = selectedProject; }, [selectedProject]);
@@ -825,6 +830,29 @@ const ProjectDirectorView: React.FC = () => {
                                                                                 <RefreshIcon />
                                                                             </IconButton>
                                                                         </Tooltip>
+
+                                                                        {/* Adjust template — only for TEMPLATE scenes with an assigned template */}
+                                                                        {scene.type === 'TEMPLATE' && scene.template && (
+                                                                            <Tooltip title="Adjust template with presets">
+                                                                                <Button
+                                                                                    size="small"
+                                                                                    variant="outlined"
+                                                                                    startIcon={<TuneIcon sx={{ fontSize: '13px !important' }} />}
+                                                                                    onClick={() => setAdjustTarget({
+                                                                                        filename: scene.template + '.tsx',
+                                                                                        chapterId: chapter.id,
+                                                                                        sceneIdx: idx,
+                                                                                    })}
+                                                                                    sx={{
+                                                                                        fontSize: '0.7rem', py: 0.4, px: 1,
+                                                                                        borderColor: '#4fc3f744', color: '#4fc3f7',
+                                                                                        '&:hover': { bgcolor: 'rgba(79,195,247,0.08)', borderColor: '#4fc3f7' },
+                                                                                    }}
+                                                                                >
+                                                                                    Adjust
+                                                                                </Button>
+                                                                            </Tooltip>
+                                                                        )}
                                                                     </Box>
                                                                 )}
 
@@ -879,6 +907,32 @@ const ProjectDirectorView: React.FC = () => {
                         </Grid>
                     </Grid>
                 </Box>
+            )}
+
+            {/* Adjust Template Dialog */}
+            {adjustTarget && (
+                <AdjustDialog
+                    filename={adjustTarget.filename}
+                    open={!!adjustTarget}
+                    onClose={() => setAdjustTarget(null)}
+                    onApplied={async (_filename) => {
+                        // After saving the adjusted template, re-generate scene code from the
+                        // updated .tsx file, then re-render so the change is visible immediately.
+                        const { chapterId, sceneIdx } = adjustTarget;
+                        setAdjustTarget(null);
+                        if (!selectedProject) return;
+                        try {
+                            await fetch(
+                                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIdx}/generate-template`,
+                                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) }
+                            );
+                            await loadProjectDetails(selectedProject.id);
+                            renderScene(chapterId, sceneIdx);
+                        } catch {
+                            // Silently ignore — user can manually re-render if the auto trigger fails
+                        }
+                    }}
+                />
             )}
 
             {/* Global Action Confirmation Dialog */}
