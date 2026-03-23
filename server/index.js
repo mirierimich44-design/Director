@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import archiver from 'archiver';
 
-import { getSettings, updateSettings, MODEL_OPTIONS } from './settings.js';
+import { getSettings, updateSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { renderVideo as renderRemotion } from './engines/remotion/renderer.js';
 import {
@@ -206,6 +206,54 @@ app.delete('/api/projects/:pid/chapters/:cid', (req, res) => {
         const project = deleteChapter(req.params.pid, req.params.cid);
         res.json({ success: true, project });
     } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ── 3D RENDER / IMAGE GENERATION ─────────────────────────────────────────────
+// Generate an AI image from a 3D render prompt using Google Imagen
+app.post('/api/auto-scene/render-3d', async (req, res) => {
+    try {
+        const { prompt, environment, camera } = req.body;
+        if (!prompt) return res.status(400).json({ error: 'prompt is required' });
+
+        const apiKey = getGoogleKey();
+        if (!apiKey) return res.status(503).json({ error: 'Google API key not configured' });
+
+        const imageModel = getImageModel() || 'imagen-3.0-generate-001';
+
+        // Call Imagen via Google AI REST API
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
+        const body = {
+            instances: [{ prompt: `${prompt}. Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.` }],
+            parameters: { sampleCount: 1, aspectRatio: '16:9' },
+        };
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error('❌ Imagen API error:', errText.substring(0, 300));
+            throw new Error(`Imagen API ${response.status}: ${errText.substring(0, 200)}`);
+        }
+
+        const data = await response.json();
+        const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+        if (!b64) throw new Error('No image returned from Imagen API');
+
+        // Save to public/images/
+        const imgId = `render_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const imgPath = join(imagesDir, `${imgId}.jpg`);
+        await fs.writeFile(imgPath, Buffer.from(b64, 'base64'));
+
+        console.log(`   🖼️ 3D Render saved: ${imgId}.jpg`);
+        res.json({ success: true, url: `/images/${imgId}.jpg` });
+    } catch (err) {
+        console.error('❌ render-3d error:', err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });

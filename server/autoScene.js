@@ -119,6 +119,54 @@ OUTPUT FORMAT — Return ONLY a JSON array, no markdown:
 ]`
 
 // ─────────────────────────────────────────────
+// Recover complete scene objects from truncated JSON
+// Gemini hits its output token limit mid-array; this extracts
+// every object that has a balanced closing brace before the cut.
+// ─────────────────────────────────────────────
+function recoverPartialSceneArray(raw) {
+  const scenes = []
+  // Find the opening [ of the array
+  const arrayStart = raw.indexOf('[')
+  if (arrayStart === -1) return scenes
+
+  let i = arrayStart + 1
+  while (i < raw.length) {
+    // Skip whitespace and commas between objects
+    while (i < raw.length && /[\s,]/.test(raw[i])) i++
+    if (i >= raw.length || raw[i] !== '{') break
+
+    // Find the matching closing } by counting brace depth
+    let depth = 0
+    let inStr = false
+    let strChar = ''
+    let j = i
+    while (j < raw.length) {
+      const ch = raw[j]
+      if (!inStr && (ch === '"' || ch === "'")) { inStr = true; strChar = ch; j++; continue }
+      if (inStr) {
+        if (ch === '\\') { j += 2; continue }
+        if (ch === strChar) inStr = false
+        j++; continue
+      }
+      if (ch === '{') depth++
+      else if (ch === '}') { depth--; if (depth === 0) { j++; break } }
+      j++
+    }
+
+    if (depth === 0) {
+      try {
+        const obj = JSON.parse(raw.slice(i, j))
+        if (obj && obj.type) scenes.push(obj)
+      } catch (_) { /* object itself malformed — skip */ }
+    } else {
+      break // hit truncation — rest is incomplete
+    }
+    i = j
+  }
+  return scenes
+}
+
+// ─────────────────────────────────────────────
 // Merge consecutive short 3D_RENDER scenes
 // Runs after LLM response as a guaranteed pass.
 // Short = script under SHORT_WORD_LIMIT words.
@@ -243,15 +291,21 @@ ${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — 
     }
   }
 
-  // Parse JSON response
+  // Parse JSON response — with truncation recovery
   let scenes
   try {
-    // Strip markdown fences if present
     let cleaned = rawResponse.replace(/```json?\s*\n?/g, '').replace(/```\s*$/g, '').trim()
     scenes = JSON.parse(cleaned)
   } catch (e) {
-    console.error('❌ Failed to parse Gemini response:', rawResponse?.substring(0, 200))
-    throw new Error(`Failed to parse scene JSON: ${e.message}`)
+    // Gemini sometimes truncates the output mid-array (token limit hit).
+    // Try to salvage complete scene objects from the partial JSON.
+    console.warn(`⚠️ JSON parse failed (${e.message}) — attempting truncation recovery...`)
+    scenes = recoverPartialSceneArray(rawResponse)
+    if (scenes.length === 0) {
+      console.error('❌ Failed to parse Gemini response:', rawResponse?.substring(0, 300))
+      throw new Error(`Failed to parse scene JSON: ${e.message}`)
+    }
+    console.log(`   ♻️ Recovered ${scenes.length} scene(s) from truncated response`)
   }
 
   if (!Array.isArray(scenes)) {
