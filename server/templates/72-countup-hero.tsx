@@ -31,8 +31,8 @@ export const AnimationComponent = () => {
   const subLabel = "SUB_LABEL"
   const contextText = "CONTEXT_TEXT"
 
-  // Animate count — stub target 247
-  const targetNumber = 247
+  // Parse numeric part from countValue (e.g. "$25B", "25 billion", "1,200")
+  const targetNumber = parseFloat(countValue.replace(/[^0-9.]/g, '')) || 0
   const currentNumber = Math.floor(countProgress * targetNumber)
 
   return (

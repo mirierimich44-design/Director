@@ -25,8 +25,8 @@ export const AnimationComponent = () => {
         <span style={{ fontSize: 20, fontWeight: 600, color: 'ACCENT_COLOR', fontFamily: 'sans-serif', letterSpacing: 6, textTransform: 'uppercase' }}>{chapterWord}</span>
       </div>
       <div style={{ position: 'absolute', top: 432, left: 160, width: lineW, height: 3, overflow: 'hidden', backgroundColor: 'ACCENT_COLOR' }} />
-      <div style={{ position: 'absolute', top: 448, left: 160, width: 1600, height: 200, overflow: 'hidden', opacity: textOp, transform: `translateY(${textTy}px)`, display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: 140, fontWeight: 900, color: 'TEXT_ON_PRIMARY', fontFamily: 'sans-serif', lineHeight: 1, letterSpacing: -4, textTransform: 'uppercase' }}>{chapterSub}</span>
+      <div style={{ position: 'absolute', top: 448, left: 160, width: 1600, height: 400, overflow: 'hidden', opacity: textOp, transform: `translateY(${textTy}px)`, display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: chapterSub.length > 14 ? 100 : 140, fontWeight: 900, color: 'TEXT_ON_PRIMARY', fontFamily: 'sans-serif', lineHeight: 1.1, letterSpacing: -4, textTransform: 'uppercase' }}>{chapterSub}</span>
       </div>
       <div style={{ position: 'absolute', top: 700, left: 160, width: 1000, height: 60, overflow: 'hidden', opacity: subOp }}>
         <span style={{ fontSize: 26, fontWeight: 400, color: 'TEXT_ON_PRIMARY', fontFamily: 'sans-serif', opacity: 0.7 }}>{contextText}</span>
