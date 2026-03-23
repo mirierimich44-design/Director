@@ -18,6 +18,7 @@ import archiver from 'archiver';
 import { getSettings, updateSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { renderVideo as renderRemotion } from './engines/remotion/renderer.js';
+import { auditTemplate, applyFix, TEMPLATES_DIR, AUDIT_DIR, REPORT_PATH } from './templateAuditor.js';
 import {
     listProjects, getProject, createProject, updateProject, deleteProject,
     addChapter, updateChapter, deleteChapter, updateChapterScenes,
@@ -577,6 +578,140 @@ app.get('/api/voiceover/download-all', async (req, res) => {
         archive.pipe(res);
         files.forEach(f => archive.file(join(audioProcessedDir, f), { name: f }));
         await archive.finalize();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ── TEMPLATE AUDITOR ─────────────────────────────────────────────────────────
+
+// In-memory audit jobs: jobId → { status, results, total, current, progress, summary }
+const auditJobs = new Map();
+// SSE subscribers: jobId → Set of res objects
+const auditSubscribers = new Map();
+
+function auditEmit(jobId, event) {
+    const subs = auditSubscribers.get(jobId);
+    if (!subs) return;
+    const data = `data: ${JSON.stringify(event)}\n\n`;
+    subs.forEach(res => { try { res.write(data); } catch {} });
+    if (event.type === 'complete' || event.type === 'error') {
+        subs.forEach(res => { try { res.end(); } catch {} });
+        auditSubscribers.delete(jobId);
+    }
+}
+
+// Serve audit screenshots
+app.use('/audit-screenshots', express.static(AUDIT_DIR));
+
+// POST /api/audit/start — kick off an audit job
+app.post('/api/audit/start', async (req, res) => {
+    const { skipRender = false, templateName = null } = req.body || {};
+    const jobId = uuidv4();
+    const job = { id: jobId, status: 'running', results: [], total: 0, current: '', progress: 0, summary: null };
+    auditJobs.set(jobId, job);
+    res.json({ jobId });
+
+    // Run audit in background
+    (async () => {
+        try {
+            await fs.mkdir(AUDIT_DIR, { recursive: true });
+            const allFiles = (await fs.readdir(TEMPLATES_DIR)).filter(f => f.endsWith('.tsx')).sort();
+            const targets = templateName
+                ? allFiles.filter(f => f.startsWith(templateName))
+                : allFiles;
+
+            job.total = targets.length;
+            auditEmit(jobId, { type: 'start', total: targets.length });
+
+            for (let i = 0; i < targets.length; i++) {
+                const filename = targets[i];
+                const filePath = join(TEMPLATES_DIR, filename);
+                job.current = filename;
+                job.progress = Math.round((i / targets.length) * 100);
+                auditEmit(jobId, { type: 'template_start', filename, index: i, total: targets.length });
+
+                const result = await auditTemplate(filePath, { skipRender }, ({ stage, message }) => {
+                    auditEmit(jobId, { type: 'stage', filename, stage, message });
+                });
+
+                job.results.push(result);
+                auditEmit(jobId, { type: 'template_done', filename, result });
+            }
+
+            const errors   = job.results.reduce((n, r) => n + r.issues.filter(i => i.severity === 'error').length, 0);
+            const warnings = job.results.reduce((n, r) => n + r.issues.filter(i => i.severity === 'warning').length, 0);
+            const clean    = job.results.filter(r => r.issues.length === 0).length;
+            job.summary = { templates: targets.length, clean, withIssues: targets.length - clean, errors, warnings };
+            job.status   = 'done';
+            job.progress = 100;
+
+            // Save report
+            const report = { timestamp: new Date().toISOString(), results: job.results, summary: job.summary };
+            await fs.writeFile(REPORT_PATH, JSON.stringify(report, null, 2), 'utf-8');
+
+            auditEmit(jobId, { type: 'complete', summary: job.summary });
+        } catch (err) {
+            job.status = 'error';
+            auditEmit(jobId, { type: 'error', message: err.message });
+        }
+    })();
+});
+
+// GET /api/audit/stream/:jobId — SSE live progress
+app.get('/api/audit/stream/:jobId', (req, res) => {
+    const { jobId } = req.params;
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    const job = auditJobs.get(jobId);
+    if (!job) { res.write(`data: ${JSON.stringify({ type: 'error', message: 'Job not found' })}\n\n`); return res.end(); }
+
+    // If already done, send full results immediately
+    if (job.status === 'done') {
+        res.write(`data: ${JSON.stringify({ type: 'complete', summary: job.summary, results: job.results })}\n\n`);
+        return res.end();
+    }
+
+    if (!auditSubscribers.has(jobId)) auditSubscribers.set(jobId, new Set());
+    auditSubscribers.get(jobId).add(res);
+
+    // Send current state to late subscriber
+    job.results.forEach(r => {
+        res.write(`data: ${JSON.stringify({ type: 'template_done', filename: r.filename, result: r })}\n\n`);
+    });
+
+    req.on('close', () => {
+        const subs = auditSubscribers.get(jobId);
+        if (subs) { subs.delete(res); if (subs.size === 0) auditSubscribers.delete(jobId); }
+    });
+});
+
+// GET /api/audit/report — last saved report
+app.get('/api/audit/report', async (req, res) => {
+    try {
+        const data = await fs.readFile(REPORT_PATH, 'utf-8');
+        res.json(JSON.parse(data));
+    } catch {
+        res.json(null);
+    }
+});
+
+// POST /api/audit/fix — fix a single template by filename
+app.post('/api/audit/fix', async (req, res) => {
+    const { filename } = req.body;
+    if (!filename) return res.status(400).json({ error: 'filename required' });
+
+    const filePath = join(TEMPLATES_DIR, filename);
+    try {
+        // Re-audit to get current issues
+        const result = await auditTemplate(filePath, { skipRender: true });
+        if (result.issues.length === 0) return res.json({ success: true, message: 'No issues to fix' });
+
+        const fixed = await applyFix(result);
+        res.json({ success: true, fixed, issuesFound: result.issues.length });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

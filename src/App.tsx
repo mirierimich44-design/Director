@@ -3,14 +3,16 @@ import './App.css';
 import ProjectDirectorView from './views/ProjectDirectorView';
 import AudioProcessorView from './views/AudioProcessorView';
 import SettingsView from './views/SettingsView';
+import TemplateAuditorView from './views/TemplateAuditorView';
 import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import {
     FolderSpecial as ProjectIcon,
     GraphicEq as AudioIcon,
     Settings as SettingsIcon,
+    BugReport as AuditIcon,
 } from '@mui/icons-material';
 
-type Mode = 'project-director' | 'audio' | 'settings';
+type Mode = 'project-director' | 'audio' | 'auditor' | 'settings';
 
 const App: React.FC = () => {
     const [mode, setMode] = useState<Mode>(() =>
@@ -22,6 +24,7 @@ const App: React.FC = () => {
     const nav = [
         { id: 'project-director', label: 'Project Director', icon: <ProjectIcon />, desc: 'Chapter-based Projects' },
         { id: 'audio',            label: 'Audio Studio',     icon: <AudioIcon />,   desc: 'Voiceover Processor' },
+        { id: 'auditor',          label: 'Template Auditor', icon: <AuditIcon />,   desc: 'Gemini Vision QA' },
         { id: 'settings',         label: 'LLM Settings',     icon: <SettingsIcon />, desc: 'API Keys & Models' },
     ];
 
@@ -73,6 +76,7 @@ const App: React.FC = () => {
             <Box sx={{ flexGrow: 1, overflow: 'auto', bgcolor: 'var(--bg-primary)' }}>
                 {mode === 'project-director' && <ProjectDirectorView />}
                 {mode === 'audio'            && <AudioProcessorView />}
+                {mode === 'auditor'          && <TemplateAuditorView />}
                 {mode === 'settings'         && <SettingsView />}
             </Box>
         </Box>

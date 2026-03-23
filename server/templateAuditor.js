@@ -1,17 +1,13 @@
 /**
  * templateAuditor.js
  *
- * Scans every template in server/templates/, renders a mid-point still,
- * runs static code analysis, then sends the screenshot to Gemini Vision
- * to detect visual issues (clipped text, wrong numbers, invisible content, etc.)
- * and optionally auto-applies fixes.
+ * Core audit logic — importable by the server OR runnable as a CLI script.
  *
- * Usage:
- *   node server/templateAuditor.js                  # audit all, report only
- *   node server/templateAuditor.js --fix             # audit + auto-fix issues
- *   node server/templateAuditor.js --template=72     # audit single template by number
- *   node server/templateAuditor.js --template=82 --fix
- *   node server/templateAuditor.js --skip-render     # static analysis only (faster)
+ * CLI usage:
+ *   node server/templateAuditor.js                   # audit all, report only
+ *   node server/templateAuditor.js --fix             # audit + auto-fix
+ *   node server/templateAuditor.js --template=72     # single template
+ *   node server/templateAuditor.js --skip-render     # static analysis only
  *
  * Best Gemini models:
  *   Vision analysis  → gemini-2.5-pro   (most accurate multimodal reasoning)
@@ -19,7 +15,6 @@
  */
 
 import { readdir, readFile, writeFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
 import { join, dirname, basename } from 'path'
 import { fileURLToPath } from 'url'
 import { renderStill } from './engines/remotion/renderer.js'
@@ -29,16 +24,15 @@ import { getGoogleKey } from './settings.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // ─── Models ───────────────────────────────────────────────────────────────────
-const VISION_MODEL = 'gemini-2.5-pro'    // screenshot → issue detection
-const FIX_MODEL    = 'gemini-2.5-flash'  // TSX code → fixed TSX code
+export const VISION_MODEL = 'gemini-2.5-pro'    // screenshot → issue detection
+export const FIX_MODEL    = 'gemini-2.5-flash'  // TSX code → fixed TSX code
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
-const TEMPLATES_DIR = join(__dirname, 'templates')
-const AUDIT_DIR     = join(__dirname, '../.temp/audit')
-const REPORT_PATH   = join(__dirname, '../.temp/audit/report.json')
+export const TEMPLATES_DIR = join(__dirname, 'templates')
+export const AUDIT_DIR     = join(__dirname, '../.temp/audit')
+export const REPORT_PATH   = join(AUDIT_DIR, 'report.json')
 
 // ─── Sample fill values ───────────────────────────────────────────────────────
-// Placeholder strings used by all templates — replaced before rendering
 const SAMPLE = {
   BACKGROUND_COLOR:  '#0d0d0d',
   PRIMARY_COLOR:     '#ffffff',
@@ -91,7 +85,6 @@ const STATIC_RULES = [
     severity: 'error',
     description: 'Hardcoded stub target number — does not read from template placeholder',
     test: (code) => {
-      // Detect patterns like: const targetNumber = 247
       const m = code.match(/const\s+(?:targetNumber|stubTarget|hardcoded\w*)\s*=\s*(\d+)/)
       if (m) return `Found: const ... = ${m[1]}`
       return null
@@ -102,7 +95,6 @@ const STATIC_RULES = [
     severity: 'warning',
     description: 'Container with overflow:hidden and fixed height may clip text',
     test: (code) => {
-      // Find all style objects — look for both overflow:hidden AND height ≤ 250 near large fontSize ≥ 80
       const blocks = code.match(/style=\{\{[^}]{0,600}\}\}/gs) || []
       const risky = blocks.filter(b => {
         const hasOverflowHidden = /overflow:\s*['"]hidden['"]/.test(b)
@@ -111,7 +103,6 @@ const STATIC_RULES = [
         if (!hasOverflowHidden || !heightMatch || !fontMatch) return false
         const h = parseInt(heightMatch[1])
         const f = parseInt(fontMatch[1])
-        // Flag if font is large relative to container height
         return f >= 80 && h < f * 2.5
       })
       if (risky.length > 0) return `${risky.length} container(s) with tight height+overflow:hidden for large fonts`
@@ -121,7 +112,7 @@ const STATIC_RULES = [
   {
     id: 'missing_placeholder_parse',
     severity: 'warning',
-    description: 'Template uses a number placeholder as string but never parses it to float/int',
+    description: 'Template animates a count value but never parses it as a number',
     test: (code) => {
       const hasCountValue = /COUNT_VALUE|STAT_VALUE|NUMBER_VALUE/.test(code)
       const hasParseFloat = /parseFloat|parseInt|Number\(/.test(code)
@@ -133,13 +124,12 @@ const STATIC_RULES = [
     },
   },
   {
-    id: 'text_container_no_wrap',
+    id: 'text_nowrap_overflow',
     severity: 'warning',
-    description: 'Text container may not handle long strings — no wrapping or font scaling',
+    description: 'whiteSpace:nowrap used — long text values will overflow silently',
     test: (code) => {
-      // Detect whiteSpace: 'nowrap' on containers likely to have variable text
       const m = code.match(/whiteSpace:\s*['"]nowrap['"]/)
-      if (m) return 'whiteSpace:nowrap used — long text values will overflow silently'
+      if (m) return 'whiteSpace:nowrap found on text container'
       return null
     },
   },
@@ -150,14 +140,13 @@ const STATIC_RULES = [
 function fillPlaceholders(code) {
   let filled = code
   for (const [key, val] of Object.entries(SAMPLE)) {
-    // Replace "KEY" string literals (quoted placeholders in the template)
     filled = filled.replaceAll(`"${key}"`, JSON.stringify(val))
     filled = filled.replaceAll(`'${key}'`, JSON.stringify(val))
   }
   return filled
 }
 
-function runStaticAnalysis(code, filename) {
+export function runStaticAnalysis(code, filename) {
   const issues = []
   for (const rule of STATIC_RULES) {
     const result = rule.test(code)
@@ -175,31 +164,29 @@ function runStaticAnalysis(code, filename) {
   return issues
 }
 
-async function renderTemplateStill(code, outputPath) {
+export async function renderTemplateStill(code, outputPath) {
   const filledCode = fillPlaceholders(code)
-  // Render at frame 50 (mid-animation for most templates which run ~90 frames)
   await renderStill(filledCode, outputPath, 50, {})
 }
 
-async function analyzeScreenshotWithGemini(imagePath, templateName, code) {
+export async function analyzeScreenshotWithGemini(imagePath, templateName) {
   const imageData = await readFile(imagePath)
   const base64 = imageData.toString('base64')
-
   const model = googleAI.getGenerativeModel({ model: VISION_MODEL })
 
   const prompt = `You are a video animation quality auditor reviewing a screenshot from a Remotion animation template called "${templateName}".
 
 Analyze this screenshot carefully and identify ALL visual issues. Look for:
 1. Text that is clipped, cut off, or partially hidden by container boundaries
-2. Numbers that seem wrong (e.g. a counter showing 247 when context suggests a different value)
+2. Numbers that seem wrong (e.g. a counter stuck at 0 or showing a hardcoded stub value)
 3. Elements that are invisible, fully transparent, or off-screen
 4. Text that overflows its container or is too large for its box
 5. Empty/blank areas where content should be visible
-6. Layout issues — elements overlapping incorrectly or misaligned
-7. Placeholder text that was NOT replaced (e.g. literally shows "TITLE_TEXT" or "COUNT_VALUE")
-8. Animation that appears frozen at an unexpected state
+6. Layout issues — elements overlapping incorrectly or badly misaligned
+7. Placeholder text that was NOT replaced (literally shows "TITLE_TEXT" or "COUNT_VALUE")
+8. Animation frozen at an unexpected state (e.g. stuck at frame 0)
 
-Respond with a JSON array of issues found. Each issue:
+Respond with a JSON array of issues. Each issue:
 {
   "id": "short_snake_case_id",
   "severity": "error" | "warning" | "info",
@@ -208,8 +195,7 @@ Respond with a JSON array of issues found. Each issue:
   "fix_hint": "brief suggestion for fixing it in the TSX code"
 }
 
-If no issues are found, return: []
-
+If no issues, return: []
 Respond ONLY with the JSON array, no other text.`
 
   const result = await model.generateContent([
@@ -219,18 +205,15 @@ Respond ONLY with the JSON array, no other text.`
 
   const text = result.response.text().trim()
   try {
-    // Strip markdown code fences if present
     const clean = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
     return JSON.parse(clean)
   } catch {
-    console.warn(`  ⚠ Could not parse Gemini vision response for ${templateName}`)
     return []
   }
 }
 
-async function generateFix(code, issues, templateName) {
+export async function generateFix(code, issues, templateName) {
   const model = googleAI.getGenerativeModel({ model: FIX_MODEL })
-
   const issueList = issues.map((i, n) =>
     `${n + 1}. [${i.severity.toUpperCase()}] ${i.description}${i.detail ? ` — ${i.detail}` : ''}${i.fix_hint ? ` | Fix hint: ${i.fix_hint}` : ''}`
   ).join('\n')
@@ -247,8 +230,8 @@ ${code}
 
 Fix ALL the issues listed above. Rules:
 - Preserve all placeholder strings like "BACKGROUND_COLOR", "COUNT_VALUE", "TITLE_TEXT" etc — do NOT hardcode values
-- For number animations: use parseFloat(countValue.replace(/[^0-9.]/g, '')) to read the numeric value
-- For text clipping: increase container height, use lineHeight: 1.1-1.2, auto-scale fontSize based on text length
+- For number animations: use parseFloat(countValue.replace(/[^0-9.]/g, '')) to extract the numeric part
+- For text clipping: increase container height, use flexWrap or adjustable fontSize
 - Do NOT change the visual design, layout, colors, or animation style — only fix the bugs
 - Return ONLY the complete fixed TSX file, no explanation, no markdown fences
 
@@ -256,46 +239,45 @@ Fixed code:`
 
   const result = await model.generateContent(prompt)
   let fixed = result.response.text().trim()
-  // Strip markdown if Gemini wraps in code fences
   fixed = fixed.replace(/^```(?:tsx|typescript|javascript)?\n?/, '').replace(/\n?```$/, '')
   return fixed
 }
 
-// ─── Main audit loop ──────────────────────────────────────────────────────────
+// ─── Main audit function (used by server endpoint and CLI) ────────────────────
 
-async function auditTemplate(filePath, options) {
+/**
+ * Audit a single template file.
+ * @param {string} filePath
+ * @param {{ skipRender?: boolean }} options
+ * @param {function} onProgress  callback({ stage, message })
+ */
+export async function auditTemplate(filePath, options = {}, onProgress = null) {
   const filename = basename(filePath)
   const name = filename.replace('.tsx', '')
-  console.log(`\n▶ Auditing: ${filename}`)
-
   const code = await readFile(filePath, 'utf-8')
   const issues = []
 
-  // 1. Static analysis (always runs)
+  // Static analysis
+  onProgress?.({ stage: 'static', message: 'Running static analysis...' })
   const staticIssues = runStaticAnalysis(code, filename)
   issues.push(...staticIssues)
-  if (staticIssues.length > 0) {
-    staticIssues.forEach(i => console.log(`  [${i.severity.toUpperCase()}] ${i.id}: ${i.detail}`))
-  }
 
-  // 2. Render still + vision analysis (unless --skip-render)
-  let screenshotPath = null
-  let visionIssues = []
+  let screenshotUrl = null
+
   if (!options.skipRender) {
-    screenshotPath = join(AUDIT_DIR, `${name}.png`)
+    await mkdir(AUDIT_DIR, { recursive: true })
+    const screenshotPath = join(AUDIT_DIR, `${name}.png`)
+
     try {
-      console.log(`  📸 Rendering still...`)
+      onProgress?.({ stage: 'render', message: 'Rendering still frame...' })
       await renderTemplateStill(code, screenshotPath)
-      console.log(`  🔍 Analyzing with Gemini Vision (${VISION_MODEL})...`)
-      visionIssues = await analyzeScreenshotWithGemini(screenshotPath, name, code)
-      visionIssues.forEach(i => {
-        i.source = 'vision'
-        i.file = filename
-        console.log(`  [${i.severity.toUpperCase()}] ${i.id}: ${i.description}`)
-      })
+      screenshotUrl = `/audit-screenshots/${name}.png`
+
+      onProgress?.({ stage: 'vision', message: `Analyzing with ${VISION_MODEL}...` })
+      const visionIssues = await analyzeScreenshotWithGemini(screenshotPath, name)
+      visionIssues.forEach(i => { i.source = 'vision'; i.file = filename })
       issues.push(...visionIssues)
     } catch (err) {
-      console.warn(`  ⚠ Render/vision failed: ${err.message}`)
       issues.push({
         source: 'render_error',
         id: 'render_failed',
@@ -306,75 +288,54 @@ async function auditTemplate(filePath, options) {
     }
   }
 
-  const errorCount  = issues.filter(i => i.severity === 'error').length
-  const warnCount   = issues.filter(i => i.severity === 'warning').length
-  console.log(`  → ${issues.length} issue(s): ${errorCount} error(s), ${warnCount} warning(s)`)
-
-  return { name, filename, filePath, issues, screenshotPath }
+  return { name, filename, filePath, issues, screenshotUrl }
 }
 
-async function applyFix(result) {
+/**
+ * Apply an auto-fix to a template that has issues.
+ * Returns true if the file was updated.
+ */
+export async function applyFix(result) {
   const { filename, filePath, issues } = result
   const fixable = issues.filter(i => i.severity === 'error' || i.severity === 'warning')
-  if (fixable.length === 0) {
-    console.log(`  ✓ No fixes needed for ${filename}`)
-    return false
-  }
+  if (fixable.length === 0) return false
 
-  console.log(`  🔧 Generating fix for ${filename} (${fixable.length} issue(s))...`)
   const code = await readFile(filePath, 'utf-8')
+  const fixed = await generateFix(code, fixable, result.name)
 
-  try {
-    const fixed = await generateFix(code, fixable, result.name)
-    // Basic sanity check — must still export AnimationComponent
-    if (!fixed.includes('AnimationComponent') || !fixed.includes('useCurrentFrame')) {
-      console.warn(`  ⚠ Fix generation produced invalid code for ${filename} — skipping`)
-      return false
-    }
-    await writeFile(filePath, fixed, 'utf-8')
-    console.log(`  ✅ Fixed and saved: ${filename}`)
-    return true
-  } catch (err) {
-    console.warn(`  ⚠ Fix generation failed for ${filename}: ${err.message}`)
-    return false
+  if (!fixed.includes('AnimationComponent') || !fixed.includes('useCurrentFrame')) {
+    throw new Error('Fix generation produced invalid component code')
   }
+  await writeFile(filePath, fixed, 'utf-8')
+  return true
 }
+
+// ─── CLI entry point ──────────────────────────────────────────────────────────
 
 async function main() {
   const args = process.argv.slice(2)
-  const applyFixes  = args.includes('--fix')
-  const skipRender  = args.includes('--skip-render')
-  const templateArg = args.find(a => a.startsWith('--template='))
-  const templateNum = templateArg ? templateArg.split('=')[1] : null
+  const doFix      = args.includes('--fix')
+  const skipRender = args.includes('--skip-render')
+  const tplArg     = args.find(a => a.startsWith('--template='))
+  const tplNum     = tplArg ? tplArg.split('=')[1] : null
 
   console.log('╔══════════════════════════════════════╗')
   console.log('║     Director Template Auditor        ║')
-  console.log(`║  Vision model : ${VISION_MODEL.padEnd(20)}║`)
-  console.log(`║  Fix model    : ${FIX_MODEL.padEnd(20)}║`)
-  console.log(`║  Mode         : ${(applyFixes ? 'audit + fix' : 'report only').padEnd(20)}║`)
-  console.log(`║  Render       : ${(skipRender ? 'skipped (static only)' : 'enabled').padEnd(20)}║`)
+  console.log(`║  Vision : ${VISION_MODEL.padEnd(26)}║`)
+  console.log(`║  Fix    : ${FIX_MODEL.padEnd(26)}║`)
+  console.log(`║  Mode   : ${(doFix ? 'audit + fix' : 'report only').padEnd(26)}║`)
   console.log('╚══════════════════════════════════════╝')
 
-  if (!getGoogleKey()) {
-    console.error('❌ GOOGLE_AI_API_KEY not configured — cannot use Gemini')
-    process.exit(1)
-  }
+  if (!getGoogleKey()) { console.error('❌ GOOGLE_AI_API_KEY not set'); process.exit(1) }
 
   await mkdir(AUDIT_DIR, { recursive: true })
 
-  // Collect templates to audit
-  const allFiles = (await readdir(TEMPLATES_DIR))
-    .filter(f => f.endsWith('.tsx'))
-    .sort()
-
-  const targets = templateNum
-    ? allFiles.filter(f => f.startsWith(templateNum + '-') || f.startsWith(templateNum.padStart(2, '0') + '-'))
+  const allFiles = (await readdir(TEMPLATES_DIR)).filter(f => f.endsWith('.tsx')).sort()
+  const targets  = tplNum
+    ? allFiles.filter(f => f.startsWith(tplNum + '-') || f.startsWith(tplNum.padStart(2, '0') + '-'))
     : allFiles
 
-  if (targets.length === 0) {
-    console.error(`❌ No templates found matching --template=${templateNum}`)
-    process.exit(1)
-  }
+  if (targets.length === 0) { console.error(`❌ No templates match --template=${tplNum}`); process.exit(1) }
 
   console.log(`\nAuditing ${targets.length} template(s)...\n`)
 
@@ -383,54 +344,37 @@ async function main() {
 
   for (const filename of targets) {
     const filePath = join(TEMPLATES_DIR, filename)
-    const result = await auditTemplate(filePath, { skipRender })
+    process.stdout.write(`▶ ${filename} `)
+    const result = await auditTemplate(filePath, { skipRender }, ({ stage }) => process.stdout.write(`[${stage}]`))
+    console.log(` → ${result.issues.length} issue(s)`)
+    result.issues.forEach(i => console.log(`   [${i.severity.toUpperCase()}] ${i.description}`))
     report.results.push(result)
 
-    if (applyFixes && result.issues.some(i => i.severity === 'error' || i.severity === 'warning')) {
-      const wasFixed = await applyFix(result)
-      if (wasFixed) fixedCount++
+    if (doFix && result.issues.some(i => i.severity === 'error' || i.severity === 'warning')) {
+      try {
+        const fixed = await applyFix(result)
+        if (fixed) { fixedCount++; console.log(`   ✅ Fixed`) }
+      } catch (err) {
+        console.warn(`   ⚠ Fix failed: ${err.message}`)
+      }
     }
   }
 
-  // Summary
-  const totalIssues  = report.results.reduce((n, r) => n + r.issues.length, 0)
-  const totalErrors  = report.results.reduce((n, r) => n + r.issues.filter(i => i.severity === 'error').length, 0)
-  const totalWarnings = report.results.reduce((n, r) => n + r.issues.filter(i => i.severity === 'warning').length, 0)
-  const cleanTemplates = report.results.filter(r => r.issues.length === 0).length
+  const total    = report.results.reduce((n, r) => n + r.issues.length, 0)
+  const errors   = report.results.reduce((n, r) => n + r.issues.filter(i => i.severity === 'error').length, 0)
+  const warnings = report.results.reduce((n, r) => n + r.issues.filter(i => i.severity === 'warning').length, 0)
+  const clean    = report.results.filter(r => r.issues.length === 0).length
 
-  report.summary = {
-    templates: targets.length,
-    clean: cleanTemplates,
-    withIssues: targets.length - cleanTemplates,
-    totalIssues,
-    errors: totalErrors,
-    warnings: totalWarnings,
-    fixed: fixedCount,
-  }
-
+  report.summary = { templates: targets.length, clean, withIssues: targets.length - clean, totalIssues: total, errors, warnings, fixed: fixedCount }
   await writeFile(REPORT_PATH, JSON.stringify(report, null, 2), 'utf-8')
 
-  console.log('\n══════════════════════════════════════')
-  console.log(`  Templates audited : ${targets.length}`)
-  console.log(`  Clean             : ${cleanTemplates}`)
-  console.log(`  With issues       : ${targets.length - cleanTemplates}`)
-  console.log(`  Total issues      : ${totalIssues} (${totalErrors} errors, ${totalWarnings} warnings)`)
-  if (applyFixes) console.log(`  Auto-fixed        : ${fixedCount}`)
-  console.log(`  Report saved      : .temp/audit/report.json`)
-  console.log('══════════════════════════════════════')
-
-  // Print templates with errors for quick reference
-  const withErrors = report.results.filter(r => r.issues.some(i => i.severity === 'error'))
-  if (withErrors.length > 0) {
-    console.log('\nTemplates with errors:')
-    withErrors.forEach(r => {
-      const errs = r.issues.filter(i => i.severity === 'error')
-      console.log(`  ❌ ${r.filename} — ${errs.map(e => e.id || e.description).join(', ')}`)
-    })
-  }
+  console.log(`\n${'═'.repeat(42)}`)
+  console.log(`  Audited: ${targets.length}  |  Clean: ${clean}  |  Issues: ${total} (${errors} err, ${warnings} warn)`)
+  if (doFix) console.log(`  Fixed: ${fixedCount}`)
+  console.log(`  Report: .temp/audit/report.json`)
+  console.log('═'.repeat(42))
 }
 
-main().catch(err => {
-  console.error('Fatal error:', err)
-  process.exit(1)
-})
+// Run CLI only when executed directly
+const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]
+if (isMain) main().catch(err => { console.error('Fatal:', err); process.exit(1) })
