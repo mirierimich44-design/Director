@@ -4,6 +4,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
 import fs from 'fs/promises';
+import { existsSync } from 'fs';
 import os from 'os';
 import { balanceBraces } from '../../services/balancer.js';
 import esbuild from 'esbuild';
@@ -55,7 +56,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Shared browser executable path to avoid multiple downloads/race conditions
-let browserExecutablePath = null;
+// Use Playwright's pre-downloaded headless_shell if available (avoids network download)
+const PLAYWRIGHT_HEADLESS_SHELL = '/root/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell';
+let browserExecutablePath = existsSync(PLAYWRIGHT_HEADLESS_SHELL) ? PLAYWRIGHT_HEADLESS_SHELL : null;
 
 // Helper to detect if URL is a video
 const isVideoUrl = (url) => {
@@ -586,7 +589,7 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
         await remotionRenderStill({
             composition,
             serveUrl: bundleLocation,
-            outputLocation: outputPath,
+            output: outputPath,
             frame,
             browserExecutable: browserExecutablePath,
         });
@@ -613,12 +616,14 @@ import { AbsoluteFill, useCurrentFrame } from 'remotion';
 export const AnimationComponent = () => <AbsoluteFill style={{ background: '#000' }} />;
 `;
     try {
-        console.log('⚡ Initializing Remotion browser (Chrome Headless Shell)...');
-        // This ensures the browser is downloaded once to a shared location
-        // rather than per-render in unique hash directories.
-        const result = await ensureBrowser();
-        browserExecutablePath = result.path;
-        console.log(`✅ Browser ready: ${browserExecutablePath}`);
+        if (browserExecutablePath) {
+            console.log(`✅ Browser ready (pre-installed): ${browserExecutablePath}`);
+        } else {
+            console.log('⚡ Initializing Remotion browser (Chrome Headless Shell)...');
+            const result = await ensureBrowser();
+            browserExecutablePath = result.path;
+            console.log(`✅ Browser ready: ${browserExecutablePath}`);
+        }
 
         const warmupDir = join(__dirname, '../../../.temp/_warmup');
         await fs.mkdir(warmupDir, { recursive: true });
