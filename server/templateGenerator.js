@@ -75,7 +75,9 @@ ${ex.schema}
 
 You create reusable .tsx templates with placeholder variables that get filled at render time.
 
-CRITICAL RULES:
+═══════════════════════════════════════════════════════════
+CRITICAL TECHNICAL RULES
+═══════════════════════════════════════════════════════════
 1. Canvas is ALWAYS 1920x1080 pixels
 2. Root div MUST have: position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR'
 3. Use ONLY these imports: import React, { useMemo } from 'react' and import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion'
@@ -85,13 +87,52 @@ CRITICAL RULES:
 7. Theme color placeholders: BACKGROUND_COLOR, PRIMARY_COLOR, SECONDARY_COLOR, ACCENT_COLOR, TEXT_ON_PRIMARY, TEXT_ON_SECONDARY, TEXT_ON_ACCENT, SUPPORT_COLOR, NODE_FILL, NODE_STROKE, LINE_STROKE, GRID_LINE, CHART_BG
 8. Every interpolate() MUST use { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
 9. Never call interpolate() inside template literals — assign to a variable first
-10. Use staggered animations for multi-element layouts (delay each by 8-15 frames)
-11. For lists/arrays of items, use useMemo to filter out empty placeholders: .filter(item => item !== '' && item !== ' ')
-12. Use position: absolute for all major layout elements with explicit top/left/width/height
-13. All text should have overflow: 'hidden' and whiteSpace: 'nowrap' (or 'pre-wrap' for multi-line)
-14. Font sizes: titles 28-36px, values 60-80px, labels 18-22px, sub-text 14-16px
-15. Use fontFamily: 'monospace' for numbers, 'sans-serif' for text
-16. Put content placeholder strings in const variables at top of component, or in arrays for list items
+10. For lists/arrays of items, use useMemo to filter out empty placeholders: .filter(item => item !== '' && item !== ' ')
+11. Put content placeholder strings in const variables at top of component, or in arrays for list items
+
+═══════════════════════════════════════════════════════════
+LAYOUT & OVERLAP PREVENTION — MANDATORY
+═══════════════════════════════════════════════════════════
+12. SAFE ZONE: Keep ALL content within x: 80–1840, y: 60–1020. Never place anything outside this area.
+13. ABSOLUTE POSITIONING: Use position: 'absolute' for every major element with EXPLICIT top, left, width, height values in pixels.
+14. NO OVERLAPPING ELEMENTS: Every element must occupy a unique region. Before placing an element, calculate: does its bounding box (top, left, top+height, left+width) intersect any other element's bounding box? If yes, adjust positions.
+15. LAYOUT ZONES — Use these defined zones and never mix content between them:
+    • Header zone: top: 60, height: 100 — title only
+    • Content zone: top: 180, height: 720 — charts, main visuals
+    • Footer zone: top: 940, height: 80 — sub-labels, source, notes
+16. For multi-column layouts, divide content zone width evenly with explicit gaps (minimum 40px between columns)
+17. For list/stack layouts: itemY = startY + (index * itemHeight). Never hardcode Y positions that might overlap when item count changes.
+18. Text elements: ALWAYS set overflow: 'hidden' and either whiteSpace: 'nowrap' (single line) or a fixed height + overflow: 'hidden' (multi-line). This prevents text from bleeding into adjacent elements.
+19. Chart labels: Position data labels OUTSIDE or ON TOP of chart bars/lines, never floating free where they might overlap other elements.
+20. Animated elements: When elements animate IN (slide, scale, fade), ensure their START position is off-screen or outside the safe zone. Never animate through another element's occupied area.
+21. Z-index discipline: Background decorations get no z-index (paint order). Main content: zIndex: 1. Labels/overlays: zIndex: 2. Tooltips/callouts: zIndex: 3.
+
+═══════════════════════════════════════════════════════════
+PROFESSIONAL ANIMATION QUALITY
+═══════════════════════════════════════════════════════════
+22. EASING: Use ease-out curves (fast start, slow settle). Simulate with interpolate using output range that decelerates, or approximate spring by overshooting slightly then settling (frame range should be ~20-25 frames per element entrance).
+23. STAGGER: Multi-element groups MUST stagger by 8–15 frames per item. Never animate all elements simultaneously.
+24. TIMING STRUCTURE:
+    • 0–20 frames: background / atmosphere elements fade in
+    • 20–60 frames: main structural elements enter
+    • 60–180 frames: data/content reveals (staggered)
+    • 180–240 frames: final state holds — all elements fully visible, no more changes
+25. VISUAL HIERARCHY: Most important element = largest size and highest brightness. Support elements should be 60–70% the size/opacity of primary elements.
+26. COLOR DISCIPLINE: Use only the theme placeholders. Never hardcode colors except for semantic meaning (e.g., #e63946 for critical errors, #2a9d5c for success, #f4a261 for warnings).
+27. TYPOGRAPHY:
+    • Hero/stat values: 64–80px, fontFamily: 'monospace', fontWeight: 'bold'
+    • Section titles: 32–40px, fontFamily: 'sans-serif', fontWeight: 'bold', letterSpacing: '2px'
+    • Labels: 18–22px, fontFamily: 'sans-serif', letterSpacing: '1px', textTransform: 'uppercase'
+    • Body/sub-text: 14–16px, fontFamily: 'sans-serif'
+    • Never use more than 3 different font sizes in one template
+28. CHARTS — specific rules:
+    • Bar charts: minimum 12px gap between bars; bars grow from base axis upward (scaleY from 0)
+    • Line charts: strokeWidth 3–4px; use SVG polyline or div-based approximation
+    • Pie/donut: use SVG with strokeDashoffset animation; always include a center label
+    • Axes and grid lines: opacity 0.3–0.4 so they don't compete with data
+    • All chart data elements must be clipped to the chart bounding box
+29. MOTION FEEL: Prefer translateY/translateX entrance animations over scale, as scale can cause layout reflow perception. Use scale only for emphasis (badge pop, stamp effect).
+30. FINAL FRAME: At the last frame, ALL elements must be fully visible (opacity 1, full scale/position). The template should look like a polished still image at rest.
 
 PLACEHOLDER NAMING:
 - TITLE_TEXT — main heading

@@ -610,6 +610,70 @@ function auditEmit(jobId, event) {
 // Serve audit screenshots
 app.use('/audit-screenshots', express.static(AUDIT_DIR));
 
+// ── ANIMATION GENERATOR ───────────────────────────────────────────────────────
+
+// GET /api/animation-generator/types — return the full catalog
+app.get('/api/animation-generator/types', async (req, res) => {
+    try {
+        const { ANIMATION_TYPES } = await import('./animationGeneratorTypes.js');
+        res.json({ success: true, catalog: ANIMATION_TYPES });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// POST /api/animation-generator/generate — generate a specific animation type
+// Body: { typeId, customDescription? }
+app.post('/api/animation-generator/generate', async (req, res) => {
+    try {
+        const { typeId, customDescription } = req.body;
+        if (!typeId) return res.status(400).json({ error: 'typeId is required' });
+
+        const { findType } = await import('./animationGeneratorTypes.js');
+        const { generateTemplate } = await import('./templateGenerator.js');
+        const { renderTemplateStill } = await import('./templateAuditor.js');
+
+        const typeInfo = findType(typeId);
+        if (!typeInfo) return res.status(404).json({ error: `Unknown animation type: ${typeId}` });
+
+        const description = customDescription
+            ? `${typeInfo.desc}\n\nAdditional requirements: ${customDescription}`
+            : typeInfo.desc;
+
+        console.log(`\n🎬 Animation Generator: "${typeInfo.name}" (${typeId})`);
+
+        const generated = await generateTemplate(description, {
+            suggestedName: typeInfo.suggestedName,
+            category: typeInfo.categoryId || 'generated',
+        });
+
+        // Render a still preview for the UI
+        let screenshotUrl = null;
+        try {
+            const screenshotPath = path.join(__dirname, '../public/audit-screenshots', `${generated.template}.png`);
+            const tsxCode = fs.readFileSync(generated.tsxPath, 'utf8');
+            await renderTemplateStill(tsxCode, screenshotPath);
+            screenshotUrl = `/audit-screenshots/${generated.template}.png`;
+            console.log(`   📸 Preview rendered: ${screenshotUrl}`);
+        } catch (previewErr) {
+            console.warn(`   ⚠️ Preview render failed: ${previewErr.message}`);
+        }
+
+        res.json({
+            success: true,
+            template: generated.template,
+            name: generated.name,
+            description: generated.description,
+            category: generated.category,
+            fields: generated.fields,
+            screenshotUrl,
+        });
+    } catch (err) {
+        console.error('❌ Animation generator error:', err.stack || err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // POST /api/audit/start — kick off an audit job
 app.post('/api/audit/start', async (req, res) => {
     const { skipRender = false, templateName = null } = req.body || {};

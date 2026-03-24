@@ -5,16 +5,17 @@ import AudioProcessorView from './views/AudioProcessorView';
 import SettingsView from './views/SettingsView';
 import TemplateAuditorView from './views/TemplateAuditorView';
 import VideoGeneratorView from './views/VideoGeneratorView';
+import AnimationGeneratorView from './views/AnimationGeneratorView';
 import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import {
     FolderSpecial as ProjectIcon,
     GraphicEq as AudioIcon,
     Settings as SettingsIcon,
     BugReport as AuditIcon,
-    AutoFixHigh as VideoGenIcon,
+    AutoFixHigh as AutoFixIcon,
 } from '@mui/icons-material';
 
-type Mode = 'project-director' | 'audio' | 'auditor' | 'settings' | 'video-generator';
+type Mode = 'project-director' | 'audio' | 'auditor' | 'settings' | 'video-generator' | 'animation-generator';
 
 const App: React.FC = () => {
     const [mode, setMode] = useState<Mode>(() =>
@@ -24,11 +25,12 @@ const App: React.FC = () => {
     useEffect(() => { localStorage.setItem('directorMode', mode); }, [mode]);
 
     const nav = [
-        { id: 'project-director', label: 'Project Director', icon: <ProjectIcon />, desc: 'Chapter-based Projects' },
-        { id: 'video-generator',  label: 'B-Roll Avatar',     icon: <VideoGenIcon />, desc: 'Gemini + Pexels + HeyGen' },
-        { id: 'audio',            label: 'Audio Studio',     icon: <AudioIcon />,   desc: 'Voiceover Processor' },
-        { id: 'auditor',          label: 'Template Auditor', icon: <AuditIcon />,   desc: 'Gemini Vision QA' },
-        { id: 'settings',         label: 'LLM Settings',     icon: <SettingsIcon />, desc: 'API Keys & Models' },
+        { id: 'project-director',    label: 'Project Director',    icon: <ProjectIcon />,   desc: 'Chapter-based Projects' },
+        { id: 'video-generator',     label: 'B-Roll Avatar',       icon: <AutoFixIcon />,   desc: 'Gemini + Pexels + HeyGen' },
+        { id: 'animation-generator', label: 'Animation Generator', icon: <AutoFixIcon />,   desc: 'AI Template Builder' },
+        { id: 'audio',               label: 'Audio Studio',        icon: <AudioIcon />,     desc: 'Voiceover Processor' },
+        { id: 'auditor',             label: 'Template Auditor',    icon: <AuditIcon />,     desc: 'Gemini Vision QA' },
+        { id: 'settings',            label: 'LLM Settings',        icon: <SettingsIcon />,  desc: 'API Keys & Models' },
     ];
 
     return (
@@ -77,15 +79,15 @@ const App: React.FC = () => {
             </Box>
 
             <Box sx={{ flexGrow: 1, overflow: 'auto', bgcolor: 'var(--bg-primary)' }}>
-                {mode === 'project-director' && <ProjectDirectorView />}
-                {mode === 'video-generator'  && <VideoGeneratorView />}
-                {mode === 'audio'            && <AudioProcessorView />}
-                {mode === 'auditor'          && <TemplateAuditorView />}
-                {mode === 'settings'         && <SettingsView />}
+                {mode === 'project-director'    && <ProjectDirectorView />}
+                {mode === 'video-generator'     && <VideoGeneratorView />}
+                {mode === 'animation-generator' && <AnimationGeneratorView />}
+                {mode === 'audio'               && <AudioProcessorView />}
+                {mode === 'auditor'             && <TemplateAuditorView />}
+                {mode === 'settings'            && <SettingsView />}
             </Box>
         </Box>
     );
 };
 
 export default App;
-
