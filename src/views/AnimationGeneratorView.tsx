@@ -326,113 +326,92 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
     return (
         <Card sx={{
             bgcolor: 'var(--bg-secondary)',
-            border: `1px solid ${isDone ? catColor + '66' : 'var(--border-color)'}`,
-            borderLeft: `3px solid ${catColor}`,
-            height: '100%',
+            border: `1px solid ${isDone ? catColor + '55' : 'var(--border-color)'}`,
+            borderRadius: 2,
+            overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            transition: 'border-color 0.2s',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+            '&:hover': { boxShadow: `0 0 0 1px ${catColor}44` },
         }}>
-            {/* Preview area */}
-            {isDone && (
-                hasVideo ? (
-                    <Box sx={{ position: 'relative', height: 160, bgcolor: '#0a0a0a', overflow: 'hidden' }}>
+            {/* Visual area — tall thumbnail */}
+            <Box sx={{ position: 'relative', height: 240, bgcolor: '#070707', flexShrink: 0, overflow: 'hidden' }}>
+                {/* colored top bar */}
+                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, bgcolor: catColor, zIndex: 2 }} />
+
+                {isDone ? (
+                    hasVideo ? (
                         <video
                             key={generated.videoUrl}
-                            autoPlay
-                            muted
-                            loop
+                            autoPlay muted loop
                             style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                         >
                             <source src={generated.videoUrl} type="video/mp4" />
                         </video>
-                    </Box>
-                ) : isRendering ? (
-                    <Box sx={{ height: 160, bgcolor: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, px: 2 }}>
-                        <CircularProgress size={22} sx={{ color: catColor }} />
-                        <Typography sx={{ fontSize: '0.6rem', color: catColor, letterSpacing: '1px' }}>
-                            RENDERING VIDEO {generated.videoProgress ? `${generated.videoProgress}%` : ''}
-                        </Typography>
-                        <LinearProgress
-                            variant={generated.videoProgress ? 'determinate' : 'indeterminate'}
-                            value={generated.videoProgress || 0}
-                            sx={{ width: '80%', height: 2, borderRadius: 1, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
-                        />
-                    </Box>
-                ) : generated.screenshotUrl && !imgFailed ? (
-                    <CardMedia
-                        component="img"
-                        image={generated.screenshotUrl}
-                        alt={type.name}
-                        onError={() => setImgFailed(true)}
-                        sx={{ height: 160, objectFit: 'contain', bgcolor: '#0a0a0a' }}
-                    />
-                ) : (
-                    <Box sx={{ height: 160, bgcolor: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ImageIcon sx={{ color: '#333', fontSize: 36 }} />
-                    </Box>
-                )
-            )}
-
-            <CardContent sx={{ flexGrow: 1, p: 1.5, '&:last-child': { pb: 1 } }}>
-                <Stack direction="row" alignItems="flex-start" justifyContent="space-between" mb={0.5}>
-                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 'bold', color: 'var(--text-primary)', lineHeight: 1.3, flex: 1, pr: 1 }}>
-                        {type.name}
-                    </Typography>
-                    {isDone && <DoneIcon sx={{ fontSize: 16, color: catColor, flexShrink: 0 }} />}
-                </Stack>
-
-                <Typography sx={{ fontSize: '0.66rem', color: 'var(--text-secondary)', lineHeight: 1.4, mb: 1 }}>
-                    {type.desc}
-                </Typography>
-
-                <Stack direction="row" flexWrap="wrap" gap={0.4} mb={1}>
-                    {type.tags.map(tag => (
-                        <Chip key={tag} label={tag} size="small" sx={{
-                            height: 16, fontSize: '0.56rem', bgcolor: catColor + '18',
-                            color: catColor, border: `1px solid ${catColor}33`,
-                            '& .MuiChip-label': { px: 0.7 },
-                        }} />
-                    ))}
-                </Stack>
-
-                {isDone && (
-                    <Box sx={{ bgcolor: '#0a0a0a', borderRadius: 1, p: 0.8, mb: 1 }}>
-                        <Typography sx={{ fontSize: '0.62rem', color: '#666', mb: 0.3 }}>GENERATED</Typography>
-                        <Typography sx={{ fontSize: '0.65rem', color: catColor, fontFamily: 'monospace' }}>
-                            {generated.template}
-                        </Typography>
-                        {Object.keys(generated.fields).length > 0 && (
-                            <Typography sx={{ fontSize: '0.6rem', color: 'var(--text-secondary)', mt: 0.5 }}>
-                                {Object.keys(generated.fields).length} fields: {Object.keys(generated.fields).slice(0, 4).join(', ')}{Object.keys(generated.fields).length > 4 ? '…' : ''}
+                    ) : isRendering ? (
+                        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, px: 4 }}>
+                            <CircularProgress size={28} sx={{ color: catColor }} />
+                            <Typography sx={{ fontSize: '0.65rem', color: catColor, letterSpacing: '2px' }}>
+                                RENDERING {generated.videoProgress ? `${generated.videoProgress}%` : ''}
                             </Typography>
-                        )}
+                            <LinearProgress
+                                variant={generated.videoProgress ? 'determinate' : 'indeterminate'}
+                                value={generated.videoProgress || 0}
+                                sx={{ width: '70%', height: 2, borderRadius: 1, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
+                            />
+                        </Box>
+                    ) : generated.screenshotUrl && !imgFailed ? (
+                        <CardMedia
+                            component="img"
+                            image={generated.screenshotUrl}
+                            alt={type.name}
+                            onError={() => setImgFailed(true)}
+                            sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        />
+                    ) : (
+                        <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <ImageIcon sx={{ color: '#2a2a2a', fontSize: 48 }} />
+                        </Box>
+                    )
+                ) : (
+                    /* Not yet generated — placeholder with type name */
+                    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                        <GenerateIcon sx={{ color: '#1e1e1e', fontSize: 40 }} />
+                        <Typography sx={{ color: '#252525', fontSize: '0.65rem', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                            not generated
+                        </Typography>
                     </Box>
                 )}
 
-                <TextField
-                    size="small"
-                    placeholder="Optional: add specific requirements…"
-                    value={custom}
-                    onChange={e => setCustom(e.target.value)}
-                    fullWidth
-                    multiline
-                    rows={2}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            fontSize: '0.65rem',
-                            bgcolor: '#0a0a0a',
-                            '& fieldset': { borderColor: 'var(--border-color)' },
-                            '&:hover fieldset': { borderColor: catColor + '66' },
-                            '&.Mui-focused fieldset': { borderColor: catColor },
-                        },
-                        '& .MuiInputBase-input': { color: 'var(--text-primary)' },
-                        '& .MuiInputBase-input::placeholder': { color: '#555', fontSize: '0.65rem' },
-                    }}
-                />
+                {/* Done badge */}
+                {isDone && (
+                    <Box sx={{ position: 'absolute', top: 10, right: 10, zIndex: 3, bgcolor: catColor, borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <DoneIcon sx={{ fontSize: 14, color: '#000' }} />
+                    </Box>
+                )}
+            </Box>
+
+            {/* Info */}
+            <CardContent sx={{ p: 2, pb: 1, flexGrow: 1 }}>
+                <Typography sx={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)', mb: 0.5, lineHeight: 1.3 }}>
+                    {type.name}
+                </Typography>
+                <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.5, mb: 1.2 }}>
+                    {type.desc}
+                </Typography>
+                <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                    {type.tags.map(tag => (
+                        <Chip key={tag} label={tag} size="small" sx={{
+                            height: 18, fontSize: '0.58rem', bgcolor: catColor + '18',
+                            color: catColor, border: `1px solid ${catColor}33`,
+                            '& .MuiChip-label': { px: 0.8 },
+                        }} />
+                    ))}
+                </Stack>
             </CardContent>
 
-            <CardActions sx={{ p: 1.5, pt: 0, gap: 1 }}>
+            {/* Actions */}
+            <CardActions sx={{ px: 2, pb: 2, pt: 0.5, gap: 1 }}>
                 <Button
                     fullWidth
                     size="small"
@@ -441,14 +420,14 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
                     onClick={() => onGenerate(type, custom)}
                     startIcon={generating ? <CircularProgress size={12} sx={{ color: 'inherit' }} /> : <GenerateIcon sx={{ fontSize: '14px !important' }} />}
                     sx={{
-                        fontSize: '0.7rem',
+                        fontSize: '0.72rem',
                         fontWeight: 'bold',
                         letterSpacing: '1px',
                         bgcolor: isDone ? 'transparent' : catColor,
                         color: isDone ? catColor : '#000',
                         borderColor: catColor,
                         '&:hover': { bgcolor: catColor + (isDone ? '22' : 'dd'), borderColor: catColor },
-                        '&.Mui-disabled': { bgcolor: '#222', color: '#444' },
+                        '&.Mui-disabled': { bgcolor: '#1a1a1a', color: '#3a3a3a', borderColor: '#2a2a2a' },
                     }}
                 >
                     {generating ? 'GENERATING…' : isDone ? 'REGENERATE' : 'GENERATE'}
@@ -459,7 +438,7 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
                         size="small"
                         onClick={() => onEdit(generated)}
                         title="Edit fields & preview video"
-                        sx={{ color: catColor, border: `1px solid ${catColor}66`, borderRadius: 1, flexShrink: 0, '&:hover': { bgcolor: catColor + '22' } }}
+                        sx={{ color: catColor, border: `1px solid ${catColor}55`, borderRadius: 1, flexShrink: 0, '&:hover': { bgcolor: catColor + '22' } }}
                     >
                         <EditIcon sx={{ fontSize: 16 }} />
                     </IconButton>
@@ -730,7 +709,7 @@ const AnimationGeneratorView: React.FC = () => {
                         {activeCat && (
                             <Grid container spacing={2}>
                                 {activeCat.types.map(type => (
-                                    <Grid item xs={12} sm={6} md={4} lg={3} key={type.id}>
+                                    <Grid item xs={12} sm={6} md={6} lg={4} key={type.id}>
                                         <TypeCard
                                             type={{ ...type, categoryId: activeCatId!, categoryLabel: activeCat.label }}
                                             catColor={CATEGORY_COLORS[activeCatId!] || '#c9a961'}
