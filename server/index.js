@@ -651,7 +651,7 @@ app.post('/api/animation-generator/generate', async (req, res) => {
         let screenshotUrl = null;
         try {
             const screenshotPath = path.join(__dirname, '../public/audit-screenshots', `${generated.template}.png`);
-            const tsxCode = fs.readFileSync(generated.tsxPath, 'utf8');
+            const tsxCode = fsSync.readFileSync(generated.tsxPath, 'utf8');
             await renderTemplateStill(tsxCode, screenshotPath);
             screenshotUrl = `/audit-screenshots/${generated.template}.png`;
             console.log(`   📸 Preview rendered: ${screenshotUrl}`);
