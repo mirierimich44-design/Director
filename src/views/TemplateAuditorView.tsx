@@ -323,7 +323,7 @@ const TemplateAuditorView: React.FC = () => {
                         TEMPLATE AUDITOR
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
-                        Vision: gemini-2.5-pro &nbsp;·&nbsp; Fix: gemini-2.5-flash &nbsp;·&nbsp; {results.length} templates loaded
+                        Vision: gemini-3.1-pro &nbsp;·&nbsp; Fix: gemini-3.1-flash &nbsp;·&nbsp; {results.length} templates loaded
                     </Typography>
                 </Box>
 

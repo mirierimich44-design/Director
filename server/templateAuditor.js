@@ -24,8 +24,8 @@ import { getGoogleKey } from './settings.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // ─── Models ───────────────────────────────────────────────────────────────────
-export const VISION_MODEL = 'gemini-2.5-pro'    // screenshot → issue detection
-export const FIX_MODEL    = 'gemini-2.5-flash'  // TSX code → fixed TSX code
+export const VISION_MODEL = 'gemini-3.1-pro'    // screenshot → issue detection
+export const FIX_MODEL    = 'gemini-3.1-flash'  // TSX code → fixed TSX code
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 export const TEMPLATES_DIR = join(__dirname, 'templates')
