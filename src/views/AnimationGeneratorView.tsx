@@ -183,95 +183,110 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
             onClose={onClose}
             maxWidth="xl"
             fullWidth
-            PaperProps={{ sx: { bgcolor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderTop: `3px solid ${catColor}`, height: '92vh', maxHeight: '92vh' } }}
+            PaperProps={{ sx: { bgcolor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderTop: `3px solid ${catColor}`, m: 2 } }}
         >
-            <DialogTitle sx={{ pb: 1 }}>
+            {/* Title bar */}
+            <DialogTitle sx={{ py: 1.2, px: 2.5, borderBottom: '1px solid var(--border-color)' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Box>
                         <Typography sx={{ fontWeight: 'bold', color: catColor, letterSpacing: '2px', textTransform: 'uppercase', fontSize: '0.85rem' }}>
                             Edit & Preview
                         </Typography>
-                        <Typography sx={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+                        <Typography sx={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
                             {generated.template}
                         </Typography>
                     </Box>
-                    <Button
-                        variant="contained"
-                        size="small"
-                        startIcon={renderStatus === 'rendering' ? <CircularProgress size={12} sx={{ color: 'inherit' }} /> : <VideoIcon sx={{ fontSize: '14px !important' }} />}
-                        disabled={renderStatus === 'rendering'}
-                        onClick={handleRender}
-                        sx={{ bgcolor: catColor, color: '#000', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', '&:hover': { bgcolor: catColor + 'dd' }, '&.Mui-disabled': { bgcolor: '#333', color: '#666' } }}
-                    >
-                        {renderStatus === 'rendering' ? `RENDERING ${renderProgress}%` : 'RENDER VIDEO'}
-                    </Button>
+                    <Stack direction="row" alignItems="center" gap={1.5}>
+                        {renderStatus === 'rendering' && (
+                            <Box sx={{ minWidth: 200 }}>
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={renderProgress}
+                                    sx={{ height: 4, borderRadius: 2, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
+                                />
+                                <Typography sx={{ fontSize: '0.6rem', color: catColor, mt: 0.3, textAlign: 'center', letterSpacing: '1px' }}>
+                                    RENDERING {renderProgress}%
+                                </Typography>
+                            </Box>
+                        )}
+                        <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={renderStatus === 'rendering' ? <CircularProgress size={12} sx={{ color: 'inherit' }} /> : <VideoIcon sx={{ fontSize: '14px !important' }} />}
+                            disabled={renderStatus === 'rendering'}
+                            onClick={handleRender}
+                            sx={{ bgcolor: catColor, color: '#000', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', whiteSpace: 'nowrap', '&:hover': { bgcolor: catColor + 'dd' }, '&.Mui-disabled': { bgcolor: '#333', color: '#666' } }}
+                        >
+                            {renderStatus === 'rendering' ? 'RENDERING…' : 'RENDER VIDEO'}
+                        </Button>
+                        <Button onClick={onClose} size="small" sx={{ color: 'var(--text-secondary)', fontSize: '0.7rem', minWidth: 0 }}>
+                            ✕
+                        </Button>
+                    </Stack>
                 </Stack>
             </DialogTitle>
 
-            <DialogContent sx={{ p: 0, display: 'flex', overflow: 'hidden', flexGrow: 1 }}>
-                <Grid container sx={{ height: '100%' }}>
-                    {/* Left: Video preview */}
-                    <Grid item xs={12} md={8} sx={{ borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', bgcolor: '#050505', height: '100%' }}>
-                        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                            {currentVideoUrl ? (
-                                <video
-                                    key={currentVideoUrl}
-                                    controls
-                                    autoPlay
-                                    loop
-                                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                                >
-                                    <source src={currentVideoUrl} type="video/mp4" />
-                                </video>
-                            ) : renderStatus === 'rendering' ? (
-                                <Box sx={{ textAlign: 'center', px: 4, width: '100%' }}>
-                                    <CircularProgress size={40} sx={{ color: catColor, mb: 2 }} />
-                                    <Typography sx={{ color: catColor, fontSize: '0.8rem', mb: 1, letterSpacing: '2px' }}>
-                                        RENDERING {renderProgress}%
-                                    </Typography>
-                                    <LinearProgress
-                                        variant="determinate"
-                                        value={renderProgress}
-                                        sx={{ height: 3, borderRadius: 1, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
-                                    />
-                                </Box>
-                            ) : renderStatus === 'error' ? (
-                                <Box sx={{ textAlign: 'center', px: 4 }}>
-                                    <Typography sx={{ color: '#ef5350', fontSize: '0.75rem', mb: 1 }}>
-                                        Render failed: {renderError}
-                                    </Typography>
-                                    <Button size="small" onClick={handleRender} startIcon={<RefreshIcon />} sx={{ color: catColor, fontSize: '0.7rem' }}>
-                                        Retry
-                                    </Button>
-                                </Box>
-                            ) : generated.screenshotUrl ? (
-                                <img src={generated.screenshotUrl} alt={generated.name} style={{ width: '100%', maxHeight: 420, objectFit: 'contain' }} />
-                            ) : (
-                                <Box sx={{ textAlign: 'center', px: 4 }}>
-                                    <VideoIcon sx={{ color: '#333', fontSize: 48, mb: 1 }} />
-                                    <Typography sx={{ color: '#555', fontSize: '0.72rem' }}>
-                                        Fill fields and click Render Video
-                                    </Typography>
-                                </Box>
-                            )}
+            <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                {/* Video pane — large, 16:9 proportional */}
+                <Box sx={{ bgcolor: '#030303', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, height: 540 }}>
+                    {currentVideoUrl ? (
+                        <video
+                            key={currentVideoUrl}
+                            controls
+                            autoPlay
+                            loop
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                        >
+                            <source src={currentVideoUrl} type="video/mp4" />
+                        </video>
+                    ) : renderStatus === 'rendering' ? (
+                        <Box sx={{ textAlign: 'center', px: 4 }}>
+                            <CircularProgress size={48} sx={{ color: catColor, mb: 2 }} />
+                            <Typography sx={{ color: catColor, fontSize: '0.85rem', letterSpacing: '3px' }}>
+                                RENDERING {renderProgress}%
+                            </Typography>
                         </Box>
-                    </Grid>
+                    ) : renderStatus === 'error' ? (
+                        <Box sx={{ textAlign: 'center', px: 4 }}>
+                            <Typography sx={{ color: '#ef5350', fontSize: '0.8rem', mb: 1.5 }}>
+                                Render failed: {renderError}
+                            </Typography>
+                            <Button onClick={handleRender} startIcon={<RefreshIcon />} sx={{ color: catColor, fontSize: '0.75rem' }}>
+                                Retry
+                            </Button>
+                        </Box>
+                    ) : generated.screenshotUrl ? (
+                        <img src={generated.screenshotUrl} alt={generated.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    ) : (
+                        <Box sx={{ textAlign: 'center', px: 4 }}>
+                            <VideoIcon sx={{ color: '#333', fontSize: 56, mb: 1.5 }} />
+                            <Typography sx={{ color: '#555', fontSize: '0.75rem' }}>
+                                Click Render Video to preview
+                            </Typography>
+                        </Box>
+                    )}
+                </Box>
 
-                    {/* Right: Field editor */}
-                    <Grid item xs={12} md={4} sx={{ overflow: 'auto', p: 2 }}>
-                        <Typography sx={{ fontSize: '0.65rem', color: '#666', letterSpacing: '2px', mb: 1.5, textTransform: 'uppercase' }}>
+                {/* Fields pane — compact grid below video */}
+                <Box sx={{ p: 2, overflow: 'auto', flexGrow: 1 }}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
+                        <Typography sx={{ fontSize: '0.65rem', color: '#666', letterSpacing: '2px', textTransform: 'uppercase' }}>
                             Content Fields
                         </Typography>
+                        <Typography sx={{ fontSize: '0.6rem', color: '#444' }}>
+                            Empty fields use sample values
+                        </Typography>
+                    </Stack>
 
-                        {contentFields.length === 0 ? (
-                            <Typography sx={{ color: '#555', fontSize: '0.72rem' }}>
-                                No content fields — this template uses only color placeholders.
-                            </Typography>
-                        ) : (
-                            <Stack spacing={1.2}>
-                                {contentFields.map(([key, desc]) => (
+                    {contentFields.length === 0 ? (
+                        <Typography sx={{ color: '#555', fontSize: '0.72rem' }}>
+                            No content fields — this template uses only color placeholders.
+                        </Typography>
+                    ) : (
+                        <Grid container spacing={1.5}>
+                            {contentFields.map(([key, desc]) => (
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={key}>
                                     <TextField
-                                        key={key}
                                         label={key}
                                         placeholder={String(desc)}
                                         value={fieldValues[key] || ''}
@@ -280,21 +295,12 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                                         size="small"
                                         sx={inputSx}
                                     />
-                                ))}
-                            </Stack>
-                        )}
-                    </Grid>
-                </Grid>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    )}
+                </Box>
             </DialogContent>
-
-            <DialogActions sx={{ borderTop: '1px solid var(--border-color)', p: 1.5 }}>
-                <Typography sx={{ fontSize: '0.6rem', color: '#555', flex: 1 }}>
-                    Empty fields use sample values. Fill any field to override.
-                </Typography>
-                <Button onClick={onClose} sx={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>
-                    Close
-                </Button>
-            </DialogActions>
         </Dialog>
     );
 };
