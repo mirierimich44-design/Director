@@ -226,9 +226,38 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                 </Stack>
             </DialogTitle>
 
-            <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                {/* Video pane — large, 16:9 proportional */}
-                <Box sx={{ bgcolor: '#030303', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, height: 540 }}>
+            <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden', height: 560 }}>
+                {/* Left: fields one per row */}
+                <Box sx={{ width: 280, flexShrink: 0, borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <Typography sx={{ fontSize: '0.6rem', color: '#555', letterSpacing: '2px', textTransform: 'uppercase', px: 2, pt: 1.5, pb: 1, borderBottom: '1px solid #111' }}>
+                        Content Fields
+                    </Typography>
+                    <Box sx={{ overflow: 'auto', flexGrow: 1, px: 1.5, py: 1.5 }}>
+                        {contentFields.length === 0 ? (
+                            <Typography sx={{ color: '#555', fontSize: '0.72rem', px: 0.5 }}>
+                                No content fields.
+                            </Typography>
+                        ) : (
+                            <Stack spacing={1.2}>
+                                {contentFields.map(([key, desc]) => (
+                                    <TextField
+                                        key={key}
+                                        label={key}
+                                        placeholder={String(desc)}
+                                        value={fieldValues[key] || ''}
+                                        onChange={e => setFieldValues(prev => ({ ...prev, [key]: e.target.value }))}
+                                        fullWidth
+                                        size="small"
+                                        sx={inputSx}
+                                    />
+                                ))}
+                            </Stack>
+                        )}
+                    </Box>
+                </Box>
+
+                {/* Right: video preview — fills remaining width */}
+                <Box sx={{ flexGrow: 1, bgcolor: '#030303', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     {currentVideoUrl ? (
                         <video
                             key={currentVideoUrl}
@@ -245,6 +274,11 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                             <Typography sx={{ color: catColor, fontSize: '0.85rem', letterSpacing: '3px' }}>
                                 RENDERING {renderProgress}%
                             </Typography>
+                            <LinearProgress
+                                variant="determinate"
+                                value={renderProgress}
+                                sx={{ mt: 2, height: 3, borderRadius: 1, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
+                            />
                         </Box>
                     ) : renderStatus === 'error' ? (
                         <Box sx={{ textAlign: 'center', px: 4 }}>
@@ -264,40 +298,6 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                                 Click Render Video to preview
                             </Typography>
                         </Box>
-                    )}
-                </Box>
-
-                {/* Fields pane — compact grid below video */}
-                <Box sx={{ p: 2, overflow: 'auto', flexGrow: 1 }}>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
-                        <Typography sx={{ fontSize: '0.65rem', color: '#666', letterSpacing: '2px', textTransform: 'uppercase' }}>
-                            Content Fields
-                        </Typography>
-                        <Typography sx={{ fontSize: '0.6rem', color: '#444' }}>
-                            Empty fields use sample values
-                        </Typography>
-                    </Stack>
-
-                    {contentFields.length === 0 ? (
-                        <Typography sx={{ color: '#555', fontSize: '0.72rem' }}>
-                            No content fields — this template uses only color placeholders.
-                        </Typography>
-                    ) : (
-                        <Grid container spacing={1.5}>
-                            {contentFields.map(([key, desc]) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={key}>
-                                    <TextField
-                                        label={key}
-                                        placeholder={String(desc)}
-                                        value={fieldValues[key] || ''}
-                                        onChange={e => setFieldValues(prev => ({ ...prev, [key]: e.target.value }))}
-                                        fullWidth
-                                        size="small"
-                                        sx={inputSx}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
                     )}
                 </Box>
             </DialogContent>
