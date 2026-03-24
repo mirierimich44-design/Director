@@ -581,6 +581,8 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
             browserExecutable: browserExecutablePath,
         });
 
+        await fs.mkdir(dirname(outputPath), { recursive: true });
+
         await remotionRenderStill({
             composition,
             serveUrl: bundleLocation,
