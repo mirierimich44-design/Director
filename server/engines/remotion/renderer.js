@@ -586,11 +586,14 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
 
         await fs.mkdir(dirname(outputPath), { recursive: true });
 
+        // Use last frame if frame is -1 (default: capture final state of animation)
+        const resolvedFrame = frame === -1 ? composition.durationInFrames - 1 : frame;
+
         await remotionRenderStill({
             composition,
             serveUrl: bundleLocation,
             output: outputPath,
-            frame,
+            frame: resolvedFrame,
             browserExecutable: browserExecutablePath,
         });
 

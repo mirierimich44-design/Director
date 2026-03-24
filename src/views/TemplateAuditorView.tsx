@@ -76,11 +76,11 @@ function TemplateCard({ result, onFix, fixing, onAdjust }: {
                     image={result.screenshotUrl}
                     alt={result.name}
                     onError={() => setImgFailed(true)}
-                    sx={{ height: 120, objectFit: 'cover', bgcolor: '#111' }}
+                    sx={{ height: 180, objectFit: 'contain', bgcolor: '#111' }}
                 />
             ) : (
                 <Box sx={{
-                    height: 120, bgcolor: '#111', display: 'flex',
+                    height: 180, bgcolor: '#111', display: 'flex',
                     alignItems: 'center', justifyContent: 'center',
                 }}>
                     <ImageIcon sx={{ color: '#333', fontSize: 36 }} />

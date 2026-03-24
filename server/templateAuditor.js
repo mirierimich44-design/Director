@@ -166,7 +166,7 @@ export function runStaticAnalysis(code, filename) {
 
 export async function renderTemplateStill(code, outputPath) {
   const filledCode = fillPlaceholders(code)
-  await renderStill(filledCode, outputPath, 50, {})
+  await renderStill(filledCode, outputPath, -1, {})
 }
 
 export async function analyzeScreenshotWithGemini(imagePath, templateName) {
