@@ -29,8 +29,8 @@ export const FIX_MODEL    = 'gemini-2.5-flash'  // TSX code → fixed TSX code
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 export const TEMPLATES_DIR = join(__dirname, 'templates')
-export const AUDIT_DIR     = join(__dirname, '../.temp/audit')
-export const REPORT_PATH   = join(AUDIT_DIR, 'report.json')
+export const AUDIT_DIR     = join(__dirname, '../public/audit-screenshots')
+export const REPORT_PATH   = join(__dirname, '../public/audit-report.json')
 
 // ─── Sample fill values ───────────────────────────────────────────────────────
 const SAMPLE = {

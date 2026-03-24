@@ -60,6 +60,7 @@ function TemplateCard({ result, onFix, fixing, onAdjust }: {
 }) {
     const sev = maxSeverity(result.issues);
     const borderColor = sev === 'error' ? '#e63946' : sev === 'warning' ? '#f4a261' : '#2a9d5c';
+    const [imgFailed, setImgFailed] = React.useState(false);
 
     return (
         <Card sx={{
@@ -69,11 +70,12 @@ function TemplateCard({ result, onFix, fixing, onAdjust }: {
             height: '100%',
         }}>
             {/* Screenshot */}
-            {result.screenshotUrl ? (
+            {result.screenshotUrl && !imgFailed ? (
                 <CardMedia
                     component="img"
                     image={result.screenshotUrl}
                     alt={result.name}
+                    onError={() => setImgFailed(true)}
                     sx={{ height: 120, objectFit: 'cover', bgcolor: '#111' }}
                 />
             ) : (
