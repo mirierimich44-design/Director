@@ -181,9 +181,9 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="lg"
+            maxWidth="xl"
             fullWidth
-            PaperProps={{ sx: { bgcolor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderTop: `3px solid ${catColor}`, maxHeight: '90vh' } }}
+            PaperProps={{ sx: { bgcolor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderTop: `3px solid ${catColor}`, height: '92vh', maxHeight: '92vh' } }}
         >
             <DialogTitle sx={{ pb: 1 }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -208,18 +208,18 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                 </Stack>
             </DialogTitle>
 
-            <DialogContent sx={{ p: 0, display: 'flex', overflow: 'hidden' }}>
-                <Grid container sx={{ height: '100%', minHeight: 500 }}>
+            <DialogContent sx={{ p: 0, display: 'flex', overflow: 'hidden', flexGrow: 1 }}>
+                <Grid container sx={{ height: '100%' }}>
                     {/* Left: Video preview */}
-                    <Grid item xs={12} md={7} sx={{ borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', bgcolor: '#050505' }}>
-                        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: 300 }}>
+                    <Grid item xs={12} md={8} sx={{ borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', bgcolor: '#050505', height: '100%' }}>
+                        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
                             {currentVideoUrl ? (
                                 <video
                                     key={currentVideoUrl}
                                     controls
                                     autoPlay
                                     loop
-                                    style={{ width: '100%', maxHeight: 420, display: 'block' }}
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                                 >
                                     <source src={currentVideoUrl} type="video/mp4" />
                                 </video>
@@ -258,7 +258,7 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                     </Grid>
 
                     {/* Right: Field editor */}
-                    <Grid item xs={12} md={5} sx={{ overflow: 'auto', p: 2 }}>
+                    <Grid item xs={12} md={4} sx={{ overflow: 'auto', p: 2 }}>
                         <Typography sx={{ fontSize: '0.65rem', color: '#666', letterSpacing: '2px', mb: 1.5, textTransform: 'uppercase' }}>
                             Content Fields
                         </Typography>
@@ -469,6 +469,8 @@ const AnimationGeneratorView: React.FC = () => {
     const [loadError, setLoadError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState(0);
     const [generating, setGenerating] = useState<string | null>(null);
+    const [generatingAll, setGeneratingAll] = useState(false);
+    const [generateAllProgress, setGenerateAllProgress] = useState<{ done: number; total: number } | null>(null);
     const [results, setResults] = useState<Record<string, GeneratedResult>>({});
     const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null);
     const [globalCustom, setGlobalCustom] = useState('');
@@ -556,6 +558,24 @@ const AnimationGeneratorView: React.FC = () => {
         } finally {
             setGenerating(null);
         }
+    };
+
+    const handleGenerateAll = async (types: AnimationType[]) => {
+        if (generatingAll) return;
+        setGeneratingAll(true);
+        setGenerateAllProgress({ done: 0, total: types.length });
+        let done = 0;
+        for (const type of types) {
+            try {
+                await handleGenerate(type, '');
+            } catch {
+                // continue on individual failures
+            }
+            done++;
+            setGenerateAllProgress({ done, total: types.length });
+        }
+        setGeneratingAll(false);
+        setGenerateAllProgress(null);
     };
 
     const catIds = catalog ? Object.keys(catalog) : [];
@@ -659,17 +679,42 @@ const AnimationGeneratorView: React.FC = () => {
                     {/* Category header */}
                     {activeCat && activeCatId && (
                         <Box sx={{ px: 4, py: 1.5, bgcolor: catColor + '0a', borderBottom: '1px solid var(--border-color)', flexShrink: 0 }}>
-                            <Stack direction="row" alignItems="center" gap={2}>
-                                <Box sx={{ color: catColor }}>{CATEGORY_ICONS[activeCatId] || <BarChartIcon />}</Box>
-                                <Box>
-                                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 'bold', color: catColor, letterSpacing: '2px', textTransform: 'uppercase' }}>
-                                        {activeCat.label}
-                                    </Typography>
-                                    <Typography sx={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
-                                        {activeCat.types.length} animation types •{' '}
-                                        {activeCat.types.filter(t => results[t.id]).length} generated
-                                    </Typography>
-                                </Box>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Stack direction="row" alignItems="center" gap={2}>
+                                    <Box sx={{ color: catColor }}>{CATEGORY_ICONS[activeCatId] || <BarChartIcon />}</Box>
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 'bold', color: catColor, letterSpacing: '2px', textTransform: 'uppercase' }}>
+                                            {activeCat.label}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
+                                            {activeCat.types.length} animation types •{' '}
+                                            {activeCat.types.filter(t => results[t.id]).length} generated
+                                            {generateAllProgress && ` • generating ${generateAllProgress.done}/${generateAllProgress.total}…`}
+                                        </Typography>
+                                    </Box>
+                                </Stack>
+
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    disabled={generatingAll || !!generating}
+                                    onClick={() => handleGenerateAll(activeCat.types.map(t => ({ ...t, categoryId: activeCatId!, categoryLabel: activeCat.label })))}
+                                    startIcon={generatingAll
+                                        ? <CircularProgress size={12} sx={{ color: 'inherit' }} />
+                                        : <GenerateIcon sx={{ fontSize: '14px !important' }} />
+                                    }
+                                    sx={{
+                                        fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px',
+                                        color: catColor, borderColor: catColor + '88',
+                                        '&:hover': { bgcolor: catColor + '18', borderColor: catColor },
+                                        '&.Mui-disabled': { color: '#444', borderColor: '#333' },
+                                    }}
+                                >
+                                    {generatingAll
+                                        ? `${generateAllProgress?.done ?? 0} / ${generateAllProgress?.total ?? 0}`
+                                        : `GENERATE ALL ${activeCat.types.length}`
+                                    }
+                                </Button>
                             </Stack>
                         </Box>
                     )}
