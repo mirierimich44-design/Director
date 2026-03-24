@@ -78,6 +78,39 @@ const voiceoverUpload = multer({
 // ── Render job tracking ───────────────────────────────────────────────────────
 const renderJobs = new Map();
 
+// Helper: start a background video render job and return { job, videoId }
+function startVideoRenderJob(filledCode, opts = {}) {
+    const job = createRenderJob({});
+    const videoId = `anim_${job.id.substring(0, 8)}`;
+    const outputPath = join(videosDir, `${videoId}.mp4`);
+    const renderOpts = { duration: opts.duration || 10, fps: opts.fps || 30, width: opts.width || 1920, height: opts.height || 1080 };
+    job.phase = 'bundling';
+    job.status = 'processing';
+    job.message = 'Preparing render...';
+    (async () => {
+        try {
+            await renderRemotion(filledCode, outputPath, {
+                ...renderOpts,
+                onProgress: (p) => {
+                    job.phase = p.phase;
+                    job.progress = p.progress;
+                    job.message = p.phase === 'bundling' ? 'Bundling...' : `Rendering... ${p.progress}%`;
+                },
+            });
+            job.status = 'completed';
+            job.progress = 100;
+            job.url = `/videos/${videoId}.mp4`;
+            job.message = 'Done';
+        } catch (err) {
+            job.status = 'error';
+            job.error = err.message;
+            job.message = 'Render failed';
+            console.error(`❌ Video render ${job.id} failed:`, err.message);
+        }
+    })();
+    return { job, videoId };
+}
+
 function createRenderJob(data = {}) {
     const jobId = uuidv4();
     const job = { id: jobId, status: 'pending', phase: 'idle', progress: 0, message: 'Initializing...', startTime: Date.now(), ...data };
@@ -647,17 +680,24 @@ app.post('/api/animation-generator/generate', async (req, res) => {
             category: typeInfo.categoryId || 'generated',
         });
 
+        const { fillForPreview } = await import('./templateAuditor.js');
+        const tsxCode = fsSync.readFileSync(generated.tsxPath, 'utf8');
+
         // Render a still preview for the UI
         let screenshotUrl = null;
         try {
             const screenshotPath = path.join(__dirname, '../public/audit-screenshots', `${generated.template}.png`);
-            const tsxCode = fsSync.readFileSync(generated.tsxPath, 'utf8');
             await renderTemplateStill(tsxCode, screenshotPath);
             screenshotUrl = `/audit-screenshots/${generated.template}.png`;
             console.log(`   📸 Preview rendered: ${screenshotUrl}`);
         } catch (previewErr) {
             console.warn(`   ⚠️ Preview render failed: ${previewErr.message}`);
         }
+
+        // Auto-start full video render in background
+        const filledCode = fillForPreview(tsxCode, {});
+        const { job: videoJob } = startVideoRenderJob(filledCode);
+        console.log(`   🎬 Video render started: ${videoJob.id}`);
 
         res.json({
             success: true,
@@ -667,9 +707,38 @@ app.post('/api/animation-generator/generate', async (req, res) => {
             category: generated.category,
             fields: generated.fields,
             screenshotUrl,
+            videoJobId: videoJob.id,
         });
     } catch (err) {
         console.error('❌ Animation generator error:', err.stack || err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// POST /api/animation-generator/render-video — re-render with custom field values
+// Body: { templateName, fieldValues: Record<string, string> }
+app.post('/api/animation-generator/render-video', async (req, res) => {
+    try {
+        const { templateName, fieldValues = {} } = req.body;
+        if (!templateName) return res.status(400).json({ error: 'templateName is required' });
+
+        const { fillForPreview } = await import('./templateAuditor.js');
+        const tsxPath = path.join(__dirname, 'templates', `${templateName}.tsx`);
+
+        let tsxCode;
+        try {
+            tsxCode = fsSync.readFileSync(tsxPath, 'utf8');
+        } catch {
+            return res.status(404).json({ error: `Template not found: ${templateName}` });
+        }
+
+        const filledCode = fillForPreview(tsxCode, fieldValues);
+        const { job, videoId } = startVideoRenderJob(filledCode);
+        console.log(`   🎬 Re-render started: ${job.id} for ${templateName}`);
+
+        res.json({ success: true, jobId: job.id, videoId });
+    } catch (err) {
+        console.error('❌ Animation render-video error:', err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });

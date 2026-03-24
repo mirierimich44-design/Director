@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Box, Typography, Tabs, Tab, Grid, Card, CardContent, CardActions,
     Button, Chip, TextField, CircularProgress, Alert, Snackbar,
-    CardMedia, Divider, Stack, Tooltip, IconButton,
+    CardMedia, Stack, IconButton, Dialog, DialogTitle, DialogContent,
+    DialogActions, LinearProgress,
 } from '@mui/material';
 import {
     BarChart as BarChartIcon,
@@ -13,9 +14,10 @@ import {
     TrendingUp as FinanceIcon,
     AutoFixHigh as GenerateIcon,
     CheckCircle as DoneIcon,
-    ContentCopy as CopyIcon,
-    OpenInNew as OpenIcon,
     BrokenImage as ImageIcon,
+    Tune as EditIcon,
+    Videocam as VideoIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -46,6 +48,10 @@ interface GeneratedResult {
     category: string;
     fields: Record<string, string>;
     screenshotUrl: string | null;
+    videoJobId?: string;
+    videoUrl?: string;
+    videoStatus?: 'rendering' | 'done' | 'error';
+    videoProgress?: number;
 }
 
 // ── Category icon map ─────────────────────────────────────────────────────────
@@ -67,6 +73,232 @@ const CATEGORY_COLORS: Record<string, string> = {
     'finance':       '#a5d6a7',
 };
 
+const COLOR_FIELDS = new Set([
+    'BACKGROUND_COLOR', 'PRIMARY_COLOR', 'SECONDARY_COLOR', 'ACCENT_COLOR',
+    'SUPPORT_COLOR', 'TEXT_ON_PRIMARY', 'TEXT_ON_SECONDARY',
+]);
+
+// ── Edit Fields Dialog ────────────────────────────────────────────────────────
+interface EditDialogProps {
+    open: boolean;
+    onClose: () => void;
+    generated: GeneratedResult;
+    catColor: string;
+    onVideoUpdate: (url: string) => void;
+}
+
+const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated, catColor, onVideoUpdate }) => {
+    const contentFields = Object.entries(generated.fields).filter(([k]) => !COLOR_FIELDS.has(k));
+
+    const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => {
+        const init: Record<string, string> = {};
+        contentFields.forEach(([k]) => { init[k] = ''; });
+        return init;
+    });
+    const [renderStatus, setRenderStatus] = useState<'idle' | 'rendering' | 'done' | 'error'>('idle');
+    const [renderProgress, setRenderProgress] = useState(0);
+    const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(generated.videoUrl || null);
+    const [renderError, setRenderError] = useState<string | null>(null);
+    const esRef = useRef<EventSource | null>(null);
+
+    // Sync video URL when it becomes available after dialog opens
+    useEffect(() => {
+        if (generated.videoUrl && !currentVideoUrl) {
+            setCurrentVideoUrl(generated.videoUrl);
+        }
+    }, [generated.videoUrl]);
+
+    // If the auto-render is still in progress when dialog opens, show its progress
+    useEffect(() => {
+        if (!open) return;
+        if (generated.videoStatus === 'rendering' && generated.videoJobId && !currentVideoUrl) {
+            setRenderStatus('rendering');
+            setRenderProgress(generated.videoProgress || 0);
+        }
+    }, [open]);
+
+    useEffect(() => {
+        return () => { esRef.current?.close(); };
+    }, []);
+
+    const handleRender = async () => {
+        esRef.current?.close();
+        setRenderStatus('rendering');
+        setRenderProgress(0);
+        setRenderError(null);
+
+        try {
+            const res = await fetch('/api/animation-generator/render-video', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ templateName: generated.template, fieldValues }),
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Render failed');
+
+            const es = new EventSource(`/api/render-progress/${data.jobId}`);
+            esRef.current = es;
+
+            es.onmessage = (e) => {
+                const job = JSON.parse(e.data);
+                setRenderProgress(job.progress || 0);
+                if (job.status === 'completed') {
+                    setRenderStatus('done');
+                    setCurrentVideoUrl(job.url);
+                    onVideoUpdate(job.url);
+                    es.close();
+                } else if (job.status === 'error') {
+                    setRenderStatus('error');
+                    setRenderError(job.error || 'Render failed');
+                    es.close();
+                }
+            };
+            es.onerror = () => {
+                setRenderStatus('error');
+                setRenderError('Connection lost during render');
+                es.close();
+            };
+        } catch (err: unknown) {
+            setRenderStatus('error');
+            setRenderError(err instanceof Error ? err.message : String(err));
+        }
+    };
+
+    const inputSx = {
+        '& .MuiOutlinedInput-root': {
+            fontSize: '0.72rem',
+            bgcolor: '#0a0a0a',
+            '& fieldset': { borderColor: 'var(--border-color)' },
+            '&:hover fieldset': { borderColor: catColor + '66' },
+            '&.Mui-focused fieldset': { borderColor: catColor },
+        },
+        '& .MuiInputBase-input': { color: 'var(--text-primary)' },
+        '& .MuiInputLabel-root': { color: '#666', fontSize: '0.7rem' },
+        '& .MuiInputLabel-root.Mui-focused': { color: catColor },
+    };
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="lg"
+            fullWidth
+            PaperProps={{ sx: { bgcolor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderTop: `3px solid ${catColor}`, maxHeight: '90vh' } }}
+        >
+            <DialogTitle sx={{ pb: 1 }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                        <Typography sx={{ fontWeight: 'bold', color: catColor, letterSpacing: '2px', textTransform: 'uppercase', fontSize: '0.85rem' }}>
+                            Edit & Preview
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+                            {generated.template}
+                        </Typography>
+                    </Box>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={renderStatus === 'rendering' ? <CircularProgress size={12} sx={{ color: 'inherit' }} /> : <VideoIcon sx={{ fontSize: '14px !important' }} />}
+                        disabled={renderStatus === 'rendering'}
+                        onClick={handleRender}
+                        sx={{ bgcolor: catColor, color: '#000', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', '&:hover': { bgcolor: catColor + 'dd' }, '&.Mui-disabled': { bgcolor: '#333', color: '#666' } }}
+                    >
+                        {renderStatus === 'rendering' ? `RENDERING ${renderProgress}%` : 'RENDER VIDEO'}
+                    </Button>
+                </Stack>
+            </DialogTitle>
+
+            <DialogContent sx={{ p: 0, display: 'flex', overflow: 'hidden' }}>
+                <Grid container sx={{ height: '100%', minHeight: 500 }}>
+                    {/* Left: Video preview */}
+                    <Grid item xs={12} md={7} sx={{ borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', bgcolor: '#050505' }}>
+                        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: 300 }}>
+                            {currentVideoUrl ? (
+                                <video
+                                    key={currentVideoUrl}
+                                    controls
+                                    autoPlay
+                                    loop
+                                    style={{ width: '100%', maxHeight: 420, display: 'block' }}
+                                >
+                                    <source src={currentVideoUrl} type="video/mp4" />
+                                </video>
+                            ) : renderStatus === 'rendering' ? (
+                                <Box sx={{ textAlign: 'center', px: 4, width: '100%' }}>
+                                    <CircularProgress size={40} sx={{ color: catColor, mb: 2 }} />
+                                    <Typography sx={{ color: catColor, fontSize: '0.8rem', mb: 1, letterSpacing: '2px' }}>
+                                        RENDERING {renderProgress}%
+                                    </Typography>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={renderProgress}
+                                        sx={{ height: 3, borderRadius: 1, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
+                                    />
+                                </Box>
+                            ) : renderStatus === 'error' ? (
+                                <Box sx={{ textAlign: 'center', px: 4 }}>
+                                    <Typography sx={{ color: '#ef5350', fontSize: '0.75rem', mb: 1 }}>
+                                        Render failed: {renderError}
+                                    </Typography>
+                                    <Button size="small" onClick={handleRender} startIcon={<RefreshIcon />} sx={{ color: catColor, fontSize: '0.7rem' }}>
+                                        Retry
+                                    </Button>
+                                </Box>
+                            ) : generated.screenshotUrl ? (
+                                <img src={generated.screenshotUrl} alt={generated.name} style={{ width: '100%', maxHeight: 420, objectFit: 'contain' }} />
+                            ) : (
+                                <Box sx={{ textAlign: 'center', px: 4 }}>
+                                    <VideoIcon sx={{ color: '#333', fontSize: 48, mb: 1 }} />
+                                    <Typography sx={{ color: '#555', fontSize: '0.72rem' }}>
+                                        Fill fields and click Render Video
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Box>
+                    </Grid>
+
+                    {/* Right: Field editor */}
+                    <Grid item xs={12} md={5} sx={{ overflow: 'auto', p: 2 }}>
+                        <Typography sx={{ fontSize: '0.65rem', color: '#666', letterSpacing: '2px', mb: 1.5, textTransform: 'uppercase' }}>
+                            Content Fields
+                        </Typography>
+
+                        {contentFields.length === 0 ? (
+                            <Typography sx={{ color: '#555', fontSize: '0.72rem' }}>
+                                No content fields — this template uses only color placeholders.
+                            </Typography>
+                        ) : (
+                            <Stack spacing={1.2}>
+                                {contentFields.map(([key, desc]) => (
+                                    <TextField
+                                        key={key}
+                                        label={key}
+                                        placeholder={String(desc)}
+                                        value={fieldValues[key] || ''}
+                                        onChange={e => setFieldValues(prev => ({ ...prev, [key]: e.target.value }))}
+                                        fullWidth
+                                        size="small"
+                                        sx={inputSx}
+                                    />
+                                ))}
+                            </Stack>
+                        )}
+                    </Grid>
+                </Grid>
+            </DialogContent>
+
+            <DialogActions sx={{ borderTop: '1px solid var(--border-color)', p: 1.5 }}>
+                <Typography sx={{ fontSize: '0.6rem', color: '#555', flex: 1 }}>
+                    Empty fields use sample values. Fill any field to override.
+                </Typography>
+                <Button onClick={onClose} sx={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
 // ── Type Card ─────────────────────────────────────────────────────────────────
 interface TypeCardProps {
     type: AnimationType;
@@ -74,13 +306,16 @@ interface TypeCardProps {
     onGenerate: (type: AnimationType, customDesc: string) => void;
     generating: boolean;
     generated: GeneratedResult | null;
+    onEdit: (generated: GeneratedResult) => void;
 }
 
-const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generating, generated }) => {
+const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generating, generated, onEdit }) => {
     const [custom, setCustom] = useState('');
     const [imgFailed, setImgFailed] = useState(false);
 
     const isDone = generated !== null;
+    const hasVideo = isDone && !!generated.videoUrl;
+    const isRendering = isDone && generated.videoStatus === 'rendering';
 
     return (
         <Card sx={{
@@ -92,20 +327,46 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
             flexDirection: 'column',
             transition: 'border-color 0.2s',
         }}>
-            {/* Preview image */}
-            {isDone && generated.screenshotUrl && !imgFailed ? (
-                <CardMedia
-                    component="img"
-                    image={generated.screenshotUrl}
-                    alt={type.name}
-                    onError={() => setImgFailed(true)}
-                    sx={{ height: 160, objectFit: 'contain', bgcolor: '#0a0a0a' }}
-                />
-            ) : isDone ? (
-                <Box sx={{ height: 160, bgcolor: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ImageIcon sx={{ color: '#333', fontSize: 36 }} />
-                </Box>
-            ) : null}
+            {/* Preview area */}
+            {isDone && (
+                hasVideo ? (
+                    <Box sx={{ position: 'relative', height: 160, bgcolor: '#0a0a0a', overflow: 'hidden' }}>
+                        <video
+                            key={generated.videoUrl}
+                            autoPlay
+                            muted
+                            loop
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                        >
+                            <source src={generated.videoUrl} type="video/mp4" />
+                        </video>
+                    </Box>
+                ) : isRendering ? (
+                    <Box sx={{ height: 160, bgcolor: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, px: 2 }}>
+                        <CircularProgress size={22} sx={{ color: catColor }} />
+                        <Typography sx={{ fontSize: '0.6rem', color: catColor, letterSpacing: '1px' }}>
+                            RENDERING VIDEO {generated.videoProgress ? `${generated.videoProgress}%` : ''}
+                        </Typography>
+                        <LinearProgress
+                            variant={generated.videoProgress ? 'determinate' : 'indeterminate'}
+                            value={generated.videoProgress || 0}
+                            sx={{ width: '80%', height: 2, borderRadius: 1, bgcolor: '#222', '& .MuiLinearProgress-bar': { bgcolor: catColor } }}
+                        />
+                    </Box>
+                ) : generated.screenshotUrl && !imgFailed ? (
+                    <CardMedia
+                        component="img"
+                        image={generated.screenshotUrl}
+                        alt={type.name}
+                        onError={() => setImgFailed(true)}
+                        sx={{ height: 160, objectFit: 'contain', bgcolor: '#0a0a0a' }}
+                    />
+                ) : (
+                    <Box sx={{ height: 160, bgcolor: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ImageIcon sx={{ color: '#333', fontSize: 36 }} />
+                    </Box>
+                )
+            )}
 
             <CardContent sx={{ flexGrow: 1, p: 1.5, '&:last-child': { pb: 1 } }}>
                 <Stack direction="row" alignItems="flex-start" justifyContent="space-between" mb={0.5}>
@@ -165,7 +426,7 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
                 />
             </CardContent>
 
-            <CardActions sx={{ p: 1.5, pt: 0 }}>
+            <CardActions sx={{ p: 1.5, pt: 0, gap: 1 }}>
                 <Button
                     fullWidth
                     size="small"
@@ -186,6 +447,17 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
                 >
                     {generating ? 'GENERATING…' : isDone ? 'REGENERATE' : 'GENERATE'}
                 </Button>
+
+                {isDone && (
+                    <IconButton
+                        size="small"
+                        onClick={() => onEdit(generated)}
+                        title="Edit fields & preview video"
+                        sx={{ color: catColor, border: `1px solid ${catColor}66`, borderRadius: 1, flexShrink: 0, '&:hover': { bgcolor: catColor + '22' } }}
+                    >
+                        <EditIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                )}
             </CardActions>
         </Card>
     );
@@ -196,10 +468,13 @@ const AnimationGeneratorView: React.FC = () => {
     const [catalog, setCatalog] = useState<Catalog | null>(null);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [generating, setGenerating] = useState<string | null>(null); // typeId being generated
+    const [generating, setGenerating] = useState<string | null>(null);
     const [results, setResults] = useState<Record<string, GeneratedResult>>({});
     const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null);
     const [globalCustom, setGlobalCustom] = useState('');
+    const [editTarget, setEditTarget] = useState<{ typeId: string; result: GeneratedResult } | null>(null);
+
+    const eventSources = useRef<Map<string, EventSource>>(new Map());
 
     useEffect(() => {
         fetch('/api/animation-generator/types')
@@ -209,10 +484,48 @@ const AnimationGeneratorView: React.FC = () => {
                 else setLoadError(d.error || 'Failed to load catalog');
             })
             .catch(e => setLoadError(e.message));
+
+        return () => {
+            eventSources.current.forEach(es => es.close());
+        };
+    }, []);
+
+    const startVideoPolling = useCallback((typeId: string, jobId: string) => {
+        const es = new EventSource(`/api/render-progress/${jobId}`);
+        eventSources.current.set(typeId, es);
+
+        es.onmessage = (e) => {
+            const job = JSON.parse(e.data);
+            setResults(prev => {
+                const curr = prev[typeId];
+                if (!curr) return prev;
+                return {
+                    ...prev,
+                    [typeId]: {
+                        ...curr,
+                        videoStatus: job.status === 'completed' ? 'done' : job.status === 'error' ? 'error' : 'rendering',
+                        videoProgress: job.progress || 0,
+                        ...(job.url ? { videoUrl: job.url } : {}),
+                    },
+                };
+            });
+            if (job.status === 'completed' || job.status === 'error') {
+                es.close();
+                eventSources.current.delete(typeId);
+            }
+        };
+        es.onerror = () => {
+            es.close();
+            eventSources.current.delete(typeId);
+        };
     }, []);
 
     const handleGenerate = async (type: AnimationType, customDesc: string) => {
         setGenerating(type.id);
+        // Close any existing polling for this type
+        eventSources.current.get(type.id)?.close();
+        eventSources.current.delete(type.id);
+
         try {
             const body: Record<string, string> = { typeId: type.id };
             const combined = [customDesc, globalCustom].filter(Boolean).join('\n');
@@ -226,8 +539,17 @@ const AnimationGeneratorView: React.FC = () => {
             const data = await res.json();
             if (!data.success) throw new Error(data.error || 'Generation failed');
 
-            setResults(prev => ({ ...prev, [type.id]: data }));
+            const result: GeneratedResult = {
+                ...data,
+                videoStatus: data.videoJobId ? 'rendering' : undefined,
+                videoProgress: 0,
+            };
+            setResults(prev => ({ ...prev, [type.id]: result }));
             setSnack({ msg: `✓ ${data.template} generated`, severity: 'success' });
+
+            if (data.videoJobId) {
+                startVideoPolling(type.id, data.videoJobId);
+            }
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : String(err);
             setSnack({ msg: `✗ ${msg}`, severity: 'error' });
@@ -240,7 +562,6 @@ const AnimationGeneratorView: React.FC = () => {
     const activeCatId = catalog ? catIds[activeTab] : null;
     const activeCat = activeCatId && catalog ? catalog[activeCatId] : null;
     const catColor = activeCatId ? (CATEGORY_COLORS[activeCatId] || '#c9a961') : '#c9a961';
-
     const totalGenerated = Object.keys(results).length;
 
     return (
@@ -284,9 +605,7 @@ const AnimationGeneratorView: React.FC = () => {
                 </Stack>
             </Box>
 
-            {loadError && (
-                <Alert severity="error" sx={{ m: 2 }}>{loadError}</Alert>
-            )}
+            {loadError && <Alert severity="error" sx={{ m: 2 }}>{loadError}</Alert>}
 
             {!catalog && !loadError && (
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
@@ -306,8 +625,7 @@ const AnimationGeneratorView: React.FC = () => {
                             sx={{
                                 '& .MuiTab-root': {
                                     fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px',
-                                    color: 'var(--text-secondary)', minWidth: 140,
-                                    textTransform: 'uppercase',
+                                    color: 'var(--text-secondary)', minWidth: 140, textTransform: 'uppercase',
                                 },
                                 '& .Mui-selected': { color: catColor + ' !important' },
                                 '& .MuiTabs-indicator': { backgroundColor: catColor },
@@ -342,9 +660,7 @@ const AnimationGeneratorView: React.FC = () => {
                     {activeCat && activeCatId && (
                         <Box sx={{ px: 4, py: 1.5, bgcolor: catColor + '0a', borderBottom: '1px solid var(--border-color)', flexShrink: 0 }}>
                             <Stack direction="row" alignItems="center" gap={2}>
-                                <Box sx={{ color: catColor }}>
-                                    {CATEGORY_ICONS[activeCatId] || <BarChartIcon />}
-                                </Box>
+                                <Box sx={{ color: catColor }}>{CATEGORY_ICONS[activeCatId] || <BarChartIcon />}</Box>
                                 <Box>
                                     <Typography sx={{ fontSize: '0.85rem', fontWeight: 'bold', color: catColor, letterSpacing: '2px', textTransform: 'uppercase' }}>
                                         {activeCat.label}
@@ -370,6 +686,7 @@ const AnimationGeneratorView: React.FC = () => {
                                             onGenerate={handleGenerate}
                                             generating={generating === type.id}
                                             generated={results[type.id] || null}
+                                            onEdit={(gen) => setEditTarget({ typeId: type.id, result: gen })}
                                         />
                                     </Grid>
                                 ))}
@@ -377,6 +694,22 @@ const AnimationGeneratorView: React.FC = () => {
                         )}
                     </Box>
                 </>
+            )}
+
+            {/* Edit Fields Dialog */}
+            {editTarget && (
+                <EditFieldsDialog
+                    open={!!editTarget}
+                    onClose={() => setEditTarget(null)}
+                    generated={results[editTarget.typeId] ?? editTarget.result}
+                    catColor={CATEGORY_COLORS[results[editTarget.typeId]?.category || ''] || catColor}
+                    onVideoUpdate={(url) => {
+                        setResults(prev => ({
+                            ...prev,
+                            [editTarget.typeId]: { ...prev[editTarget.typeId], videoUrl: url, videoStatus: 'done', videoProgress: 100 },
+                        }));
+                    }}
+                />
             )}
 
             {/* Snackbar */}

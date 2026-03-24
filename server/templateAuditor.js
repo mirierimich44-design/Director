@@ -146,6 +146,17 @@ function fillPlaceholders(code) {
   return filled
 }
 
+// Fill placeholders with user-provided values, falling back to SAMPLE for anything missing
+export function fillForPreview(code, userValues = {}) {
+  const merged = { ...SAMPLE, ...userValues }
+  let filled = code
+  for (const [key, val] of Object.entries(merged)) {
+    filled = filled.replaceAll(`"${key}"`, JSON.stringify(String(val)))
+    filled = filled.replaceAll(`'${key}'`, JSON.stringify(String(val)))
+  }
+  return filled
+}
+
 export function runStaticAnalysis(code, filename) {
   const issues = []
   for (const rule of STATIC_RULES) {
