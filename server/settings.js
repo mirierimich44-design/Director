@@ -20,6 +20,7 @@ const DEFAULTS = {
   keys: {
     google: '',      // GOOGLE_AI_API_KEY
     anthropic: '',   // ANTHROPIC_API_KEY
+    mapbox: '',      // MAPBOX_TOKEN
   },
 
   // Language models
@@ -78,6 +79,9 @@ export function loadSettings() {
   if (!settings.keys.anthropic && process.env.ANTHROPIC_API_KEY) {
     settings.keys.anthropic = process.env.ANTHROPIC_API_KEY
   }
+  if (!settings.keys.mapbox && process.env.MAPBOX_TOKEN) {
+    settings.keys.mapbox = process.env.MAPBOX_TOKEN
+  }
 
   return settings
 }
@@ -103,8 +107,10 @@ export function getSettings() {
     keys: {
       google: maskKey(settings.keys.google),
       anthropic: maskKey(settings.keys.anthropic),
+      mapbox: maskKey(settings.keys.mapbox),
       googleSet: !!settings.keys.google,
       anthropicSet: !!settings.keys.anthropic,
+      mapboxSet: !!settings.keys.mapbox,
     },
     models: structuredClone(settings.models),
     providers: structuredClone(settings.providers),
@@ -130,6 +136,9 @@ export function updateSettings(updates) {
     if (updates.keys.anthropic !== undefined && updates.keys.anthropic !== '') {
       settings.keys.anthropic = updates.keys.anthropic
     }
+    if (updates.keys.mapbox !== undefined && updates.keys.mapbox !== '') {
+      settings.keys.mapbox = updates.keys.mapbox
+    }
   }
   if (updates.models) {
     settings.models = deepMerge(settings.models, updates.models)
@@ -150,6 +159,10 @@ export function getGoogleKey() {
 
 export function getAnthropicKey() {
   return settings.keys.anthropic || process.env.ANTHROPIC_API_KEY || ''
+}
+
+export function getMapboxToken() {
+  return settings.keys.mapbox || process.env.MAPBOX_TOKEN || ''
 }
 
 export function getLanguageModel() {

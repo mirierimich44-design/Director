@@ -1,6 +1,20 @@
 import React from 'react'
 import { useCurrentFrame, interpolate } from 'remotion'
 
+// Mapbox Static Image coordinates per country [lon, lat, zoom]
+const COUNTRY_MAPBOX: Record<string, [number, number, number]> = {
+  USA:        [-100, 38, 3],
+  UK:         [-2, 54, 5],
+  RUSSIA:     [55, 55, 2.5],
+  CHINA:      [103, 36, 3],
+  NORTHKOREA: [127.5, 40, 5],
+  IRAN:       [53, 32, 4],
+  UKRAINE:    [32, 49, 5],
+  ISRAEL:     [35, 31.5, 7],
+  KENYA:      [37.5, 0.5, 5],
+  GERMANY:    [10, 51, 5],
+}
+
 // Country border paths — simplified but recognizable outlines
 // All paths normalized to fit within a 1200x800 viewBox, centered on the country
 const COUNTRY_PATHS: Record<string, { path: string; viewBox: string; label: string }> = {
@@ -65,6 +79,12 @@ export const AnimationComponent = () => {
   // Use NORTHKOREA as default for stub rendering
   const country = COUNTRY_PATHS['NORTHKOREA']
 
+  const mapboxToken = "MAPBOX_TOKEN"
+  const mapboxCoords = COUNTRY_MAPBOX[countryKey] || COUNTRY_MAPBOX['NORTHKOREA']
+  const mapboxUrl = mapboxToken
+    ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${mapboxCoords[0]},${mapboxCoords[1]},${mapboxCoords[2]}/480x400@2x?access_token=${mapboxToken}`
+    : null
+
   // Animations
   const bgOp = interpolate(frame, [0, 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
@@ -118,6 +138,14 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 50, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <span style={{ fontSize: 26, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{titleText}</span>
       </div>
+
+      {/* Mapbox background for country area */}
+      {mapboxUrl ? (
+        <img
+          src={mapboxUrl}
+          style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4, objectFit: 'cover' }}
+        />
+      ) : null}
 
       {/* SVG — country shape centered on left portion of screen */}
       <svg

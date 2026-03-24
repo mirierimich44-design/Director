@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { getMapboxToken } from './settings.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -45,6 +46,10 @@ export function fillTemplate(templateName, themeName, contentJson) {
       code = safeReplace(code, key, val)
     }
   })
+
+  // Step 1b: Inject Mapbox token (empty string if not configured)
+  const mapboxToken = getMapboxToken()
+  code = safeReplace(code, 'MAPBOX_TOKEN', mapboxToken)
 
   // Step 2: Apply content values (with word boundary safety)
   Object.entries(contentJson).forEach(([key, val]) => {

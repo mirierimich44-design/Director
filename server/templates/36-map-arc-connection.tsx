@@ -28,6 +28,11 @@ export const AnimationComponent = () => {
       .filter(item => item.label !== '' && item.label !== 'Placeholder')
   }, [])
 
+  const mapboxToken = "MAPBOX_TOKEN"
+  const mapboxUrl = mapboxToken
+    ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/0,20,1.2/860x360@2x?access_token=${mapboxToken}`
+    : null
+
   const mapX = 100
   const mapY = 150
   const mapW = 1720
@@ -60,15 +65,21 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 50, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <span style={{ fontSize: 28, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
       </div>
+      {mapboxUrl ? (
+        <img
+          src={mapboxUrl}
+          style={{ position: 'absolute', top: mapY, left: mapX, width: mapW, height: mapH, opacity: mapOp, borderRadius: 4, objectFit: 'cover' }}
+        />
+      ) : null}
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
-        <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="CHART_BG" rx={4} opacity={mapOp} />
-        {[0.25, 0.5, 0.75].map((r, i) => (
+        {!mapboxUrl && <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="CHART_BG" rx={4} opacity={mapOp} />}
+        {!mapboxUrl && [0.25, 0.5, 0.75].map((r, i) => (
           <line key={`h${i}`} x1={mapX} y1={mapY + r * mapH} x2={mapX + mapW} y2={mapY + r * mapH} stroke="GRID_LINE" strokeWidth={1} opacity={mapOp * 0.3} />
         ))}
-        {[0.2, 0.4, 0.6, 0.8].map((r, i) => (
+        {!mapboxUrl && [0.2, 0.4, 0.6, 0.8].map((r, i) => (
           <line key={`v${i}`} x1={mapX + r * mapW} y1={mapY} x2={mapX + r * mapW} y2={mapY + mapH} stroke="GRID_LINE" strokeWidth={1} opacity={mapOp * 0.3} />
         ))}
-        {continents.map((path, i) => (
+        {!mapboxUrl && continents.map((path, i) => (
           <path key={i} d={path} fill="PANEL_LEFT_BG" stroke="LINE_STROKE" strokeWidth={1} opacity={mapOp * 0.5} />
         ))}
         <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="none" stroke="CHART_BORDER" strokeWidth={2} rx={4} opacity={mapOp} />

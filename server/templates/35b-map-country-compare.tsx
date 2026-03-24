@@ -1,6 +1,20 @@
 import React from 'react'
 import { useCurrentFrame, interpolate } from 'remotion'
 
+// Mapbox Static Image coordinates per country [lon, lat, zoom]
+const COUNTRY_MAPBOX: Record<string, [number, number, number]> = {
+  USA:        [-100, 38, 3],
+  UK:         [-2, 54, 5],
+  RUSSIA:     [55, 55, 2.5],
+  CHINA:      [103, 36, 3],
+  NORTHKOREA: [127.5, 40, 5],
+  IRAN:       [53, 32, 4],
+  UKRAINE:    [32, 49, 5],
+  ISRAEL:     [35, 31.5, 7],
+  KENYA:      [37.5, 0.5, 5],
+  GERMANY:    [10, 51, 5],
+}
+
 // Simplified country shapes for side-by-side comparison
 const SHAPES: Record<string, string> = {
   USA:        'M 40,60 L 80,50 L 130,48 L 190,50 L 230,55 L 250,75 L 248,110 L 230,140 L 190,155 L 140,160 L 90,155 L 50,138 L 30,110 L 28,80 Z',
@@ -17,6 +31,8 @@ const SHAPES: Record<string, string> = {
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
+
+  const mapboxToken = "MAPBOX_TOKEN"
 
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
@@ -70,12 +86,18 @@ export const AnimationComponent = () => {
         return (
           <div key={i} style={{ position: 'absolute', top: cardY, left: x, width: cardW, height: cardH, overflow: 'hidden', backgroundColor: 'CHART_BG', borderRadius: 8, border: '1px solid', borderColor: 'CHART_BORDER', opacity: cardOpacity, boxSizing: 'border-box' }}>
 
+            {mapboxToken ? (() => {
+              const coords = COUNTRY_MAPBOX[item.key] || COUNTRY_MAPBOX['NORTHKOREA']
+              const url = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${coords[0]},${coords[1]},${coords[2]}/250x130@2x?access_token=${mapboxToken}`
+              return <img src={url} style={{ position: 'absolute', top: 0, left: 0, width: cardW, height: 260, objectFit: 'cover', opacity: 0.7 }} />
+            })() : null}
+
             <svg viewBox="0 0 280 220" width={cardW} height={260} style={{ position: 'absolute', top: 0, left: 0 }}>
-              <rect width={280} height={220} fill="PANEL_LEFT_BG" opacity={0.5} />
-              {[55, 110, 165].map((y, gi) => (
+              {!mapboxToken && <rect width={280} height={220} fill="PANEL_LEFT_BG" opacity={0.5} />}
+              {!mapboxToken && [55, 110, 165].map((y, gi) => (
                 <line key={gi} x1={0} y1={y} x2={280} y2={y} stroke="GRID_LINE" strokeWidth={0.5} opacity={0.4} />
               ))}
-              {[70, 140, 210].map((xx, gi) => (
+              {!mapboxToken && [70, 140, 210].map((xx, gi) => (
                 <line key={gi} x1={xx} y1={0} x2={xx} y2={220} stroke="GRID_LINE" strokeWidth={0.5} opacity={0.4} />
               ))}
               <path d={shape} fill="PRIMARY_COLOR" opacity={0.3} />
