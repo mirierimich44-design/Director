@@ -313,9 +313,10 @@ interface TypeCardProps {
     generating: boolean;
     generated: GeneratedResult | null;
     onEdit: (generated: GeneratedResult) => void;
+    onDisk: boolean;
 }
 
-const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generating, generated, onEdit }) => {
+const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generating, generated, onEdit, onDisk }) => {
     const [custom, setCustom] = useState('');
     const [imgFailed, setImgFailed] = useState(false);
 
@@ -383,6 +384,14 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
                     </Box>
                 )}
 
+                {/* On-disk badge (exists in template library but not generated this session) */}
+                {onDisk && !isDone && (
+                    <Box sx={{ position: 'absolute', top: 10, left: 10, zIndex: 3, bgcolor: '#1a1a1a', border: '1px solid #333', borderRadius: 1, px: 0.8, py: 0.3, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                        <Typography sx={{ fontSize: '0.55rem', color: '#4caf50', letterSpacing: '1px', textTransform: 'uppercase' }}>on disk</Typography>
+                    </Box>
+                )}
+
                 {/* Done badge */}
                 {isDone && (
                     <Box sx={{ position: 'absolute', top: 10, right: 10, zIndex: 3, bgcolor: catColor, borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -409,6 +418,28 @@ const TypeCard: React.FC<TypeCardProps> = ({ type, catColor, onGenerate, generat
                     ))}
                 </Stack>
             </CardContent>
+
+            {/* Custom prompt */}
+            <Box sx={{ px: 2, pb: 1 }}>
+                <TextField
+                    size="small"
+                    placeholder="Optional requirements…"
+                    value={custom}
+                    onChange={e => setCustom(e.target.value)}
+                    fullWidth
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            fontSize: '0.65rem',
+                            bgcolor: '#0a0a0a',
+                            '& fieldset': { borderColor: '#1a1a1a' },
+                            '&:hover fieldset': { borderColor: catColor + '44' },
+                            '&.Mui-focused fieldset': { borderColor: catColor + '88' },
+                        },
+                        '& .MuiInputBase-input': { color: 'var(--text-secondary)', py: 0.8 },
+                        '& .MuiInputBase-input::placeholder': { color: '#3a3a3a', fontSize: '0.65rem' },
+                    }}
+                />
+            </Box>
 
             {/* Actions */}
             <CardActions sx={{ px: 2, pb: 2, pt: 0.5, gap: 1 }}>
@@ -456,12 +487,20 @@ const AnimationGeneratorView: React.FC = () => {
     const [generating, setGenerating] = useState<string | null>(null);
     const [generatingAll, setGeneratingAll] = useState(false);
     const [generateAllProgress, setGenerateAllProgress] = useState<{ done: number; total: number } | null>(null);
-    const [results, setResults] = useState<Record<string, GeneratedResult>>({});
+    const [results, setResults] = useState<Record<string, GeneratedResult>>(() => {
+        try { return JSON.parse(localStorage.getItem('animgen_results') || '{}'); } catch { return {}; }
+    });
+    const [onDiskTemplates, setOnDiskTemplates] = useState<string[]>([]);
     const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null);
     const [globalCustom, setGlobalCustom] = useState('');
     const [editTarget, setEditTarget] = useState<{ typeId: string; result: GeneratedResult } | null>(null);
 
     const eventSources = useRef<Map<string, EventSource>>(new Map());
+
+    // Persist results to localStorage whenever they change
+    useEffect(() => {
+        try { localStorage.setItem('animgen_results', JSON.stringify(results)); } catch { /* quota */ }
+    }, [results]);
 
     useEffect(() => {
         fetch('/api/animation-generator/types')
@@ -471,6 +510,11 @@ const AnimationGeneratorView: React.FC = () => {
                 else setLoadError(d.error || 'Failed to load catalog');
             })
             .catch(e => setLoadError(e.message));
+
+        fetch('/api/animation-generator/on-disk')
+            .then(r => r.json())
+            .then(d => { if (d.success) setOnDiskTemplates(d.templates); })
+            .catch(() => {});
 
         return () => {
             eventSources.current.forEach(es => es.close());
@@ -568,6 +612,12 @@ const AnimationGeneratorView: React.FC = () => {
     const activeCat = activeCatId && catalog ? catalog[activeCatId] : null;
     const catColor = activeCatId ? (CATEGORY_COLORS[activeCatId] || '#c9a961') : '#c9a961';
     const totalGenerated = Object.keys(results).length;
+
+    // Check if a type has a matching template already on disk (fuzzy: normalize name to slug)
+    const isOnDisk = (typeName: string): boolean => {
+        const slug = typeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        return onDiskTemplates.some(t => t.replace(/^\d+-/, '').includes(slug.slice(0, 12)));
+    };
 
     return (
         <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -717,6 +767,7 @@ const AnimationGeneratorView: React.FC = () => {
                                             generating={generating === type.id}
                                             generated={results[type.id] || null}
                                             onEdit={(gen) => setEditTarget({ typeId: type.id, result: gen })}
+                                            onDisk={isOnDisk(type.name)}
                                         />
                                     </Grid>
                                 ))}

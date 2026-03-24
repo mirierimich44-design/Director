@@ -655,6 +655,16 @@ app.get('/api/animation-generator/types', async (req, res) => {
     }
 });
 
+// GET /api/animation-generator/on-disk — list template names already saved to disk
+app.get('/api/animation-generator/on-disk', async (req, res) => {
+    try {
+        const { listTemplates } = await import('./templateFiller.js');
+        res.json({ success: true, templates: listTemplates() });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // POST /api/animation-generator/generate — generate a specific animation type
 // Body: { typeId, customDescription? }
 app.post('/api/animation-generator/generate', async (req, res) => {
