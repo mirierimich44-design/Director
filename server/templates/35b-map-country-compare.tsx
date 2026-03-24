@@ -32,7 +32,7 @@ const SHAPES: Record<string, string> = {
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
 
-  const mapboxToken = "MAPBOX_TOKEN"
+  const stadiaKey = "STADIA_API_KEY"
 
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
@@ -86,18 +86,18 @@ export const AnimationComponent = () => {
         return (
           <div key={i} style={{ position: 'absolute', top: cardY, left: x, width: cardW, height: cardH, overflow: 'hidden', backgroundColor: 'CHART_BG', borderRadius: 8, border: '1px solid', borderColor: 'CHART_BORDER', opacity: cardOpacity, boxSizing: 'border-box' }}>
 
-            {mapboxToken ? (() => {
+            {stadiaKey ? (() => {
               const coords = COUNTRY_MAPBOX[item.key] || COUNTRY_MAPBOX['NORTHKOREA']
-              const url = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${coords[0]},${coords[1]},${coords[2]}/250x130@2x?access_token=${mapboxToken}`
+              const url = `https://tiles.stadiamaps.com/static/alidade_smooth_dark/${coords[0]},${coords[1]},${coords[2]}/250x130@2x.png?api_key=${stadiaKey}`
               return <img src={url} style={{ position: 'absolute', top: 0, left: 0, width: cardW, height: 260, objectFit: 'cover', opacity: 0.7 }} />
             })() : null}
 
             <svg viewBox="0 0 280 220" width={cardW} height={260} style={{ position: 'absolute', top: 0, left: 0 }}>
-              {!mapboxToken && <rect width={280} height={220} fill="PANEL_LEFT_BG" opacity={0.5} />}
-              {!mapboxToken && [55, 110, 165].map((y, gi) => (
+              {!stadiaKey && <rect width={280} height={220} fill="PANEL_LEFT_BG" opacity={0.5} />}
+              {!stadiaKey && [55, 110, 165].map((y, gi) => (
                 <line key={gi} x1={0} y1={y} x2={280} y2={y} stroke="GRID_LINE" strokeWidth={0.5} opacity={0.4} />
               ))}
-              {!mapboxToken && [70, 140, 210].map((xx, gi) => (
+              {!stadiaKey && [70, 140, 210].map((xx, gi) => (
                 <line key={gi} x1={xx} y1={0} x2={xx} y2={220} stroke="GRID_LINE" strokeWidth={0.5} opacity={0.4} />
               ))}
               <path d={shape} fill="PRIMARY_COLOR" opacity={0.3} />

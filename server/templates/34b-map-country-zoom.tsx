@@ -79,10 +79,10 @@ export const AnimationComponent = () => {
   // Use NORTHKOREA as default for stub rendering
   const country = COUNTRY_PATHS['NORTHKOREA']
 
-  const mapboxToken = "MAPBOX_TOKEN"
+  const stadiaKey = "STADIA_API_KEY"
   const mapboxCoords = COUNTRY_MAPBOX[countryKey] || COUNTRY_MAPBOX['NORTHKOREA']
-  const mapboxUrl = mapboxToken
-    ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${mapboxCoords[0]},${mapboxCoords[1]},${mapboxCoords[2]}/480x400@2x?access_token=${mapboxToken}`
+  const stadiaUrl = stadiaKey
+    ? `https://tiles.stadiamaps.com/static/alidade_smooth_dark/${mapboxCoords[0]},${mapboxCoords[1]},${mapboxCoords[2]}/480x400@2x.png?api_key=${stadiaKey}`
     : null
 
   // Animations
@@ -140,9 +140,9 @@ export const AnimationComponent = () => {
       </div>
 
       {/* Mapbox background for country area */}
-      {mapboxUrl ? (
+      {stadiaUrl ? (
         <img
-          src={mapboxUrl}
+          src={stadiaUrl}
           style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4, objectFit: 'cover' }}
         />
       ) : null}

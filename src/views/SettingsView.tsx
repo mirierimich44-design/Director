@@ -21,10 +21,10 @@ interface Settings {
     keys: {
         google: string;
         anthropic: string;
-        mapbox: string;
+        stadia: string;
         googleSet: boolean;
         anthropicSet: boolean;
-        mapboxSet: boolean;
+        stadiaSet: boolean;
     };
     models: {
         language: {
@@ -58,10 +58,10 @@ const SettingsView: React.FC = () => {
     const [modelOptions, setModelOptions] = useState<ModelOptions>({ language: [], image: [], video: [] });
     const [googleKey, setGoogleKey] = useState('');
     const [anthropicKey, setAnthropicKey] = useState('');
-    const [mapboxKey, setMapboxKey] = useState('');
+    const [stadiaKey, setStadiaKey] = useState('');
     const [showGoogleKey, setShowGoogleKey] = useState(false);
     const [showAnthropicKey, setShowAnthropicKey] = useState(false);
-    const [showMapboxKey, setShowMapboxKey] = useState(false);
+    const [showStadiaKey, setShowStadiaKey] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
@@ -100,7 +100,7 @@ const SettingsView: React.FC = () => {
             // Only send keys if user typed new ones
             if (googleKey) payload.keys = { ...payload.keys, google: googleKey };
             if (anthropicKey) payload.keys = { ...(payload.keys || {}), anthropic: anthropicKey };
-            if (mapboxKey) payload.keys = { ...(payload.keys || {}), mapbox: mapboxKey };
+            if (stadiaKey) payload.keys = { ...(payload.keys || {}), stadia: stadiaKey };
 
             const res = await fetch('/api/settings', {
                 method: 'PUT',
@@ -113,7 +113,7 @@ const SettingsView: React.FC = () => {
             setSettings(data.settings);
             setGoogleKey('');
             setAnthropicKey('');
-            setMapboxKey('');
+            setStadiaKey('');
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
         } catch (err: any) {
@@ -287,57 +287,57 @@ const SettingsView: React.FC = () => {
                 </CardContent>
             </Card>
 
-            {/* Mapbox Maps */}
+            {/* Stadia Maps */}
             <Card sx={sectionSx}>
                 <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                         <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 'bold', letterSpacing: 1 }}>
-                            MAPS — MAPBOX
+                            MAPS — STADIA MAPS
                         </Typography>
                         <Chip
-                            label={settings.keys.mapboxSet ? 'CONFIGURED' : 'NOT SET'}
+                            label={settings.keys.stadiaSet ? 'CONFIGURED' : 'NOT SET'}
                             size="small"
                             sx={{
-                                bgcolor: settings.keys.mapboxSet ? 'rgba(0,200,0,0.15)' : 'rgba(255,50,50,0.15)',
-                                color: settings.keys.mapboxSet ? '#00CC00' : '#FF4444',
+                                bgcolor: settings.keys.stadiaSet ? 'rgba(0,200,0,0.15)' : 'rgba(255,50,50,0.15)',
+                                color: settings.keys.stadiaSet ? '#00CC00' : '#FF4444',
                                 fontSize: '0.65rem',
                             }}
                         />
                     </Box>
                     <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 2 }}>
-                        Mapbox powers real satellite and styled map imagery in all map templates. Without a key, templates fall back to simplified SVG maps.
+                        Stadia Maps provides real styled map imagery for all map templates — completely free, no credit card required. Without a key, templates fall back to simplified SVG maps.
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 3 }}>
                         Don't have a key?{' '}
                         <a
-                            href="https://account.mapbox.com/auth/signup/"
+                            href="https://client.stadiamaps.com/signup/"
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{ color: 'var(--accent-gold)', textDecoration: 'none', fontWeight: 'bold' }}
                         >
-                            Sign up at mapbox.com →
+                            Sign up free at stadiamaps.com →
                         </a>
-                        {' '}— Free tier includes 50,000 map loads/month. Copy your public token (starts with <code style={{ color: 'var(--text-primary)', background: 'rgba(255,255,255,0.07)', padding: '1px 5px', borderRadius: 3 }}>pk.</code>) from the Mapbox dashboard.
+                        {' '}— 200,000 map loads/month free, no credit card needed. After signing up, create a property and copy the API key from your dashboard.
                     </Typography>
 
-                    {settings.keys.mapbox && (
+                    {settings.keys.stadia && (
                         <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mb: 1, display: 'block' }}>
-                            Current: {settings.keys.mapbox}
+                            Current: {settings.keys.stadia}
                         </Typography>
                     )}
                     <TextField
                         fullWidth
                         size="small"
-                        type={showMapboxKey ? 'text' : 'password'}
-                        value={mapboxKey}
-                        onChange={(e) => setMapboxKey(e.target.value)}
-                        placeholder="Enter Mapbox public token (pk.eyJ1...)"
+                        type={showStadiaKey ? 'text' : 'password'}
+                        value={stadiaKey}
+                        onChange={(e) => setStadiaKey(e.target.value)}
+                        placeholder="Enter Stadia Maps API key"
                         sx={textFieldSx}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    <IconButton size="small" onClick={() => setShowMapboxKey(!showMapboxKey)} sx={{ color: 'var(--text-secondary)' }}>
-                                        {showMapboxKey ? <HideIcon fontSize="small" /> : <ShowIcon fontSize="small" />}
+                                    <IconButton size="small" onClick={() => setShowStadiaKey(!showStadiaKey)} sx={{ color: 'var(--text-secondary)' }}>
+                                        {showStadiaKey ? <HideIcon fontSize="small" /> : <ShowIcon fontSize="small" />}
                                     </IconButton>
                                 </InputAdornment>
                             ),
