@@ -1,0 +1,22 @@
+{
+  "template": "157-archive-newspaper-reel",
+  "name": "Archive Newspaper Reel",
+  "description": "A 3D-perspective vintage newspaper reel that slides through headlines and zooms into a specific historical report.",
+  "category": "storytelling",
+  "duration": 15,
+  "tags": [
+    "newspaper",
+    "archive",
+    "history",
+    "headlines",
+    "vintage"
+  ],
+  "fields": {
+    "HEADLINE_1": "Background headline 1",
+    "HEADLINE_2": "Background headline 2",
+    "TARGET_HEADLINE": "The main headline to highlight",
+    "PUBLICATION_NAME": "Name of the newspaper (e.g. THE DAILY POST)",
+    "DATE_TEXT": "Archive date",
+    "IMAGE_URL": "Main archive photo URL"
+  }
+}

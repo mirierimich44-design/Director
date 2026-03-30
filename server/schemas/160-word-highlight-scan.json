@@ -1,0 +1,23 @@
+{
+    "template":  "160-word-highlight-scan",
+    "name":  "Word Highlight Scan",
+    "description":  "A sequence of words revealed one by one with a subtle scale and fade animation, emphasizing a process or progression.",
+    "category":  "scene-generated",
+    "duration":  15,
+    "tags":  [
+                 "text",
+                 "reveal",
+                 "process",
+                 "sequence"
+             ],
+    "fields":  {
+                   "WORD_1":  "First word in sequence",
+                   "WORD_2":  "Second word in sequence",
+                   "WORD_3":  "Third word in sequence",
+                   "WORD_4":  "Fourth word in sequence",
+                   "WORD_5":  "Fifth word in sequence",
+                   "WORD_6":  "Sixth word in sequence",
+                   "WORD_7":  "Seventh word in sequence",
+                   "WORD_8":  "Eighth word in sequence"
+               }
+}

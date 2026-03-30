@@ -1,0 +1,23 @@
+{
+    "template":  "106-word-highlight-scan",
+    "name":  "Word Highlight Scan",
+    "description":  "A sequence of words that highlight one by one with a subtle glow effect, simulating a scanning or reading process.",
+    "category":  "text-reveal",
+    "duration":  15,
+    "tags":  [
+                 "text",
+                 "reveal",
+                 "scanner",
+                 "highlight"
+             ],
+    "fields":  {
+                   "WORD_1":  "First word to display",
+                   "WORD_2":  "Second word to display",
+                   "WORD_3":  "Third word to display",
+                   "WORD_4":  "Fourth word to display",
+                   "WORD_5":  "Fifth word to display",
+                   "WORD_6":  "Sixth word to display",
+                   "WORD_7":  "Seventh word to display",
+                   "WORD_8":  "Eighth word to display"
+               }
+}

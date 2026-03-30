@@ -1,0 +1,19 @@
+{
+    "template":  "108-stamped-verdict",
+    "name":  "Stamped Verdict",
+    "description":  "A high-impact rubber stamp animation with rotation and scale overshoot, suitable for status indicators like CLASSIFIED or BREACH.",
+    "category":  "text-reveal",
+    "duration":  15,
+    "tags":  [
+                 "stamp",
+                 "verdict",
+                 "status",
+                 "impact"
+             ],
+    "fields":  {
+                   "STAMP_TEXT":  "The main text inside the stamp (e.g., CLASSIFIED)",
+                   "SUB_TEXT":  "Secondary descriptive text below the stamp",
+                   "DATE_TEXT":  "Date or timestamp label",
+                   "ID_TEXT":  "Reference ID or classification code"
+               }
+}

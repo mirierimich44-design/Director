@@ -1,0 +1,19 @@
+{
+    "template":  "118-classified-stamp",
+    "name":  "Classified Document Stamp",
+    "description":  "A professional document reveal with a high-impact animated stamp effect",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "document",
+                 "security",
+                 "stamp",
+                 "redacted"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main document header",
+                   "REF_NUMBER":  "Reference code or date",
+                   "BODY_TEXT":  "Main body content of the document",
+                   "STATUS_TEXT":  "The text on the stamp (e.g. CLASSIFIED)"
+               }
+}

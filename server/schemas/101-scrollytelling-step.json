@@ -1,0 +1,22 @@
+{
+    "template":  "101-scrollytelling-step",
+    "name":  "Scrollytelling Step Reveal",
+    "description":  "A sequential, numbered step-by-step reveal animation where each step slides in and dims as the next appears.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "process",
+                 "steps",
+                 "narrative"
+             ],
+    "fields":  {
+                   "STEP_TITLE_1":  "Title for step 1",
+                   "STEP_BODY_1":  "Description for step 1",
+                   "STEP_TITLE_2":  "Title for step 2",
+                   "STEP_BODY_2":  "Description for step 2",
+                   "STEP_TITLE_3":  "Title for step 3",
+                   "STEP_BODY_3":  "Description for step 3",
+                   "STEP_TITLE_4":  "Title for step 4",
+                   "STEP_BODY_4":  "Description for step 4"
+               }
+}

@@ -1,0 +1,20 @@
+{
+    "template":  "153-debt-payoff-timeline",
+    "name":  "Debt Payoff Timeline",
+    "description":  "A stacked bar chart visualizing the reduction of debt over time, splitting principal and interest payments.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "debt",
+                 "amortization",
+                 "charts"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Legend label for principal",
+                   "LABEL_2":  "Legend label for interest",
+                   "STAT_VALUE_1":  "Primary metric highlight",
+                   "STAT_VALUE_2":  "Secondary metric highlight"
+               }
+}

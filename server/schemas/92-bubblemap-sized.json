@@ -1,0 +1,22 @@
+{
+    "template":  "92-bubblemap-sized",
+    "name":  "Bubble Map Sized",
+    "description":  "Geographic or abstract map with circles sized by value, featuring staggered entrance animations.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "map",
+                 "bubbles",
+                 "data",
+                 "intensity"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Label for bubble 1",
+                   "LABEL_2":  "Label for bubble 2",
+                   "LABEL_3":  "Label for bubble 3",
+                   "LABEL_4":  "Label for bubble 4",
+                   "LABEL_5":  "Label for bubble 5",
+                   "LABEL_6":  "Label for bubble 6"
+               }
+}

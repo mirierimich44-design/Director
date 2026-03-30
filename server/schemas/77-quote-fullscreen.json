@@ -1,15 +1,19 @@
 {
-  "template": "77-quote-fullscreen",
-  "name": "Fullscreen Quote",
-  "description": "Full-screen quote card with large pull quote, attribution name, role, and date tag",
-  "category": "quote",
-  "duration": 8,
-  "tags": ["quote", "attribution", "statement"],
-  "fields": {
-    "WORD_1": "The main quote text, e.g. 'We had no idea they had been inside our network for nine months.'",
-    "WORD_2": "Optional second line or continuation of the quote, or leave as empty context",
-    "LABEL_1": "Name of the person being quoted, e.g. 'MGM RESORTS CEO'",
-    "LABEL_2": "Their role or context, e.g. 'Testimony to Senate Committee, 2024'",
-    "SUB_LABEL": "Date or tag shown top right, e.g. 'SEPT 2023'"
-  }
+    "template":  "77-quote-fullscreen",
+    "name":  "Fullscreen Quote",
+    "description":  "Full-screen quote card with large pull quote, attribution name, role, and date tag",
+    "category":  "quote",
+    "duration":  15,
+    "tags":  [
+                 "quote",
+                 "attribution",
+                 "statement"
+             ],
+    "fields":  {
+                   "WORD_1":  "The main quote text, e.g. \u0027We had no idea they had been inside our network for nine months.\u0027",
+                   "WORD_2":  "Optional second line or continuation of the quote, or leave as empty context",
+                   "LABEL_1":  "Name of the person being quoted, e.g. \u0027MGM RESORTS CEO\u0027",
+                   "LABEL_2":  "Their role or context, e.g. \u0027Testimony to Senate Committee, 2024\u0027",
+                   "SUB_LABEL":  "Date or tag shown top right, e.g. \u0027SEPT 2023\u0027"
+               }
 }

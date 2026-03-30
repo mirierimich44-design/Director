@@ -1,0 +1,20 @@
+{
+    "template":  "126-memory-map",
+    "name":  "Memory Map Visualization",
+    "description":  "Visualizes process memory segments as stacked blocks with sequential reveal animations.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "memory",
+                 "security",
+                 "process",
+                 "segments"
+             ],
+    "fields":  {
+                   "TEXT_SEGMENT":  "Label for the text segment",
+                   "DATA_SEGMENT":  "Label for the data segment",
+                   "HEAP_SEGMENT":  "Label for the heap segment",
+                   "STACK_SEGMENT":  "Label for the stack segment",
+                   "INJECTED_CODE":  "Label for the injected code segment"
+               }
+}

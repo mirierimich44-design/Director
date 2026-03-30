@@ -1,0 +1,20 @@
+{
+    "template":  "143-portfolio-allocation",
+    "name":  "Portfolio Allocation Donut",
+    "description":  "Animated donut chart for asset allocation with staggered legend reveals",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "chart",
+                 "allocation",
+                 "donut"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Segment 1 name",
+                   "LABEL_2":  "Segment 2 name",
+                   "LABEL_3":  "Segment 3 name",
+                   "LABEL_4":  "Segment 4 name"
+               }
+}

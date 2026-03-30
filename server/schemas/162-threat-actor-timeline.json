@@ -1,0 +1,30 @@
+{
+    "template":  "162-threat-actor-timeline",
+    "name":  "Threat Actor Dwell Timeline",
+    "description":  "A vertical timeline visualization showing the progression of a threat actor through different sectors and techniques over time.",
+    "category":  "scene-generated",
+    "duration":  15,
+    "tags":  [
+                 "timeline",
+                 "security",
+                 "threat-actor",
+                 "dwell-time"
+             ],
+    "fields":  {
+                   "DATE_1":  "Date/Month for step 1",
+                   "SECTOR_1":  "Sector/Action for step 1",
+                   "TECH_1":  "Technique for step 1",
+                   "DATE_2":  "Date/Month for step 2",
+                   "SECTOR_2":  "Sector/Action for step 2",
+                   "TECH_2":  "Technique for step 2",
+                   "DATE_3":  "Date/Month for step 3",
+                   "SECTOR_3":  "Sector/Action for step 3",
+                   "TECH_3":  "Technique for step 3",
+                   "DATE_4":  "Date/Month for step 4",
+                   "SECTOR_4":  "Sector/Action for step 4",
+                   "TECH_4":  "Technique for step 4",
+                   "DATE_5":  "Date/Month for step 5",
+                   "SECTOR_5":  "Sector/Action for step 5",
+                   "TECH_5":  "Technique for step 5"
+               }
+}

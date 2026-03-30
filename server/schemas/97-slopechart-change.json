@@ -1,0 +1,22 @@
+{
+    "template":  "97-slopechart-change",
+    "name":  "Slope Chart Change",
+    "description":  "A comparative slope chart showing change between two time points across multiple categories.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "data",
+                 "comparison",
+                 "slope",
+                 "trends"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "AXIS_LEFT":  "Label for left axis",
+                   "AXIS_RIGHT":  "Label for right axis",
+                   "VAL_1_START":  "Value 1 start",
+                   "VAL_1_END":  "Value 1 end",
+                   "LABEL_1":  "Category label 1",
+                   "SOURCE_TEXT":  "Data source attribution"
+               }
+}

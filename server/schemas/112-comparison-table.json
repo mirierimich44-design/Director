@@ -1,0 +1,22 @@
+{
+    "template":  "112-comparison-table",
+    "name":  "Comparison Table",
+    "description":  "Animated feature comparison table with staggered row reveals",
+    "category":  "layout",
+    "duration":  15,
+    "tags":  [
+                 "table",
+                 "comparison",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main table title",
+                   "HEADER_1":  "Column 1 header",
+                   "HEADER_2":  "Column 2 header",
+                   "HEADER_3":  "Column 3 header",
+                   "ROW_LABEL_1":  "Row 1 label",
+                   "VAL_1_1":  "Row 1 Col 1 value",
+                   "VAL_1_2":  "Row 1 Col 2 value",
+                   "VAL_1_3":  "Row 1 Col 3 value"
+               }
+}

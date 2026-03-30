@@ -1,0 +1,22 @@
+{
+    "template":  "91-radarchart-spider",
+    "name":  "Radar Chart Spider",
+    "description":  "A dynamic multi-axis radar chart for comparing 5-6 dimensions of data.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "radar",
+                 "chart",
+                 "comparison",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "AXIS_1":  "Label for dimension 1",
+                   "AXIS_2":  "Label for dimension 2",
+                   "AXIS_3":  "Label for dimension 3",
+                   "AXIS_4":  "Label for dimension 4",
+                   "AXIS_5":  "Label for dimension 5",
+                   "AXIS_6":  "Label for dimension 6"
+               }
+}

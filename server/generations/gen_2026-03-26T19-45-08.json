@@ -1,0 +1,178 @@
+{
+  "timestamp": "2026-03-26T19:45:08.341Z",
+  "scriptLength": 1877,
+  "scriptPreview": "By sunrise, Stryker was in total darkness.\nManufacturing lines were motionless. Login screens displayed the attacker's logo where corporate interfaces used to be. Hospital supply chain managers across",
+  "scriptFull": "By sunrise, Stryker was in total darkness.\nManufacturing lines were motionless. Login screens displayed the attacker's logo where corporate interfaces used to be. Hospital supply chain managers across the United States were realizing that surgical equipment they had ordered was not coming — and making calls to emergency backup suppliers they hoped they would never need.\nA healthcare professional at a major university medical center told journalists they were unable to order surgical supplies they normally sourced through Stryker. 'This is a real-world supply chain attack,' they said. 'Pretty much every hospital in the US that performs surgeries uses their supplies.'\nBut here is the detail that rarely made the headlines: the operating theatres kept running. Stryker's actual medical hardware — the Mako surgical robots, the LIFEPAK defibrillators, the Vocera clinical communication platforms — had been architecturally separated from the corporate Microsoft environment. They were air-gapped. The attackers had destroyed the company's entire digital infrastructure and could not touch a single device in a single operating room. Surgeons carried surgical plans on encrypted drives. Procedures continued. The corporate network was ash. The instruments were fine.\nThe LifeNet disruption was different. LifeNet is not a device — it is a transmission service, sitting in the layer between the paramedic in the ambulance and the physician waiting at the hospital. When hospitals began disconnecting from Stryker's systems as a precaution, that layer went dark. Paramedics could still read a patient's ECG. They just couldn't transmit it. They described the findings over radio instead. The device worked. The connection did not.\nAnd the voicemail at Stryker's headquarters still said: 'We are currently experiencing a building emergency. Please try your call again later.'\n",
+  "totalScenes": 10,
+  "templateCount": 8,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "By sunrise, Stryker was in total darkness. Manufacturing lines were motionless.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Urgent notification of a system-wide failure at Stryker.",
+      "content": {
+        "TITLE_TEXT": "SYSTEM FAILURE",
+        "SUBTITLE_TEXT": "STRYKER INFRASTRUCTURE",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "06:00 AM",
+        "DESCRIPTION_TEXT": "Manufacturing lines offline."
+      },
+      "duration": 8
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "Login screens displayed the attacker's logo where corporate interfaces used to be.",
+      "template": "110-scramble-decode",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the defacement of corporate login portals.",
+      "content": {
+        "LINE_1": "ACCESS DENIED",
+        "LINE_2": "ENCRYPTION ACTIVE",
+        "LINE_3": "SYSTEM COMPROMISED",
+        "LINE_4": "CONTACT ADMIN",
+        "LINE_5": "LOGO_DISPLAYED",
+        "LINE_6": "INTERFACE_LOCKED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Hospital supply chain managers across the United States were realizing that surgical equipment they had ordered was not coming — and making calls to emergency backup suppliers they hoped they would never need.",
+      "template": "34b-map-country-zoom",
+      "theme": "COLD",
+      "reasoning": "Geographic impact of the supply chain disruption across the US.",
+      "content": {
+        "TITLE_TEXT": "SUPPLY CHAIN IMPACT",
+        "MAP_LABEL_1": "USA",
+        "TAG_1": "CRITICAL",
+        "STAT_VALUE_1": "100%",
+        "LABEL_1": "ORDER DELAY",
+        "STAT_VALUE_2": "48H",
+        "LABEL_2": "BACKUP ACTIVATION",
+        "CONTEXT_TEXT": "Hospitals seeking emergency suppliers."
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "3D_RENDER",
+      "script": "A healthcare professional at a major university medical center told journalists they were unable to order surgical supplies they normally sourced through Stryker. 'This is a real-world supply chain attack,' they said. 'Pretty much every hospital in the US that performs surgeries uses their supplies.'",
+      "prompt": "Photorealistic close-up of a sterile, modern hospital office desk with a computer monitor showing a blank order screen, soft ambient lighting, professional medical environment, no people, high detail.",
+      "environment": "hospital-office",
+      "camera": "close-up",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "Real-world supply chain attack",
+        "attribution": "Healthcare Administrator",
+        "tone": "#FF6600"
+      },
+      "duration": 15
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "But here is the detail that rarely made the headlines: the operating theatres kept running.",
+      "template": "158-chapter-word-drop",
+      "theme": "CLEAN",
+      "reasoning": "Dramatic transition to the positive outcome in operating rooms.",
+      "content": {
+        "CHAPTER_WORD": "CONTINUITY",
+        "CHAPTER_SUB": "OPERATING THEATRES",
+        "CONTEXT_TEXT": "Hardware remained operational."
+      },
+      "duration": 8,
+      "generated": true
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Stryker's actual medical hardware — the Mako surgical robots, the LIFEPAK defibrillators, the Vocera clinical communication platforms — had been architecturally separated from the corporate Microsoft environment. They were air-gapped.",
+      "template": "120-lateral-movement",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the network architecture and the air-gap separation.",
+      "content": {
+        "TITLE_TEXT": "NETWORK ISOLATION",
+        "SUB_TEXT": "AIR-GAPPED HARDWARE",
+        "SOURCE_NODE": "CORPORATE",
+        "HOP_1": "FIREWALL",
+        "HOP_2": "ISOLATION",
+        "HOP_3": "AIR-GAP",
+        "TARGET_NODE": "MEDICAL_DEVICES"
+      },
+      "duration": 12
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "The attackers had destroyed the company's entire digital infrastructure and could not touch a single device in a single operating room. Surgeons carried surgical plans on encrypted drives. Procedures continued. The corporate network was ash. The instruments were fine.",
+      "template": "9-split-2panel",
+      "theme": "TECHNICAL",
+      "reasoning": "Contrasting the destroyed corporate network with the functional medical instruments.",
+      "content": {
+        "LEFT_HEAD": "CORPORATE",
+        "LEFT_SUB1": "INFRASTRUCTURE",
+        "LEFT_SUB2": "DESTROYED",
+        "LEFT_SUB3": "NETWORK ASH",
+        "RIGHT_HEAD": "MEDICAL",
+        "RIGHT_SUB1": "AIR-GAPPED",
+        "RIGHT_SUB2": "OPERATIONAL",
+        "RIGHT_SUB3": "INSTRUMENTS FINE",
+        "VERDICT_TEXT": "SYSTEM SEGREGATION SUCCESS"
+      },
+      "duration": 12
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "The LifeNet disruption was different. LifeNet is not a device — it is a transmission service, sitting in the layer between the paramedic in the ambulance and the physician waiting at the hospital.",
+      "template": "93-sankey-flow",
+      "theme": "COLD",
+      "reasoning": "Visualizing the transmission service flow between ambulance and hospital.",
+      "content": {
+        "SOURCE_NAME": "PARAMEDIC",
+        "TARGET_NAME": "PHYSICIAN",
+        "VALUE_1": "ECG DATA",
+        "VALUE_2": "LIFENET",
+        "VALUE_3": "TRANSMISSION",
+        "VALUE_4": "SERVICE"
+      },
+      "duration": 10
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "When hospitals began disconnecting from Stryker's systems as a precaution, that layer went dark. Paramedics could still read a patient's ECG. They just couldn't transmit it. They described the findings over radio instead. The device worked. The connection did not.",
+      "template": "123-c2-beacon",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the broken connection between the device and the hospital.",
+      "content": {
+        "HOST_NAME": "AMBULANCE_ECG",
+        "C2_SERVER": "HOSPITAL_HUB",
+        "IP_ADDRESS": "DISCONNECTED",
+        "STATUS_TEXT": "CONNECTION FAILED"
+      },
+      "duration": 12
+    },
+    {
+      "index": 10,
+      "type": "3D_RENDER",
+      "script": "And the voicemail at Stryker's headquarters still said: 'We are currently experiencing a building emergency. Please try your call again later.'",
+      "prompt": "Photorealistic wide shot of a dark, empty corporate lobby with a single glowing emergency exit sign, minimalist architecture, high-end office furniture, cinematic shadows, no people, high detail.",
+      "environment": "corporate-lobby",
+      "camera": "zoom-out",
+      "motion": "zoom-out",
+      "lower_third": {
+        "text": "Building emergency in progress",
+        "attribution": "Stryker HQ",
+        "tone": "#FF0000"
+      },
+      "duration": 10
+    }
+  ]
+}

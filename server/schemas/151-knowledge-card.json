@@ -1,0 +1,24 @@
+{
+  "template": "151-knowledge-card",
+  "name": "Wikipedia Knowledge Card",
+  "description": "A high-fidelity encyclopedia-style summary card for a person, company, or object.",
+  "category": "storytelling",
+  "duration": 15,
+  "tags": [
+    "knowledge",
+    "wikipedia",
+    "profile",
+    "facts",
+    "summary"
+  ],
+  "fields": {
+    "SUBJECT_NAME": "The main name of the subject",
+    "SUBTITLE": "Short description (e.g., 'American Entrepreneur')",
+    "IMAGE_URL": "URL or path to the subject image",
+    "FACT_1_LABEL": "Label for first fact (e.g. Born)",
+    "FACT_1_VALUE": "Value for first fact (e.g. 1971)",
+    "FACT_2_LABEL": "Label for second fact",
+    "FACT_2_VALUE": "Value for second fact",
+    "DESCRIPTION": "Brief biographical or descriptive text"
+  }
+}

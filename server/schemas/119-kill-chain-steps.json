@@ -1,0 +1,24 @@
+{
+    "template":  "119-kill-chain-steps",
+    "name":  "Kill Chain Steps",
+    "description":  "A sequential 7-step process visualization with staggered icon reveals and descriptive labels.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "security",
+                 "process",
+                 "flow",
+                 "cyber"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main title of the process",
+                   "STEP_1":  "Label for step 1",
+                   "STEP_2":  "Label for step 2",
+                   "STEP_3":  "Label for step 3",
+                   "STEP_4":  "Label for step 4",
+                   "STEP_5":  "Label for step 5",
+                   "STEP_6":  "Label for step 6",
+                   "STEP_7":  "Label for step 7",
+                   "FOOTER_TEXT":  "Summary or concluding note"
+               }
+}

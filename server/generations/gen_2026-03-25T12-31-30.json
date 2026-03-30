@@ -1,0 +1,169 @@
+{
+  "timestamp": "2026-03-25T12:31:30.850Z",
+  "scriptLength": 2053,
+  "scriptPreview": "It's just past three in the morning and an employee at Stryker Corporation's Irish hub reaches for their phone on the nightstand and finds it halfway through a factory reset. They haven't touched it —",
+  "scriptFull": "It's just past three in the morning and an employee at Stryker Corporation's Irish hub reaches for their phone on the nightstand and finds it halfway through a factory reset. They haven't touched it — they went to bed with a full battery and a lock screen, and now there's a progress bar moving steadily toward the end, and there is nothing they can do about it because by the time you're reading a factory reset in progress, it's already been authorised somewhere else, on a server you'll never reach in time.\nThey get up and go to the kitchen where the laptop is open on the table, and the screen is doing the same thing.\nThey are a senior IT administrator at one of the largest medical technology companies in the world, and they know exactly what this means — not just for their own devices, but for every device connected to the same management system, in every office, in every country. They grab a phone that isn't enrolled in the corporate network and start making calls.\nBy sunrise, across nearly eighty countries — on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who had simply connected them to the work network and never thought about it again — two hundred thousand devices had been wiped clean, with no ransom note, no warning, and no countdown timer, just a single command issued in the middle of the night by someone who had stolen the one credential that had power over all of it.\nWhen markets opened that morning, Stryker's stock dropped nearly four percent within hours, and kept falling — shedding roughly eight billion dollars in value over the days that followed.\nThis is the story of the most surgical corporate cyberattack ever documented — a wiper attack conducted entirely without a wiper, beginning not with a line of malicious code but with a stolen key and a door that should never have opened from the outside. Brian Krebs broke this story, and everything you're about to hear is documented — sources and technical references are in the description.",
+  "totalScenes": 9,
+  "templateCount": 6,
+  "renderCount": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "It's just past three in the morning and an employee at Stryker Corporation's Irish hub reaches for their phone on the nightstand and finds it halfway through a factory reset.",
+      "prompt": "A dimly lit bedroom at 3 AM, soft moonlight filtering through curtains. A smartphone lies on a wooden nightstand, its screen glowing with a progress bar indicating a factory reset. Photorealistic, cinematic, shallow depth of field, focus on the screen.",
+      "environment": "bedroom",
+      "camera": "close-up",
+      "motion": "Slow dolly forward toward the phone screen, capturing the progress bar's movement.",
+      "lower_third": {
+        "text": "3:00 AM - IRISH HUB",
+        "attribution": "STRYKER CORPORATION",
+        "tone": "#FF6600"
+      },
+      "duration": 6
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "They haven't touched it — they went to bed with a full battery and a lock screen, and now there's a progress bar moving steadily toward the end, and there is nothing they can do about it because by the time you're reading a factory reset in progress, it's already been authorised somewhere else, on a server you'll never reach in time.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the urgency and the automated nature of the remote command.",
+      "content": {
+        "TITLE_TEXT": "REMOTE COMMAND EXECUTED",
+        "SUBTITLE_TEXT": "UNAUTHORIZED FACTORY RESET",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "03:14:22 UTC",
+        "DESCRIPTION_TEXT": "SERVER-SIDE AUTHORIZATION DETECTED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 3,
+      "type": "3D_RENDER",
+      "script": "They get up and go to the kitchen where the laptop is open on the table, and the screen is doing the same thing.",
+      "prompt": "A modern, dark kitchen at night. A laptop sits open on a granite island, the screen displaying a system wipe interface. Cold blue light from the screen illuminates the surrounding surface. High detail, cinematic atmosphere.",
+      "environment": "kitchen",
+      "camera": "medium shot",
+      "motion": "Slow pan across the kitchen island toward the glowing laptop screen.",
+      "lower_third": {
+        "text": "SYSTEM WIPE IN PROGRESS",
+        "attribution": "IT INFRASTRUCTURE",
+        "tone": "#FF6600"
+      },
+      "duration": 6
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "They are a senior IT administrator at one of the largest medical technology companies in the world, and they know exactly what this means — not just for their own devices, but for every device connected to the same management system, in every office, in every country.",
+      "template": "76-organization-card",
+      "theme": "COLD",
+      "reasoning": "Establishing the scale of the victim organization and the scope of the threat.",
+      "content": {
+        "TITLE_TEXT": "STRYKER CORPORATION",
+        "LABEL_1": "INDUSTRY",
+        "LABEL_2": "GLOBAL REACH",
+        "LABEL_3": "SYSTEM IMPACT",
+        "TAG_1": "MEDICAL TECH",
+        "TAG_2": "80+ COUNTRIES",
+        "TAG_3": "MANAGEMENT SYSTEM",
+        "STAT_VALUE_1": "GLOBAL",
+        "STAT_VALUE_2": "200K+",
+        "STAT_VALUE_3": "CRITICAL",
+        "CONTEXT_TEXT": "Senior IT administrator identifies systemic compromise across global infrastructure."
+      },
+      "duration": 8
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "They grab a phone that isn't enrolled in the corporate network and start making calls.",
+      "prompt": "A hand holding a personal smartphone in a dark room, the screen showing a call interface. The phone is disconnected from any corporate Wi-Fi. Cinematic, high contrast, focus on the hand and the device.",
+      "environment": "home office",
+      "camera": "close-up",
+      "motion": "Static shot with subtle camera shake to convey urgency.",
+      "lower_third": {
+        "text": "EMERGENCY OUT-OF-BAND COMMS",
+        "attribution": "IT ADMINISTRATOR",
+        "tone": "#FF6600"
+      },
+      "duration": 5
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "By sunrise, across nearly eighty countries — on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who had simply connected them to the work network and never thought about it again — two hundred thousand devices had been wiped clean, with no ransom note, no warning, and no countdown timer, just a single command issued in the middle of the night by someone who had stolen the one credential that had power over all of it.",
+      "template": "37-map-spread",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the massive geographic scale of the device wipe.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL DEVICE WIPE",
+        "ORIGIN_LABEL": "CENTRAL CREDENTIAL",
+        "COUNT_VALUE": "200,000",
+        "COUNT_LABEL": "DEVICES WIPED",
+        "MAP_LABEL_1": "80 COUNTRIES",
+        "MAP_LABEL_2": "NO RANSOM",
+        "DURATION_SECONDS": "5"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "When markets opened that morning, Stryker's stock dropped nearly four percent within hours, and kept falling — shedding roughly eight billion dollars in value over the days that followed.",
+      "template": "02-statcluster-2box",
+      "theme": "CLEAN",
+      "reasoning": "Displaying the financial impact of the breach.",
+      "content": {
+        "TITLE_TEXT": "MARKET IMPACT",
+        "STAT_VALUE_1": "4%",
+        "LABEL_1": "STOCK DROP",
+        "SUB_1": "INITIAL HOURS",
+        "STAT_VALUE_2": "$8B",
+        "LABEL_2": "VALUE LOST",
+        "SUB_2": "TOTAL IMPACT"
+      },
+      "duration": 7
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "This is the story of the most surgical corporate cyberattack ever documented — a wiper attack conducted entirely without a wiper, beginning not with a line of malicious code but with a stolen key and a door that should never have opened from the outside.",
+      "template": "119-kill-chain-steps",
+      "theme": "INTEL",
+      "reasoning": "Summarizing the unique nature of the attack vector.",
+      "content": {
+        "TITLE_TEXT": "SURGICAL ATTACK VECTOR",
+        "STEP_1": "STOLEN KEY",
+        "STEP_2": "ACCESS GAINED",
+        "STEP_3": "NO MALWARE",
+        "STEP_4": "SYSTEM COMMAND",
+        "STEP_5": "DEVICE WIPE",
+        "STEP_6": "NO RANSOM",
+        "STEP_7": "TOTAL LOSS",
+        "FOOTER_TEXT": "A wiper attack without a wiper."
+      },
+      "duration": 8
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Brian Krebs broke this story, and everything you're about to hear is documented — sources and technical references are in the description.",
+      "template": "75-person-profile",
+      "theme": "INTEL",
+      "reasoning": "Crediting the investigative journalist.",
+      "content": {
+        "TITLE_TEXT": "BRIAN KREBS",
+        "LABEL_1": "INVESTIGATIVE",
+        "LABEL_2": "JOURNALIST",
+        "LABEL_3": "CYBERSECURITY",
+        "TAG_1": "KREBS ON SECURITY",
+        "TAG_2": "DOCUMENTED",
+        "TAG_3": "VERIFIED",
+        "CONTEXT_TEXT": "Investigative report on the Stryker Corporation incident."
+      },
+      "duration": 6
+    }
+  ]
+}

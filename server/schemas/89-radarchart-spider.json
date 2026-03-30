@@ -1,0 +1,21 @@
+{
+    "template":  "89-radarchart-spider",
+    "name":  "Radar Chart Spider",
+    "description":  "A 5-axis radar chart for comparing multi-dimensional data with smooth path animation.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "radar",
+                 "spider",
+                 "comparison",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Axis label 1",
+                   "LABEL_2":  "Axis label 2",
+                   "LABEL_3":  "Axis label 3",
+                   "LABEL_4":  "Axis label 4",
+                   "LABEL_5":  "Axis label 5"
+               }
+}

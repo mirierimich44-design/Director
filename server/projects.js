@@ -32,6 +32,19 @@ function createProjectData(name, description = '') {
     settings: {
       defaultTheme: 'THREAT',
       format: 'landscape',
+      director: 'standard', // 'standard' | 'fiscal-pal'
+    },
+    generationSettings: {
+      templateRatio: 60,           // % of scenes that should be TEMPLATE (vs 3D_RENDER)
+      colorScheme: 'auto',         // 'auto' | 'THREAT' | 'COLD' | 'DARK' | 'INTEL' | 'TECHNICAL' | 'CLEAN' | 'custom'
+      customColors: {              // only used when colorScheme === 'custom'
+        primary: '#FF6600',
+        background: '#0A0A0A',
+        accent: '#FFAA00',
+      },
+      templateVariety: 'high',     // 'low' | 'medium' | 'high' — how aggressively to avoid reuse
+      maxTemplateReuse: 1,         // max times a single template can appear in one chapter
+      customPrompt: '',            // free-text instructions appended to Gemini system prompt
     },
   }
 }
@@ -102,8 +115,11 @@ export function getProject(id) {
   return loadProject(id)
 }
 
-export function createProject(name, description) {
+export function createProject(name, description, settings = {}) {
   const project = createProjectData(name, description)
+  if (settings) {
+    project.settings = { ...project.settings, ...settings }
+  }
   saveProject(project)
   console.log(`📁 Project created: "${name}" (${project.id.substring(0, 8)})`)
   return project
@@ -117,6 +133,7 @@ export function updateProject(id, updates) {
   if (updates.description !== undefined) project.description = updates.description
   if (updates.status !== undefined) project.status = updates.status
   if (updates.settings) project.settings = { ...project.settings, ...updates.settings }
+  if (updates.generationSettings) project.generationSettings = { ...project.generationSettings, ...updates.generationSettings }
 
   return saveProject(project)
 }
@@ -263,6 +280,8 @@ export function updateScene(projectId, chapterId, sceneIndex, updates) {
   if (updates.prompt !== undefined) scene.prompt = updates.prompt
   if (updates.environment !== undefined) scene.environment = updates.environment
   if (updates.camera !== undefined) scene.camera = updates.camera
+  if (updates.error !== undefined) scene.error = updates.error
+  if (updates.template !== undefined) scene.template = updates.template
   if (updates.lower_third !== undefined) scene.lower_third = updates.lower_third
   if (updates.duration !== undefined) scene.duration = updates.duration
   if (updates.editInstruction) {

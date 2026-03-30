@@ -1,0 +1,22 @@
+{
+  "template": "152-search-engine-reveal",
+  "name": "Search Engine Reveal",
+  "description": "A sleek, dark-mode search engine UI that types out a query and reveals search results with a knowledge panel.",
+  "category": "storytelling",
+  "duration": 15,
+  "tags": [
+    "search",
+    "google",
+    "discovery",
+    "results",
+    "investigation"
+  ],
+  "fields": {
+    "SEARCH_QUERY": "The text typed into the search bar",
+    "RESULT_1_TITLE": "Title of the first search result",
+    "RESULT_1_URL": "URL shown for the first result",
+    "RESULT_1_DESC": "Snippet text for the first result",
+    "KNOWLEDGE_TITLE": "Title for the side knowledge panel",
+    "KNOWLEDGE_DESC": "Description for the knowledge panel"
+  }
+}

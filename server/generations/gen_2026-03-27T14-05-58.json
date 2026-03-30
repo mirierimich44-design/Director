@@ -1,0 +1,271 @@
+{
+  "timestamp": "2026-03-27T14:05:58.233Z",
+  "scriptLength": 2284,
+  "scriptPreview": "Somewhere in Washington D.C., in the late summer of 2023, a phone rings — and it belongs to a senior official, someone who works at the intersection of politics and national security, someone whose ca",
+  "scriptFull": "Somewhere in Washington D.C., in the late summer of 2023, a phone rings — and it belongs to a senior official, someone who works at the intersection of politics and national security, someone whose calls are, by any reasonable assumption, private.\nThe call is answered, the conversation happens, and when it ends, a recording of that conversation is quietly saved to a server in an operations center somewhere in Chengdu, China. Nobody in Washington knows this is happening — not the official, not their staff, not the FBI, not the NSA, and not the intelligence agencies whose entire reason for existing is to detect exactly this kind of threat. And it will keep happening, silently and continuously, for more than a year.\nIn September 2024, the Wall Street Journal broke a story that the US national security establishment immediately scrambled to contain. Chinese state hackers had been living inside the networks of America's largest telecommunications companies — AT&T, Verizon, Lumen, and others — for potentially two to three years, accessing call records, reading unencrypted text messages, and in some cases recording actual audio from phone calls. Senator Mark Warner, chairman of the Senate Intelligence Committee, called it — and I am quoting directly — \"the worst telecom hack in our nation's history.\"\nBut the detail that most coverage buried, or missed entirely, is this: the attackers did not break in through a zero-day exploit, they did not brute-force an encrypted system, and they did not write sophisticated custom malware to defeat America's defenses. They walked through a door the US government had legally required every phone company to build — and leave accessible — for three uninterrupted decades.\nThis is the story of Salt Typhoon, the hack that turned America's own surveillance system against itself, and the law signed in 1994 that made every part of it possible.\nEverything you are about to hear is drawn from published reporting by US government agencies, congressional testimony, verified journalism, and cybersecurity firm disclosures. No events have been invented or embellished. Every attribution reflects the conclusions of the researchers and agencies whose work made this documentary possible. All sources are linked in the description below.\n",
+  "totalScenes": 15,
+  "templateCount": 12,
+  "renderCount": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "Somewhere in Washington D.C., in the late summer of 2023, a phone rings — and it belongs to a senior official,",
+      "prompt": "Cinematic close-up of a sleek, modern smartphone resting on a dark mahogany desk in a dimly lit, high-end Washington D.C. office. Soft, warm ambient light from a nearby window catches the edge of the device. The phone screen is dark, reflecting the blurred silhouette of a city skyline through the window. Photorealistic, 8k, shallow depth of field.",
+      "environment": "office",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "WASHINGTON D.C. | AUGUST 2023",
+        "attribution": "SECURE LINE",
+        "tone": "#FF6600"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "someone who works at the intersection of politics and national security, someone whose calls are, by any reasonable assumption, private.",
+      "prompt": "Interior of a prestigious, wood-paneled office in Washington D.C. with stacks of classified documents and a secure telephone handset. The atmosphere is quiet and serious. The camera slowly zooms in on the desk, emphasizing the isolation and perceived privacy of the space. Photorealistic, moody lighting, high contrast.",
+      "environment": "office",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "NATIONAL SECURITY OFFICIAL",
+        "attribution": "IDENTITY CLASSIFIED",
+        "tone": "#FF6600"
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "3D_RENDER",
+      "script": "The call is answered, the conversation happens, and when it ends, a recording of that conversation is quietly saved to a server in an operations center somewhere in Chengdu, China.",
+      "prompt": "A dark, cold server room in Chengdu, China. Rows of server racks with blinking red and blue status lights. The camera pans across the humming hardware, focusing on a single rack where data packets are being written to a drive. High-tech, ominous, industrial aesthetic. Photorealistic, 8k.",
+      "environment": "server-room",
+      "camera": "pan-left",
+      "motion": "pan-left",
+      "lower_third": {
+        "text": "CHENGDU, CHINA | OPERATIONS CENTER",
+        "attribution": "DATA EXFILTRATION",
+        "tone": "#FF0000"
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "Nobody in Washington knows this is happening — not the official, not their staff, not the FBI, not the NSA, and not the intelligence agencies whose entire reason for existing is to detect exactly this kind of threat.",
+      "template": "106-word-highlight-scan",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the failure of detection agencies.",
+      "content": {
+        "WORD_1": "OFFICIAL",
+        "WORD_2": "STAFF",
+        "WORD_3": "FBI",
+        "WORD_4": "NSA",
+        "WORD_5": "INTELLIGENCE",
+        "WORD_6": "THREAT",
+        "WORD_7": "UNDETECTED",
+        "WORD_8": "FAILURE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "And it will keep happening, silently and continuously, for more than a year.",
+      "template": "131-countdown-breach",
+      "theme": "THREAT",
+      "reasoning": "Shows the duration of the ongoing breach.",
+      "content": {
+        "TITLE_TEXT": "BREACH DURATION",
+        "LABEL_TEXT": "DAYS ACTIVE",
+        "TIME_VALUE": "365+",
+        "STATUS_TEXT": "CONTINUOUS"
+      },
+      "duration": 8
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "In September 2024, the Wall Street Journal broke a story that the US national security establishment immediately scrambled to contain.",
+      "template": "111-magazine-cover",
+      "theme": "CLEAN",
+      "reasoning": "Represents the media breaking the story.",
+      "content": {
+        "TITLE_TEXT": "WSJ EXCLUSIVE",
+        "SUBTITLE_TEXT": "NATIONAL SECURITY BREACH",
+        "STAT_VALUE_1": "SEPT",
+        "LABEL_1": "2024",
+        "STAT_VALUE_2": "CRITICAL",
+        "LABEL_2": "STATUS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "Chinese state hackers had been living inside the networks of America's largest telecommunications companies — AT&T, Verizon, Lumen, and others — for potentially two to three years,",
+      "template": "120-lateral-movement",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the lateral movement within telecom networks.",
+      "content": {
+        "TITLE_TEXT": "NETWORK INFILTRATION",
+        "SUB_TEXT": "TELECOM SECTOR",
+        "SOURCE_NODE": "CHINESE ACTOR",
+        "HOP_1": "AT&T",
+        "HOP_2": "VERIZON",
+        "HOP_3": "LUMEN",
+        "TARGET_NODE": "CORE INFRA"
+      },
+      "duration": 12
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "accessing call records, reading unencrypted text messages, and in some cases recording actual audio from phone calls.",
+      "template": "30-icongrid-3x3",
+      "theme": "THREAT",
+      "reasoning": "Shows the types of data compromised.",
+      "content": {
+        "TITLE_TEXT": "COMPROMISED DATA",
+        "ICON_LABEL_1": "CALL RECORDS",
+        "ICON_LABEL_2": "SMS TEXTS",
+        "ICON_LABEL_3": "AUDIO",
+        "ICON_LABEL_4": "METADATA",
+        "ICON_LABEL_5": "LOCATION",
+        "ICON_LABEL_6": "CONTACTS",
+        "ICON_LABEL_7": "VOICEMAIL",
+        "ICON_LABEL_8": "ENCRYPTION",
+        "ICON_LABEL_9": "LOGS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Senator Mark Warner, chairman of the Senate Intelligence Committee, called it — and I am quoting directly — \"the worst telecom hack in our nation's history.\"",
+      "template": "77-quote-fullscreen",
+      "theme": "DARK",
+      "reasoning": "High-impact quote reveal.",
+      "content": {
+        "WORD_1": "WORST",
+        "WORD_2": "HISTORY",
+        "LABEL_1": "SENATOR MARK WARNER",
+        "LABEL_2": "SENATE INTELLIGENCE COMMITTEE",
+        "SUB_LABEL": "2024"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "But the detail that most coverage buried, or missed entirely, is this: the attackers did not break in through a zero-day exploit, they did not brute-force an encrypted system,",
+      "template": "112-comparison-table",
+      "theme": "COLD",
+      "reasoning": "Contrasts common assumptions with reality.",
+      "content": {
+        "TITLE_TEXT": "ATTACK METHODOLOGY",
+        "HEADER_1": "MYTH",
+        "HEADER_2": "REALITY",
+        "HEADER_3": "STATUS",
+        "ROW_LABEL_1": "ZERO-DAY",
+        "VAL_1_1": "ASSUMED",
+        "VAL_1_2": "NONE",
+        "VAL_1_3": "FALSE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "and they did not write sophisticated custom malware to defeat America's defenses.",
+      "template": "107-redacted-reveal",
+      "theme": "INTEL",
+      "reasoning": "Reveals the lack of custom malware.",
+      "content": {
+        "CLASSIFIED_TITLE": "MALWARE ANALYSIS",
+        "LINE_1": "NO CUSTOM CODE",
+        "LINE_2": "NO EXPLOITS",
+        "LINE_3": "NO BRUTE FORCE",
+        "LINE_4": "SYSTEM ACCESS",
+        "LINE_5": "LEGITIMATE",
+        "LINE_6": "VERIFIED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "They walked through a door the US government had legally required every phone company to build — and leave accessible — for three uninterrupted decades.",
+      "template": "119-kill-chain-steps",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the legal backdoor process.",
+      "content": {
+        "TITLE_TEXT": "LEGAL BACKDOOR",
+        "STEP_1": "1994 MANDATE",
+        "STEP_2": "TELECOM BUILD",
+        "STEP_3": "ACCESS PORT",
+        "STEP_4": "MAINTENANCE",
+        "STEP_5": "EXPLOITATION",
+        "STEP_6": "DATA THEFT",
+        "STEP_7": "SILENT ACCESS",
+        "FOOTER_TEXT": "30 YEARS ACTIVE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "This is the story of Salt Typhoon, the hack that turned America's own surveillance system against itself, and the law signed in 1994 that made every part of it possible.",
+      "template": "114-dossier-open",
+      "theme": "INTEL",
+      "reasoning": "Introduces the threat actor.",
+      "content": {
+        "SUBJECT_NAME": "SALT TYPHOON",
+        "ALIAS_TEXT": "CHINESE STATE HACKERS",
+        "TTP_1": "LEGAL BACKDOOR",
+        "TTP_2": "SURVEILLANCE ABUSE",
+        "THREAT_LEVEL": "CRITICAL"
+      },
+      "duration": 12
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "Everything you are about to hear is drawn from published reporting by US government agencies, congressional testimony, verified journalism, and cybersecurity firm disclosures. No events have been invented or embellished.",
+      "template": "78-evidence-item",
+      "theme": "CLEAN",
+      "reasoning": "Establishes credibility.",
+      "content": {
+        "TITLE_TEXT": "DOCUMENTATION SOURCE",
+        "LABEL_1": "GOVERNMENT",
+        "LABEL_2": "TESTIMONY",
+        "LABEL_3": "JOURNALISM",
+        "TAG_1": "VERIFIED",
+        "TAG_2": "AUTHENTICATED",
+        "CONTEXT_TEXT": "NO EMBELLISHMENT",
+        "ALERT_TEXT": "FACTUAL BASIS"
+      },
+      "duration": 12
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "Every attribution reflects the conclusions of the researchers and agencies whose work made this documentary possible. All sources are linked in the description below.",
+      "template": "103-dashboard-summary",
+      "theme": "CLEAN",
+      "reasoning": "Final summary of sources.",
+      "content": {
+        "TITLE_TEXT": "DOCUMENTARY SOURCES",
+        "KPI_LABEL_1": "RESEARCHERS",
+        "KPI_VALUE_1": "12+",
+        "KPI_LABEL_2": "AGENCIES",
+        "KPI_VALUE_2": "8",
+        "SUMMARY_TEXT": "ALL SOURCES LINKED BELOW"
+      },
+      "duration": 10
+    }
+  ]
+}

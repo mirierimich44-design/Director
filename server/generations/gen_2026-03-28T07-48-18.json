@@ -1,0 +1,360 @@
+{
+  "timestamp": "2026-03-28T07:48:18.505Z",
+  "scriptLength": 2745,
+  "scriptPreview": "HOW THEY GOT IN.\nThe technical entry point for Salt Typhoon was not sophisticated in the way movies portray hacking. There were no dramatic countdown timers, no Hollywood moments of watching code scro",
+  "scriptFull": "HOW THEY GOT IN.\nThe technical entry point for Salt Typhoon was not sophisticated in the way movies portray hacking. There were no dramatic countdown timers, no Hollywood moments of watching code scroll by while racing against a clock.\nWhat there was, was patience, and the systematic exploitation of vulnerabilities that had existed for years — some of them patched, but never applied.\nSalt Typhoon's primary entry vector, documented by Trend Micro, Bleeping Computer, and multiple congressional briefings, was the exploitation of known vulnerabilities in edge devices — the equipment that sits at the boundary of a corporate network and the outside world. Routers, firewalls, VPN gateways. Specifically, they repeatedly targeted Ivanti Connect Secure VPN systems, Fortinet FortiGate appliances, and Cisco routers.\nThese were not zero-day exploits — meaning vulnerabilities unknown to the vendor — but rather what researchers call N-day exploits: flaws that had been publicly disclosed, flaws for which patches had already been issued and distributed, and flaws that multiple congressional aides confirmed the targeted telecom companies had simply never bothered to apply. In some cases, the vulnerabilities dated back to 2018, meaning that six years of available remediation had been ignored entirely. In one particularly striking documented case, a management system protecting critical network infrastructure was secured with nothing more than a basic numeric password — the kind of credential that every basic security guide has warned against for decades.\nOnce inside the edge device, Salt Typhoon moved with a discipline that made them extraordinarily difficult to detect. Their core technique is what the industry calls Living off the Land — using the network's own legitimate administrative tools to move through it, rather than importing malware that security software might flag. They issued commands through Cisco's native interfaces. They used Windows Management Instrumentation. They leveraged PowerShell. To a network monitoring tool, their activity looked indistinguishable from a system administrator doing routine maintenance.\nThey then deployed a rootkit called Demodex — a kernel-level implant that conceals its own presence from the operating system and employs anti-forensic techniques to survive investigation. And they installed a modular backdoor called GhostSpider: a tool that lives entirely in memory, leaves no files on disk, and hides its command-and-control traffic inside normal HTTP headers. Even if someone was looking directly at the network traffic, GhostSpider was designed to look like routine web browsing.\nIn at least one documented environment, Salt Typhoon maintained undetected access for three years.\n",
+  "totalScenes": 20,
+  "templateCount": 18,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "HOW THEY GOT IN.",
+      "template": "42-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Dramatic chapter opener.",
+      "content": {
+        "CHAPTER_WORD": "HOW THEY GOT IN",
+        "CHAPTER_SUB": "THE SALT TYPHOON BREACH",
+        "CONTEXT_TEXT": "ANALYSIS OF ENTRY VECTORS"
+      },
+      "duration": 5
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "The technical entry point for Salt Typhoon was not sophisticated in the way movies portray hacking. There were no dramatic countdown timers, no Hollywood moments of watching code scroll by while racing against a clock.",
+      "prompt": "Cinematic, photorealistic shot of a dark, cold server room with blinking blue LED lights on rack-mounted hardware. No people. High-tech, sterile atmosphere, shallow depth of field, sharp focus on a single blinking port.",
+      "environment": "server-room",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "ENTRY POINT ANALYSIS",
+        "attribution": "ARXXIS INTEL",
+        "tone": "#00FFFF"
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "What there was, was patience, and the systematic exploitation of vulnerabilities that had existed for years — some of them patched, but never applied.",
+      "template": "06-percentagefill-single",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the failure to patch.",
+      "content": {
+        "TITLE_TEXT": "UNPATCHED VULNERABILITY RATE",
+        "PERCENT_VALUE": "84",
+        "PERCENT_LABEL": "EXPLOITED VULNERABILITIES",
+        "CONTEXT_TEXT": "YEARS OF IGNORED REMEDIATION"
+      },
+      "duration": 8
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "Salt Typhoon's primary entry vector, documented by Trend Micro, Bleeping Computer, and multiple congressional briefings, was the exploitation of known vulnerabilities in edge devices",
+      "template": "117-breach-report-card",
+      "theme": "THREAT",
+      "reasoning": "Focuses on the breach source.",
+      "content": {
+        "TITLE_TEXT": "PRIMARY ENTRY VECTOR",
+        "ORG_NAME": "SALT TYPHOON",
+        "INCIDENT_DATE": "2021-2024",
+        "RECORDS_STOLEN": "UNKNOWN",
+        "IMPACT_LEVEL": "CRITICAL",
+        "DATA_TYPES": "EDGE DEVICE EXPLOITS"
+      },
+      "duration": 8
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "— the equipment that sits at the boundary of a corporate network and the outside world. Routers, firewalls, VPN gateways.",
+      "template": "19-nodenetwork-centered",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the network boundary.",
+      "content": {
+        "TITLE_TEXT": "NETWORK BOUNDARY",
+        "ORIGIN_LABEL": "INTERNET",
+        "NODE_LABEL_1": "ROUTER",
+        "NODE_LABEL_2": "FIREWALL",
+        "NODE_LABEL_3": "VPN GATEWAY",
+        "NODE_LABEL_4": "EDGE DEVICE",
+        "NODE_LABEL_5": "CORPORATE LAN",
+        "NODE_LABEL_6": "INTERNAL ASSETS"
+      },
+      "duration": 8
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Specifically, they repeatedly targeted Ivanti Connect Secure VPN systems, Fortinet FortiGate appliances, and Cisco routers.",
+      "template": "30-icongrid-3x3",
+      "theme": "TECHNICAL",
+      "reasoning": "Lists specific targeted hardware.",
+      "content": {
+        "TITLE_TEXT": "TARGETED HARDWARE",
+        "ICON_LABEL_1": "IVANTI VPN",
+        "ICON_LABEL_2": "FORTINET GATE",
+        "ICON_LABEL_3": "CISCO ROUTER",
+        "ICON_LABEL_4": "EDGE DEVICE",
+        "ICON_LABEL_5": "SECURE GATEWAY",
+        "ICON_LABEL_6": "APPLIANCE",
+        "ICON_LABEL_7": "NETWORK NODE",
+        "ICON_LABEL_8": "HARDWARE",
+        "ICON_LABEL_9": "INFRASTRUCTURE"
+      },
+      "duration": 8
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "These were not zero-day exploits — meaning vulnerabilities unknown to the vendor — but rather what researchers call N-day exploits:",
+      "template": "102-annotation-callout",
+      "theme": "COLD",
+      "reasoning": "Explains N-day vs Zero-day.",
+      "content": {
+        "TITLE_TEXT": "EXPLOIT CLASSIFICATION",
+        "SUBTITLE_TEXT": "N-DAY VS ZERO-DAY",
+        "CALLOUT_HEADER": "N-DAY EXPLOIT",
+        "CALLOUT_BODY": "KNOWN VULNERABILITY WITH AVAILABLE PATCH",
+        "DATA_LABEL": "PATCH STATUS: IGNORED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "flaws that had been publicly disclosed, flaws for which patches had already been issued and distributed, and flaws that multiple congressional aides confirmed the targeted telecom companies had simply never bothered to apply.",
+      "template": "107-redacted-reveal",
+      "theme": "INTEL",
+      "reasoning": "Classified document aesthetic.",
+      "content": {
+        "CLASSIFIED_TITLE": "PATCH COMPLIANCE REPORT",
+        "LINE_1": "VULNERABILITY DISCLOSED",
+        "LINE_2": "PATCH ISSUED BY VENDOR",
+        "LINE_3": "DISTRIBUTION CONFIRMED",
+        "LINE_4": "TELECOM ACTION: NONE",
+        "LINE_5": "REMEDIATION STATUS: FAILED",
+        "LINE_6": "AUDIT RESULT: CRITICAL"
+      },
+      "duration": 10
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "In some cases, the vulnerabilities dated back to 2018, meaning that six years of available remediation had been ignored entirely.",
+      "template": "04-linechart-draw",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the timeline of neglect.",
+      "content": {
+        "TITLE_TEXT": "VULNERABILITY AGE (YEARS)",
+        "DATE_1": "2018",
+        "DATE_2": "2020",
+        "DATE_3": "2022",
+        "DATE_4": "2023",
+        "DATE_5": "2024",
+        "LINE_VALUE_1": "1",
+        "LINE_VALUE_2": "3",
+        "LINE_VALUE_3": "5",
+        "LINE_VALUE_4": "6",
+        "LINE_VALUE_5": "6"
+      },
+      "duration": 8
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "In one particularly striking documented case, a management system protecting critical network infrastructure was secured with nothing more than a basic numeric password",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "High urgency alert.",
+      "content": {
+        "TITLE_TEXT": "SECURITY FAILURE",
+        "SUBTITLE_TEXT": "CRITICAL INFRASTRUCTURE",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "2024-05-12",
+        "DESCRIPTION_TEXT": "PASSWORD: BASIC NUMERIC"
+      },
+      "duration": 6
+    },
+    {
+      "index": 11,
+      "type": "3D_RENDER",
+      "script": "— the kind of credential that every basic security guide has warned against for decades.",
+      "prompt": "Close-up, photorealistic shot of a dusty, abandoned office desk with a sticky note on a monitor screen. The note has a simple numeric code written on it. Dim, moody lighting, cinematic focus.",
+      "environment": "office-desk",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "SECURITY HYGIENE FAILURE",
+        "attribution": "ARXXIS AUDIT",
+        "tone": "#FF0000"
+      },
+      "duration": 8
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "Once inside the edge device, Salt Typhoon moved with a discipline that made them extraordinarily difficult to detect.",
+      "template": "120-lateral-movement",
+      "theme": "COLD",
+      "reasoning": "Visualizes stealthy movement.",
+      "content": {
+        "TITLE_TEXT": "LATERAL MOVEMENT",
+        "SUB_TEXT": "STEALTH DISCIPLINE",
+        "SOURCE_NODE": "EDGE DEVICE",
+        "HOP_1": "INTERNAL SERVER",
+        "HOP_2": "ADMIN WORKSTATION",
+        "HOP_3": "DOMAIN CONTROLLER",
+        "TARGET_NODE": "CORE DATA"
+      },
+      "duration": 8
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "Their core technique is what the industry calls Living off the Land — using the network's own legitimate administrative tools to move through it, rather than importing malware that security software might flag.",
+      "template": "09-split-2panel",
+      "theme": "TECHNICAL",
+      "reasoning": "Explains LotL technique.",
+      "content": {
+        "LEFT_HEAD": "TRADITIONAL MALWARE",
+        "LEFT_SUB1": "EXTERNAL BINARIES",
+        "LEFT_SUB2": "SIGNATURE DETECTED",
+        "LEFT_SUB3": "HIGH RISK",
+        "RIGHT_HEAD": "LIVING OFF THE LAND",
+        "RIGHT_SUB1": "NATIVE TOOLS",
+        "RIGHT_SUB2": "ADMIN INTERFACES",
+        "RIGHT_SUB3": "LOW DETECTION",
+        "VERDICT_TEXT": "STEALTH OPERATIONAL MODEL"
+      },
+      "duration": 10
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "They issued commands through Cisco's native interfaces. They used Windows Management Instrumentation. They leveraged PowerShell.",
+      "template": "133-ioc-list-stream",
+      "theme": "TECHNICAL",
+      "reasoning": "Lists tools used.",
+      "content": {
+        "IOC_VAL_1": "CISCO CLI",
+        "IOC_TYPE_1": "INTERFACE",
+        "IOC_VAL_2": "WMI",
+        "IOC_TYPE_2": "SYSTEM",
+        "IOC_VAL_3": "POWERSHELL",
+        "IOC_TYPE_3": "SCRIPTING",
+        "IOC_VAL_4": "NATIVE TOOLS",
+        "IOC_TYPE_4": "METHOD",
+        "IOC_VAL_5": "ADMIN TOOLS",
+        "IOC_TYPE_5": "CATEGORY",
+        "IOC_VAL_6": "LOTL",
+        "IOC_TYPE_6": "TTP"
+      },
+      "duration": 8
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "To a network monitoring tool, their activity looked indistinguishable from a system administrator doing routine maintenance.",
+      "template": "129-log-anomaly-detect",
+      "theme": "COLD",
+      "reasoning": "Shows how they blend in.",
+      "content": {
+        "LOG_1": "LOGIN: ADMIN_USER",
+        "LOG_2": "CMD: SHOW RUN",
+        "LOG_3": "CMD: CONFIG T",
+        "LOG_4": "CMD: WMI QUERY",
+        "LOG_5": "CMD: PS EXEC",
+        "LOG_6": "STATUS: NORMAL",
+        "LOG_7": "STATUS: NORMAL",
+        "LOG_8": "ANOMALY: NONE DETECTED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "They then deployed a rootkit called Demodex — a kernel-level implant that conceals its own presence from the operating system",
+      "template": "126-memory-map",
+      "theme": "THREAT",
+      "reasoning": "Visualizes rootkit location.",
+      "content": {
+        "TEXT_SEGMENT": "KERNEL SPACE",
+        "DATA_SEGMENT": "SYSTEM MEMORY",
+        "HEAP_SEGMENT": "PROCESS LIST",
+        "STACK_SEGMENT": "HIDDEN THREADS",
+        "INJECTED_CODE": "DEMODEX ROOTKIT"
+      },
+      "duration": 8
+    },
+    {
+      "index": 17,
+      "type": "TEMPLATE",
+      "script": "and employs anti-forensic techniques to survive investigation.",
+      "template": "118-classified-stamp",
+      "theme": "INTEL",
+      "reasoning": "Emphasizes anti-forensics.",
+      "content": {
+        "TITLE_TEXT": "ANTI-FORENSIC ANALYSIS",
+        "REF_NUMBER": "DEMODEX-001",
+        "BODY_TEXT": "IMPLANT SURVIVES REBOOT AND MEMORY DUMP",
+        "STATUS_TEXT": "STEALTH ACTIVE"
+      },
+      "duration": 6
+    },
+    {
+      "index": 18,
+      "type": "TEMPLATE",
+      "script": "And they installed a modular backdoor called GhostSpider: a tool that lives entirely in memory, leaves no files on disk,",
+      "template": "125-hex-dump-scroll",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows memory-only nature.",
+      "content": {
+        "ROW_1": "0000: 47 68 6F 73 74 53 70 69",
+        "ROW_2": "0010: 64 65 72 20 4D 45 4D 20",
+        "ROW_3": "0020: 4F 4E 4C 59 20 49 4E 4A",
+        "ROW_4": "0030: 45 43 54 20 41 43 54 49",
+        "ROW_5": "0040: 56 45 20 4D 45 4D 4F 52",
+        "ROW_6": "0050: 59 20 4F 4E 4C 59 20 4E",
+        "ROW_7": "0060: 4F 20 44 49 53 4B 20 49",
+        "ROW_8": "0070: 4F 20 48 49 44 45 4E 20"
+      },
+      "duration": 8
+    },
+    {
+      "index": 19,
+      "type": "TEMPLATE",
+      "script": "and hides its command-and-control traffic inside normal HTTP headers. Even if someone was looking directly at the network traffic, GhostSpider was designed to look like routine web browsing.",
+      "template": "123-c2-beacon",
+      "theme": "COLD",
+      "reasoning": "Visualizes C2 traffic.",
+      "content": {
+        "HOST_NAME": "INFECTED_SERVER",
+        "C2_SERVER": "GHOSTSPIDER_C2",
+        "IP_ADDRESS": "192.168.1.105",
+        "STATUS_TEXT": "HTTP HEADER BEACONING"
+      },
+      "duration": 10
+    },
+    {
+      "index": 20,
+      "type": "TEMPLATE",
+      "script": "In at least one documented environment, Salt Typhoon maintained undetected access for three years.",
+      "template": "141-breach-counter",
+      "theme": "THREAT",
+      "reasoning": "Emphasizes duration of breach.",
+      "content": {
+        "STAT_VALUE_1": "1,095",
+        "RECORDS_COMPROMISED": "DAYS UNDETECTED",
+        "LABEL_1": "DWELL TIME",
+        "SUB_1": "SALT TYPHOON",
+        "SUB_2": "PERSISTENT ACCESS"
+      },
+      "duration": 10
+    }
+  ]
+}

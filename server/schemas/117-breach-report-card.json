@@ -1,0 +1,21 @@
+{
+    "template":  "117-breach-report-card",
+    "name":  "Breach Report Card",
+    "description":  "A professional security incident summary card featuring a highlighted impact bar and key metrics.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "breach",
+                 "incident",
+                 "report",
+                 "security"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main header, e.g. \u0027INCIDENT REPORT\u0027",
+                   "ORG_NAME":  "Name of the affected organization",
+                   "INCIDENT_DATE":  "Date of the breach",
+                   "RECORDS_STOLEN":  "Number of records, e.g. \u00271.2M\u0027",
+                   "IMPACT_LEVEL":  "Severity, e.g. \u0027CRITICAL\u0027",
+                   "DATA_TYPES":  "Comma separated list of data types exposed"
+               }
+}

@@ -1,0 +1,284 @@
+{
+  "timestamp": "2026-03-26T13:21:32.720Z",
+  "scriptLength": 2733,
+  "scriptPreview": "What happened next has no real precedent in the history of corporate cyberattacks.\nThe attackers did not upload malware. They did not exploit a vulnerability in Windows or iOS. They did not write a si",
+  "scriptFull": "What happened next has no real precedent in the history of corporate cyberattacks.\nThe attackers did not upload malware. They did not exploit a vulnerability in Windows or iOS. They did not write a single line of malicious code. They logged into the Intune console and issued one native administrative command: Bulk Wipe All Devices.\nThis is what security researchers call a Living-off-the-Land attack. Think of it like a burglar who breaks into your house, finds the spare key hanging in the kitchen, and uses it to walk back out the front door with everything you own. In broad daylight. No broken windows. No alarm. To every neighbor watching, it looks like you're moving house. To every security system monitoring Stryker's network, the command that erased two hundred thousand devices looked exactly like a legitimate instruction from a legitimate administrator. Because technically, it was. The administrator just happened to be a threat actor who had stolen the session token.\nThere was no malware signature to detect. No anomalous process to flag. No antivirus in the world would have stopped it, because there was nothing for antivirus to scan. The weapon was already inside, trusted and waiting.\nThe command reached laptops and tablets, servers and smartphones. And it reached the personal phones of thousands of employees who had enrolled their personal devices in the corporate management system to access work email.\nThis is where the attack crosses from corporate disaster into something more personal.\nThe wipe was a full device wipe — not a corporate data wipe. For employees with enrolled personal phones, it deleted everything. Family photographs. Videos of children's first steps. Wedding footage. It wiped eSIM profiles, leaving people unable to make calls or send texts. Employees whose phones went blank at three in the morning couldn't even call their families to say what was happening. They communicated through WhatsApp on old devices that had never been enrolled — because everything else had been turned to glass.\nAnd here is a dimension that received almost no coverage: the legal exposure. When a company's device management system factory-resets an employee's personal property — destroying irreplaceable personal data — that is not a cybersecurity incident. That is the destruction of private property. The liability questions that follow are significant, and they remain largely unresolved.\nNo ransom demand was ever issued. This was not an attack designed to extract money. It was an attack designed to erase. That distinction matters — because it means there was no negotiation phase, no window in which the company might have minimized the damage. The destruction was the point. And it was total.\n",
+  "totalScenes": 16,
+  "templateCount": 14,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "What happened next has no real precedent in the history of corporate cyberattacks.",
+      "template": "42-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Dramatic chapter opener for a major event.",
+      "content": {
+        "CHAPTER_WORD": "PRECEDENT",
+        "CHAPTER_SUB": "CORPORATE CYBERATTACK",
+        "CONTEXT_TEXT": "A shift in the history of digital warfare."
+      },
+      "duration": 8
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "The attackers did not upload malware. They did not exploit a vulnerability in Windows or iOS. They did not write a single line of malicious code.",
+      "template": "106-word-highlight-scan",
+      "theme": "TECHNICAL",
+      "reasoning": "Emphasizing the absence of traditional attack vectors.",
+      "content": {
+        "WORD_1": "NO",
+        "WORD_2": "MALWARE",
+        "WORD_3": "NO",
+        "WORD_4": "EXPLOITS",
+        "WORD_5": "NO",
+        "WORD_6": "MALICIOUS",
+        "WORD_7": "CODE",
+        "WORD_8": "DETECTED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "They logged into the Intune console and issued one native administrative command: Bulk Wipe All Devices.",
+      "template": "39-terminal-typewriter",
+      "theme": "THREAT",
+      "reasoning": "Simulating the terminal command execution.",
+      "content": {
+        "TITLE_TEXT": "INTUNE CONSOLE ACCESS",
+        "KEY_PATH": "C:\\ADMIN\\COMMANDS\\",
+        "LOG_LINE_1": "LOGIN SUCCESSFUL",
+        "LOG_LINE_2": "SESSION TOKEN VALIDATED",
+        "LOG_LINE_3": "ACCESSING DEVICE MANAGEMENT",
+        "LOG_LINE_4": "COMMAND: BULK_WIPE_ALL",
+        "LOG_LINE_5": "STATUS: EXECUTING",
+        "LOG_LINE_6": "DEVICES AFFECTED: 200,000"
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "This is what security researchers call a Living-off-the-Land attack.",
+      "template": "102-annotation-callout",
+      "theme": "COLD",
+      "reasoning": "Defining the attack methodology.",
+      "content": {
+        "TITLE_TEXT": "LOTL ATTACK",
+        "SUBTITLE_TEXT": "LIVING OFF THE LAND",
+        "CALLOUT_HEADER": "DEFINITION",
+        "CALLOUT_BODY": "Using legitimate system tools for malicious purposes.",
+        "DATA_LABEL": "METHODOLOGY"
+      },
+      "duration": 8
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "Think of it like a burglar who breaks into your house, finds the spare key hanging in the kitchen, and uses it to walk back out the front door with everything you own.",
+      "prompt": "Photorealistic interior of a modern kitchen, focus on a set of keys hanging on a hook near the door, cinematic lighting, shallow depth of field, high detail.",
+      "environment": "physical space",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "Living-off-the-Land",
+        "attribution": "Security Concept",
+        "tone": "#FF6600"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "3D_RENDER",
+      "script": "In broad daylight. No broken windows. No alarm.",
+      "prompt": "Photorealistic exterior of a quiet suburban house during the day, clear windows, no signs of forced entry, peaceful atmosphere, cinematic lighting.",
+      "environment": "physical space",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "Stealth Execution",
+        "attribution": "Attack Profile",
+        "tone": "#FF6600"
+      },
+      "duration": 8
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "To every neighbor watching, it looks like you're moving house.",
+      "template": "103-dashboard-summary",
+      "theme": "CLEAN",
+      "reasoning": "Explaining the perception of the attack.",
+      "content": {
+        "TITLE_TEXT": "EXTERNAL PERCEPTION",
+        "KPI_LABEL_1": "OBSERVED STATE",
+        "KPI_VALUE_1": "NORMAL",
+        "KPI_LABEL_2": "ACTUAL STATE",
+        "KPI_VALUE_2": "CRITICAL",
+        "SUMMARY_TEXT": "The attack mimics legitimate administrative activity."
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "To every security system monitoring Stryker's network, the command that erased two hundred thousand devices looked exactly like a legitimate instruction from a legitimate administrator.",
+      "template": "129-log-anomaly-detect",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the log stream that failed to trigger alerts.",
+      "content": {
+        "LOG_1": "USER_AUTH: ADMIN_01",
+        "LOG_2": "IP_SOURCE: 192.168.1.5",
+        "LOG_3": "ACTION: BULK_WIPE",
+        "LOG_4": "TARGET: ALL_DEVICES",
+        "LOG_5": "STATUS: AUTHORIZED",
+        "LOG_6": "TIMESTAMP: 03:00:00",
+        "LOG_7": "SYSTEM_HEALTH: OK",
+        "LOG_8": "ALERT_LEVEL: NONE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Because technically, it was. The administrator just happened to be a threat actor who had stolen the session token.",
+      "template": "114-dossier-open",
+      "theme": "INTEL",
+      "reasoning": "Revealing the actor behind the credentials.",
+      "content": {
+        "SUBJECT_NAME": "THREAT ACTOR",
+        "ALIAS_TEXT": "SESSION HIJACKER",
+        "TTP_1": "TOKEN THEFT",
+        "TTP_2": "ADMIN IMPERSONATION",
+        "THREAT_LEVEL": "CRITICAL"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "There was no malware signature to detect. No anomalous process to flag. No antivirus in the world would have stopped it, because there was nothing for antivirus to scan. The weapon was already inside, trusted and waiting.",
+      "template": "09-split-2panel",
+      "theme": "COLD",
+      "reasoning": "Comparing the lack of detection to the internal threat.",
+      "content": {
+        "LEFT_HEAD": "DETECTION",
+        "LEFT_SUB1": "NO SIGNATURES",
+        "LEFT_SUB2": "NO ANOMALIES",
+        "LEFT_SUB3": "NO ALERTS",
+        "RIGHT_HEAD": "REALITY",
+        "RIGHT_SUB1": "TRUSTED ACCESS",
+        "RIGHT_SUB2": "INTERNAL WEAPON",
+        "RIGHT_SUB3": "ZERO SCANNING",
+        "VERDICT_TEXT": "SYSTEMS BYPASSED"
+      },
+      "duration": 12
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "The command reached laptops and tablets, servers and smartphones. And it reached the personal phones of thousands of employees who had enrolled their personal devices in the corporate management system to access work email.",
+      "template": "140-botnet-spread",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the spread of the wipe command.",
+      "content": {
+        "TITLE_TEXT": "WIPE COMMAND PROPAGATION",
+        "STAT_VALUE_1": "200,000",
+        "STAT_VALUE_2": "DEVICES",
+        "DESC_1": "Corporate and personal devices wiped simultaneously."
+      },
+      "duration": 12
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "This is where the attack crosses from corporate disaster into something more personal.",
+      "template": "42-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Transitioning to the personal impact phase.",
+      "content": {
+        "CHAPTER_WORD": "PERSONAL",
+        "CHAPTER_SUB": "HUMAN IMPACT",
+        "CONTEXT_TEXT": "The breach of private lives."
+      },
+      "duration": 8
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "The wipe was a full device wipe — not a corporate data wipe. For employees with enrolled personal phones, it deleted everything. Family photographs. Videos of children's first steps. Wedding footage.",
+      "template": "107-redacted-reveal",
+      "theme": "INTEL",
+      "reasoning": "Highlighting the loss of personal data.",
+      "content": {
+        "CLASSIFIED_TITLE": "DATA LOSS REPORT",
+        "LINE_1": "FAMILY PHOTOS: DELETED",
+        "LINE_2": "CHILDREN VIDEOS: DELETED",
+        "LINE_3": "WEDDING FOOTAGE: DELETED",
+        "LINE_4": "PERSONAL CONTACTS: DELETED",
+        "LINE_5": "PRIVATE MESSAGES: DELETED",
+        "LINE_6": "TOTAL LOSS: IRREVERSIBLE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "It wiped eSIM profiles, leaving people unable to make calls or send texts. Employees whose phones went blank at three in the morning couldn't even call their families to say what was happening. They communicated through WhatsApp on old devices that had never been enrolled — because everything else had been turned to glass.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Conveying the urgency and isolation of the victims.",
+      "content": {
+        "TITLE_TEXT": "COMMUNICATION BLACKOUT",
+        "SUBTITLE_TEXT": "ESIM PROFILES WIPED",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "03:00 AM",
+        "DESCRIPTION_TEXT": "Total loss of cellular connectivity for thousands."
+      },
+      "duration": 12
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "And here is a dimension that received almost no coverage: the legal exposure. When a company's device management system factory-resets an employee's personal property — destroying irreplaceable personal data — that is not a cybersecurity incident. That is the destruction of private property. The liability questions that follow are significant, and they remain largely unresolved.",
+      "template": "78-evidence-item",
+      "theme": "COLD",
+      "reasoning": "Analyzing the legal implications of the breach.",
+      "content": {
+        "TITLE_TEXT": "LEGAL EXPOSURE ANALYSIS",
+        "LABEL_1": "PROPERTY DAMAGE",
+        "LABEL_2": "LIABILITY",
+        "LABEL_3": "UNRESOLVED",
+        "TAG_1": "PRIVATE PROPERTY",
+        "TAG_2": "CORPORATE LIABILITY",
+        "CONTEXT_TEXT": "Destruction of personal data via corporate policy.",
+        "ALERT_TEXT": "LEGAL PRECEDENT PENDING"
+      },
+      "duration": 15
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "No ransom demand was ever issued. This was not an attack designed to extract money. It was an attack designed to erase. That distinction matters — because it means there was no negotiation phase, no window in which the company might have minimized the damage. The destruction was the point. And it was total.",
+      "template": "01-statcluster-3box",
+      "theme": "THREAT",
+      "reasoning": "Summarizing the nature of the attack as pure destruction.",
+      "content": {
+        "STAT_VALUE_1": "0",
+        "STAT_VALUE_2": "100%",
+        "STAT_VALUE_3": "NONE",
+        "LABEL_1": "RANSOM DEMAND",
+        "LABEL_2": "DESTRUCTION RATE",
+        "LABEL_3": "NEGOTIATION WINDOW",
+        "SUB_1": "NO FINANCIAL MOTIVE",
+        "SUB_2": "TOTAL DATA LOSS",
+        "SUB_3": "NO RECOVERY POSSIBLE",
+        "VERDICT_TEXT": "DESTRUCTION WAS THE POINT"
+      },
+      "duration": 15
+    }
+  ]
+}

@@ -18,6 +18,7 @@ import archiver from 'archiver';
 import { getSettings, updateSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
+import { googleAI } from './services/llm.js';
 import { renderVideo as renderRemotion } from './engines/remotion/renderer.js';
 import { auditTemplate, applyFix, TEMPLATES_DIR, AUDIT_DIR, REPORT_PATH } from './templateAuditor.js';
 import { generateAdjustment, diffSummary, getAllPresets } from './adjustmentPresets.js';
@@ -61,7 +62,28 @@ app.use('/audio',  express.static(audioDir));
 app.use('/images', express.static(imagesDir));
 app.use(express.static(join(__dirname, '../dist')));
 
-// ── Multer — voiceover uploads ────────────────────────────────────────────────
+// ── Multer — image uploads ──────────────────────────────────────────────────
+const imageStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, imagesDir),
+    filename:    (req, file, cb) => cb(null, `upload_${uuidv4()}.${file.originalname.split('.').pop()}`)
+});
+const imageUpload = multer({
+    storage: imageStorage,
+    fileFilter: (req, file, cb) => {
+        const allowed = /jpg|jpeg|png|webp|gif/;
+        const ext = file.originalname.split('.').pop().toLowerCase();
+        cb(null, allowed.test(ext));
+    }
+});
+
+app.post('/api/upload-image', imageUpload.single('image'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No image provided or invalid format' });
+    const url = `/images/${req.file.filename}`;
+    res.json({ success: true, url });
+});
+
+// ── Multer — voiceover uploads ──────────────────────────────────────────────────
+
 const voiceoverStorage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, audioDir),
     filename:    (req, file, cb) => cb(null, `vo_${uuidv4()}.${file.originalname.split('.').pop()}`)
@@ -78,6 +100,114 @@ const voiceoverUpload = multer({
 // ── Render job tracking ───────────────────────────────────────────────────────
 const renderJobs = new Map();
 
+// Helper: generate a 3D image prompt from template scene data
+async function generateFallback3DPrompt(script, template, theme, content) {
+    const apiKey = getGoogleKey();
+    if (!apiKey) {
+        throw new Error('Google API key not configured for fallback generation');
+    }
+
+    const model = googleAI.getGenerativeModel({
+        model: 'gemini-2.5-flash-exp',
+        generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 1024,
+        }
+    });
+
+    const prompt = `You are a 3D scene director. Convert this failed Remotion template scene into a single 3D render prompt.
+
+TEMPLATE: ${template}
+THEME: ${theme}
+CONTENT: ${JSON.stringify(content)}
+SCRIPT: ${script}
+
+Generate a single 60-80 word prompt for a photorealistic 3D render that captures the essence of this scene.
+Rules:
+- Visualize the key data/concept from the content
+- Use the mood indicated by the theme (THREAT = urgent/dark, CLEAN = clean/modern, etc.)
+- Describe the visual elements clearly
+- Include lighting and camera angle suggestions
+- NO humans, NO text overlays in the scene itself
+- Cinematic documentary style
+
+Return ONLY the prompt text, no markdown, no explanations.`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        return result.response.text().trim();
+    } catch (err) {
+        console.warn('⚠️ Fallback prompt generation failed:', err.message);
+        // Return a generic fallback prompt
+        return `Cinematic documentary scene visualizing: ${script.substring(0, 50)}. Dark moody atmosphere, volumetric lighting, photorealistic 3D render, no humans.`;
+    }
+}
+
+// Helper: generate a 3D image as fallback
+async function generateFallbackImage(prompt, environment = 'standard') {
+    const apiKey = getGoogleKey();
+    if (!apiKey) {
+        throw new Error('Google API key not configured for image generation');
+    }
+
+    const imageModel = getImageModel() || 'imagen-3.0-generate-001';
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
+
+    let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
+    if (environment === 'editorial-illustration') {
+        promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
+    }
+
+    const body = {
+        instances: [{ prompt: `${prompt}${promptSuffix}` }],
+        parameters: { sampleCount: 1, aspectRatio: '16:9' },
+    };
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        const errText = await response.text();
+        console.error('❌ Fallback Imagen API error:', errText.substring(0, 500));
+        // Check if error is HTML (common for API issues)
+        if (errText.trim().startsWith('<')) {
+            console.error('   ⚠️ Fallback API returned HTML error page instead of JSON');
+            throw new Error(`Fallback Imagen API returned HTML error page. Check your Google API key.`);
+        }
+        throw new Error(`Fallback Imagen API ${response.status}: ${errText.substring(0, 200)}`);
+    }
+
+    const responseText = await response.text();
+
+    // Check if response is HTML instead of JSON
+    if (responseText.trim().startsWith('<')) {
+        console.error('❌ Fallback Imagen API returned HTML instead of JSON');
+        console.error('   📋 First 300 chars:', responseText.substring(0, 300));
+        throw new Error(`Fallback Imagen API returned HTML error page. Response: ${responseText.substring(0, 200)}...`);
+    }
+
+    let data;
+    try {
+        data = JSON.parse(responseText);
+    } catch (parseErr) {
+        console.error('❌ Failed to parse fallback API response as JSON:', parseErr.message);
+        throw new Error(`Fallback Imagen API returned invalid JSON. Parse error: ${parseErr.message}`);
+    }
+
+    const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) throw new Error('No image returned from Fallback Imagen API. Response: ' + JSON.stringify(data).substring(0, 200));
+
+    const imgId = `fallback_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const imgPath = join(imagesDir, `${imgId}.jpg`);
+    await fs.writeFile(imgPath, Buffer.from(b64, 'base64'));
+
+    console.log(`   🖼️ Fallback image generated: ${imgId}.jpg`);
+    return `/images/${imgId}.jpg`;
+}
+
 // Helper: start a background video render job and return { job, videoId }
 function startVideoRenderJob(filledCode, opts = {}) {
     const job = createRenderJob({});
@@ -87,6 +217,7 @@ function startVideoRenderJob(filledCode, opts = {}) {
     job.phase = 'bundling';
     job.status = 'processing';
     job.message = 'Preparing render...';
+
     (async () => {
         try {
             await renderRemotion(filledCode, outputPath, {
@@ -94,20 +225,51 @@ function startVideoRenderJob(filledCode, opts = {}) {
                 onProgress: (p) => {
                     job.phase = p.phase;
                     job.progress = p.progress;
-                    job.message = p.phase === 'bundling' ? 'Bundling...' : `Rendering... ${p.progress}%`;
-                },
+                    if (p.phase === 'bundling') {
+                        job.message = p.progress >= 30 ? 'Bundling complete, starting render...' : `Bundling... ${Math.round((p.progress / 30) * 100)}%`;
+                    } else {
+                        job.message = `Rendering frames... ${p.progress}%`;
+                    }
+                }
             });
             job.status = 'completed';
             job.progress = 100;
             job.url = `/videos/${videoId}.mp4`;
             job.message = 'Done';
         } catch (err) {
+            // ── Fallback: Generate 3D image when render fails ─────────────────────────────────
+            if (opts.sceneData && opts.sceneData.type === 'TEMPLATE') {
+                try {
+                    console.log(`   🔄 Render failed, attempting 3D image fallback...`);
+                    job.message = 'Render failed, generating fallback image...';
+                    job.phase = 'fallback';
+                    job.progress = 90;
+
+                    const { script, template, theme, content, environment } = opts.sceneData;
+                    const fallbackPrompt = await generateFallback3DPrompt(script, template, theme, content);
+                    const fallbackImageUrl = await generateFallbackImage(fallbackPrompt, environment);
+
+                    job.status = 'fallback';
+                    job.progress = 100;
+                    job.imageUrl = fallbackImageUrl;
+                    job.fallbackPrompt = fallbackPrompt;
+                    job.message = 'Fallback image ready';
+                    console.log(`   ✅ Fallback image generated for failed render ${job.id}`);
+                    return;
+                } catch (fallbackErr) {
+                    console.error(`   ❌ Fallback generation also failed:`, fallbackErr.message);
+                    // Continue to original error handling
+                }
+            }
+
+            // Original error handling if fallback not applicable or failed
             job.status = 'error';
             job.error = err.message;
             job.message = 'Render failed';
             console.error(`❌ Video render ${job.id} failed:`, err.message);
         }
     })();
+
     return { job, videoId };
 }
 
@@ -142,9 +304,9 @@ app.get('/api/projects', (req, res) => {
 
 app.post('/api/projects', (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, settings } = req.body;
         if (!name) return res.status(400).json({ error: 'name is required' });
-        const project = createProject(name, description);
+        const project = createProject(name, description, settings);
         res.json({ success: true, project });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -207,12 +369,54 @@ app.get('/api/projects/:id/export', (req, res) => {
 
         archive.append(JSON.stringify(project, null, 2), { name: 'project_data.json' });
         archive.finalize();
-    } catch (err) {
+        } catch (err) {
         res.status(500).json({ success: false, error: err.message });
-    }
-});
+        }
+        });
 
-// ── CHAPTERS ──────────────────────────────────────────────────────────────────
+        app.get('/api/projects/:pid/chapters/:cid/export', (req, res) => {
+        try {
+        const project = getProject(req.params.pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+
+        const chapter = project.chapters.find(c => c.id === req.params.cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+
+        res.attachment(`${project.name.replace(/[^a-zA-Z0-9]/g, '_')}_${chapter.title.replace(/[^a-zA-Z0-9]/g, '_')}_export.zip`);
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        archive.on('error', err => { throw err; });
+        archive.pipe(res);
+
+        chapter.scenes.forEach(scene => {
+            const sceneNum = String(scene.globalIndex).padStart(3, '0');
+            if (scene.videoUrl) {
+                const fileName = scene.videoUrl.split('/').pop();
+                const localPath = join(videosDir, fileName);
+                if (fsSync.existsSync(localPath)) {
+                    archive.file(localPath, { name: `Sc${sceneNum}_${fileName}` });
+                }
+            } else if (scene.imageUrl) {
+                const fileName = scene.imageUrl.split('/').pop();
+                const localPath = join(imagesDir, fileName);
+                if (fsSync.existsSync(localPath)) {
+                    archive.file(localPath, { name: `Sc${sceneNum}_${fileName}` });
+                }
+            }
+        });
+
+        archive.append(JSON.stringify(chapter, null, 2), { name: 'chapter_data.json' });
+        archive.finalize();
+        } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+        }
+        });
+
+        // Root Route
+        app.get('/', (req, res) => {
+        res.send('🎬 ARXXIS Director Studio API Server is running. Access the UI via port 5174 in development.');
+        });
+
+        // ── CHAPTERS ──────────────────────────────────────────────────────────────────
 app.post('/api/projects/:id/chapters', async (req, res) => {
     try {
         const { title, scriptText, scenes } = req.body;
@@ -220,8 +424,13 @@ app.post('/api/projects/:id/chapters', async (req, res) => {
 
         let processedScenes = scenes;
         if (!processedScenes) {
-            const { generateScenes } = await import('./autoScene.js');
-            processedScenes = await generateScenes(scriptText);
+            const project = getProject(req.params.id);
+            const genSettings = project?.generationSettings || null;
+            const directorType = project?.settings?.director || 'standard';
+            
+            console.log(`   🎬 Using director: ${directorType}`);
+            const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
+            processedScenes = await generateScenes(scriptText, genSettings);
         }
 
         const result = addChapter(req.params.id, title || `Chapter ${Date.now()}`, scriptText, processedScenes);
@@ -262,12 +471,23 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
 
         const imageModel = getImageModel() || 'imagen-3.0-generate-001';
 
+        // Choose prompt suffix based on environment
+        let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
+        if (environment === 'editorial-illustration') {
+            promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
+        }
+
+        console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : 'PHOTOREALISTIC'}`);
+
         // Call Imagen via Google AI REST API
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
         const body = {
-            instances: [{ prompt: `${prompt}. Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.` }],
+            instances: [{ prompt: `${prompt}${promptSuffix}` }],
             parameters: { sampleCount: 1, aspectRatio: '16:9' },
         };
+
+        console.log(`   📡 Calling Imagen API: ${imageModel}`);
+        console.log(`   📋 Prompt: ${prompt.substring(0, 100)}...`);
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -277,13 +497,41 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
 
         if (!response.ok) {
             const errText = await response.text();
-            console.error('❌ Imagen API error:', errText.substring(0, 300));
+            console.error('❌ Imagen API error:', errText.substring(0, 500));
+            // Check if error is HTML (common for API issues)
+            if (errText.trim().startsWith('<')) {
+                console.error('   ⚠️ API returned HTML error page instead of JSON');
+                console.error('   📋 First 300 chars:', errText.substring(0, 300));
+                throw new Error(`Imagen API returned HTML error page. Status: ${response.status}. This may indicate: invalid API key, API quota exceeded, or service unavailable.`);
+            }
             throw new Error(`Imagen API ${response.status}: ${errText.substring(0, 200)}`);
         }
 
-        const data = await response.json();
+        const responseText = await response.text();
+
+        // Check if response is HTML instead of JSON
+        if (responseText.trim().startsWith('<')) {
+            console.error('❌ Imagen API returned HTML instead of JSON');
+            console.error('   📋 First 300 chars:', responseText.substring(0, 300));
+            console.error('   🔍 TROUBLESHOOTING:');
+            console.error('      1. Check Google API key is valid and not expired');
+            console.error('      2. Verify Imagen API is enabled in Google Cloud Console');
+            console.error('      3. Check API quota limits (may be exceeded)');
+            console.error('      4. Current model:', imageModel);
+            throw new Error(`Imagen API returned HTML error page. Check your Google API key and Imagen access. Response: ${responseText.substring(0, 200)}...`);
+        }
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseErr) {
+            console.error('❌ Failed to parse API response as JSON:', parseErr.message);
+            console.error('   📋 Response first 300 chars:', responseText.substring(0, 300));
+            throw new Error(`Imagen API returned invalid JSON. Parse error: ${parseErr.message}`);
+        }
+
         const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
-        if (!b64) throw new Error('No image returned from Imagen API');
+        if (!b64) throw new Error('No image returned from Imagen API. Response: ' + JSON.stringify(data).substring(0, 200));
 
         // Save to public/images/
         const imgId = `render_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -294,6 +542,40 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         res.json({ success: true, url: `/images/${imgId}.jpg` });
     } catch (err) {
         console.error('❌ render-3d error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ── ANIMATE STATIC IMAGE TO VIDEO ────────────────────────────────────────────
+// Animate a static image using ImageHero template for 3D_RENDER scenes
+app.post('/api/auto-scene/render-image-video', async (req, res) => {
+    try {
+        const { imageUrl, motion, duration } = req.body;
+        if (!imageUrl) return res.status(400).json({ error: 'imageUrl is required' });
+
+        const { fillTemplate } = await import('./templateFiller.js');
+
+        // Fill ImageHero template with the image URL and motion type
+        const content = {
+            IMAGE_URL: imageUrl,
+            MOTION_TYPE: motion || 'zoom-in'
+        };
+
+        const filledCode = fillTemplate('ImageHero', 'DARK', content);
+
+        // Start render job with the filled template
+        const { job, videoId } = startVideoRenderJob(filledCode, {
+            duration: duration || 15,
+            fps: 30,
+            width: 1920,
+            height: 1080,
+            sceneData: { type: '3D_RENDER' } // Not a template scene, so no fallback needed
+        });
+
+        console.log(`   🎬 Image-to-video render started: ${job.id}`);
+        res.json({ success: true, jobId: job.id, videoId });
+    } catch (err) {
+        console.error('❌ render-image-video error:', err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -387,8 +669,13 @@ app.post('/api/projects/:pid/chapters/:cid/reanalyze', async (req, res) => {
         if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
 
         console.log(`   📄 Chapter scriptText: ${chapter.scriptText?.length ?? 'MISSING'} chars`)
-        const { generateScenes } = await import('./autoScene.js');
-        const processedScenes = await generateScenes(chapter.scriptText);
+        const genSettings = project.generationSettings || null;
+        const directorType = project?.settings?.director || 'standard';
+        
+        console.log(`   🎬 Using director (reanalyze): ${directorType}`);
+        const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
+        
+        const processedScenes = await generateScenes(chapter.scriptText, genSettings);
         const result = updateChapterScenes(req.params.pid, req.params.cid, processedScenes);
         res.json({ success: true, project: result.project, chapter: result.chapter });
     } catch (err) {
@@ -419,15 +706,15 @@ app.put('/api/projects/:pid/chapters/:cid/scenes/:idx/flag', (req, res) => {
 // ── RENDER JOBS ───────────────────────────────────────────────────────────────
 app.post('/api/manual-render-job', async (req, res) => {
     try {
-        const { code, duration, fps, width, height } = req.body;
+        const { code, duration, fps, width, height, sceneData } = req.body;
         if (!code) return res.status(400).json({ error: 'TSX code is required' });
 
-        const job = createRenderJob({ code, duration, fps, width, height });
+        const job = createRenderJob({ code, duration, fps, width, height, sceneData });
         res.json({ success: true, jobId: job.id });
 
         const videoId = `Director_${job.id.substring(0, 8)}`;
         const outputPath = join(videosDir, `${videoId}.mp4`);
-        const renderOptions = { duration: duration || 10, fps: fps || 30, width: width || 1920, height: height || 1080 };
+        const renderOptions = { duration: duration || 15, fps: fps || 30, width: width || 1920, height: height || 1080, sceneData };
 
         job.phase = 'bundling';
         job.status = 'processing';
@@ -439,7 +726,11 @@ app.post('/api/manual-render-job', async (req, res) => {
                 onProgress: (p) => {
                     job.phase = p.phase;
                     job.progress = p.progress;
-                    job.message = p.phase === 'bundling' ? 'Bundling...' : `Rendering frames... ${p.progress}%`;
+                    if (p.phase === 'bundling') {
+                        job.message = p.progress === 100 ? 'Bundling complete, starting render...' : `Bundling... ${p.progress}%`;
+                    } else {
+                        job.message = `Rendering frames... ${p.progress}%`;
+                    }
                 }
             });
             job.status = 'completed';
@@ -448,6 +739,7 @@ app.post('/api/manual-render-job', async (req, res) => {
             job.message = 'Done';
             console.log(`✅ Render ${job.id} complete`);
         } catch (err) {
+            // Fallback handling is now inside startVideoRenderJob
             job.status = 'error';
             job.error = err.message;
             job.message = 'Render failed';

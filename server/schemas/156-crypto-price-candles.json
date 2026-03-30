@@ -1,0 +1,19 @@
+{
+    "template":  "156-crypto-price-candles",
+    "name":  "Crypto Price Candles",
+    "description":  "Professional OHLC candlestick chart with volume bars and staggered entrance animation.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "crypto",
+                 "trading",
+                 "chart"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "SUB_TEXT_1":  "Footer description or source",
+                   "ASSET_NAME":  "Name of the asset",
+                   "TIMEFRAME":  "Timeframe label (e.g. 1H, 4H, 1D)"
+               }
+}

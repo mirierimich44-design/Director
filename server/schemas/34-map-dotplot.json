@@ -1,15 +1,20 @@
 {
-  "template": "34-map-dotplot",
-  "name": "World Map Dot Plot",
-  "description": "World map with four highlighted dot locations — North America, Europe, Asia, Africa",
-  "category": "map",
-  "duration": 8,
-  "tags": ["map", "global", "locations", "dots"],
-  "fields": {
-    "TITLE_TEXT": "Title above map, e.g. 'GLOBAL ATTACK ORIGINS'",
-    "MAP_LABEL_1": "Label for North America dot, e.g. 'United States'",
-    "MAP_LABEL_2": "Label for Europe dot, e.g. 'Eastern Europe'",
-    "MAP_LABEL_3": "Label for Asia dot, e.g. 'North Korea'",
-    "MAP_LABEL_4": "Label for Africa dot, e.g. 'West Africa'"
-  }
+    "template":  "34-map-dotplot",
+    "name":  "World Map Dot Plot",
+    "description":  "World map with four highlighted dot locations — North America, Europe, Asia, Africa",
+    "category":  "map",
+    "duration":  15,
+    "tags":  [
+                 "map",
+                 "global",
+                 "locations",
+                 "dots"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Title above map, e.g. \u0027GLOBAL ATTACK ORIGINS\u0027",
+                   "MAP_LABEL_1":  "Label for North America dot, e.g. \u0027United States\u0027",
+                   "MAP_LABEL_2":  "Label for Europe dot, e.g. \u0027Eastern Europe\u0027",
+                   "MAP_LABEL_3":  "Label for Asia dot, e.g. \u0027North Korea\u0027",
+                   "MAP_LABEL_4":  "Label for Africa dot, e.g. \u0027West Africa\u0027"
+               }
 }

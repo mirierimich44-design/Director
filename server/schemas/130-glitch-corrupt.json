@@ -1,0 +1,20 @@
+{
+    "template":  "130-glitch-corrupt",
+    "name":  "Glitch Corruption Display",
+    "description":  "A high-impact, security-focused aesthetic featuring digital glitch artifacts, color channel splitting, and memory corruption visuals.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "glitch",
+                 "security",
+                 "corruption",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main header text",
+                   "SUB_1":  "Contextual subtitle",
+                   "DATA_1":  "Primary metric or data point",
+                   "DATA_2":  "Secondary metric or data point",
+                   "STATUS_TEXT":  "System status label"
+               }
+}

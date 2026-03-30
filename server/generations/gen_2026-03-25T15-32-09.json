@@ -1,0 +1,184 @@
+{
+  "timestamp": "2026-03-25T15:32:09.284Z",
+  "scriptLength": 1794,
+  "scriptPreview": "In the modern enterprise, the old idea of a secure perimeter is dead. Employees work from home, from airports, from hotel lobbies. An IT department cannot physically touch every device. So they use a ",
+  "scriptFull": "In the modern enterprise, the old idea of a secure perimeter is dead. Employees work from home, from airports, from hotel lobbies. An IT department cannot physically touch every device. So they use a management platform — a single pane of glass from which one administrator can see, control, and issue commands to every device in the organization, regardless of where on earth it happens to be.\nMicrosoft Intune is one of the most widely deployed of these platforms. From a single web-based console, one administrator can enforce security policies, push software updates, and remotely wipe a device if it is reported lost or stolen.\nOr wipe all of them at once.\nThink of it like a building where one master key opens every door — the server room, the vault, the executive offices, the parking garage — and that key hangs on a hook by the front desk, twenty-four hours a day. Nobody checks who picks it up. Nobody logs who used it. It just hangs there, fully loaded, because it makes things convenient for the staff. That is what Intune's administrative console represents. And when the wrong person picks up that key, every door in the building opens for them at once.\nIT administrators will tell you that Intune can be maddeningly slow to push software updates across a large organization. But on the morning of this attack, the system worked with a speed it rarely manages under normal conditions — like a fire alarm that ignored every drill, then went off at full volume the one night it actually mattered. A single Bulk Wipe command moved through Microsoft's global cloud infrastructure and reached two hundred thousand devices in a matter of hours.\nBut here is the question that unlocks the whole story. How does an outsider get behind that front desk? How do they pick up the master key?\n",
+  "totalScenes": 10,
+  "templateCount": 7,
+  "renderCount": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "In the modern enterprise, the old idea of a secure perimeter is dead.",
+      "prompt": "Cinematic wide shot of a modern, empty glass-walled office at dusk, flickering overhead lights, digital artifacts overlaying the glass, high-tech atmosphere, photorealistic, 8k.",
+      "environment": "modern office",
+      "camera": "dolly out",
+      "motion": "Slow dolly out from a single desk to reveal the vast, empty office space.",
+      "lower_third": {
+        "text": "PERIMETER BREACHED",
+        "attribution": "ARXXIS INTEL",
+        "tone": "#FF6600"
+      },
+      "duration": 6
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "Employees work from home, from airports, from hotel lobbies. An IT department cannot physically touch every device.",
+      "prompt": "Abstract visualization of glowing nodes scattered across a dark world map, lines of light connecting them to a central hub, cold blue aesthetic, cinematic depth of field.",
+      "environment": "abstract network",
+      "camera": "pan",
+      "motion": "Slow pan across the map, highlighting the disconnected nature of the remote devices.",
+      "lower_third": {
+        "text": "REMOTE WORKFORCE",
+        "attribution": "ARXXIS INTEL",
+        "tone": "#00FFFF"
+      },
+      "duration": 8
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "So they use a management platform — a single pane of glass from which one administrator can see, control, and issue commands to every device in the organization, regardless of where on earth it happens to be.",
+      "template": "103-dashboard-summary",
+      "theme": "TECHNICAL",
+      "reasoning": "Explains the function of a management platform.",
+      "content": {
+        "TITLE_TEXT": "MANAGEMENT PLATFORM",
+        "KPI_LABEL_1": "DEVICES MANAGED",
+        "KPI_VALUE_1": "100%",
+        "KPI_LABEL_2": "CONTROL LEVEL",
+        "KPI_VALUE_2": "ADMIN",
+        "SUMMARY_TEXT": "Centralized command and control for global enterprise infrastructure."
+      },
+      "duration": 8
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "Microsoft Intune is one of the most widely deployed of these platforms.",
+      "template": "76-organization-card",
+      "theme": "INTEL",
+      "reasoning": "Profiles the specific software platform.",
+      "content": {
+        "TITLE_TEXT": "MICROSOFT INTUNE",
+        "LABEL_1": "TYPE",
+        "LABEL_2": "DEPLOYMENT",
+        "LABEL_3": "STATUS",
+        "TAG_1": "MDM",
+        "TAG_2": "CLOUD",
+        "TAG_3": "ENTERPRISE",
+        "STAT_VALUE_1": "GLOBAL",
+        "STAT_VALUE_2": "HIGH",
+        "STAT_VALUE_3": "ACTIVE",
+        "CONTEXT_TEXT": "Widely deployed management platform for enterprise device security."
+      },
+      "duration": 6
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "From a single web-based console, one administrator can enforce security policies, push software updates, and remotely wipe a device if it is reported lost or stolen. Or wipe all of them at once.",
+      "template": "119-kill-chain-steps",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the administrative capabilities and the wipe command.",
+      "content": {
+        "TITLE_TEXT": "ADMINISTRATIVE CAPABILITIES",
+        "STEP_1": "ENFORCE POLICY",
+        "STEP_2": "PUSH UPDATES",
+        "STEP_3": "REMOTE WIPE",
+        "STEP_4": "BULK WIPE",
+        "STEP_5": "",
+        "STEP_6": "",
+        "STEP_7": "",
+        "FOOTER_TEXT": "Total control over enterprise assets."
+      },
+      "duration": 8
+    },
+    {
+      "index": 6,
+      "type": "3D_RENDER",
+      "script": "Think of it like a building where one master key opens every door — the server room, the vault, the executive offices, the parking garage — and that key hangs on a hook by the front desk, twenty-four hours a day. Nobody checks who picks it up. Nobody logs who used it.",
+      "prompt": "Close up of a physical brass key hanging on a hook behind a dark, empty security desk, cinematic lighting, shallow depth of field, moody atmosphere.",
+      "environment": "security desk",
+      "camera": "dolly in",
+      "motion": "Slow dolly in towards the key, focusing on the lack of security around it.",
+      "lower_third": {
+        "text": "MASTER KEY ACCESS",
+        "attribution": "ARXXIS INTEL",
+        "tone": "#FF6600"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "It just hangs there, fully loaded, because it makes things convenient for the staff. That is what Intune's administrative console represents. And when the wrong person picks up that key, every door in the building opens for them at once.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Highlights the vulnerability of the console.",
+      "content": {
+        "TITLE_TEXT": "SECURITY ALERT",
+        "SUBTITLE_TEXT": "CONSOLE COMPROMISE",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "08:00 UTC",
+        "DESCRIPTION_TEXT": "Unauthorized access to administrative master key."
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "IT administrators will tell you that Intune can be maddeningly slow to push software updates across a large organization. But on the morning of this attack, the system worked with a speed it rarely manages under normal conditions — like a fire alarm that ignored every drill, then went off at full volume the one night it actually mattered.",
+      "template": "04-linechart-draw",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the anomaly in system performance speed.",
+      "content": {
+        "TITLE_TEXT": "SYSTEM PERFORMANCE ANOMALY",
+        "DATE_1": "T-48H",
+        "DATE_2": "T-24H",
+        "DATE_3": "ATTACK",
+        "DATE_4": "T+24H",
+        "DATE_5": "T+48H",
+        "LINE_VALUE_1": "10",
+        "LINE_VALUE_2": "10",
+        "LINE_VALUE_3": "100",
+        "LINE_VALUE_4": "10",
+        "LINE_VALUE_5": "10",
+        "CONTEXT_TEXT": "Unprecedented speed during bulk wipe event."
+      },
+      "duration": 10
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "A single Bulk Wipe command moved through Microsoft's global cloud infrastructure and reached two hundred thousand devices in a matter of hours.",
+      "template": "141-breach-counter",
+      "theme": "THREAT",
+      "reasoning": "Shows the scale of the impact.",
+      "content": {
+        "STAT_VALUE_1": "200,000",
+        "RECORDS_COMPROMISED": "DEVICES WIPED",
+        "LABEL_1": "IMPACT",
+        "SUB_1": "GLOBAL INFRASTRUCTURE",
+        "SUB_2": "BULK COMMAND EXECUTED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "But here is the question that unlocks the whole story. How does an outsider get behind that front desk? How do they pick up the master key?",
+      "template": "42-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Transition to the investigation phase.",
+      "content": {
+        "CHAPTER_WORD": "ATTRIBUTION",
+        "CHAPTER_SUB": "THE INVESTIGATION",
+        "CONTEXT_TEXT": "Unlocking the source of the breach."
+      },
+      "duration": 6
+    }
+  ]
+}

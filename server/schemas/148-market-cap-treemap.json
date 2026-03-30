@@ -1,0 +1,25 @@
+{
+    "template":  "148-market-cap-treemap",
+    "name":  "Market Cap Treemap",
+    "description":  "A proportional treemap visualization for sectors or companies, featuring staggered entrance animations.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "treemap",
+                 "market-cap",
+                 "comparison"
+             ],
+    "fields":  {
+                   "COMPANY_1":  "Name of the largest entity",
+                   "VALUE_1":  "Market cap or value for entity 1",
+                   "COMPANY_2":  "Name of the second entity",
+                   "VALUE_2":  "Market cap or value for entity 2",
+                   "COMPANY_3":  "Name of the third entity",
+                   "VALUE_3":  "Market cap or value for entity 3",
+                   "COMPANY_4":  "Name of the fourth entity",
+                   "VALUE_4":  "Market cap or value for entity 4",
+                   "COMPANY_5":  "Name of the fifth entity",
+                   "VALUE_5":  "Market cap or value for entity 5"
+               }
+}

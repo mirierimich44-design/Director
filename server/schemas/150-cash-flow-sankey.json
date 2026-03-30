@@ -1,0 +1,22 @@
+{
+    "template":  "150-cash-flow-sankey",
+    "name":  "Cash Flow Sankey",
+    "description":  "Animated flow bands representing financial distribution from a central source.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "sankey",
+                 "flow",
+                 "budget"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "FLOW_LABEL_1":  "Label for first flow band",
+                   "VAL_1":  "Numeric value for first flow",
+                   "FLOW_LABEL_2":  "Label for second flow band",
+                   "VAL_2":  "Numeric value for second flow",
+                   "FLOW_LABEL_3":  "Label for third flow band",
+                   "VAL_3":  "Numeric value for third flow"
+               }
+}

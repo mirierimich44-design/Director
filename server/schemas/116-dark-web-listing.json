@@ -1,0 +1,20 @@
+{
+    "template":  "116-dark-web-listing",
+    "name":  "Dark Web Listing",
+    "description":  "An ominous, high-contrast card display for leaked data summaries, featuring a red border and monospace data stats.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "leak",
+                 "security",
+                 "dark-web",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main title of the leaked dataset",
+                   "SOURCE_TEXT":  "Origin or threat actor name",
+                   "PRICE_VALUE":  "Cost in crypto or fiat",
+                   "RECORD_COUNT":  "Total number of records",
+                   "DESCRIPTION_TEXT":  "Short summary of the data contents"
+               }
+}

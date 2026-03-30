@@ -1,20 +1,24 @@
 {
-  "template": "01-statcluster-3box",
-  "name": "3-Box Stat Cluster",
-  "description": "Three statistics displayed in colorful boxes with connectors, plus a verdict summary at the bottom",
-  "category": "charts",
-  "duration": 9,
-  "tags": ["statistics", "comparison", "summary"],
-  "fields": {
-    "STAT_VALUE_1": "large number or short word for box 1",
-    "STAT_VALUE_2": "large number or short word for box 2",
-    "STAT_VALUE_3": "large number or short word for box 3",
-    "LABEL_1": "short label for stat 1 max 4 words",
-    "LABEL_2": "short label for stat 2 max 4 words",
-    "LABEL_3": "short label for stat 3 max 4 words",
-    "SUB_1": "one line context for stat 1 max 6 words",
-    "SUB_2": "one line context for stat 2 max 6 words",
-    "SUB_3": "one line context for stat 3 max 6 words",
-    "VERDICT_TEXT": "one sentence conclusion from the script"
-  }
+    "template":  "01-statcluster-3box",
+    "name":  "3-Box Stat Cluster",
+    "description":  "Three statistics displayed in colorful boxes with connectors, plus a verdict summary at the bottom",
+    "category":  "charts",
+    "duration":  15,
+    "tags":  [
+                 "statistics",
+                 "comparison",
+                 "summary"
+             ],
+    "fields":  {
+                   "STAT_VALUE_1":  "large number or short word for box 1",
+                   "STAT_VALUE_2":  "large number or short word for box 2",
+                   "STAT_VALUE_3":  "large number or short word for box 3",
+                   "LABEL_1":  "short label for stat 1 max 4 words",
+                   "LABEL_2":  "short label for stat 2 max 4 words",
+                   "LABEL_3":  "short label for stat 3 max 4 words",
+                   "SUB_1":  "one line context for stat 1 max 6 words",
+                   "SUB_2":  "one line context for stat 2 max 6 words",
+                   "SUB_3":  "one line context for stat 3 max 6 words",
+                   "VERDICT_TEXT":  "one sentence conclusion from the script"
+               }
 }

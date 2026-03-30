@@ -76,11 +76,11 @@ export const AnimationComponent = () => {
   // Which country to show — controlled by placeholder
   const countryKey = "MAP_LABEL_1"
 
-  // Use NORTHKOREA as default for stub rendering
-  const country = COUNTRY_PATHS['NORTHKOREA']
+  // Look up country path using the placeholder value, fallback to USA if not found
+  const country = COUNTRY_PATHS[countryKey] || COUNTRY_PATHS['USA']
 
   const stadiaKey = "STADIA_API_KEY"
-  const mapboxCoords = COUNTRY_MAPBOX[countryKey] || COUNTRY_MAPBOX['NORTHKOREA']
+  const mapboxCoords = COUNTRY_MAPBOX[countryKey] || COUNTRY_MAPBOX['USA']
   const stadiaUrl = stadiaKey
     ? `https://tiles.stadiamaps.com/static/alidade_smooth_dark/${mapboxCoords[0]},${mapboxCoords[1]},${mapboxCoords[2]}/480x400@2x.png?api_key=${stadiaKey}`
     : null

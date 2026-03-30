@@ -1,19 +1,23 @@
 {
-  "template": "09-split-2panel",
-  "name": "2-Panel Split",
-  "description": "Two panels side by side, each with a heading and three sub-items",
-  "category": "split",
-  "duration": 8,
-  "tags": ["split", "comparison", "panel"],
-  "fields": {
-    "LEFT_HEAD": "heading for left panel max 4 words",
-    "LEFT_SUB1": "left sub item one max 5 words",
-    "LEFT_SUB2": "left sub item two max 5 words",
-    "LEFT_SUB3": "left sub item three max 5 words",
-    "RIGHT_HEAD": "heading for right panel max 4 words",
-    "RIGHT_SUB1": "right sub item one max 5 words",
-    "RIGHT_SUB2": "right sub item two max 5 words",
-    "RIGHT_SUB3": "right sub item three max 5 words",
-    "VERDICT_TEXT": "one sentence conclusion from the script"
-  }
+    "template":  "09-split-2panel",
+    "name":  "2-Panel Split",
+    "description":  "Two panels side by side, each with a heading and three sub-items",
+    "category":  "split",
+    "duration":  15,
+    "tags":  [
+                 "split",
+                 "comparison",
+                 "panel"
+             ],
+    "fields":  {
+                   "LEFT_HEAD":  "heading for left panel max 4 words",
+                   "LEFT_SUB1":  "left sub item one max 5 words",
+                   "LEFT_SUB2":  "left sub item two max 5 words",
+                   "LEFT_SUB3":  "left sub item three max 5 words",
+                   "RIGHT_HEAD":  "heading for right panel max 4 words",
+                   "RIGHT_SUB1":  "right sub item one max 5 words",
+                   "RIGHT_SUB2":  "right sub item two max 5 words",
+                   "RIGHT_SUB3":  "right sub item three max 5 words",
+                   "VERDICT_TEXT":  "one sentence conclusion from the script"
+               }
 }

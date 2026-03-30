@@ -1,0 +1,267 @@
+{
+  "timestamp": "2026-03-28T14:45:15.922Z",
+  "scriptLength": 2480,
+  "scriptPreview": "There is a dimension to Salt Typhoon that rarely appears in the coverage, and that requires a moment to sit with properly.\nThe US intelligence community has assessed, in public documents, that China's",
+  "scriptFull": "There is a dimension to Salt Typhoon that rarely appears in the coverage, and that requires a moment to sit with properly.\nThe US intelligence community has assessed, in public documents, that China's goal in the event of a military conflict — specifically a conflict over Taiwan — would be to disrupt American command, control, and communications infrastructure in order to slow US military mobilization and create confusion in the critical early hours. Salt Typhoon's target selection was not random. The concentration in Washington D.C., the focus on government officials, defense contractors, military networks, and intelligence community personnel, the systematic targeting of the backbone infrastructure through which US military and intelligence communications flow — all of it aligns with that strategic objective in ways that are too consistent to be coincidental.\nA former NSA analyst described Salt Typhoon as a component of China's hundred-year strategy, and that framing is the correct lens for understanding the full operation. The calls intercepted in 2023 and 2024 are not simply today's intelligence. They are the foundation for a comprehensive understanding of how the US government communicates under pressure, who speaks to whom, what the command structures look like when decisions need to be made quickly, and which relationships and channels carry the most weight. That picture does not expire. It is stored, analyzed, and built into models that will inform decisions years and potentially decades from now.\nBetween March and December 2024, Salt Typhoon also compromised an unnamed US state's Army National Guard network for nine undetected months, exfiltrating administrator credentials, network traffic diagrams, geographic location maps, and personally identifiable information on service members. Given that National Guard units in fourteen states are integrated with state fusion centers responsible for sharing threat information, that single compromise potentially undermined cybersecurity coordination across an entire layer of US infrastructure that most Americans never think about until it fails.\nSalt Typhoon obtained, in the words of Deputy National Security Advisor Anne Neuberger, \"broad and full access\" to American telecommunications — the capability to geolocate millions of individuals and record calls at will. That is not a data breach in the conventional sense. That is strategic pre-positioning for a conflict that has not yet begun.\n",
+  "totalScenes": 14,
+  "templateCount": 13,
+  "renderCount": 1,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "There is a dimension to Salt Typhoon that rarely appears in the coverage, and that requires a moment to sit with properly.",
+      "template": "158-chapter-word-drop",
+      "theme": "TECHNICAL",
+      "reasoning": "Sets a serious, analytical tone for the chapter introduction.",
+      "content": {
+        "CHAPTER_WORD": "SALT TYPHOON",
+        "CHAPTER_SUB": "BEYOND THE HEADLINES",
+        "CONTEXT_TEXT": "UNCOVERING THE STRATEGIC DIMENSION"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "The US intelligence community has assessed, in public documents, that China's goal in the event of a military conflict — specifically a conflict over Taiwan — would be to disrupt American command, control, and communications infrastructure",
+      "template": "34b-map-country-zoom",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the geographic focus of the conflict assessment.",
+      "content": {
+        "TITLE_TEXT": "STRATEGIC ASSESSMENT",
+        "MAP_LABEL_1": "TAIWAN STRAIT",
+        "TAG_1": "CONFLICT SCENARIO",
+        "STAT_VALUE_1": "C2",
+        "LABEL_1": "COMMAND & CONTROL",
+        "STAT_VALUE_2": "INFRA",
+        "LABEL_2": "COMMUNICATIONS",
+        "CONTEXT_TEXT": "DISRUPTION OF US MILITARY INFRASTRUCTURE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "in order to slow US military mobilization and create confusion in the critical early hours. Salt Typhoon's target selection was not random.",
+      "template": "119-kill-chain-steps",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the disruption phase of the kill chain.",
+      "content": {
+        "TITLE_TEXT": "DISRUPTION OBJECTIVE",
+        "STEP_1": "MOBILIZATION DELAY",
+        "STEP_2": "C2 DEGRADATION",
+        "STEP_3": "OPERATIONAL CONFUSION",
+        "STEP_4": "TARGETED SELECTION",
+        "STEP_5": "",
+        "STEP_6": "",
+        "STEP_7": "",
+        "FOOTER_TEXT": "STRATEGIC TARGETING"
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "The concentration in Washington D.C., the focus on government officials, defense contractors, military networks, and intelligence community personnel,",
+      "template": "19-nodenetwork-centered",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the hub-and-spoke nature of the targeted entities.",
+      "content": {
+        "TITLE_TEXT": "TARGET CONCENTRATION",
+        "ORIGIN_LABEL": "WASHINGTON D.C.",
+        "NODE_LABEL_1": "GOV OFFICIALS",
+        "NODE_LABEL_2": "DEFENSE CONTRACTORS",
+        "NODE_LABEL_3": "MILITARY NETWORKS",
+        "NODE_LABEL_4": "INTEL PERSONNEL",
+        "NODE_LABEL_5": "",
+        "NODE_LABEL_6": ""
+      },
+      "duration": 10
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "the systematic targeting of the backbone infrastructure through which US military and intelligence communications flow — all of it aligns with that strategic objective in ways that are too consistent to be coincidental.",
+      "template": "120-lateral-movement",
+      "theme": "THREAT",
+      "reasoning": "Illustrates the systematic nature of the infrastructure targeting.",
+      "content": {
+        "TITLE_TEXT": "BACKBONE TARGETING",
+        "SUB_TEXT": "SYSTEMATIC ALIGNMENT",
+        "SOURCE_NODE": "EXTERNAL",
+        "HOP_1": "CORE ROUTER",
+        "HOP_2": "SWITCH FABRIC",
+        "HOP_3": "COMM LINK",
+        "TARGET_NODE": "US INTEL"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "A former NSA analyst described Salt Typhoon as a component of China's hundred-year strategy, and that framing is the correct lens for understanding the full operation.",
+      "template": "151-knowledge-card",
+      "theme": "TECHNICAL",
+      "reasoning": "Provides context on the strategic framing of the operation.",
+      "content": {
+        "SUBJECT_NAME": "SALT TYPHOON",
+        "SUBTITLE": "STRATEGIC COMPONENT",
+        "IMAGE_URL": "",
+        "FACT_1_LABEL": "STRATEGY",
+        "FACT_1_VALUE": "100-YEAR",
+        "FACT_2_LABEL": "ANALYST",
+        "FACT_2_VALUE": "FORMER NSA",
+        "DESCRIPTION": "A LONG-TERM OPERATIONAL LENS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "The calls intercepted in 2023 and 2024 are not simply today's intelligence.",
+      "template": "14-timeline-horizontal",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the temporal span of the intelligence gathering.",
+      "content": {
+        "TITLE_TEXT": "INTERCEPTION TIMELINE",
+        "DATE_1": "2023",
+        "DATE_2": "2024",
+        "DATE_3": "",
+        "DATE_4": "",
+        "DATE_5": "",
+        "DATE_6": "",
+        "EVENT_1": "INITIAL ACCESS",
+        "EVENT_2": "PERSISTENCE",
+        "EVENT_3": "",
+        "EVENT_4": "",
+        "EVENT_5": "",
+        "EVENT_6": ""
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "They are the foundation for a comprehensive understanding of how the US government communicates under pressure, who speaks to whom, what the command structures look like when decisions need to be made quickly, and which relationships and channels carry the most weight.",
+      "template": "53-nodenetwork-bipartite",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the mapping of communication relationships.",
+      "content": {
+        "TITLE_TEXT": "COMMUNICATION MAPPING",
+        "LEFT_HEAD": "US GOVERNMENT",
+        "RIGHT_HEAD": "CHANNELS",
+        "NODE_LABEL_1": "COMMAND",
+        "NODE_LABEL_2": "DECISION",
+        "NODE_LABEL_3": "RELATIONSHIP",
+        "NODE_LABEL_4": "WEIGHT",
+        "NODE_LABEL_5": "",
+        "NODE_LABEL_6": "",
+        "NODE_LABEL_7": ""
+      },
+      "duration": 15
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "That picture does not expire. It is stored, analyzed, and built into models that will inform decisions years and potentially decades from now.",
+      "template": "103-dashboard-summary",
+      "theme": "TECHNICAL",
+      "reasoning": "Summarizes the long-term utility of the stolen data.",
+      "content": {
+        "TITLE_TEXT": "DATA UTILITY",
+        "KPI_LABEL_1": "RETENTION",
+        "KPI_VALUE_1": "DECADE+",
+        "KPI_LABEL_2": "MODELING",
+        "KPI_VALUE_2": "ACTIVE",
+        "SUMMARY_TEXT": "INFORMING FUTURE DECISIONS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "Between March and December 2024, Salt Typhoon also compromised an unnamed US state's Army National Guard network for nine undetected months,",
+      "template": "155-calendar-date-highlight",
+      "theme": "THREAT",
+      "reasoning": "Highlights the duration of the National Guard compromise.",
+      "content": {
+        "TARGET_MONTH": "MAR-DEC",
+        "TARGET_YEAR": "2024",
+        "TARGET_DAY": "9 MONTHS",
+        "EVENT_TITLE": "GUARD COMPROMISE",
+        "EVENT_DESC": "UNDETECTED ACCESS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "exfiltrating administrator credentials, network traffic diagrams, geographic location maps, and personally identifiable information on service members.",
+      "template": "154-file-explorer-leak",
+      "theme": "THREAT",
+      "reasoning": "Shows the specific types of data exfiltrated.",
+      "content": {
+        "DIRECTORY_PATH": "/ROOT/GUARD/ADMIN/",
+        "FILE_1_NAME": "CREDS.DB",
+        "FILE_2_NAME": "NETWORK_MAPS.PDF",
+        "TARGET_FILE": "PII_SERVICE_MEMBERS.CSV",
+        "STATUS_TEXT": "EXFILTRATION COMPLETE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "Given that National Guard units in fourteen states are integrated with state fusion centers responsible for sharing threat information, that single compromise potentially undermined cybersecurity coordination across an entire layer of US infrastructure that most Americans never think about until it fails.",
+      "template": "24-nodenetwork-hierarchy",
+      "theme": "THREAT",
+      "reasoning": "Shows the cascading impact of the National Guard breach.",
+      "content": {
+        "TITLE_TEXT": "SYSTEMIC IMPACT",
+        "ORIGIN_LABEL": "GUARD UNIT",
+        "TAG_1": "FUSION CENTER",
+        "TAG_2": "THREAT SHARING",
+        "TAG_3": "INFRASTRUCTURE",
+        "NODE_LABEL_1": "STATE 1",
+        "NODE_LABEL_2": "STATE 2",
+        "NODE_LABEL_3": "STATE 3",
+        "NODE_LABEL_4": "STATE 4",
+        "NODE_LABEL_5": "STATE 5",
+        "NODE_LABEL_6": "STATE 6"
+      },
+      "duration": 15
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "Salt Typhoon obtained, in the words of Deputy National Security Advisor Anne Neuberger, \"broad and full access\" to American telecommunications — the capability to geolocate millions of individuals and record calls at will.",
+      "template": "114-dossier-open",
+      "theme": "THREAT",
+      "reasoning": "Profiles the capability of the threat actor.",
+      "content": {
+        "SUBJECT_NAME": "SALT TYPHOON",
+        "ALIAS_TEXT": "TELECOM ACCESS",
+        "TTP_1": "GEOLOCATION",
+        "TTP_2": "CALL RECORDING",
+        "THREAT_LEVEL": "CRITICAL"
+      },
+      "duration": 12
+    },
+    {
+      "index": 14,
+      "type": "3D_RENDER",
+      "script": "That is not a data breach in the conventional sense. That is strategic pre-positioning for a conflict that has not yet begun.",
+      "prompt": "Cinematic, photorealistic shot of a dark, high-tech server room with rows of blinking blue and red lights. The camera slowly zooms in on a single, isolated server rack. The atmosphere is cold, sterile, and ominous. No humans. High contrast, deep shadows, sharp focus on the metallic textures of the server hardware.",
+      "environment": "physical spaces",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "STRATEGIC PRE-POSITIONING",
+        "attribution": "ARXXIS ANALYTICS",
+        "tone": "#FF0000"
+      },
+      "duration": 15
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+    "template":  "123-c2-beacon",
+    "name":  "C2 Beacon Pulse",
+    "description":  "Visualizes a connection between an infected host and a C2 server with periodic pulse waves.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "security",
+                 "malware",
+                 "c2"
+             ],
+    "fields":  {
+                   "HOST_NAME":  "Name of the infected host",
+                   "C2_SERVER":  "Name or alias of the C2 server",
+                   "IP_ADDRESS":  "IP address of the host",
+                   "STATUS_TEXT":  "Current status message displayed at the bottom"
+               }
+}

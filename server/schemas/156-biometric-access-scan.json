@@ -1,0 +1,21 @@
+{
+  "template": "156-biometric-access-scan",
+  "name": "Biometric Identity Scan",
+  "description": "A high-tech biometric scan UI featuring a scanning line, subject profile, and access status result.",
+  "category": "security",
+  "duration": 15,
+  "tags": [
+    "security",
+    "scan",
+    "biometric",
+    "access",
+    "identity",
+    "profile"
+  ],
+  "fields": {
+    "SUBJECT_NAME": "Name of the person being scanned",
+    "SCAN_TYPE": "Type of scan (e.g. RETINAL, FINGERPRINT)",
+    "STATUS_RESULT": "The result (e.g. ACCESS GRANTED, DENIED)",
+    "IMAGE_URL": "Subject photo URL"
+  }
+}

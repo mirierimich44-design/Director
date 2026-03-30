@@ -1,0 +1,28 @@
+{
+    "template":  "86-radarchart-spider",
+    "name":  "Radar Spider Chart",
+    "description":  "A 5-6 axis radar chart for comparing multi-dimensional data with smooth polygon reveal animation.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "radar",
+                 "spider",
+                 "comparison",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Axis 1 label",
+                   "LABEL_2":  "Axis 2 label",
+                   "LABEL_3":  "Axis 3 label",
+                   "LABEL_4":  "Axis 4 label",
+                   "LABEL_5":  "Axis 5 label",
+                   "LABEL_6":  "Axis 6 label",
+                   "VAL_1":  "Value 1 (0-100)",
+                   "VAL_2":  "Value 2 (0-100)",
+                   "VAL_3":  "Value 3 (0-100)",
+                   "VAL_4":  "Value 4 (0-100)",
+                   "VAL_5":  "Value 5 (0-100)",
+                   "VAL_6":  "Value 6 (0-100)"
+               }
+}

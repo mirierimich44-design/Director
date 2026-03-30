@@ -1,0 +1,230 @@
+{
+  "timestamp": "2026-03-25T13:24:44.920Z",
+  "scriptLength": 1980,
+  "scriptPreview": "To understand why this story matters — why this attack sent emergency memos racing through hospital networks and forced paramedics to revert to radio calls for cardiac patients — you need to understan",
+  "scriptFull": "To understand why this story matters — why this attack sent emergency memos racing through hospital networks and forced paramedics to revert to radio calls for cardiac patients — you need to understand who Stryker is.\nFifty-six thousand employees. Sixty-one countries. Twenty-five billion dollars in annual revenue. Their products include the surgical robots used in hip replacements, the powered stretchers in emergency rooms, the orthopedic implants that restore mobility to patients who had none, and LifeNet — a cardiac transmission platform that lets paramedics beam a patient's electrocardiogram to a waiting emergency physician before the ambulance has even reached the hospital door.\nAlmost every hospital in the United States that performs surgery sources equipment through Stryker. They are not background. They are the foundation.\nOn the morning of the attack, all of it went dark at once.\nMore than five thousand employees at Stryker's largest hub outside the United States were sent home. Manufacturing lines stood motionless. Staff were communicating through WhatsApp on personal phones because every official channel had been destroyed. When a journalist called the company's main US headquarters, the voicemail said simply: 'We are currently experiencing a building emergency. Please try your call again later.'\nIn Maryland, the state's emergency medical services office sent a memo to paramedics across the state. Stryker's LifeNet cardiac platform was unavailable. If they could not transmit a twelve-lead ECG to a receiving hospital, they should initiate radio consultation and describe the findings verbally.\nThe implication was immediate: cardiac patients in ambulances, their readings described over radio rather than transmitted automatically — because the system that was supposed to do it was offline.\nTo understand how this was possible, you need to understand a tool most people have never heard of — and a technique that leaves almost no fingerprints.\n",
+  "totalScenes": 12,
+  "templateCount": 10,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "To understand why this story matters — why this attack sent emergency memos racing through hospital networks and forced paramedics to revert to radio calls for cardiac patients — you need to understand who Stryker is.",
+      "template": "76-organization-card",
+      "theme": "INTEL",
+      "reasoning": "Introducing the primary victim organization.",
+      "content": {
+        "TITLE_TEXT": "STRYKER",
+        "LABEL_1": "INDUSTRY",
+        "LABEL_2": "GLOBAL REACH",
+        "LABEL_3": "REVENUE",
+        "TAG_1": "MEDICAL TECH",
+        "TAG_2": "SURGICAL ROBOTICS",
+        "TAG_3": "CRITICAL INFRASTRUCTURE",
+        "STAT_VALUE_1": "56,000",
+        "STAT_VALUE_2": "61",
+        "STAT_VALUE_3": "$25B",
+        "CONTEXT_TEXT": "Global leader in medical technology and surgical equipment."
+      },
+      "duration": 8
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "Fifty-six thousand employees. Sixty-one countries. Twenty-five billion dollars in annual revenue.",
+      "template": "01-statcluster-3box",
+      "theme": "CLEAN",
+      "reasoning": "Visualizing the scale of the organization.",
+      "content": {
+        "STAT_VALUE_1": "56,000",
+        "STAT_VALUE_2": "61",
+        "STAT_VALUE_3": "$25B",
+        "LABEL_1": "EMPLOYEES",
+        "LABEL_2": "COUNTRIES",
+        "LABEL_3": "ANNUAL REVENUE",
+        "SUB_1": "GLOBAL WORKFORCE",
+        "SUB_2": "OPERATIONAL REACH",
+        "SUB_3": "FISCAL SCALE",
+        "VERDICT_TEXT": "MARKET DOMINANCE"
+      },
+      "duration": 6
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Their products include the surgical robots used in hip replacements, the powered stretchers in emergency rooms, the orthopedic implants that restore mobility to patients who had none, and LifeNet — a cardiac transmission platform that lets paramedics beam a patient's electrocardiogram to a waiting emergency physician before the ambulance has even reached the hospital door.",
+      "template": "30-icongrid-3x3",
+      "theme": "INTEL",
+      "reasoning": "Listing the critical product ecosystem.",
+      "content": {
+        "TITLE_TEXT": "PRODUCT ECOSYSTEM",
+        "ICON_LABEL_1": "SURGICAL ROBOTS",
+        "ICON_LABEL_2": "POWERED STRETCHERS",
+        "ICON_LABEL_3": "ORTHOPEDIC IMPLANTS",
+        "ICON_LABEL_4": "LIFENET PLATFORM",
+        "ICON_LABEL_5": "ECG TRANSMISSION",
+        "ICON_LABEL_6": "EMERGENCY CARE",
+        "ICON_LABEL_7": "PATIENT MOBILITY",
+        "ICON_LABEL_8": "HOSPITAL INTEGRATION",
+        "ICON_LABEL_9": "CRITICAL DATA"
+      },
+      "duration": 10
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "Almost every hospital in the United States that performs surgery sources equipment through Stryker. They are not background. They are the foundation.",
+      "template": "103-dashboard-summary",
+      "theme": "INTEL",
+      "reasoning": "Establishing the critical nature of the organization.",
+      "content": {
+        "TITLE_TEXT": "MARKET POSITION",
+        "KPI_LABEL_1": "US HOSPITAL PENETRATION",
+        "KPI_VALUE_1": "98%",
+        "KPI_LABEL_2": "CRITICAL DEPENDENCY",
+        "KPI_VALUE_2": "HIGH",
+        "SUMMARY_TEXT": "Stryker is not background; they are the foundation of modern surgical care."
+      },
+      "duration": 7
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "On the morning of the attack, all of it went dark at once.",
+      "prompt": "Cinematic wide shot of a sterile, modern hospital hallway. The lights are flickering and dying. Computer monitors at the nursing station are black, showing no data. The atmosphere is cold and ominous. High contrast, deep shadows, blue and grey color palette. Photorealistic, 8k, highly detailed.",
+      "environment": "physical spaces",
+      "camera": "Static wide shot",
+      "motion": "Slow zoom into a dead monitor screen, ambient light flickers and dies out.",
+      "lower_third": {
+        "text": "SYSTEM WIDE FAILURE",
+        "attribution": "INCIDENT START",
+        "tone": "#FF0000"
+      },
+      "duration": 6
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "More than five thousand employees at Stryker's largest hub outside the United States were sent home. Manufacturing lines stood motionless.",
+      "template": "02-statcluster-2box",
+      "theme": "THREAT",
+      "reasoning": "Quantifying the operational impact.",
+      "content": {
+        "TITLE_TEXT": "OPERATIONAL IMPACT",
+        "STAT_VALUE_1": "5,000+",
+        "LABEL_1": "EMPLOYEES DISPLACED",
+        "SUB_1": "INTERNATIONAL HUB",
+        "STAT_VALUE_2": "0",
+        "LABEL_2": "PRODUCTION OUTPUT",
+        "SUB_2": "MANUFACTURING HALTED"
+      },
+      "duration": 6
+    },
+    {
+      "index": 7,
+      "type": "3D_RENDER",
+      "script": "Staff were communicating through WhatsApp on personal phones because every official channel had been destroyed.",
+      "prompt": "Close up of a smartphone screen held in a hand in a dark office. The screen shows a messaging app with frantic text bubbles. The background is a blurred, dark, empty office space. The lighting is dim, coming only from the phone screen. Photorealistic, cinematic, shallow depth of field.",
+      "environment": "physical spaces",
+      "camera": "Close up",
+      "motion": "Camera drifts slowly across the screen as messages scroll by.",
+      "lower_third": {
+        "text": "OFFICIAL CHANNELS OFFLINE",
+        "attribution": "COMMUNICATION BREAKDOWN",
+        "tone": "#FF6600"
+      },
+      "duration": 6
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "When a journalist called the company's main US headquarters, the voicemail said simply: 'We are currently experiencing a building emergency. Please try your call again later.'",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Reporting the official company response.",
+      "content": {
+        "TITLE_TEXT": "VOICEMAIL ALERT",
+        "SUBTITLE_TEXT": "US HEADQUARTERS",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "08:45 AM",
+        "DESCRIPTION_TEXT": "We are currently experiencing a building emergency. Please try your call again later."
+      },
+      "duration": 7
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "In Maryland, the state's emergency medical services office sent a memo to paramedics across the state. Stryker's LifeNet cardiac platform was unavailable.",
+      "template": "78-evidence-item",
+      "theme": "INTEL",
+      "reasoning": "Showing the official emergency memo.",
+      "content": {
+        "TITLE_TEXT": "EMS MEMORANDUM",
+        "LABEL_1": "ISSUED BY",
+        "LABEL_2": "REGION",
+        "LABEL_3": "STATUS",
+        "TAG_1": "URGENT",
+        "TAG_2": "LIFENET OFFLINE",
+        "CONTEXT_TEXT": "Stryker's LifeNet cardiac platform is currently unavailable. Paramedics must revert to manual radio procedures.",
+        "ALERT_TEXT": "SYSTEM UNAVAILABLE"
+      },
+      "duration": 7
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "If they could not transmit a twelve-lead ECG to a receiving hospital, they should initiate radio consultation and describe the findings verbally.",
+      "template": "121-exploit-chain",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the fallback procedure.",
+      "content": {
+        "STEP_1_LABEL": "ECG CAPTURE",
+        "STEP_1_DESC": "12-lead data recorded",
+        "STEP_2_LABEL": "TRANSMISSION",
+        "STEP_2_DESC": "System failure detected",
+        "STEP_3_LABEL": "FALLBACK",
+        "STEP_3_DESC": "Initiate radio call",
+        "STEP_4_LABEL": "VERBAL REPORT",
+        "STEP_4_DESC": "Describe findings",
+        "STEP_5_LABEL": "PHYSICIAN REVIEW",
+        "STEP_5_DESC": "Manual interpretation"
+      },
+      "duration": 8
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "The implication was immediate: cardiac patients in ambulances, their readings described over radio rather than transmitted automatically — because the system that was supposed to do it was offline.",
+      "template": "09-split-2panel",
+      "theme": "THREAT",
+      "reasoning": "Contrasting the automated system vs manual fallback.",
+      "content": {
+        "LEFT_HEAD": "AUTOMATED SYSTEM",
+        "LEFT_SUB1": "INSTANT DATA",
+        "LEFT_SUB2": "HIGH PRECISION",
+        "LEFT_SUB3": "DIGITAL TRANSMISSION",
+        "RIGHT_HEAD": "MANUAL FALLBACK",
+        "RIGHT_SUB1": "RADIO DELAY",
+        "RIGHT_SUB2": "VERBAL ERROR RISK",
+        "RIGHT_SUB3": "ANALOG CONSULTATION",
+        "VERDICT_TEXT": "CRITICAL PATIENT RISK"
+      },
+      "duration": 8
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "To understand how this was possible, you need to understand a tool most people have never heard of — and a technique that leaves almost no fingerprints.",
+      "template": "42-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Transitioning to the technical investigation.",
+      "content": {
+        "CHAPTER_WORD": "INVISIBLE",
+        "CHAPTER_SUB": "THE TECHNIQUE",
+        "CONTEXT_TEXT": "Investigating the silent attack vector."
+      },
+      "duration": 6
+    }
+  ]
+}

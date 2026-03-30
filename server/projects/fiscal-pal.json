@@ -1,0 +1,22 @@
+{
+  "id": "fiscal-pal-project",
+  "name": "Fiscal Pal",
+  "description": "Financial news-style documentary series using editorial watercolor illustrations and data visualizations.",
+  "createdAt": "2026-03-28T12:00:00.000Z",
+  "updatedAt": "2026-03-28T12:00:00.000Z",
+  "status": "active",
+  "chapters": [],
+  "totalScenes": 0,
+  "settings": {
+    "defaultTheme": "CLEAN",
+    "format": "landscape",
+    "director": "fiscal-pal"
+  },
+  "generationSettings": {
+    "templateRatio": 50,
+    "colorScheme": "CLEAN",
+    "templateVariety": "high",
+    "maxTemplateReuse": 1,
+    "customPrompt": "Always follow the FISCAL PAL editorial illustration rules. Use WSJ/FT style."
+  }
+}

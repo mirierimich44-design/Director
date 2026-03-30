@@ -1,2 +1,6 @@
-server/settings.json
-node_modules/
+﻿node_modules/
+dist/
+public/
+.env
+*.log
+.temp

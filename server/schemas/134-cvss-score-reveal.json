@@ -1,0 +1,19 @@
+{
+    "template":  "134-cvss-score-reveal",
+    "name":  "CVSS Score Reveal",
+    "description":  "Animated dial visualization for CVSS scores with severity color coding and metadata display.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "security",
+                 "vulnerability",
+                 "cvss",
+                 "chart"
+             ],
+    "fields":  {
+                   "CVE_ID":  "The CVE identifier (e.g., CVE-2023-1234)",
+                   "CVSS_SCORE":  "Numeric score between 0.0 and 10.0",
+                   "SEVERITY_LABEL":  "Severity text (e.g., CRITICAL, HIGH, MEDIUM)",
+                   "VECTOR_STRING":  "The CVSS vector string (e.g., CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)"
+               }
+}

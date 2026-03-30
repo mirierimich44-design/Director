@@ -1,23 +1,27 @@
 {
-  "template": "14-timeline-horizontal",
-  "name": "Horizontal Timeline",
-  "description": "Six-event horizontal timeline with alternating labels above and below the line",
-  "category": "timeline",
-  "duration": 10,
-  "tags": ["timeline", "chronology", "events"],
-  "fields": {
-    "TITLE_TEXT": "Title shown above the timeline, e.g. 'ATTACK TIMELINE'",
-    "DATE_1": "Date or time for event 1, e.g. 'JAN 2020'",
-    "DATE_2": "Date or time for event 2",
-    "DATE_3": "Date or time for event 3",
-    "DATE_4": "Date or time for event 4",
-    "DATE_5": "Date or time for event 5",
-    "DATE_6": "Date or time for event 6",
-    "EVENT_1": "Short description of event 1, e.g. 'Initial breach detected'",
-    "EVENT_2": "Short description of event 2",
-    "EVENT_3": "Short description of event 3",
-    "EVENT_4": "Short description of event 4",
-    "EVENT_5": "Short description of event 5",
-    "EVENT_6": "Short description of event 6"
-  }
+    "template":  "14-timeline-horizontal",
+    "name":  "Horizontal Timeline",
+    "description":  "Six-event horizontal timeline with alternating labels above and below the line",
+    "category":  "timeline",
+    "duration":  15,
+    "tags":  [
+                 "timeline",
+                 "chronology",
+                 "events"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Title shown above the timeline, e.g. \u0027ATTACK TIMELINE\u0027",
+                   "DATE_1":  "Date or time for event 1, e.g. \u0027JAN 2020\u0027",
+                   "DATE_2":  "Date or time for event 2",
+                   "DATE_3":  "Date or time for event 3",
+                   "DATE_4":  "Date or time for event 4",
+                   "DATE_5":  "Date or time for event 5",
+                   "DATE_6":  "Date or time for event 6",
+                   "EVENT_1":  "Short description of event 1, e.g. \u0027Initial breach detected\u0027",
+                   "EVENT_2":  "Short description of event 2",
+                   "EVENT_3":  "Short description of event 3",
+                   "EVENT_4":  "Short description of event 4",
+                   "EVENT_5":  "Short description of event 5",
+                   "EVENT_6":  "Short description of event 6"
+               }
 }

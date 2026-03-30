@@ -1,0 +1,21 @@
+{
+    "template":  "111-magazine-cover",
+    "name":  "Magazine Cover Layout",
+    "description":  "A bold, high-impact typography-focused layout with staggered entrance animations for titles and key metrics.",
+    "category":  "layout",
+    "duration":  15,
+    "tags":  [
+                 "hero",
+                 "typography",
+                 "impact",
+                 "cover"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main hero headline",
+                   "SUBTITLE_TEXT":  "Supporting descriptive text",
+                   "STAT_VALUE_1":  "Primary numeric metric",
+                   "LABEL_1":  "Label for primary metric",
+                   "STAT_VALUE_2":  "Secondary numeric metric",
+                   "LABEL_2":  "Label for secondary metric"
+               }
+}

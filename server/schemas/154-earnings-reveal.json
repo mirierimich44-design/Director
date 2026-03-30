@@ -1,0 +1,20 @@
+{
+    "template":  "154-earnings-reveal",
+    "name":  "Earnings Reveal",
+    "description":  "Professional quarterly earnings card showing EPS, Revenue, and Guidance",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "earnings",
+                 "stocks",
+                 "report"
+             ],
+    "fields":  {
+                   "QUARTER_LABEL":  "e.g. Q3 2023 EARNINGS",
+                   "EPS_ACTUAL":  "e.g. $1.42",
+                   "EPS_ESTIMATE":  "e.g. $1.35",
+                   "REVENUE_BEAT":  "e.g. +$450M BEAT",
+                   "GUIDANCE_TEXT":  "Short outlook statement"
+               }
+}

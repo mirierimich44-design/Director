@@ -1,0 +1,17 @@
+{
+    "template":  "158-chapter-word-drop",
+    "name":  "42-chapter-word-drop",
+    "description":  "A dramatic chapter transition screen with a large, scaling word reveal, subtitle, and context text.",
+    "category":  "scene-generated",
+    "duration":  15,
+    "tags":  [
+                 "transition",
+                 "chapter",
+                 "title"
+             ],
+    "fields":  {
+                   "CHAPTER_WORD":  "The main chapter title (e.g., ATTRIBUTION)",
+                   "CHAPTER_SUB":  "The secondary subtitle (e.g., THE INVESTIGATION)",
+                   "CONTEXT_TEXT":  "A short descriptive sentence for the chapter."
+               }
+}

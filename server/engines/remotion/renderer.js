@@ -56,9 +56,36 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Shared browser executable path to avoid multiple downloads/race conditions
-// Use Playwright's pre-downloaded headless_shell if available (avoids network download)
-const PLAYWRIGHT_HEADLESS_SHELL = '/root/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell';
-let browserExecutablePath = existsSync(PLAYWRIGHT_HEADLESS_SHELL) ? PLAYWRIGHT_HEADLESS_SHELL : null;
+let browserExecutablePath = null;
+
+/**
+ * Ensures the Remotion browser (Chrome Headless Shell) is available.
+ * Caches the path to avoid repeated downloads.
+ */
+async function ensureRemotionBrowser() {
+    if (browserExecutablePath && existsSync(browserExecutablePath)) {
+        return browserExecutablePath;
+    }
+
+    // Use Playwright's pre-downloaded headless_shell if available (common in some environments)
+    const PLAYWRIGHT_HEADLESS_SHELL = '/root/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell';
+    if (existsSync(PLAYWRIGHT_HEADLESS_SHELL)) {
+        browserExecutablePath = PLAYWRIGHT_HEADLESS_SHELL;
+        console.log(`✅ Using pre-installed Playwright browser: ${browserExecutablePath}`);
+        return browserExecutablePath;
+    }
+
+    try {
+        console.log('⚡ Ensuring Remotion browser is ready...');
+        const result = await ensureBrowser();
+        browserExecutablePath = result.path;
+        console.log(`✅ Remotion browser ready: ${browserExecutablePath}`);
+        return browserExecutablePath;
+    } catch (error) {
+        console.error('❌ Failed to ensure Remotion browser:', error.message);
+        throw error;
+    }
+}
 
 // Helper to detect if URL is a video
 const isVideoUrl = (url) => {
@@ -180,7 +207,7 @@ const BackgroundWrapper = ({children}) => {
         ? 'const WrappedAnimation = () => <BackgroundWrapper><AbsoluteFill><AnimationComponent /></AbsoluteFill></BackgroundWrapper>;'
         : 'const WrappedAnimation = () => <AbsoluteFill><AnimationComponent /></AbsoluteFill>;';
 
-    const durationFrames = Math.round((settings.duration || 10) * (settings.fps || 30));
+    const durationFrames = Math.round((settings.duration || 15) * (settings.fps || 30));
     const fpsValue = settings.fps || 30;
     const widthValue = settings.width || 1920;
     const heightValue = settings.height || 1080;
@@ -188,15 +215,9 @@ const BackgroundWrapper = ({children}) => {
     // Strip duplicate React/Remotion imports from component code since the wrapper provides its own
     componentCode = componentCode.replace(/import\s+React\s*(?:,\s*\{[^}]*\})?\s*from\s*['"]react['"];?\s*\n?/g, '');
 
-    // CRITICAL: Ensure component code has balanced braces before injecting wrapper code.
-    // If the AI truncated the output mid-function, the wrapper (WrappedAnimation, RemotionRoot)
-    // would end up INSIDE the unclosed function, causing syntax errors like
-    // 'Expected ":" but found "WrappedAnimation"'
-    componentCode = balanceBraces(componentCode);
-
     return `
 ${reactImportStr}
-import { registerRoot, Composition, AbsoluteFill, interpolate as _originalInterpolate } from 'remotion';${additionalImports}
+import { registerRoot, Composition, AbsoluteFill, staticFile, interpolate as _originalInterpolate } from 'remotion';${additionalImports}
 // Note: external font loading removed due to package installation issues. 
 // Using system font stack as fallback.
 const fontFamily = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
@@ -286,6 +307,7 @@ const calculateHash = (content) => {
 };
 
 export async function renderVideo(tsxCode, outputPath, settings, onProgress = null) {
+    const browserPath = await ensureRemotionBrowser();
     let wrappedCode = wrapperTemplate(tsxCode, settings);
 
     // CRITICAL: Fast syntax pre-check before expensive bundling.
@@ -465,12 +487,16 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
 
         if (!isCached) {
             // console.log('   📦 Bundling Remotion project...');
+            const publicDir = join(__dirname, '../../../public');
             bundleLocation = await bundle({
                 entryPoint: entryPath,
+                publicDir: publicDir,
                 onProgress: (progress) => {
-                    progressBar.update(progress, { phase: 'Bundling' });
+                    const pct = Math.round(progress * 100);
+                    progressBar.update(pct, { phase: 'Bundling' });
                     if (onProgress) {
-                        onProgress({ phase: 'bundling', progress: Math.round(progress * 0.3) });
+                        // For the UI, bundling is the first 30%
+                        onProgress({ phase: 'bundling', progress: Math.round(progress * 30) });
                     }
                 },
             });
@@ -484,7 +510,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         const composition = await selectComposition({
             serveUrl: bundleLocation,
             id: 'Animation',
-            browserExecutable: browserExecutablePath,
+            browserExecutable: browserPath,
         });
 
         // console.log('   🎬 Rendering video...');
@@ -496,7 +522,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
             codec: 'h264',
             outputLocation: outputPath,
             concurrency: RENDER_CONCURRENCY,
-            browserExecutable: browserExecutablePath,
+            browserExecutable: browserPath,
             onProgress: ({ progress }) => {
                 const pct = Math.round(progress * 100);
                 progressBar.update(pct, { phase: 'Rendering' });
@@ -524,6 +550,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
 }
 
 export async function renderStill(tsxCode, outputPath, frame, settings) {
+    const browserPath = await ensureRemotionBrowser();
     const wrappedCode = wrapperTemplate(tsxCode, settings);
     const hash = calculateHash(wrappedCode);
     // Adjusted path to look for .temp in project root (same as renderVideo)
@@ -572,8 +599,10 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
         }
 
         if (!isCached) {
+            const publicDir = join(__dirname, '../../../public');
             bundleLocation = await bundle({
                 entryPoint: entryPath,
+                publicDir: publicDir,
             });
             await fs.writeFile(bundleInfoPath, JSON.stringify({ location: bundleLocation }), 'utf-8');
         }
@@ -581,7 +610,7 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
         const composition = await selectComposition({
             serveUrl: bundleLocation,
             id: 'Animation',
-            browserExecutable: browserExecutablePath,
+            browserExecutable: browserPath,
         });
 
         await fs.mkdir(dirname(outputPath), { recursive: true });
@@ -594,7 +623,7 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
             serveUrl: bundleLocation,
             output: outputPath,
             frame: resolvedFrame,
-            browserExecutable: browserExecutablePath,
+            browserExecutable: browserPath,
         });
 
         // Clean up temp directory after successful render
@@ -619,14 +648,8 @@ import { AbsoluteFill, useCurrentFrame } from 'remotion';
 export const AnimationComponent = () => <AbsoluteFill style={{ background: '#000' }} />;
 `;
     try {
-        if (browserExecutablePath) {
-            console.log(`✅ Browser ready (pre-installed): ${browserExecutablePath}`);
-        } else {
-            console.log('⚡ Initializing Remotion browser (Chrome Headless Shell)...');
-            const result = await ensureBrowser();
-            browserExecutablePath = result.path;
-            console.log(`✅ Browser ready: ${browserExecutablePath}`);
-        }
+        const browserPath = await ensureRemotionBrowser();
+        console.log(`✅ Browser ready: ${browserPath}`);
 
         const warmupDir = join(__dirname, '../../../.temp/_warmup');
         await fs.mkdir(warmupDir, { recursive: true });

@@ -1,0 +1,21 @@
+{
+    "template":  "144-profit-loss-waterfall",
+    "name":  "Profit Loss Waterfall",
+    "description":  "Financial waterfall chart showing revenue, expenses, and net profit with staggered bar animations.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "waterfall",
+                 "profit",
+                 "loss"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Revenue label",
+                   "LABEL_2":  "Expense 1 label",
+                   "LABEL_3":  "Expense 2 label",
+                   "LABEL_4":  "Expense 3 label",
+                   "LABEL_5":  "Net Profit label"
+               }
+}

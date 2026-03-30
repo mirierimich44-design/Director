@@ -1,0 +1,177 @@
+{
+  "timestamp": "2026-03-25T11:44:42.566Z",
+  "scriptLength": 1380,
+  "scriptPreview": "In the early hours of March 11, 2026, an employee at Stryker Corporation's Irish hub woke up to a ghost in their machine. They didn't see a notification or an incoming call. They saw a factory reset i",
+  "scriptFull": "In the early hours of March 11, 2026, an employee at Stryker Corporation's Irish hub woke up to a ghost in their machine. They didn't see a notification or an incoming call. They saw a factory reset in progress.\nBefore they were fully awake, it was done. The phone: silent. The laptop in the next room: already dark, its fan winding down to nothing. Not crashed. Not frozen. Gone.\nAnd simultaneously — across nearly eighty countries, on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who never thought twice about connecting them to the company network — two hundred thousand devices were wiping themselves. A decade of work. Plans, correspondence, secrets — disappearing in real time.\nNo ransom note. No countdown timer. Just silence, spreading from device to device across the globe, as if a switch had been thrown somewhere in the dark.\nA twenty-five billion dollar company had just been erased.\nThis is the story of the most surgical corporate cyberattack ever documented. A wiper attack conducted entirely without a wiper. And it begins not with a line of malicious code, but with a stolen key — and a door that should never have opened from the outside.\nThis story is based on the factual reporting of Krebs on Security. Full sources and technical documentation are available in the video description.\n",
+  "totalScenes": 10,
+  "templateCount": 6,
+  "renderCount": 4,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "In the early hours of March 11, 2026, an employee at Stryker Corporation's Irish hub woke up to a ghost in their machine.",
+      "prompt": "Photorealistic bedroom interior at dawn, soft blue light filtering through curtains, a smartphone resting on a nightstand with a faint, ominous glow on the screen, cinematic depth of field, high detail, 8k.",
+      "environment": "bedroom",
+      "camera": "low angle, close up",
+      "motion": "Slow dolly forward toward the nightstand, camera drifts slightly left.",
+      "lower_third": {
+        "text": "March 11, 2026 | Stryker Corp Irish Hub",
+        "attribution": "ARXXIS",
+        "tone": "#FF6600"
+      },
+      "duration": 6
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "They didn't see a notification or an incoming call. They saw a factory reset in progress. Before they were fully awake, it was done. The phone: silent.",
+      "prompt": "Macro shot of a smartphone screen displaying a progress bar for a factory reset, dark background, sharp focus on the screen, cold blue light, high contrast, cinematic atmosphere.",
+      "environment": "bedroom",
+      "camera": "macro",
+      "motion": "Static shot, subtle flickering of the screen light.",
+      "lower_third": {
+        "text": "Device Compromised",
+        "attribution": "ARXXIS",
+        "tone": "#FF6600"
+      },
+      "duration": 8
+    },
+    {
+      "index": 3,
+      "type": "3D_RENDER",
+      "script": "The laptop in the next room: already dark, its fan winding down to nothing. Not crashed. Not frozen. Gone.",
+      "prompt": "A dark home office with a laptop on a desk, screen black, faint dust motes in the air, cold ambient lighting, cinematic composition, high detail.",
+      "environment": "home office",
+      "camera": "wide shot",
+      "motion": "Slow pan across the desk, camera stops on the dark laptop screen.",
+      "lower_third": {
+        "text": "System Failure",
+        "attribution": "ARXXIS",
+        "tone": "#FF6600"
+      },
+      "duration": 7
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "And simultaneously — across nearly eighty countries, on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who never thought twice about connecting them to the company network — two hundred thousand devices were wiping themselves.",
+      "template": "140-botnet-spread",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the massive scale of the device wipe across the globe.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL WIPE EVENT",
+        "STAT_VALUE_1": "80",
+        "STAT_VALUE_2": "200,000",
+        "DESC_1": "DEVICES WIPED SIMULTANEOUSLY"
+      },
+      "duration": 10
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "A decade of work. Plans, correspondence, secrets — disappearing in real time. No ransom note. No countdown timer.",
+      "template": "107-redacted-reveal",
+      "theme": "INTEL",
+      "reasoning": "Represents the loss of sensitive data and the lack of traditional extortion.",
+      "content": {
+        "CLASSIFIED_TITLE": "DATA LOSS REPORT",
+        "LINE_1": "DECADE OF WORK",
+        "LINE_2": "PLANS",
+        "LINE_3": "CORRESPONDENCE",
+        "LINE_4": "SECRETS",
+        "LINE_5": "NO RANSOM",
+        "LINE_6": "NO COUNTDOWN"
+      },
+      "duration": 8
+    },
+    {
+      "index": 6,
+      "type": "3D_RENDER",
+      "script": "Just silence, spreading from device to device across the globe, as if a switch had been thrown somewhere in the dark.",
+      "prompt": "Abstract digital representation of a global network, nodes going dark one by one in a wave, dark background, glowing blue lines fading to black, cinematic, high tech.",
+      "environment": "digital space",
+      "camera": "wide",
+      "motion": "Slow zoom out from a central point, showing the wave of darkness spreading.",
+      "lower_third": {
+        "text": "Network Silence",
+        "attribution": "ARXXIS",
+        "tone": "#FF6600"
+      },
+      "duration": 7
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "A twenty-five billion dollar company had just been erased.",
+      "template": "44-chapter-countup",
+      "theme": "THREAT",
+      "reasoning": "Highlights the massive financial impact of the attack.",
+      "content": {
+        "TITLE_TEXT": "TOTAL LOSS",
+        "COUNT_VALUE": "$25B",
+        "COUNT_LABEL": "MARKET VALUE",
+        "SUB_LABEL": "ERASED",
+        "CONTEXT_TEXT": "STRYKER CORPORATION"
+      },
+      "duration": 6
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "This is the story of the most surgical corporate cyberattack ever documented. A wiper attack conducted entirely without a wiper.",
+      "template": "111-magazine-cover",
+      "theme": "INTEL",
+      "reasoning": "Introduces the core subject of the documentary.",
+      "content": {
+        "TITLE_TEXT": "SURGICAL ATTACK",
+        "SUBTITLE_TEXT": "NO WIPER DETECTED",
+        "STAT_VALUE_1": "100%",
+        "LABEL_1": "PRECISION",
+        "STAT_VALUE_2": "0",
+        "LABEL_2": "MALWARE SIGNATURES"
+      },
+      "duration": 8
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "And it begins not with a line of malicious code, but with a stolen key — and a door that should never have opened from the outside.",
+      "template": "121-exploit-chain",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the initial entry point of the attack.",
+      "content": {
+        "STEP_1_LABEL": "STOLEN KEY",
+        "STEP_1_DESC": "CREDENTIAL THEFT",
+        "STEP_2_LABEL": "OPEN DOOR",
+        "STEP_2_DESC": "UNAUTHORIZED ACCESS",
+        "STEP_3_LABEL": "LATERAL MOVE",
+        "STEP_3_DESC": "NETWORK PENETRATION",
+        "STEP_4_LABEL": "EXECUTION",
+        "STEP_4_DESC": "FACTORY RESET",
+        "STEP_5_LABEL": "SILENCE",
+        "STEP_5_DESC": "DATA WIPED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "This story is based on the factual reporting of Krebs on Security. Full sources and technical documentation are available in the video description.",
+      "template": "78-evidence-item",
+      "theme": "INTEL",
+      "reasoning": "Provides source attribution for the documentary.",
+      "content": {
+        "TITLE_TEXT": "REPORTING SOURCE",
+        "LABEL_1": "KREBS ON SECURITY",
+        "LABEL_2": "FACTUAL REPORTING",
+        "LABEL_3": "TECHNICAL DOCS",
+        "TAG_1": "VERIFIED",
+        "TAG_2": "PUBLIC",
+        "CONTEXT_TEXT": "SOURCES IN DESCRIPTION",
+        "ALERT_TEXT": "DOCUMENTATION"
+      },
+      "duration": 6
+    }
+  ]
+}

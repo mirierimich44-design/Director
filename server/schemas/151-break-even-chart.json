@@ -1,0 +1,19 @@
+{
+    "template":  "151-break-even-chart",
+    "name":  "Break-Even Chart",
+    "description":  "Financial visualization showing fixed costs, variable costs, and revenue lines with a highlighted break-even point.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "business",
+                 "charts"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "FIXED_COSTS_LABEL":  "Label for the fixed costs line",
+                   "VARIABLE_COSTS_LABEL":  "Label for the variable costs line",
+                   "REVENUE_LABEL":  "Label for the revenue line",
+                   "BREAK_EVEN_LABEL":  "Text for the intersection point callout"
+               }
+}

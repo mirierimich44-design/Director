@@ -1,0 +1,21 @@
+{
+    "template":  "136-attribution-web",
+    "name":  "Attribution Web",
+    "description":  "A node-based visualization connecting security artifacts from malware to nation-state actors.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "attribution",
+                 "network",
+                 "security",
+                 "threat-intel"
+             ],
+    "fields":  {
+                   "NODE_LABEL_1":  "Starting point (e.g. Malware Sample)",
+                   "NODE_LABEL_2":  "Secondary link (e.g. Shared Tooling)",
+                   "NODE_LABEL_3":  "Secondary link (e.g. Infrastructure)",
+                   "NODE_LABEL_4":  "Intermediate link (e.g. TTPs)",
+                   "NODE_LABEL_5":  "Actor Group",
+                   "NODE_LABEL_6":  "Final Attribution (e.g. Nation State)"
+               }
+}

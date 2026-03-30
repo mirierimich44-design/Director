@@ -1,0 +1,20 @@
+{
+    "template":  "102-annotation-callout",
+    "name":  "Annotation Callout",
+    "description":  "A professional callout animation featuring a lead-in line, a data point marker, and a reveal box for descriptive text.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "annotation",
+                 "callout",
+                 "highlight",
+                 "data-story"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main section title",
+                   "SUBTITLE_TEXT":  "Supporting context text",
+                   "CALLOUT_HEADER":  "Header for the annotation box",
+                   "CALLOUT_BODY":  "Detailed description inside the box",
+                   "DATA_LABEL":  "Short label for the data point"
+               }
+}

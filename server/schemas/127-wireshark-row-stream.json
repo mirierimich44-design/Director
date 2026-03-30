@@ -1,0 +1,22 @@
+{
+    "template":  "127-wireshark-row-stream",
+    "name":  "Wireshark Row Stream",
+    "description":  "A scrolling packet capture visualization with a highlighted anomalous row.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "packet",
+                 "security",
+                 "stream"
+             ],
+    "fields":  {
+                   "SRC_IP_1":  "Source IP for row 1",
+                   "DST_IP_1":  "Destination IP for row 1",
+                   "PROTO_1":  "Protocol for row 1",
+                   "LEN_1":  "Packet length for row 1",
+                   "INFO_1":  "Packet info for row 1",
+                   "SRC_IP_5":  "Source IP for anomalous row",
+                   "INFO_5":  "Description of the anomalous packet"
+               }
+}

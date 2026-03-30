@@ -1,0 +1,19 @@
+{
+    "template":  "131-countdown-breach",
+    "name":  "Breach Countdown Clock",
+    "description":  "A high-urgency countdown timer with alarm state visualization for security monitoring.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "countdown",
+                 "security",
+                 "alarm",
+                 "timer"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main header text",
+                   "LABEL_TEXT":  "Sub-label above the timer",
+                   "TIME_VALUE":  "The time string (e.g., 00:05:00)",
+                   "STATUS_TEXT":  "Bottom status message"
+               }
+}

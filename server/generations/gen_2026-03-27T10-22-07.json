@@ -1,0 +1,178 @@
+{
+  "timestamp": "2026-03-27T10:22:07.812Z",
+  "scriptLength": 1168,
+  "scriptPreview": "The phone on the nightstand is still dark. Sometime in the night, the employee let go of the idea of recovering it. The photos are gone. The videos are gone. The small, irreplaceable record of a life.",
+  "scriptFull": "The phone on the nightstand is still dark. Sometime in the night, the employee let go of the idea of recovering it. The photos are gone. The videos are gone. The small, irreplaceable record of a life. All of it gone — erased by a command that looked, to every system that processed it, like a routine administrative action.\nIn the next room, the laptop sits open, its power light blinking slowly. A technician will come today to collect it. Somewhere, it will join a pallet of machines being shipped to a regional imaging center — one laptop among two hundred thousand. Eventually it will come back, blank and clean, and need to be rebuilt from nothing.\nIn corporate IT offices around the world this morning, administrators are looking at their own consoles with slightly different eyes. Looking at the wipe command. Looking at who else has access to it. Asking questions they probably should have asked before.\nThe self-destruct button has always been there. We built it ourselves, for good reasons, with the best of intentions. The only thing that changed on March 11, 2026 is that now we know — with certainty — exactly how easy it is for someone else to press it.\n",
+  "totalScenes": 10,
+  "templateCount": 6,
+  "renderCount": 4,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "The phone on the nightstand is still dark.",
+      "prompt": "A cinematic close-up of a modern smartphone lying on a dark wooden nightstand in a dimly lit bedroom. The screen is completely black, reflecting nothing. The atmosphere is somber and quiet. High-end photorealistic style, shallow depth of field, soft ambient moonlight coming from a window off-screen.",
+      "environment": "bedroom",
+      "camera": "close-up",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "DEVICE STATUS: OFFLINE",
+        "attribution": "INCIDENT REPORT",
+        "tone": "#FF6600"
+      },
+      "duration": 8
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "Sometime in the night, the employee let go of the idea of recovering it.",
+      "prompt": "A wide shot of a modern, minimalist bedroom at night. A person is visible in silhouette sitting on the edge of the bed, looking at a dark phone. The room is cold and sterile. Photorealistic, moody lighting, deep shadows, cinematic composition.",
+      "environment": "bedroom",
+      "camera": "wide-shot",
+      "motion": "pan-left",
+      "lower_third": {
+        "text": "DATA RECOVERY: IMPOSSIBLE",
+        "attribution": "SYSTEM LOG",
+        "tone": "#FF6600"
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "The photos are gone. The videos are gone. The small, irreplaceable record of a life.",
+      "template": "106-word-highlight-scan",
+      "theme": "DARK",
+      "reasoning": "The scan effect emphasizes the systematic deletion of personal memories.",
+      "content": {
+        "WORD_1": "PHOTOS",
+        "WORD_2": "DELETED",
+        "WORD_3": "VIDEOS",
+        "WORD_4": "DELETED",
+        "WORD_5": "RECORDS",
+        "WORD_6": "ERASED",
+        "WORD_7": "LIFE",
+        "WORD_8": "LOST"
+      },
+      "duration": 10
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "All of it gone — erased by a command that looked, to every system that processed it, like a routine administrative action.",
+      "template": "110-scramble-decode",
+      "theme": "TECHNICAL",
+      "reasoning": "The scramble effect visualizes the deceptive nature of the malicious command.",
+      "content": {
+        "LINE_1": "EXECUTE: WIPE_ALL",
+        "LINE_2": "AUTH: ADMIN_ROOT",
+        "LINE_3": "STATUS: SUCCESS",
+        "LINE_4": "TARGET: ALL_VOLUMES",
+        "LINE_5": "LOG: ROUTINE_MAINT",
+        "LINE_6": "RESULT: DATA_NULL"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "In the next room, the laptop sits open, its power light blinking slowly. A technician will come today to collect it.",
+      "prompt": "A sleek, modern laptop sitting open on a glass desk in a dark office. A small LED light on the side is rhythmically blinking a soft blue. The room is empty and quiet. Photorealistic, sharp focus on the blinking light, cinematic lighting.",
+      "environment": "office",
+      "camera": "dolly-forward",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "HARDWARE RECOVERY: PENDING",
+        "attribution": "IT LOGISTICS",
+        "tone": "#00FFFF"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Somewhere, it will join a pallet of machines being shipped to a regional imaging center — one laptop among two hundred thousand.",
+      "template": "02-statcluster-2box",
+      "theme": "CLEAN",
+      "reasoning": "The scale of the operation requires a clean, informational display.",
+      "content": {
+        "TITLE_TEXT": "FLEET RECOVERY",
+        "STAT_VALUE_1": "200,000",
+        "LABEL_1": "TOTAL DEVICES",
+        "SUB_1": "REGIONAL CENTER",
+        "STAT_VALUE_2": "1",
+        "LABEL_2": "AFFECTED UNIT",
+        "SUB_2": "SHIPPING QUEUE"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "3D_RENDER",
+      "script": "Eventually it will come back, blank and clean, and need to be rebuilt from nothing.",
+      "prompt": "A vast, sterile industrial warehouse filled with rows of metal shelves holding thousands of laptops. The lighting is cold and clinical. Photorealistic, high-tech environment, depth of field showing endless rows of machines.",
+      "environment": "warehouse",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "REBUILD STATUS: REQUIRED",
+        "attribution": "SYSTEM RECOVERY",
+        "tone": "#FFFFFF"
+      },
+      "duration": 10
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "In corporate IT offices around the world this morning, administrators are looking at their own consoles with slightly different eyes. Looking at the wipe command. Looking at who else has access to it. Asking questions they probably should have asked before.",
+      "template": "103-dashboard-summary",
+      "theme": "COLD",
+      "reasoning": "The dashboard summary reflects the analytical shift in IT security perspective.",
+      "content": {
+        "TITLE_TEXT": "ADMINISTRATIVE AUDIT",
+        "KPI_LABEL_1": "WIPE COMMANDS",
+        "KPI_VALUE_1": "REVIEWED",
+        "KPI_LABEL_2": "ACCESS RIGHTS",
+        "KPI_VALUE_2": "RESTRICTED",
+        "SUMMARY_TEXT": "Administrators are re-evaluating internal security protocols following the breach."
+      },
+      "duration": 15
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "The self-destruct button has always been there. We built it ourselves, for good reasons, with the best of intentions.",
+      "template": "119-kill-chain-steps",
+      "theme": "TECHNICAL",
+      "reasoning": "The kill chain visualization highlights the intended purpose of the administrative tools.",
+      "content": {
+        "TITLE_TEXT": "SYSTEM DESIGN",
+        "STEP_1": "REQUIREMENT",
+        "STEP_2": "DEVELOPMENT",
+        "STEP_3": "DEPLOYMENT",
+        "STEP_4": "INTENT",
+        "STEP_5": "SECURITY",
+        "STEP_6": "CONTROL",
+        "STEP_7": "VULNERABILITY",
+        "FOOTER_TEXT": "DESIGNED FOR SAFETY"
+      },
+      "duration": 12
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "The only thing that changed on March 11, 2026 is that now we know — with certainty — exactly how easy it is for someone else to press it.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "The alert notification emphasizes the urgency and danger of the realization.",
+      "content": {
+        "TITLE_TEXT": "CRITICAL SECURITY ALERT",
+        "SUBTITLE_TEXT": "UNAUTHORIZED ACCESS",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "MARCH 11, 2026",
+        "DESCRIPTION_TEXT": "The ease of exploitation has been confirmed."
+      },
+      "duration": 12
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+    "template":  "94-marimekko-mosaic",
+    "name":  "Marimekko Mosaic Chart",
+    "description":  "A proportional 2D mosaic chart where width and height represent data dimensions, featuring staggered block reveals.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "mosaic",
+                 "proportional",
+                 "data-viz"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Label for block 1",
+                   "LABEL_2":  "Label for block 2",
+                   "LABEL_3":  "Label for block 3",
+                   "SUB_1":  "Footer source or context text"
+               }
+}

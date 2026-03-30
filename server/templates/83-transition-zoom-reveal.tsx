@@ -14,7 +14,7 @@ export const AnimationComponent = () => {
   const barW = interpolate(frame, [15, 50], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const tagOp = interpolate(frame, [55, 70], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
-  const titleText = "TITLE_TEXT"
+  const titleText = 'TITLE_TEXT'
   const chapterWord = "CHAPTER_WORD"
   const chapterSub = "CHAPTER_SUB"
   const tag1 = "TAG_1"

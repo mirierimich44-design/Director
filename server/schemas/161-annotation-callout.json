@@ -1,0 +1,19 @@
+{
+    "template":  "161-annotation-callout",
+    "name":  "Annotation Callout",
+    "description":  "A focused callout box highlighting a specific data point or event with a header and body text.",
+    "category":  "scene-generated",
+    "duration":  15,
+    "tags":  [
+                 "callout",
+                 "annotation",
+                 "highlight"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main heading for the scene",
+                   "SUBTITLE_TEXT":  "Supporting context line",
+                   "CALLOUT_HEADER":  "Title for the callout box",
+                   "CALLOUT_BODY":  "Main descriptive text for the callout",
+                   "DATA_LABEL":  "Technical identifier or data string"
+               }
+}

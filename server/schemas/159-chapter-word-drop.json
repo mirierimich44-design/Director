@@ -1,0 +1,17 @@
+{
+    "template":  "159-chapter-word-drop",
+    "name":  "Chapter Word Drop",
+    "description":  "A high-impact transition screen featuring a large, dropping title, a decorative accent line, and a subtitle reveal.",
+    "category":  "scene-generated",
+    "duration":  15,
+    "tags":  [
+                 "transition",
+                 "chapter",
+                 "title"
+             ],
+    "fields":  {
+                   "CHAPTER_WORD":  "Main title word, e.g. \u0027ATTRIBUTION\u0027",
+                   "CHAPTER_SUB":  "Subtitle or phase name, e.g. \u0027THE INVESTIGATION\u0027",
+                   "CONTEXT_TEXT":  "Brief descriptive text for the scene"
+               }
+}

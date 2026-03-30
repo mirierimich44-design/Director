@@ -37,8 +37,8 @@ const DEFAULTS = {
       engine: 'kokoro',                        // 'kokoro' or 'orpheus'
     },
     image: {
-      primary: 'imagen-3.0-generate-001',      // Image generation
-      fallback: 'imagen-3.0-fast-generate-001', // Fallback image model
+      primary: 'imagen-4.0-generate-001',      // Image generation
+      fallback: 'imagen-4.0-generate-001',    // Fallback image model
     },
     video: {
       primary: 'veo-2.0-generate-001',      // Video generation (Veo 2)
@@ -229,7 +229,7 @@ export const MODEL_OPTIONS = {
   image: [
     { id: 'imagen-4.0-generate-001', name: 'Imagen 4.0', provider: 'google' },
     { id: 'imagen-4.0-fast-generate-001', name: 'Imagen 4.0 Fast', provider: 'google' },
-    { id: 'gemini-2.5-flash-image', name: 'Gemini 2.5 Flash (Image)', provider: 'google' },
+    { id: 'imagen-4.0-ultra-generate-001', name: 'Imagen 4.0 Ultra', provider: 'google' },
   ],
   video: [
     { id: 'veo-3.0-generate-preview', name: 'Veo 3.0 (Preview)', provider: 'google' },

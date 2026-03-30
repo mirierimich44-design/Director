@@ -1,0 +1,30 @@
+{
+  "template": "150-mobile-chat-ui",
+  "name": "Mobile Chat Interface",
+  "description": "A high-visibility mobile-style chat UI with incoming and outgoing bubbles, avatars, and a status header.",
+  "category": "storytelling",
+  "duration": 15,
+  "tags": [
+    "chat",
+    "whatsapp",
+    "messenger",
+    "messages",
+    "social"
+  ],
+  "fields": {
+    "CONTACT_NAME": "Name of the chat partner",
+    "STATUS_TEXT": "Status under the name (e.g. Online, Typing...)",
+    "MSG_1": "Text for message 1",
+    "SENDER_1": "Sender of msg 1: 'ME' or 'THEM'",
+    "MSG_2": "Text for message 2",
+    "SENDER_2": "Sender of msg 2: 'ME' or 'THEM'",
+    "MSG_3": "Text for message 3",
+    "SENDER_3": "Sender of msg 3: 'ME' or 'THEM'",
+    "MSG_4": "Text for message 4",
+    "SENDER_4": "Sender of msg 4: 'ME' or 'THEM'",
+    "MSG_5": "Text for message 5",
+    "SENDER_5": "Sender of msg 5: 'ME' or 'THEM'",
+    "MSG_6": "Text for message 6",
+    "SENDER_6": "Sender of msg 6: 'ME' or 'THEM'"
+  }
+}

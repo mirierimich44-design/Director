@@ -1,0 +1,11 @@
+{
+    "template":  "ImageHero",
+    "name":  "Image with Motion \u0026 Shadows",
+    "description":  "Applies cinematic zoom/pan and moving sunlight/shadow effects to a static image.",
+    "category":  "cinematic",
+    "duration":  15,
+    "fields":  {
+                   "IMAGE_URL":  "The URL of the generated image",
+                   "MOTION_TYPE":  "Description of the motion (e.g., zoom-in, pan-left)"
+               }
+}

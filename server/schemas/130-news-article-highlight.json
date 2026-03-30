@@ -1,0 +1,22 @@
+{
+    "template":  "130-news-article-highlight",
+    "name":  "Digital News Article Highlight",
+    "description":  "A modern web-publication article layout that reveals a headline and highlights a key quote for emphasis.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "news",
+                 "article",
+                 "publication",
+                 "quote",
+                 "journalism"
+             ],
+    "fields":  {
+                   "PUBLICATION_NAME":  "Name of the news outlet (e.g., CYBER DAILY, THE TIMES)",
+                   "ARTICLE_DATE":  "Publication date",
+                   "AUTHOR_NAME":  "Name of the journalist",
+                   "HEADLINE_TEXT":  "The main article headline",
+                   "BODY_TEXT_1":  "The first paragraph of the article",
+                   "HIGHLIGHT_QUOTE":  "The specific sentence or quote to emphasize"
+               }
+}

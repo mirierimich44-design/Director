@@ -1,0 +1,323 @@
+{
+  "timestamp": "2026-03-28T14:45:40.027Z",
+  "scriptLength": 2997,
+  "scriptPreview": "The post-mortem on Salt Typhoon revealed a pattern that is, by now, familiar from every major breach in the history of corporate cybersecurity: the vulnerabilities were known, the patches existed, and",
+  "scriptFull": "The post-mortem on Salt Typhoon revealed a pattern that is, by now, familiar from every major breach in the history of corporate cybersecurity: the vulnerabilities were known, the patches existed, and the companies had simply not applied them.\nCongressional aides confirmed that some of the exploited vulnerabilities dated back to 2018, meaning that patches had been issued and security advisories had been published years before the breach, and the telecoms had received the same notifications as every other organization in their sector — they simply chose not to prioritize remediation against the cost and operational disruption of doing so.\nAnd then there is the detail that should make every American who pays a phone bill feel something between rage and despair. One of the most critical management systems — the kind that sits at the heart of a major carrier's network infrastructure and that Salt Typhoon needed to access in order to move laterally through the entire organization — was protected by nothing more than a basic numeric password. Not a complex credential, not multi-factor authentication, but a string of numbers of the kind that security awareness training has warned against for as long as security awareness training has existed. This is not a billion-dollar company being defeated by nation-state tradecraft so sophisticated that no private organization could counter it. This is a billion-dollar company leaving a master key under the doormat and being surprised when someone picked it up.\nSenior national security officials, speaking after the breach, blamed what they called \"rudimentary cybersecurity failures\" — not sophisticated exploitation, not zero-day attacks, but the basic hygiene, patch management, and password policy that every security framework has recommended for decades and that companies in this sector had the resources, the expertise, and the regulatory obligation to implement.\nThe response to this, from the regulatory side, has been actively counterproductive. In its final weeks in office, the Biden administration's FCC pushed through new rules requiring telecommunications carriers to implement stronger security controls specifically around lawful intercept systems — rules written in direct response to what Salt Typhoon had demonstrated was possible. Within months of taking office, the Trump administration's FCC revoked those rules entirely, leaving the same architectural vulnerabilities legally unaddressed that had allowed the breach to persist undetected for years.\nAs of early 2026, CALEA remains law, the backdoors that enabled the breach are still legally required, and the telecoms must still maintain the lawful intercept systems whose architecture Salt Typhoon exploited across nine carriers in America and dozens of networks worldwide. The FBI responded to all of this by announcing a ten-million-dollar bounty for information on Salt Typhoon operatives — and as of the time this script was written, nobody has collected it.\n",
+  "totalScenes": 18,
+  "templateCount": 15,
+  "renderCount": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "The post-mortem on Salt Typhoon revealed a pattern that is, by now, familiar from every major breach in the history of corporate cybersecurity:",
+      "template": "158-chapter-word-drop",
+      "theme": "TECHNICAL",
+      "reasoning": "Sets the stage for the post-mortem analysis.",
+      "content": {
+        "CHAPTER_WORD": "POST-MORTEM",
+        "CHAPTER_SUB": "SALT TYPHOON",
+        "CONTEXT_TEXT": "CYBERSECURITY BREACH ANALYSIS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "the vulnerabilities were known, the patches existed, and the companies had simply not applied them.",
+      "template": "101-scrollytelling-step",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the failure of basic security hygiene.",
+      "content": {
+        "STEP_TITLE_1": "VULNERABILITIES",
+        "STEP_BODY_1": "KNOWN EXPLOITS",
+        "STEP_TITLE_2": "PATCHES",
+        "STEP_BODY_2": "AVAILABLE UPDATES",
+        "STEP_TITLE_3": "ACTION",
+        "STEP_BODY_3": "FAILURE TO APPLY",
+        "STEP_TITLE_4": "RESULT",
+        "STEP_BODY_4": "SYSTEM COMPROMISE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Congressional aides confirmed that some of the exploited vulnerabilities dated back to 2018, meaning that patches had been issued and security advisories had been published years before the breach,",
+      "template": "14-timeline-horizontal",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the long timeline of unpatched vulnerabilities.",
+      "content": {
+        "TITLE_TEXT": "VULNERABILITY TIMELINE",
+        "DATE_1": "2018",
+        "DATE_2": "2019",
+        "DATE_3": "2020",
+        "DATE_4": "2021",
+        "DATE_5": "2022",
+        "DATE_6": "2023",
+        "EVENT_1": "CVE DISCOVERY",
+        "EVENT_2": "PATCH RELEASED",
+        "EVENT_3": "ADVISORY ISSUED",
+        "EVENT_4": "NOTIFICATION SENT",
+        "EVENT_5": "SYSTEM IGNORED",
+        "EVENT_6": "BREACH OCCURRED"
+      },
+      "duration": 15
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "and the telecoms had received the same notifications as every other organization in their sector — they simply chose not to prioritize remediation against the cost and operational disruption of doing so.",
+      "template": "07-comparisonchart-dual",
+      "theme": "TECHNICAL",
+      "reasoning": "Contrasts the cost of security vs the cost of breach.",
+      "content": {
+        "TITLE_TEXT": "REMEDIATION COST ANALYSIS",
+        "COMPARE_LABEL_1": "PATCHING COST",
+        "COMPARE_LABEL_2": "BREACH IMPACT",
+        "COMPARE_VALUE_1": "$100K",
+        "COMPARE_VALUE_2": "$500M",
+        "CONTEXT_TEXT": "PRIORITIZATION FAILURE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "And then there is the detail that should make every American who pays a phone bill feel something between rage and despair.",
+      "prompt": "Cinematic close-up of a glowing server rack in a dark, cold data center. The lighting is moody and blue, emphasizing the scale of the infrastructure. The camera slowly zooms into a single blinking red light on a server blade, symbolizing the hidden vulnerability.",
+      "environment": "physical spaces",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "CRITICAL INFRASTRUCTURE FAILURE",
+        "attribution": "SYSTEM AUDIT",
+        "tone": "#FF0000"
+      },
+      "duration": 10
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "One of the most critical management systems — the kind that sits at the heart of a major carrier's network infrastructure and that Salt Typhoon needed to access in order to move laterally through the entire organization —",
+      "template": "120-lateral-movement",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the path of the attacker through the network.",
+      "content": {
+        "TITLE_TEXT": "LATERAL MOVEMENT PATH",
+        "SUB_TEXT": "SALT TYPHOON ACCESS",
+        "SOURCE_NODE": "ENTRY POINT",
+        "HOP_1": "MANAGEMENT SYSTEM",
+        "HOP_2": "CORE ROUTER",
+        "HOP_3": "DATABASE",
+        "TARGET_NODE": "USER DATA"
+      },
+      "duration": 12
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "was protected by nothing more than a basic numeric password.",
+      "template": "108-stamped-verdict",
+      "theme": "TECHNICAL",
+      "reasoning": "Emphasizes the absurdity of the security failure.",
+      "content": {
+        "STAMP_TEXT": "INSECURE",
+        "SUB_TEXT": "NUMERIC PASSWORD ONLY",
+        "DATE_TEXT": "2026",
+        "ID_TEXT": "AUDIT-001"
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "Not a complex credential, not multi-factor authentication, but a string of numbers of the kind that security awareness training has warned against for as long as security awareness training has existed.",
+      "template": "106-word-highlight-scan",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the failure of basic security practices.",
+      "content": {
+        "WORD_1": "NO",
+        "WORD_2": "COMPLEXITY",
+        "WORD_3": "NO",
+        "WORD_4": "MFA",
+        "WORD_5": "BASIC",
+        "WORD_6": "NUMERIC",
+        "WORD_7": "PASSWORD",
+        "WORD_8": "FAILURE"
+      },
+      "duration": 12,
+      "generated": true
+    },
+    {
+      "index": 9,
+      "type": "3D_RENDER",
+      "script": "This is not a billion-dollar company being defeated by nation-state tradecraft so sophisticated that no private organization could counter it.",
+      "prompt": "A wide, cinematic shot of a modern, glass-walled corporate office lobby at night. The space is empty and sterile. The camera pans right across the polished floor, reflecting the cold, blue light of the building's exterior. It emphasizes the scale and wealth of the organization.",
+      "environment": "physical spaces",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "CORPORATE VULNERABILITY",
+        "attribution": "SECURITY ANALYSIS",
+        "tone": "#FFFFFF"
+      },
+      "duration": 12
+    },
+    {
+      "index": 10,
+      "type": "3D_RENDER",
+      "script": "This is a billion-dollar company leaving a master key under the doormat and being surprised when someone picked it up.",
+      "prompt": "A close-up of a physical, old-fashioned brass key resting on a sleek, modern glass desk. The background is blurred, showing the high-tech office environment. The camera zooms out to reveal the key is sitting in plain sight, symbolizing the negligence.",
+      "environment": "physical spaces",
+      "camera": "zoom-out",
+      "motion": "zoom-out",
+      "lower_third": {
+        "text": "NEGLIGENT SECURITY",
+        "attribution": "AUDIT FINDING",
+        "tone": "#FF6600"
+      },
+      "duration": 12
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "Senior national security officials, speaking after the breach, blamed what they called \"rudimentary cybersecurity failures\"",
+      "template": "151-knowledge-card",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the official stance on the breach.",
+      "content": {
+        "SUBJECT_NAME": "NATIONAL SECURITY OFFICIALS",
+        "SUBTITLE": "OFFICIAL STATEMENT",
+        "IMAGE_URL": "",
+        "FACT_1_LABEL": "VERDICT",
+        "FACT_1_VALUE": "RUDIMENTARY FAILURES",
+        "FACT_2_LABEL": "STATUS",
+        "FACT_2_VALUE": "CRITICAL",
+        "DESCRIPTION": "Officials cited basic hygiene failures as the primary cause."
+      },
+      "duration": 10
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "— not sophisticated exploitation, not zero-day attacks, but the basic hygiene, patch management, and password policy that every security framework has recommended for decades and that companies in this sector had the resources, the expertise, and the regulatory obligation to implement.",
+      "template": "119-kill-chain-steps",
+      "theme": "TECHNICAL",
+      "reasoning": "Lists the failures in the security framework.",
+      "content": {
+        "TITLE_TEXT": "SECURITY FAILURES",
+        "STEP_1": "BASIC HYGIENE",
+        "STEP_2": "PATCH MANAGEMENT",
+        "STEP_3": "PASSWORD POLICY",
+        "STEP_4": "RESOURCE ALLOCATION",
+        "STEP_5": "EXPERTISE UTILIZATION",
+        "STEP_6": "REGULATORY COMPLIANCE",
+        "STEP_7": "SYSTEM AUDIT",
+        "FOOTER_TEXT": "SYSTEMIC NEGLIGENCE"
+      },
+      "duration": 15
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "The response to this, from the regulatory side, has been actively counterproductive.",
+      "template": "104-alert-notification",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the failure of regulatory response.",
+      "content": {
+        "TITLE_TEXT": "REGULATORY ALERT",
+        "SUBTITLE_TEXT": "COUNTERPRODUCTIVE RESPONSE",
+        "SEVERITY_LEVEL": "HIGH",
+        "TIMESTAMP_TEXT": "2026-01-01",
+        "DESCRIPTION_TEXT": "Regulatory actions have failed to address core vulnerabilities."
+      },
+      "duration": 8
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "In its final weeks in office, the Biden administration's FCC pushed through new rules requiring telecommunications carriers to implement stronger security controls specifically around lawful intercept systems — rules written in direct response to what Salt Typhoon had demonstrated was possible.",
+      "template": "155-calendar-date-highlight",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the timing of the regulatory change.",
+      "content": {
+        "TARGET_MONTH": "JANUARY",
+        "TARGET_YEAR": "2025",
+        "TARGET_DAY": "15",
+        "EVENT_TITLE": "FCC SECURITY RULES",
+        "EVENT_DESC": "NEW CONTROLS FOR INTERCEPT SYSTEMS"
+      },
+      "duration": 12
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "Within months of taking office, the Trump administration's FCC revoked those rules entirely, leaving the same architectural vulnerabilities legally unaddressed that had allowed the breach to persist undetected for years.",
+      "template": "08-waterfall-chart",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the reversal of security progress.",
+      "content": {
+        "TITLE_TEXT": "REGULATORY PROGRESS",
+        "WATERFALL_1": "INITIAL RULES",
+        "WATERFALL_2": "IMPLEMENTATION",
+        "WATERFALL_3": "REVOCATION",
+        "WATERFALL_4": "VULNERABILITY",
+        "WATERFALL_5": "EXPOSURE",
+        "BAR_VALUE_1": "100",
+        "BAR_VALUE_2": "50",
+        "BAR_VALUE_3": "-100",
+        "BAR_VALUE_4": "50",
+        "BAR_VALUE_5": "100"
+      },
+      "duration": 12
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "As of early 2026, CALEA remains law, the backdoors that enabled the breach are still legally required, and the telecoms must still maintain the lawful intercept systems whose architecture Salt Typhoon exploited across nine carriers in America and dozens of networks worldwide.",
+      "template": "36-map-arc-connection",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the global scale of the vulnerability.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL VULNERABILITY",
+        "ARC_FROM": "USA",
+        "MAP_LABEL_1": "NORTH AMERICA",
+        "MAP_LABEL_2": "EUROPE",
+        "MAP_LABEL_3": "ASIA",
+        "MAP_LABEL_4": "GLOBAL NETWORKS"
+      },
+      "duration": 15
+    },
+    {
+      "index": 17,
+      "type": "TEMPLATE",
+      "script": "The FBI responded to all of this by announcing a ten-million-dollar bounty for information on Salt Typhoon operatives —",
+      "template": "06-percentagefill-single",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the bounty amount.",
+      "content": {
+        "TITLE_TEXT": "FBI BOUNTY",
+        "PERCENT_VALUE": "100",
+        "PERCENT_LABEL": "$10M",
+        "CONTEXT_TEXT": "SALT TYPHOON OPERATIVES"
+      },
+      "duration": 8
+    },
+    {
+      "index": 18,
+      "type": "TEMPLATE",
+      "script": "and as of the time this script was written, nobody has collected it.",
+      "template": "131-countdown-breach",
+      "theme": "TECHNICAL",
+      "reasoning": "Emphasizes the lack of resolution.",
+      "content": {
+        "TITLE_TEXT": "BOUNTY STATUS",
+        "LABEL_TEXT": "COLLECTED",
+        "TIME_VALUE": "0",
+        "STATUS_TEXT": "UNCLAIMED"
+      },
+      "duration": 8
+    }
+  ]
+}

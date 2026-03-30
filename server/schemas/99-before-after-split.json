@@ -1,0 +1,20 @@
+{
+    "template":  "99-before-after-split",
+    "name":  "Before After Split",
+    "description":  "A dynamic vertical split screen transition revealing two contrasting states with text and statistics.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "comparison",
+                 "transition",
+                 "split-screen"
+             ],
+    "fields":  {
+                   "TITLE_LEFT":  "Title for the left side",
+                   "TITLE_RIGHT":  "Title for the right side",
+                   "STAT_LEFT":  "Primary stat for left side",
+                   "STAT_RIGHT":  "Primary stat for right side",
+                   "DESC_LEFT":  "Description for left side",
+                   "DESC_RIGHT":  "Description for right side"
+               }
+}

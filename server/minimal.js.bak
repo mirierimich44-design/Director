@@ -1,0 +1,18 @@
+/**
+ * Minimal server for testing
+ */
+const express = require('express');
+const app = express();
+const PORT = 3002;
+
+app.get('/', (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Minimal server works!');
+});
+
+console.log('Minimal server starting...');
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+    console.log('Process ID:', process.pid);
+});

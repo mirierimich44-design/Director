@@ -1,0 +1,23 @@
+{
+    "template":  "109-number-odometer",
+    "name":  "Number Odometer",
+    "description":  "Mechanical-style scrolling digit counter with staggered column animation",
+    "category":  "text-reveal",
+    "duration":  15,
+    "tags":  [
+                 "counter",
+                 "data",
+                 "odometer",
+                 "reveal"
+             ],
+    "fields":  {
+                   "DIGIT_1":  "First digit",
+                   "DIGIT_2":  "Second digit",
+                   "DIGIT_3":  "Third digit",
+                   "DIGIT_4":  "Fourth digit",
+                   "DIGIT_5":  "Fifth digit",
+                   "DIGIT_6":  "Sixth digit",
+                   "LABEL_TEXT":  "Main label text",
+                   "SUB_TEXT":  "Supporting sub-text"
+               }
+}

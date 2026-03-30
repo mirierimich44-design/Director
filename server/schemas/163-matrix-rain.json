@@ -1,0 +1,20 @@
+{
+    "template":  "163-matrix-rain",
+    "name":  "Matrix Rain Security",
+    "description":  "Hacker-style falling character rain background with high-contrast data overlays.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "hacker",
+                 "security",
+                 "matrix",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main header text",
+                   "STAT_VALUE_1":  "Primary metric value",
+                   "LABEL_1":  "Label for primary metric",
+                   "STAT_VALUE_2":  "Secondary metric value",
+                   "LABEL_2":  "Label for secondary metric"
+               }
+}

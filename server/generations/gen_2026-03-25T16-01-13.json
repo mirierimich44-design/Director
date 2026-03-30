@@ -1,0 +1,167 @@
+{
+  "timestamp": "2026-03-25T16:01:13.780Z",
+  "scriptLength": 1437,
+  "scriptPreview": "Most people understand basic phishing — a fake email, a fake login page, and a password stolen in seconds. Most people also understand that multi-factor authentication — the code sent to your phone — ",
+  "scriptFull": "Most people understand basic phishing — a fake email, a fake login page, and a password stolen in seconds. Most people also understand that multi-factor authentication — the code sent to your phone — is supposed to stop this. And for a while, it did.\nBut attackers adapted. The technique is called Adversary-in-the-Middle — and it shatters the security most companies thought was unbeatable.\nThink of it like a forger who doesn't copy your signature — they make you sign the real document yourself, then steal it out of your hand on the way to the bank. When you type your credentials into their fake login page, it invisibly forwards them to the real Microsoft server in real time. The real server asks for your multi-factor authentication code. The fake page asks you for it too. You enter it. It gets forwarded. The real server is satisfied — and issues an authenticated session token, a digital stamp that says this user has already been verified. The attacker captures it.\nFrom the platform's perspective, attackers holding a valid session token were a legitimate administrator. They had always been a legitimate administrator. Nothing flagged the login as suspicious. Because technically, it wasn't.\n[The score darkens.]\nBut how do you get to that moment? How do you target the right person — an administrator with Intune access — out of fifty-six thousand employees?\nYou don't find them overnight. You watch. You study. You wait.\n",
+  "totalScenes": 9,
+  "templateCount": 7,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "Most people understand basic phishing — a fake email, a fake login page, and a password stolen in seconds.",
+      "template": "13-split-percentage",
+      "theme": "THREAT",
+      "reasoning": "Introduces the concept of phishing with a comparative split.",
+      "content": {
+        "TITLE_TEXT": "PHISHING BASICS",
+        "COMPARE_LABEL_1": "FAKE EMAIL",
+        "COMPARE_VALUE_1": "65%",
+        "COMPARE_LABEL_2": "STOLEN CREDS",
+        "COMPARE_VALUE_2": "35%",
+        "CONTEXT_TEXT": "Standard credential harvesting"
+      },
+      "duration": 6
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "Most people also understand that multi-factor authentication — the code sent to your phone — is supposed to stop this. And for a while, it did. But attackers adapted.",
+      "template": "14-timeline-horizontal",
+      "theme": "THREAT",
+      "reasoning": "Shows the evolution of security measures over time.",
+      "content": {
+        "TITLE_TEXT": "MFA EVOLUTION",
+        "DATE_1": "2015",
+        "DATE_2": "2018",
+        "DATE_3": "2020",
+        "DATE_4": "2022",
+        "DATE_5": "2023",
+        "DATE_6": "2024",
+        "EVENT_1": "PASSWORD ONLY",
+        "EVENT_2": "MFA INTRO",
+        "EVENT_3": "MFA ADOPTION",
+        "EVENT_4": "ATTACKER ADAPT",
+        "EVENT_5": "AITM EMERGENCE",
+        "EVENT_6": "SESSION HIJACK"
+      },
+      "duration": 8
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "The technique is called Adversary-in-the-Middle — and it shatters the security most companies thought was unbeatable.",
+      "template": "108-stamped-verdict",
+      "theme": "THREAT",
+      "reasoning": "High-impact reveal of the attack technique.",
+      "content": {
+        "STAMP_TEXT": "AITM DETECTED",
+        "SUB_TEXT": "SECURITY BREACHED",
+        "DATE_TEXT": "2024-Q3",
+        "ID_TEXT": "REF-9928"
+      },
+      "duration": 5
+    },
+    {
+      "index": 4,
+      "type": "3D_RENDER",
+      "script": "Think of it like a forger who doesn't copy your signature — they make you sign the real document yourself, then steal it out of your hand on the way to the bank.",
+      "prompt": "Cinematic close-up of a high-end fountain pen resting on a crisp, white document on a dark mahogany desk. The lighting is moody and dramatic, casting long shadows. The camera slowly dollies forward, focusing on the texture of the paper. The scene feels like a high-stakes espionage thriller, emphasizing the deception of the forgery process.",
+      "environment": "physical space",
+      "camera": "dolly forward",
+      "motion": "Slow dolly forward, focus pull from the pen tip to the paper surface.",
+      "lower_third": {
+        "text": "ADVERSARY-IN-THE-MIDDLE",
+        "attribution": "THREAT ANALYSIS",
+        "tone": "#FF0000"
+      },
+      "duration": 7
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "When you type your credentials into their fake login page, it invisibly forwards them to the real Microsoft server in real time. The real server asks for your multi-factor authentication code. The fake page asks you for it too. You enter it. It gets forwarded.",
+      "template": "120-lateral-movement",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the flow of credentials through the attacker's proxy.",
+      "content": {
+        "TITLE_TEXT": "CREDENTIAL FORWARDING",
+        "SUB_TEXT": "REAL-TIME INTERCEPTION",
+        "SOURCE_NODE": "USER",
+        "HOP_1": "FAKE PAGE",
+        "HOP_2": "ATTACKER PROXY",
+        "HOP_3": "REAL SERVER",
+        "TARGET_NODE": "SESSION TOKEN"
+      },
+      "duration": 10
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "The real server is satisfied — and issues an authenticated session token, a digital stamp that says this user has already been verified. The attacker captures it.",
+      "template": "102-annotation-callout",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the critical moment of token theft.",
+      "content": {
+        "TITLE_TEXT": "SESSION TOKEN",
+        "SUBTITLE_TEXT": "AUTHENTICATION GRANTED",
+        "CALLOUT_HEADER": "TOKEN CAPTURED",
+        "CALLOUT_BODY": "Attacker now holds valid session state.",
+        "DATA_LABEL": "JWT_TOKEN_0x4F2"
+      },
+      "duration": 6
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "From the platform's perspective, attackers holding a valid session token were a legitimate administrator. They had always been a legitimate administrator. Nothing flagged the login as suspicious. Because technically, it wasn't.",
+      "template": "103-dashboard-summary",
+      "theme": "INTEL",
+      "reasoning": "Summarizes the stealthy nature of the attack.",
+      "content": {
+        "TITLE_TEXT": "SYSTEM STATUS",
+        "KPI_LABEL_1": "LOGIN STATUS",
+        "KPI_VALUE_1": "VALID",
+        "KPI_LABEL_2": "THREAT LEVEL",
+        "KPI_VALUE_2": "CRITICAL",
+        "SUMMARY_TEXT": "Platform identifies attacker as legitimate admin due to valid session token."
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "3D_RENDER",
+      "script": "[The score darkens.] But how do you get to that moment? How do you target the right person — an administrator with Intune access — out of fifty-six thousand employees?",
+      "prompt": "A vast, dark server room with rows of blinking blue and green lights stretching into the distance. The atmosphere is cold and sterile. The camera cranes up slowly, revealing the sheer scale of the infrastructure. The lighting is low-key, emphasizing the shadows between the racks. The scene feels overwhelming and complex, reflecting the difficulty of finding a single target.",
+      "environment": "dark server room",
+      "camera": "crane up",
+      "motion": "Slow crane up, camera pans slightly to reveal the depth of the server rows.",
+      "lower_third": {
+        "text": "TARGET ACQUISITION",
+        "attribution": "RECONNAISSANCE PHASE",
+        "tone": "#FF6600"
+      },
+      "duration": 8
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "You don't find them overnight. You watch. You study. You wait.",
+      "template": "106-word-highlight-scan",
+      "theme": "DARK",
+      "reasoning": "Emphasizes the patience required for the attack.",
+      "content": {
+        "WORD_1": "WATCH",
+        "WORD_2": "STUDY",
+        "WORD_3": "WAIT",
+        "WORD_4": "TARGET",
+        "WORD_5": "IDENTIFY",
+        "WORD_6": "EXPLOIT",
+        "WORD_7": "BREACH",
+        "WORD_8": "COMPLETE"
+      },
+      "duration": 6
+    }
+  ]
+}

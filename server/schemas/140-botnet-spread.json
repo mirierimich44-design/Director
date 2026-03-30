@@ -1,0 +1,19 @@
+{
+    "template":  "140-botnet-spread",
+    "name":  "Botnet Spread Visualization",
+    "description":  "Animated nodes with ripple effects simulating network infection spread across a canvas",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "security",
+                 "infection",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main heading for the visualization",
+                   "STAT_VALUE_1":  "Primary statistic (e.g. Total Infected)",
+                   "STAT_VALUE_2":  "Secondary statistic (e.g. Growth Rate)",
+                   "DESC_1":  "Brief description of the network event"
+               }
+}

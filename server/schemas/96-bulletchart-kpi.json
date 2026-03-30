@@ -1,0 +1,21 @@
+{
+    "template":  "96-bulletchart-kpi",
+    "name":  "Bullet Chart KPI",
+    "description":  "A professional bullet chart visualization comparing actual performance against target markers for multiple KPIs.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "kpi",
+                 "performance",
+                 "data",
+                 "comparison"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "KPI 1 Name",
+                   "LABEL_2":  "KPI 2 Name",
+                   "LABEL_3":  "KPI 3 Name",
+                   "LABEL_4":  "KPI 4 Name",
+                   "SOURCE_TEXT":  "Data source or footer note"
+               }
+}

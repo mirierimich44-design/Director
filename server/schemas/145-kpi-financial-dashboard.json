@@ -1,0 +1,25 @@
+{
+    "template":  "145-kpi-financial-dashboard",
+    "name":  "Financial KPI Dashboard",
+    "description":  "A 4-card financial dashboard with staggered entrance animations, ideal for revenue and growth metrics.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "kpi",
+                 "dashboard",
+                 "business"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main dashboard title",
+                   "STAT_VALUE_1":  "Revenue value",
+                   "TREND_1":  "Revenue trend description",
+                   "STAT_VALUE_2":  "EBITDA value",
+                   "TREND_2":  "EBITDA trend description",
+                   "STAT_VALUE_3":  "Margin percentage",
+                   "TREND_3":  "Margin trend description",
+                   "STAT_VALUE_4":  "YoY growth value",
+                   "TREND_4":  "Growth trend description",
+                   "SOURCE_TEXT":  "Data source attribution"
+               }
+}

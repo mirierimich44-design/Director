@@ -1,0 +1,28 @@
+{
+    "template":  "88-radarchart-spider",
+    "name":  "Radar Chart Spider",
+    "description":  "A dynamic multi-axis polygon chart comparing up to 6 dimensions with staggered label reveals.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "data",
+                 "comparison",
+                 "polygon",
+                 "radar"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Axis label 1",
+                   "LABEL_2":  "Axis label 2",
+                   "LABEL_3":  "Axis label 3",
+                   "LABEL_4":  "Axis label 4",
+                   "LABEL_5":  "Axis label 5",
+                   "LABEL_6":  "Axis label 6",
+                   "VAL_1":  "Value for axis 1 (0-100)",
+                   "VAL_2":  "Value for axis 2 (0-100)",
+                   "VAL_3":  "Value for axis 3 (0-100)",
+                   "VAL_4":  "Value for axis 4 (0-100)",
+                   "VAL_5":  "Value for axis 5 (0-100)",
+                   "VAL_6":  "Value for axis 6 (0-100)"
+               }
+}

@@ -1,0 +1,21 @@
+{
+    "template":  "93-sankey-flow",
+    "name":  "Sankey Flow Diagram",
+    "description":  "A professional flow visualization showing data moving from a source to a destination with staggered band animations.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "flow",
+                 "sankey",
+                 "data",
+                 "movement"
+             ],
+    "fields":  {
+                   "SOURCE_NAME":  "Name of the source category",
+                   "TARGET_NAME":  "Name of the destination category",
+                   "VALUE_1":  "Label for flow path 1",
+                   "VALUE_2":  "Label for flow path 2",
+                   "VALUE_3":  "Label for flow path 3",
+                   "VALUE_4":  "Label for flow path 4"
+               }
+}

@@ -1,0 +1,22 @@
+{
+    "template":  "152-asset-comparison-slope",
+    "name":  "Asset Comparison Slope",
+    "description":  "A professional slope chart comparing two data points with percentage change highlight.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "comparison",
+                 "slope",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "ASSET_NAME":  "Name of the asset being compared",
+                   "START_VALUE":  "Value at the start point",
+                   "END_VALUE":  "Value at the end point",
+                   "LABEL_START":  "Label for the start period",
+                   "LABEL_END":  "Label for the end period",
+                   "PERCENT_CHANGE":  "The calculated percentage change"
+               }
+}

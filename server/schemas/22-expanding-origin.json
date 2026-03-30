@@ -1,18 +1,23 @@
 {
-  "template": "22-expanding-origin",
-  "name": "Expanding Origin",
-  "description": "Single origin node on the left with pulse rings expanding outward, connecting to six target nodes on the right",
-  "category": "expansion",
-  "duration": 9,
-  "tags": ["network", "origin", "spread", "pulse"],
-  "fields": {
-    "TITLE_TEXT": "Title above the diagram, e.g. 'ATTACK ORIGIN' or 'BREACH SPREAD'",
-    "ORIGIN_LABEL": "Label on the origin node, e.g. 'THREAT ACTOR' or 'PATIENT ZERO'",
-    "TARGET_1": "Label for target node 1",
-    "TARGET_2": "Label for target node 2",
-    "TARGET_3": "Label for target node 3",
-    "TARGET_4": "Label for target node 4",
-    "TARGET_5": "Label for target node 5",
-    "TARGET_6": "Label for target node 6"
-  }
+    "template":  "22-expanding-origin",
+    "name":  "Expanding Origin",
+    "description":  "Single origin node on the left with pulse rings expanding outward, connecting to six target nodes on the right",
+    "category":  "expansion",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "origin",
+                 "spread",
+                 "pulse"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Title above the diagram, e.g. \u0027ATTACK ORIGIN\u0027 or \u0027BREACH SPREAD\u0027",
+                   "ORIGIN_LABEL":  "Label on the origin node, e.g. \u0027THREAT ACTOR\u0027 or \u0027PATIENT ZERO\u0027",
+                   "TARGET_1":  "Label for target node 1",
+                   "TARGET_2":  "Label for target node 2",
+                   "TARGET_3":  "Label for target node 3",
+                   "TARGET_4":  "Label for target node 4",
+                   "TARGET_5":  "Label for target node 5",
+                   "TARGET_6":  "Label for target node 6"
+               }
 }

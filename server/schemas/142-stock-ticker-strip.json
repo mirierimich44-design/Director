@@ -1,0 +1,33 @@
+{
+    "template":  "142-stock-ticker-strip",
+    "name":  "Stock Ticker Strip",
+    "description":  "A continuous horizontal scrolling ticker strip for financial data with color-coded change indicators.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "ticker",
+                 "scrolling",
+                 "data"
+             ],
+    "fields":  {
+                   "SYMBOL_1":  "Ticker symbol 1",
+                   "PRICE_1":  "Price 1",
+                   "CHANGE_1":  "Change 1 (e.g. +1.2%)",
+                   "SYMBOL_2":  "Ticker symbol 2",
+                   "PRICE_2":  "Price 2",
+                   "CHANGE_2":  "Change 2",
+                   "SYMBOL_3":  "Ticker symbol 3",
+                   "PRICE_3":  "Price 3",
+                   "CHANGE_3":  "Change 3",
+                   "SYMBOL_4":  "Ticker symbol 4",
+                   "PRICE_4":  "Price 4",
+                   "CHANGE_4":  "Change 4",
+                   "SYMBOL_5":  "Ticker symbol 5",
+                   "PRICE_5":  "Price 5",
+                   "CHANGE_5":  "Change 5",
+                   "SYMBOL_6":  "Ticker symbol 6",
+                   "PRICE_6":  "Price 6",
+                   "CHANGE_6":  "Change 6"
+               }
+}

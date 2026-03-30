@@ -1,0 +1,65 @@
+import React, { useMemo } from 'react';
+import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+
+export const AnimationComponent = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const words = useMemo(() => [
+    "WORD_1", "WORD_2", "WORD_3", "WORD_4", "WORD_5", "WORD_6", "WORD_7", "WORD_8"
+  ].filter(w => w !== '' && w !== ' '), []);
+
+  const totalWords = words.length;
+  const durationPerWord = 25;
+  const startDelay = 30;
+
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: 1920,
+      height: 1080,
+      backgroundColor: 'BACKGROUND_COLOR',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        width: 1440,
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '24px 32px',
+        justifyContent: 'center',
+      }}>
+        {words.map((word, i) => {
+          const wordStart = startDelay + (i * durationPerWord);
+          const wordEnd = wordStart + 20;
+          
+          const opacity = interpolate(frame, [wordStart, wordEnd], [0.3, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+          const scale = interpolate(frame, [wordStart, wordEnd], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+          const glow = interpolate(frame, [wordStart, wordEnd], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+
+          return (
+            <div key={i} style={{
+              position: 'relative',
+              fontSize: 72,
+              fontWeight: 800,
+              fontFamily: 'sans-serif',
+              color: 'TEXT_ON_PRIMARY',
+              opacity,
+              transform: `scale(${scale})`,
+              textShadow: glow > 0.5 ? `0 0 20px var(--accent-color)` : 'none',
+            }}>
+              {word}
+            </div>
+          );
+        })}
+      </div>
+      <style>{`:root { --accent-color: var(--ACCENT_COLOR); }`}</style>
+    </div>
+  );
+};
+
+export default AnimationComponent;

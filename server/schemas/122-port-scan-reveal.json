@@ -1,0 +1,31 @@
+{
+    "template":  "122-port-scan-reveal",
+    "name":  "Port Scan Reveal",
+    "description":  "A grid-based visualization of network ports flipping status with staggered entrance animations.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "security",
+                 "scan",
+                 "ports"
+             ],
+    "fields":  {
+                   "PORT_1":  "Port number 1",
+                   "STATUS_1":  "Status 1 (OPEN/CLOSED)",
+                   "PORT_2":  "Port number 2",
+                   "STATUS_2":  "Status 2 (OPEN/CLOSED)",
+                   "PORT_3":  "Port number 3",
+                   "STATUS_3":  "Status 3 (OPEN/CLOSED)",
+                   "PORT_4":  "Port number 4",
+                   "STATUS_4":  "Status 4 (OPEN/CLOSED)",
+                   "PORT_5":  "Port number 5",
+                   "STATUS_5":  "Status 5 (OPEN/CLOSED)",
+                   "PORT_6":  "Port number 6",
+                   "STATUS_6":  "Status 6 (OPEN/CLOSED)",
+                   "PORT_7":  "Port number 7",
+                   "STATUS_7":  "Status 7 (OPEN/CLOSED)",
+                   "PORT_8":  "Port number 8",
+                   "STATUS_8":  "Status 8 (OPEN/CLOSED)"
+               }
+}

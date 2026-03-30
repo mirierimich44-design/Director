@@ -1,0 +1,23 @@
+{
+    "template":  "155-risk-return-scatter",
+    "name":  "Risk-Return Scatter Plot",
+    "description":  "A financial scatter plot showing asset classes on a risk vs return axis with an efficient frontier curve.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "scatter",
+                 "risk",
+                 "return"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Asset class 1 name",
+                   "LABEL_2":  "Asset class 2 name",
+                   "LABEL_3":  "Asset class 3 name",
+                   "LABEL_4":  "Asset class 4 name",
+                   "LABEL_5":  "Asset class 5 name",
+                   "LABEL_6":  "Asset class 6 name",
+                   "SOURCE_TEXT":  "Data source attribution"
+               }
+}

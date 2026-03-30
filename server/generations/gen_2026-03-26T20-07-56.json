@@ -1,0 +1,227 @@
+{
+  "timestamp": "2026-03-26T20:07:56.761Z",
+  "scriptLength": 1366,
+  "scriptPreview": "You cannot clean a computer that has been factory-reset. There is nothing to clean. The drive is gone. The operating system is gone. Everything is gone.\nRestoring a wiped device is like rebuilding a h",
+  "scriptFull": "You cannot clean a computer that has been factory-reset. There is nothing to clean. The drive is gone. The operating system is gone. Everything is gone.\nRestoring a wiped device is like rebuilding a house that dissolved overnight — brick by brick, from the foundation up, while the family stands on the lawn in their pajamas. Two hundred thousand houses. One night.\nEvery device must be physically collected, reimaged from scratch, tested, and returned. That means palletizing laptops and shipping them to regional imaging depots. Couriers. Freight. Customs paperwork for equipment that, forty-eight hours ago, was a functioning asset and is now dead weight. You cannot push a recovery script remotely — the management tool itself was the weapon. You cannot email instructions to employees — their email is gone. Every step of the recovery must be done manually, in person, at scale, across nearly eighty countries.\nSecurity experts estimated full recovery at several months. During that time, Stryker's operations ran on emergency workarounds — pen and paper in facilities that hadn't used them in twenty years, phone calls in place of automated supply systems, manual orders in place of digital logistics.\nA twenty-five-billion-dollar medical technology company — running on infrastructure from 1987. Because one session token was stolen through a phishing relay.\n",
+  "totalScenes": 13,
+  "templateCount": 8,
+  "renderCount": 5,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "You cannot clean a computer that has been factory-reset. There is nothing to clean. The drive is gone. The operating system is gone. Everything is gone.",
+      "prompt": "Cinematic close-up of a dark, blank laptop screen on a sterile office desk, dramatic shadows, high-contrast, photorealistic, 8k, moody lighting.",
+      "environment": "office",
+      "camera": "close-up",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "SYSTEM WIPE: TOTAL LOSS",
+        "attribution": "ARXXIS INCIDENT REPORT",
+        "tone": "#FF0000"
+      },
+      "duration": 15
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "Restoring a wiped device is like rebuilding a house that dissolved overnight — brick by brick, from the foundation up, while the family stands on the lawn in their pajamas.",
+      "prompt": "Photorealistic wide shot of a vast, empty warehouse floor with rows of empty desks, cold blue lighting, cinematic depth of field, high-end architectural photography.",
+      "environment": "industrial",
+      "camera": "wide-angle",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "RECOVERY SCALE: 200,000 UNITS",
+        "attribution": "LOGISTICS ANALYSIS",
+        "tone": "#FFFFFF"
+      },
+      "duration": 15
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Two hundred thousand houses. One night.",
+      "template": "109-number-odometer",
+      "theme": "URGENT",
+      "reasoning": "Emphasizes the sheer scale of the disaster.",
+      "content": {
+        "DIGIT_1": "2",
+        "DIGIT_2": "0",
+        "DIGIT_3": "0",
+        "DIGIT_4": "0",
+        "DIGIT_5": "0",
+        "DIGIT_6": "0",
+        "LABEL_TEXT": "DEVICES WIPED",
+        "SUB_TEXT": "OVERNIGHT"
+      },
+      "duration": 10
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "Every device must be physically collected, reimaged from scratch, tested, and returned.",
+      "template": "119-kill-chain-steps",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the manual recovery process.",
+      "content": {
+        "TITLE_TEXT": "RECOVERY WORKFLOW",
+        "STEP_1": "COLLECT",
+        "STEP_2": "REIMAGE",
+        "STEP_3": "TEST",
+        "STEP_4": "DEPLOY",
+        "STEP_5": "",
+        "STEP_6": "",
+        "STEP_7": "",
+        "FOOTER_TEXT": "MANUAL INTERVENTION REQUIRED"
+      },
+      "duration": 15
+    },
+    {
+      "index": 5,
+      "type": "3D_RENDER",
+      "script": "That means palletizing laptops and shipping them to regional imaging depots. Couriers. Freight.",
+      "prompt": "Cinematic shot of wooden shipping pallets stacked high with cardboard boxes in a dimly lit warehouse, industrial aesthetic, sharp focus, volumetric lighting.",
+      "environment": "logistics",
+      "camera": "dolly-forward",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "LOGISTICS: GLOBAL SCALE",
+        "attribution": "SUPPLY CHAIN",
+        "tone": "#FFD700"
+      },
+      "duration": 15
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Customs paperwork for equipment that, forty-eight hours ago, was a functioning asset and is now dead weight.",
+      "template": "78-evidence-item",
+      "theme": "INTEL",
+      "reasoning": "Highlights the bureaucratic nightmare of the recovery.",
+      "content": {
+        "TITLE_TEXT": "CUSTOMS DECLARATION",
+        "LABEL_1": "STATUS",
+        "LABEL_2": "PRIORITY",
+        "LABEL_3": "ASSET TYPE",
+        "TAG_1": "CRITICAL",
+        "TAG_2": "DELAYED",
+        "CONTEXT_TEXT": "EQUIPMENT RENDERED INOPERABLE",
+        "ALERT_TEXT": "DEAD WEIGHT"
+      },
+      "duration": 15
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "You cannot push a recovery script remotely — the management tool itself was the weapon.",
+      "template": "130-glitch-corrupt",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the corruption of the management tools.",
+      "content": {
+        "TITLE_TEXT": "MANAGEMENT TOOL FAILURE",
+        "SUB_1": "REMOTE ACCESS",
+        "DATA_1": "0x000000",
+        "DATA_2": "ACCESS_DENIED",
+        "STATUS_TEXT": "WEAPONIZED"
+      },
+      "duration": 15
+    },
+    {
+      "index": 8,
+      "type": "3D_RENDER",
+      "script": "You cannot email instructions to employees — their email is gone.",
+      "prompt": "Cinematic shot of a dark, empty office cubicle with a disconnected monitor, cold atmosphere, high-end photography, cinematic lighting.",
+      "environment": "office",
+      "camera": "pan-left",
+      "motion": "pan-left",
+      "lower_third": {
+        "text": "COMMUNICATION: OFFLINE",
+        "attribution": "INTERNAL SYSTEMS",
+        "tone": "#FF0000"
+      },
+      "duration": 15
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Every step of the recovery must be done manually, in person, at scale, across nearly eighty countries.",
+      "template": "34-map-dotplot",
+      "theme": "COLD",
+      "reasoning": "Shows the global scale of the manual recovery.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL RECOVERY EFFORT",
+        "MAP_LABEL_1": "NORTH AMERICA",
+        "MAP_LABEL_2": "EUROPE",
+        "MAP_LABEL_3": "ASIA",
+        "MAP_LABEL_4": "GLOBAL"
+      },
+      "duration": 15
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "Security experts estimated full recovery at several months.",
+      "template": "131-countdown-breach",
+      "theme": "URGENT",
+      "reasoning": "Conveys the long duration of the recovery.",
+      "content": {
+        "TITLE_TEXT": "ESTIMATED RECOVERY",
+        "LABEL_TEXT": "MONTHS",
+        "TIME_VALUE": "06",
+        "STATUS_TEXT": "CRITICAL"
+      },
+      "duration": 15
+    },
+    {
+      "index": 11,
+      "type": "3D_RENDER",
+      "script": "During that time, Stryker's operations ran on emergency workarounds — pen and paper in facilities that hadn't used them in twenty years, phone calls in place of automated supply systems, manual orders in place of digital logistics.",
+      "prompt": "Cinematic close-up of a handwritten ledger on a cluttered desk, vintage aesthetic, warm desk lamp light, high-contrast, photorealistic.",
+      "environment": "industrial",
+      "camera": "close-up",
+      "motion": "zoom-out",
+      "lower_third": {
+        "text": "OPERATIONS: ANALOG MODE",
+        "attribution": "STRYKER INCIDENT",
+        "tone": "#FFD700"
+      },
+      "duration": 15
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "A twenty-five-billion-dollar medical technology company — running on infrastructure from 1987.",
+      "template": "02-statcluster-2box",
+      "theme": "CLEAN",
+      "reasoning": "Contrasts the company value with the outdated infrastructure.",
+      "content": {
+        "TITLE_TEXT": "INFRASTRUCTURE GAP",
+        "STAT_VALUE_1": "$25B",
+        "LABEL_1": "MARKET CAP",
+        "SUB_1": "MEDICAL TECH",
+        "STAT_VALUE_2": "1987",
+        "LABEL_2": "INFRASTRUCTURE",
+        "SUB_2": "LEGACY SYSTEMS"
+      },
+      "duration": 15
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "Because one session token was stolen through a phishing relay.",
+      "template": "120-lateral-movement",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the single point of failure.",
+      "content": {
+        "TITLE_TEXT": "ROOT CAUSE ANALYSIS",
+        "SUB_TEXT": "SESSION TOKEN HIJACK",
+        "SOURCE_NODE": "PHISHING RELAY",
+        "HOP_1": "TOKEN",
+        "HOP_2": "ACCESS",
+        "HOP_3": "BREACH",
+        "TARGET_NODE": "INFRASTRUCTURE"
+      },
+      "duration": 15
+    }
+  ]
+}

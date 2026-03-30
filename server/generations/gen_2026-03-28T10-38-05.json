@@ -1,0 +1,370 @@
+{
+  "timestamp": "2026-03-28T10:38:05.027Z",
+  "scriptLength": 3239,
+  "scriptPreview": "Getting into the network was only step one, and what Salt Typhoon did next is the reason US senators reached for words like \"breathtaking\" and \"worst in history.\"\nInside the networks of AT&T, Verizon,",
+  "scriptFull": "Getting into the network was only step one, and what Salt Typhoon did next is the reason US senators reached for words like \"breathtaking\" and \"worst in history.\"\nInside the networks of AT&T, Verizon, and Lumen Technologies, the group located the CALEA lawful intercept infrastructure — the dedicated portals, the surveillance systems, the backdoors that thirty years of federal law had required these companies to build, maintain, and leave accessible — and they walked through them without obstruction.\nFrom that position, the access they obtained was comprehensive in a way that no ordinary network breach achieves.\nThey could access call metadata — who called whom, when, for how long, from where. For over a million users, concentrated heavily in the Washington D.C. metropolitan area. Senators, officials, defense contractors, intelligence community personnel, political campaign staff — the entire ecosystem of the American national security apparatus, mapped out in call records.\nBut call records were only half the picture. The metadata also included geolocation data — precise cell tower triangulation showing exactly where a device was at any given moment. Where a Senator slept. Where a defense contractor met a source. Where an intelligence officer traveled at two in the morning. Location data that granular does not just tell you what someone said. It tells you who they are, what they fear, and what they are trying to hide. In the business of counterintelligence, that is sometimes more valuable than the call itself.\nThey could access the content of unencrypted calls and text messages. Actual audio. Actual words. In a limited number of cases — fewer than one hundred individuals, according to the FBI — they recorded the actual content of phone calls. According to briefings provided to affected campaigns and confirmed by US investigators with high confidence, the targets included staff of the Kamala Harris 2024 presidential campaign, and phones belonging to Donald Trump and JD Vance.\nAnd then there is the damage that most coverage failed to adequately convey.\nBy accessing the CALEA systems, Salt Typhoon could see the database of active wiretap requests — the full list of phone numbers currently under court-authorized surveillance by US law enforcement and intelligence agencies. That meant that if any of China's intelligence operatives inside the United States appeared on that list, Beijing would know in time to pull their people out, destroy evidence, and redirect operations before a single arrest could be made. The FBI could be closing in on a Chinese spy, building a counterintelligence case for months, preparing to act — and the target would already be gone. The entire US counterintelligence apparatus, built over decades at enormous cost, had effectively been handed to the adversary it was designed to protect against.\nOne former White House national security official described this to the Wall Street Journal as \"a counterintelligence failure of the highest order,\" and that assessment is precise rather than hyperbolic. Salt Typhoon did not simply steal information — they compromised the machinery that protects information and turned the surveillance system against the people who built it.\n",
+  "totalScenes": 21,
+  "templateCount": 19,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "Getting into the network was only step one, and what Salt Typhoon did next is the reason US senators reached for words like \"breathtaking\" and \"worst in history.\"",
+      "template": "158-chapter-word-drop",
+      "theme": "THREAT",
+      "reasoning": "Sets the high-stakes tone for the breach.",
+      "content": {
+        "CHAPTER_WORD": "BREACH",
+        "CHAPTER_SUB": "SALT TYPHOON",
+        "CONTEXT_TEXT": "US SENATE INVESTIGATION"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "Inside the networks of AT&T, Verizon, and Lumen Technologies, the group located the CALEA lawful intercept infrastructure.",
+      "template": "76-organization-card",
+      "theme": "TECHNICAL",
+      "reasoning": "Identifies the victim organizations.",
+      "content": {
+        "TITLE_TEXT": "TARGETED INFRASTRUCTURE",
+        "LABEL_1": "AT&T",
+        "LABEL_2": "VERIZON",
+        "LABEL_3": "LUMEN",
+        "TAG_1": "TELECOM",
+        "TAG_2": "CALEA",
+        "TAG_3": "INTERCEPT",
+        "STAT_VALUE_1": "100%",
+        "STAT_VALUE_2": "ACCESS",
+        "STAT_VALUE_3": "GRANTED",
+        "CONTEXT_TEXT": "LAWFUL INTERCEPT PORTALS COMPROMISED"
+      },
+      "duration": 12
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "The dedicated portals, the surveillance systems, the backdoors that thirty years of federal law had required these companies to build, maintain, and leave accessible — and they walked through them without obstruction.",
+      "template": "119-kill-chain-steps",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the exploit chain.",
+      "content": {
+        "TITLE_TEXT": "EXPLOIT PATH",
+        "STEP_1": "PORTAL ACCESS",
+        "STEP_2": "SURVEILLANCE BYPASS",
+        "STEP_3": "BACKDOOR ENTRY",
+        "STEP_4": "MAINTENANCE",
+        "STEP_5": "OBSTRUCTION REMOVAL",
+        "STEP_6": "DATA EXFIL",
+        "STEP_7": "PERSISTENCE",
+        "FOOTER_TEXT": "CALEA INFRASTRUCTURE EXPLOITED"
+      },
+      "duration": 15
+    },
+    {
+      "index": 4,
+      "type": "3D_RENDER",
+      "script": "From that position, the access they obtained was comprehensive in a way that no ordinary network breach achieves.",
+      "prompt": "Cinematic shot of a dark, high-tech server room with blinking blue and red LED lights on rack-mounted hardware. The camera slowly dollies forward into the center of the server aisle, emphasizing the scale of the infrastructure.",
+      "environment": "server-room",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "COMPREHENSIVE ACCESS",
+        "attribution": "ARXXIS ANALYTICS",
+        "tone": "#FF0000"
+      },
+      "duration": 10
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "They could access call metadata — who called whom, when, for how long, from where.",
+      "template": "127-wireshark-row-stream",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes metadata capture.",
+      "content": {
+        "SRC_IP_1": "CALLER_ID",
+        "DST_IP_1": "CALLEE_ID",
+        "PROTO_1": "TIMESTAMP",
+        "LEN_1": "DURATION",
+        "INFO_1": "LOCATION_DATA",
+        "SRC_IP_5": "METADATA_STREAM",
+        "INFO_5": "ACTIVE_CAPTURE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "For over a million users, concentrated heavily in the Washington D.C. metropolitan area.",
+      "template": "139-attack-origin-heatmap",
+      "theme": "THREAT",
+      "reasoning": "Shows geographic concentration.",
+      "content": {
+        "TITLE_TEXT": "USER IMPACT",
+        "STAT_VALUE_1": "1,000,000+",
+        "LABEL_1": "USERS",
+        "STAT_VALUE_2": "DC METRO",
+        "LABEL_2": "REGION",
+        "DESC_1": "HIGH CONCENTRATION OF TARGETS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "Senators, officials, defense contractors, intelligence community personnel, political campaign staff — the entire ecosystem of the American national security apparatus, mapped out in call records.",
+      "template": "136-attribution-web",
+      "theme": "INTEL",
+      "reasoning": "Maps the network of targets.",
+      "content": {
+        "NODE_LABEL_1": "SENATORS",
+        "NODE_LABEL_2": "OFFICIALS",
+        "NODE_LABEL_3": "CONTRACTORS",
+        "NODE_LABEL_4": "INTELLIGENCE",
+        "NODE_LABEL_5": "CAMPAIGN STAFF",
+        "NODE_LABEL_6": "NATIONAL SECURITY"
+      },
+      "duration": 15
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "But call records were only half the picture. The metadata also included geolocation data — precise cell tower triangulation showing exactly where a device was at any given moment.",
+      "template": "102-annotation-callout",
+      "theme": "TECHNICAL",
+      "reasoning": "Explains geolocation capabilities.",
+      "content": {
+        "TITLE_TEXT": "GEOLOCATION",
+        "SUBTITLE_TEXT": "CELL TOWER TRIANGULATION",
+        "CALLOUT_HEADER": "PRECISION",
+        "CALLOUT_BODY": "REAL-TIME TRACKING OF DEVICES",
+        "DATA_LABEL": "LAT/LONG"
+      },
+      "duration": 12
+    },
+    {
+      "index": 9,
+      "type": "3D_RENDER",
+      "script": "Where a Senator slept. Where a defense contractor met a source. Where an intelligence officer traveled at two in the morning.",
+      "prompt": "A dark, stylized digital map of Washington D.C. with glowing pulse points moving along streets. The camera pans across the city grid, highlighting specific locations with red markers.",
+      "environment": "urban-map",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "REAL-TIME TRACKING",
+        "attribution": "SURVEILLANCE DATA",
+        "tone": "#FF0000"
+      },
+      "duration": 15
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "Location data that granular does not just tell you what someone said. It tells you who they are, what they fear, and what they are trying to hide.",
+      "template": "106-word-highlight-scan",
+      "theme": "INTEL",
+      "reasoning": "Emphasizes the psychological impact of data.",
+      "content": {
+        "WORD_1": "IDENTITY",
+        "WORD_2": "FEAR",
+        "WORD_3": "SECRETS",
+        "WORD_4": "VULNERABILITY",
+        "WORD_5": "EXPOSURE",
+        "WORD_6": "COMPROMISE",
+        "WORD_7": "LEVERAGE",
+        "WORD_8": "INTEL"
+      },
+      "duration": 10
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "In the business of counterintelligence, that is sometimes more valuable than the call itself.",
+      "template": "103-dashboard-summary",
+      "theme": "INTEL",
+      "reasoning": "Summarizes the value of the data.",
+      "content": {
+        "TITLE_TEXT": "COUNTERINTEL VALUE",
+        "KPI_LABEL_1": "METADATA",
+        "KPI_VALUE_1": "HIGH",
+        "KPI_LABEL_2": "AUDIO",
+        "KPI_VALUE_2": "MEDIUM",
+        "SUMMARY_TEXT": "LOCATION DATA PROVIDES SUPERIOR LEVERAGE"
+      },
+      "duration": 8
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "They could access the content of unencrypted calls and text messages. Actual audio. Actual words.",
+      "template": "125-hex-dump-scroll",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes raw data capture.",
+      "content": {
+        "ROW_1": "0x0001 AUDIO_STREAM",
+        "ROW_2": "0x0002 TEXT_PAYLOAD",
+        "ROW_3": "0x0003 ENCRYPTION_BYPASS",
+        "ROW_4": "0x0004 RAW_DATA",
+        "ROW_5": "0x0005 PACKET_CAPTURE",
+        "ROW_6": "0x0006 INTERCEPT_LOG",
+        "ROW_7": "0x0007 CONTENT_EXTRACT",
+        "ROW_8": "0x0008 SYSTEM_ACCESS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "In a limited number of cases — fewer than one hundred individuals, according to the FBI — they recorded the actual content of phone calls.",
+      "template": "02-statcluster-2box",
+      "theme": "THREAT",
+      "reasoning": "Highlights the specific scope of audio theft.",
+      "content": {
+        "TITLE_TEXT": "AUDIO INTERCEPT",
+        "STAT_VALUE_1": "< 100",
+        "LABEL_1": "INDIVIDUALS",
+        "SUB_1": "FBI CONFIRMED",
+        "STAT_VALUE_2": "100%",
+        "LABEL_2": "SUCCESS RATE",
+        "SUB_2": "TARGETED RECORDINGS"
+      },
+      "duration": 10
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "According to briefings provided to affected campaigns and confirmed by US investigators with high confidence, the targets included staff of the Kamala Harris 2024 presidential campaign, and phones belonging to Donald Trump and JD Vance.",
+      "template": "114-dossier-open",
+      "theme": "INTEL",
+      "reasoning": "Profiles the high-profile targets.",
+      "content": {
+        "SUBJECT_NAME": "POLITICAL TARGETS",
+        "ALIAS_TEXT": "HARRIS / TRUMP / VANCE",
+        "TTP_1": "PHONE INTERCEPT",
+        "TTP_2": "CAMPAIGN BREACH",
+        "THREAT_LEVEL": "CRITICAL"
+      },
+      "duration": 15
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "And then there is the damage that most coverage failed to adequately convey.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Signals a shift to the deeper damage.",
+      "content": {
+        "TITLE_TEXT": "CRITICAL DAMAGE",
+        "SUBTITLE_TEXT": "SYSTEMIC COMPROMISE",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "2024-10-27",
+        "DESCRIPTION_TEXT": "CALEA INFRASTRUCTURE EXPOSED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "By accessing the CALEA systems, Salt Typhoon could see the database of active wiretap requests — the full list of phone numbers currently under court-authorized surveillance by US law enforcement and intelligence agencies.",
+      "template": "107-redacted-reveal",
+      "theme": "TECHNICAL",
+      "reasoning": "Reveals the wiretap list exposure.",
+      "content": {
+        "CLASSIFIED_TITLE": "WIRETAP DATABASE",
+        "LINE_1": "ACTIVE_REQUESTS: 4,200",
+        "LINE_2": "AGENCY: FBI/NSA",
+        "LINE_3": "STATUS: COMPROMISED",
+        "LINE_4": "LIST_ACCESS: GRANTED",
+        "LINE_5": "EXFIL_STATUS: COMPLETE",
+        "LINE_6": "THREAT_LEVEL: EXTREME"
+      },
+      "duration": 15
+    },
+    {
+      "index": 17,
+      "type": "TEMPLATE",
+      "script": "That meant that if any of China's intelligence operatives inside the United States appeared on that list, Beijing would know in time to pull their people out, destroy evidence, and redirect operations before a single arrest could be made.",
+      "template": "120-lateral-movement",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the counter-intelligence failure.",
+      "content": {
+        "TITLE_TEXT": "OPERATIONAL COMPROMISE",
+        "SUB_TEXT": "CHINESE INTELLIGENCE ESCAPE",
+        "SOURCE_NODE": "CALEA_DB",
+        "HOP_1": "BEIJING_ALERT",
+        "HOP_2": "OPERATIVE_PULL",
+        "HOP_3": "EVIDENCE_DESTROY",
+        "TARGET_NODE": "SAFE_EXIT"
+      },
+      "duration": 15
+    },
+    {
+      "index": 18,
+      "type": "TEMPLATE",
+      "script": "The FBI could be closing in on a Chinese spy, building a counterintelligence case for months, preparing to act — and the target would already be gone.",
+      "template": "131-countdown-breach",
+      "theme": "THREAT",
+      "reasoning": "Shows the race against time.",
+      "content": {
+        "TITLE_TEXT": "FBI CASE STATUS",
+        "LABEL_TEXT": "TARGET ESCAPE",
+        "TIME_VALUE": "00:00:00",
+        "STATUS_TEXT": "COMPROMISED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 19,
+      "type": "TEMPLATE",
+      "script": "The entire US counterintelligence apparatus, built over decades at enormous cost, had effectively been handed to the adversary it was designed to protect against.",
+      "template": "147-inflation-erosion",
+      "theme": "INTEL",
+      "reasoning": "Summarizes the systemic failure.",
+      "content": {
+        "TITLE_TEXT": "APPARATUS VALUE",
+        "STAT_VALUE_1": "DECADES",
+        "LABEL_1": "INVESTMENT",
+        "STAT_VALUE_2": "ZERO",
+        "LABEL_2": "SECURITY",
+        "DESC_1": "SYSTEM HANDED TO ADVERSARY"
+      },
+      "duration": 12
+    },
+    {
+      "index": 20,
+      "type": "TEMPLATE",
+      "script": "One former White House national security official described this to the Wall Street Journal as \"a counterintelligence failure of the highest order,\" and that assessment is precise rather than hyperbolic.",
+      "template": "130-news-article-highlight",
+      "theme": "INTEL",
+      "reasoning": "Highlights the expert assessment.",
+      "content": {
+        "PUBLICATION_NAME": "WALL STREET JOURNAL",
+        "ARTICLE_DATE": "2024-10-27",
+        "AUTHOR_NAME": "STAFF REPORT",
+        "HEADLINE_TEXT": "COUNTERINTEL FAILURE",
+        "BODY_TEXT_1": "OFFICIALS CONFIRM BREACH",
+        "HIGHLIGHT_QUOTE": "FAILURE OF THE HIGHEST ORDER"
+      },
+      "duration": 12
+    },
+    {
+      "index": 21,
+      "type": "TEMPLATE",
+      "script": "Salt Typhoon did not simply steal information — they compromised the machinery that protects information and turned the surveillance system against the people who built it.",
+      "template": "108-stamped-verdict",
+      "theme": "THREAT",
+      "reasoning": "Final verdict on the breach.",
+      "content": {
+        "STAMP_TEXT": "SYSTEMIC FAILURE",
+        "SUB_TEXT": "MACHINERY COMPROMISED",
+        "DATE_TEXT": "2024-10-27",
+        "ID_TEXT": "SALT-TYPHOON-01"
+      },
+      "duration": 10
+    }
+  ]
+}

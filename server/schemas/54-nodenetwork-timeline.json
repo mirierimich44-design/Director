@@ -1,26 +1,26 @@
 {
-  "template": "54-nodenetwork-timeline",
-  "description": "Timeline with 5 nodes on a horizontal spine, alternating above and below",
-  "fields": {
-    "TITLE_TEXT": "INCIDENT PROGRESSION",
-    "NODE_LABEL_1": "Breach Detected",
-    "DATE_1": "Q1 2023",
-    "NODE_LABEL_2": "Containment",
-    "DATE_2": "Q2 2023",
-    "NODE_LABEL_3": "Forensic Analysis",
-    "DATE_3": "Q3 2023",
-    "NODE_LABEL_4": "Remediation",
-    "DATE_4": "Q4 2023",
-    "NODE_LABEL_5": "Recovery",
-    "DATE_5": "Q1 2024"
-  },
-  "name": "54-nodenetwork-timeline",
-  "category": "network",
-  "duration": 10,
-  "tags": [
-    "network",
-    "connections",
-    "timeline",
-    "events"
-  ]
+    "template":  "54-nodenetwork-timeline",
+    "description":  "Timeline with 5 nodes on a horizontal spine, alternating above and below",
+    "fields":  {
+                   "TITLE_TEXT":  "INCIDENT PROGRESSION",
+                   "NODE_LABEL_1":  "Breach Detected",
+                   "DATE_1":  "Q1 2023",
+                   "NODE_LABEL_2":  "Containment",
+                   "DATE_2":  "Q2 2023",
+                   "NODE_LABEL_3":  "Forensic Analysis",
+                   "DATE_3":  "Q3 2023",
+                   "NODE_LABEL_4":  "Remediation",
+                   "DATE_4":  "Q4 2023",
+                   "NODE_LABEL_5":  "Recovery",
+                   "DATE_5":  "Q1 2024"
+               },
+    "name":  "54-nodenetwork-timeline",
+    "category":  "network",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "connections",
+                 "timeline",
+                 "events"
+             ]
 }

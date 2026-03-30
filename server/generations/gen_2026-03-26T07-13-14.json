@@ -1,0 +1,237 @@
+{
+  "timestamp": "2026-03-26T07:13:14.207Z",
+  "scriptLength": 2677,
+  "scriptPreview": "Here is the thing about sophisticated cyberattacks that most coverage gets wrong: the dramatic moment — the wipe, the dark screen — is almost never the beginning. It is the end.\nThe beginning is month",
+  "scriptFull": "Here is the thing about sophisticated cyberattacks that most coverage gets wrong: the dramatic moment — the wipe, the dark screen — is almost never the beginning. It is the end.\nThe beginning is months earlier. Quiet. Patient. Invisible.\nThe group that claimed responsibility — Handala, an Iran-linked operation assessed by Palo Alto Networks as a front for the Iranian Ministry of Intelligence and Security — has a well-documented pattern. They do not rush. In previous intrusions studied by Check Point Research, Handala maintained quiet access inside target networks for months before executing a destructive phase. During that time, they did nothing that would trigger an alert. They simply watched.\nBut Handala is not a single actor. Forensic analysis by Check Point Research and Palo Alto Networks identifies a two-team model at the heart of these operations. The first team — tracked as Scarred Manticore — specialises in the slow work: long-dwell infiltration, credential harvesting, months of silent reconnaissance. They are the ones who get through the door and find the master key. The second team — Void Manticore, the group that operates the Handala persona — handles the destruction. They are brought in at the end, when everything is already in position, to press the button. Two separate groups. Two separate roles. One catastrophic outcome.\nBased on Handala's documented history, their typical entry point is not glamorous: credential stuffing against corporate VPN infrastructure. Hundreds of failed login attempts, disguised behind generic hostnames. Most fail. Eventually, one doesn't. The timeline of the specific Stryker intrusion has not been publicly confirmed — but the pattern is consistent across every operation this group has been attributed to.\nOnce inside, they move laterally — spreading from one system to the next using the same remote access tools a helpdesk technician uses to fix a problem. To reach systems not directly accessible from the outside, they have been observed using open-source tunneling software that lets them build a private channel through the target's own infrastructure. Their weapons are the organization's own hallways.\nWhat they are looking for is not a file or a server. It is an identity. A privileged identity — an account that holds administrative rights over something powerful. Something like Intune.\nWhen they find it, they don't immediately use it. They confirm the access, test the permissions, and wait. Then they build the phishing relay, send the targeted email, capture the session token, and log in.\nThe preparation, based on this group's established pattern, took months. The attack itself took hours.\n",
+  "totalScenes": 11,
+  "templateCount": 9,
+  "renderCount": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "Here is the thing about sophisticated cyberattacks that most coverage gets wrong: the dramatic moment — the wipe, the dark screen — is almost never the beginning.",
+      "prompt": "Cinematic wide shot of a dark, high-tech server room with rows of blinking blue and green LED lights on server racks. The camera slowly dollies forward through the aisle, creating a sense of depth and mystery. The atmosphere is cold and sterile, with subtle dust particles floating in the light beams. High-end, photorealistic, 8k resolution, moody lighting.",
+      "environment": "server-room",
+      "camera": "dolly-in",
+      "motion": "Slow dolly forward through the server aisle, camera drifts slightly left.",
+      "lower_third": {
+        "text": "THE MYTH OF THE BREACH",
+        "attribution": "ARXXIS INTEL",
+        "tone": "#FF6600"
+      },
+      "duration": 6
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "It is the end. The beginning is months earlier. Quiet. Patient. Invisible.",
+      "template": "158-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Structural beat introducing the timeline concept.",
+      "content": {
+        "CHAPTER_WORD": "INFILTRATION",
+        "CHAPTER_SUB": "THE LONG GAME",
+        "CONTEXT_TEXT": "MONTHS OF SILENT RECONNAISSANCE"
+      },
+      "duration": 5
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "The group that claimed responsibility — Handala, an Iran-linked operation assessed by Palo Alto Networks as a front for the Iranian Ministry of Intelligence and Security — has a well-documented pattern. They do not rush.",
+      "template": "80-threat-actor-card",
+      "theme": "THREAT",
+      "reasoning": "Profile of the threat actor Handala.",
+      "content": {
+        "TITLE_TEXT": "HANDALA",
+        "LABEL_1": "AFFILIATION",
+        "LABEL_2": "SPONSOR",
+        "LABEL_3": "STATUS",
+        "TAG_1": "IRAN-LINKED",
+        "TAG_2": "APT",
+        "TAG_3": "ACTIVE",
+        "STAT_VALUE_1": "HIGH",
+        "STAT_VALUE_2": "PERSISTENT",
+        "CONTEXT_TEXT": "FRONT FOR IRANIAN MOIS",
+        "ALERT_TEXT": "THREAT LEVEL: CRITICAL"
+      },
+      "duration": 7
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "In previous intrusions studied by Check Point Research, Handala maintained quiet access inside target networks for months before executing a destructive phase. During that time, they did nothing that would trigger an alert. They simply watched. But Handala is not a single actor.",
+      "template": "135-threat-actor-timeline",
+      "theme": "COLD",
+      "reasoning": "Visualizing the long-dwell time of the actor.",
+      "content": {
+        "DATE_1": "MONTH 1",
+        "SECTOR_1": "ACCESS",
+        "TECH_1": "STEALTH",
+        "DATE_2": "MONTH 2",
+        "SECTOR_2": "RECON",
+        "TECH_2": "PASSIVE",
+        "DATE_3": "MONTH 3",
+        "SECTOR_3": "LATERAL",
+        "TECH_3": "TUNNELING",
+        "DATE_4": "MONTH 4",
+        "SECTOR_4": "PREP",
+        "TECH_4": "PHISHING",
+        "DATE_5": "MONTH 5",
+        "SECTOR_5": "DESTRUCT",
+        "TECH_5": "WIPE"
+      },
+      "duration": 8
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "Forensic analysis by Check Point Research and Palo Alto Networks identifies a two-team model at the heart of these operations. The first team — tracked as Scarred Manticore — specialises in the slow work: long-dwell infiltration, credential harvesting, months of silent reconnaissance. They are the ones who get through the door and find the master key. The second team — Void Manticore, the group that operates the Handala persona — handles the destruction. They are brought in at the end, when everything is already in position, to press the button. Two separate groups. Two separate roles. One catastrophic outcome.",
+      "template": "10-split-3panel",
+      "theme": "INTEL",
+      "reasoning": "Explaining the two-team operational model.",
+      "content": {
+        "TITLE_TEXT": "OPERATIONAL MODEL",
+        "LEFT_HEAD": "SCARRED MANTICORE",
+        "RIGHT_HEAD": "VOID MANTICORE",
+        "VERDICT_TEXT": "CATASTROPHIC OUTCOME",
+        "TAG_1": "INFILTRATION",
+        "TAG_2": "RECONNAISSANCE",
+        "TAG_3": "DESTRUCTION",
+        "LEFT_SUB1": "LONG-DWELL",
+        "LEFT_SUB2": "CREDENTIAL HARVEST",
+        "LEFT_SUB3": "SILENT ACCESS",
+        "RIGHT_SUB1": "HANDALA PERSONA",
+        "RIGHT_SUB2": "DESTRUCTIVE PAYLOAD",
+        "RIGHT_SUB3": "FINAL EXECUTION",
+        "SUB_1": "TWO TEAMS",
+        "SUB_2": "TWO ROLES",
+        "SUB_3": "ONE GOAL"
+      },
+      "duration": 10
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Based on Handala's documented history, their typical entry point is not glamorous: credential stuffing against corporate VPN infrastructure. Hundreds of failed login attempts, disguised behind generic hostnames. Most fail. Eventually, one doesn't.",
+      "template": "122-port-scan-reveal",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the credential stuffing attack.",
+      "content": {
+        "PORT_1": "VPN-01",
+        "STATUS_1": "FAIL",
+        "PORT_2": "VPN-02",
+        "STATUS_2": "FAIL",
+        "PORT_3": "VPN-03",
+        "STATUS_3": "FAIL",
+        "PORT_4": "VPN-04",
+        "STATUS_4": "FAIL",
+        "PORT_5": "VPN-05",
+        "STATUS_5": "FAIL",
+        "PORT_6": "VPN-06",
+        "STATUS_6": "FAIL",
+        "PORT_7": "VPN-07",
+        "STATUS_7": "FAIL",
+        "PORT_8": "VPN-08",
+        "STATUS_8": "SUCCESS"
+      },
+      "duration": 6
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "The timeline of the specific Stryker intrusion has not been publicly confirmed — but the pattern is consistent across every operation this group has been attributed to.",
+      "template": "79-timeline-incident",
+      "theme": "INTEL",
+      "reasoning": "Contextualizing the specific intrusion within the broader pattern.",
+      "content": {
+        "TITLE_TEXT": "STRYKER INTRUSION",
+        "DATE_1": "PHASE 1",
+        "DATE_2": "PHASE 2",
+        "DATE_3": "PHASE 3",
+        "DATE_4": "PHASE 4",
+        "EVENT_1": "INITIAL ACCESS",
+        "EVENT_2": "LATERAL MOVEMENT",
+        "EVENT_3": "IDENTITY THEFT",
+        "EVENT_4": "DESTRUCTION",
+        "TAG_1": "CONFIRMED",
+        "TAG_2": "CONSISTENT",
+        "TAG_3": "ATTRIBUTED",
+        "TAG_4": "ACTIVE"
+      },
+      "duration": 6
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "Once inside, they move laterally — spreading from one system to the next using the same remote access tools a helpdesk technician uses to fix a problem. To reach systems not directly accessible from the outside, they have been observed using open-source tunneling software that lets them build a private channel through the target's own infrastructure. Their weapons are the organization's own hallways.",
+      "template": "120-lateral-movement",
+      "theme": "THREAT",
+      "reasoning": "Visualizing lateral movement through internal infrastructure.",
+      "content": {
+        "TITLE_TEXT": "LATERAL MOVEMENT",
+        "SUB_TEXT": "INTERNAL TUNNELING",
+        "SOURCE_NODE": "VPN-ENTRY",
+        "HOP_1": "WORKSTATION",
+        "HOP_2": "SERVER-A",
+        "HOP_3": "SERVER-B",
+        "TARGET_NODE": "INTUNE-ADMIN"
+      },
+      "duration": 8
+    },
+    {
+      "index": 9,
+      "type": "3D_RENDER",
+      "script": "What they are looking for is not a file or a server. It is an identity. A privileged identity — an account that holds administrative rights over something powerful. Something like Intune.",
+      "prompt": "Macro shot of a glowing, holographic digital identity card floating in a dark, empty office environment. The card displays administrative credentials and the Intune logo. The lighting is moody and amber-toned, emphasizing the value of the asset. Photorealistic, high-tech, cinematic depth of field.",
+      "environment": "office-space",
+      "camera": "static-macro",
+      "motion": "Static shot with a subtle pulse effect on the identity card.",
+      "lower_third": {
+        "text": "TARGET: PRIVILEGED IDENTITY",
+        "attribution": "ARXXIS INTEL",
+        "tone": "#FFCC00"
+      },
+      "duration": 6
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "When they find it, they don't immediately use it. They confirm the access, test the permissions, and wait. Then they build the phishing relay, send the targeted email, capture the session token, and log in.",
+      "template": "121-exploit-chain",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the final exploit chain.",
+      "content": {
+        "STEP_1_LABEL": "CONFIRM",
+        "STEP_1_DESC": "TEST PERMISSIONS",
+        "STEP_2_LABEL": "RELAY",
+        "STEP_2_DESC": "BUILD PHISHING",
+        "STEP_3_LABEL": "EMAIL",
+        "STEP_3_DESC": "TARGETED DELIVERY",
+        "STEP_4_LABEL": "CAPTURE",
+        "STEP_4_DESC": "SESSION TOKEN",
+        "STEP_5_LABEL": "LOGIN",
+        "STEP_5_DESC": "FULL ACCESS"
+      },
+      "duration": 7
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "The preparation, based on this group's established pattern, took months. The attack itself took hours.",
+      "template": "07-comparisonchart-dual",
+      "theme": "CLEAN",
+      "reasoning": "Comparing preparation time vs execution time.",
+      "content": {
+        "TITLE_TEXT": "TIME INVESTMENT",
+        "COMPARE_LABEL_1": "PREPARATION",
+        "COMPARE_LABEL_2": "EXECUTION",
+        "COMPARE_VALUE_1": "MONTHS",
+        "COMPARE_VALUE_2": "HOURS",
+        "CONTEXT_TEXT": "ASYMMETRIC WARFARE"
+      },
+      "duration": 5
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+    "template":  "139-attack-origin-heatmap",
+    "name":  "Attack Origin Heatmap",
+    "description":  "World map visualization highlighting attack hotspots with pulsing intensity and summary statistics.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "security",
+                 "map",
+                 "heatmap",
+                 "threats"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main title for the map view",
+                   "STAT_VALUE_1":  "Primary metric (e.g. 1.2M)",
+                   "LABEL_1":  "Label for primary metric",
+                   "STAT_VALUE_2":  "Secondary metric (e.g. 450)",
+                   "LABEL_2":  "Label for secondary metric",
+                   "DESC_1":  "Brief context description",
+                   "CENTER_LAT": "Center latitude for map",
+                   "CENTER_LON": "Center longitude for map",
+                   "ZOOM_LEVEL": "Map zoom level (e.g. 1.5)"
+               }
+}

@@ -1,0 +1,20 @@
+{
+    "template":  "100-zoom-to-detail",
+    "name":  "Zoom to Detail",
+    "description":  "A cinematic zoom animation that transitions from an overview to a specific highlighted area, revealing detailed data.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "zoom",
+                 "focus",
+                 "detail",
+                 "storytelling"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main headline for the overview",
+                   "SUBTITLE_TEXT":  "Brief description of the context",
+                   "DETAIL_LABEL":  "Label for the zoomed-in data point",
+                   "DETAIL_VALUE":  "Key numeric or short text value",
+                   "BODY_TEXT":  "Supporting paragraph for the detail view"
+               }
+}

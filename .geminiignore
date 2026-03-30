@@ -1,0 +1,6 @@
+.temp/
+node_modules/
+public/videos/
+public/audio/
+public/images/
+dist/

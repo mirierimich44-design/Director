@@ -1,0 +1,24 @@
+{
+  "template": "153-social-media-impact",
+  "name": "Social Media Impact Post",
+  "description": "A high-fidelity social media post (X/Twitter style) with rapidly ticking engagement counters.",
+  "category": "storytelling",
+  "duration": 15,
+  "tags": [
+    "social",
+    "twitter",
+    "x",
+    "viral",
+    "engagement",
+    "post"
+  ],
+  "fields": {
+    "USER_HANDLE": "The user's handle (e.g. @0xGhost)",
+    "USER_NAME": "The user's display name",
+    "IMAGE_URL": "Avatar image URL",
+    "POST_TEXT": "The main content of the post",
+    "REPOST_COUNT": "Target number for reposts",
+    "LIKE_COUNT": "Target number for likes",
+    "TIMESTAMP": "Post time (e.g. 10:42 PM)"
+  }
+}

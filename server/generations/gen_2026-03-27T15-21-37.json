@@ -1,0 +1,229 @@
+{
+  "timestamp": "2026-03-27T15:21:37.514Z",
+  "scriptLength": 1956,
+  "scriptPreview": "WHO THEY ARE\n\nThe group has several names, depending on which threat intelligence firm is tracking them. Microsoft calls them Salt Typhoon — the \"Typhoon\" suffix being used consistently for Chinese st",
+  "scriptFull": "WHO THEY ARE\n\nThe group has several names, depending on which threat intelligence firm is tracking them. Microsoft calls them Salt Typhoon — the \"Typhoon\" suffix being used consistently for Chinese state-sponsored actors — while Trend Micro tracks the same group under the name Earth Estries, and others know them as FamousSparrow, GhostEmperor, or UNC2286. The different names reflect different researchers studying different pieces of the same operation at different points in time, gradually assembling a picture of something far larger and more coordinated than any single firm could see alone.\nWhat every researcher agrees on, regardless of what they call the group, is who they work for. Salt Typhoon is assessed with high confidence to be operated by China's Ministry of State Security — the MSS — which is China's foreign intelligence service, its secret police, and the organization responsible for overseas espionage, counterintelligence, and the surveillance of Chinese dissidents living abroad.\nFormer NSA analyst Terry Dunlap described the group as \"a component of China's hundred-year strategy,\" and that framing matters considerably for understanding what follows, because this is not opportunistic cybercrime and it is not ransomware. It is generational intelligence collection — patient, methodical, and designed to serve strategic objectives that extend decades into the future rather than quarters.\nThe group has been active since at least 2019, and in its early years it targeted hotels and government agencies across Southeast Asia and Europe in what appear to have been reconnaissance operations, building a comprehensive picture of who travels where, who stays where, and who meets whom under conditions of official discretion. By 2021, based on the forensic evidence now available, it had shifted its primary focus to telecommunications infrastructure in the United States, where it would remain, completely undetected, for years.\n\n",
+  "totalScenes": 12,
+  "templateCount": 11,
+  "renderCount": 1,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "WHO THEY ARE",
+      "template": "158-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Dramatic chapter opener.",
+      "content": {
+        "CHAPTER_WORD": "WHO THEY ARE",
+        "CHAPTER_SUB": "THREAT ACTOR PROFILING",
+        "CONTEXT_TEXT": "IDENTIFYING THE OPERATORS"
+      },
+      "duration": 5
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "The group has several names, depending on which threat intelligence firm is tracking them.",
+      "template": "106-word-highlight-scan",
+      "theme": "TECHNICAL",
+      "reasoning": "Analytical tone for tracking nomenclature.",
+      "content": {
+        "WORD_1": "GROUP",
+        "WORD_2": "NAMES",
+        "WORD_3": "THREAT",
+        "WORD_4": "INTELLIGENCE",
+        "WORD_5": "FIRM",
+        "WORD_6": "TRACKING",
+        "WORD_7": "THEM",
+        "WORD_8": "ANALYSIS"
+      },
+      "duration": 8
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Microsoft calls them Salt Typhoon — the \"Typhoon\" suffix being used consistently for Chinese state-sponsored actors — while Trend Micro tracks the same group under the name Earth Estries, and others know them as FamousSparrow, GhostEmperor, or UNC2286.",
+      "template": "114-dossier-open",
+      "theme": "INTEL",
+      "reasoning": "Dossier style fits the list of aliases.",
+      "content": {
+        "SUBJECT_NAME": "SALT TYPHOON",
+        "ALIAS_TEXT": "EARTH ESTRIES, FAMOUSSPARROW, GHOSTEMPEROR, UNC2286",
+        "TTP_1": "CHINESE STATE-SPONSORED",
+        "TTP_2": "MULTI-FIRM TRACKING",
+        "THREAT_LEVEL": "CRITICAL"
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "The different names reflect different researchers studying different pieces of the same operation at different points in time, gradually assembling a picture of something far larger and more coordinated than any single firm could see alone.",
+      "template": "136-attribution-web",
+      "theme": "TECHNICAL",
+      "reasoning": "Network visualization shows the convergence of intelligence.",
+      "content": {
+        "NODE_LABEL_1": "RESEARCHERS",
+        "NODE_LABEL_2": "PIECES",
+        "NODE_LABEL_3": "OPERATION",
+        "NODE_LABEL_4": "TIME",
+        "NODE_LABEL_5": "COORDINATION",
+        "NODE_LABEL_6": "PICTURE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "What every researcher agrees on, regardless of what they call the group, is who they work for.",
+      "template": "103-dashboard-summary",
+      "theme": "CLEAN",
+      "reasoning": "Neutral informational summary.",
+      "content": {
+        "TITLE_TEXT": "CONSENSUS",
+        "KPI_LABEL_1": "RESEARCHERS",
+        "KPI_VALUE_1": "100%",
+        "KPI_LABEL_2": "ATTRIBUTION",
+        "KPI_VALUE_2": "CONFIRMED",
+        "SUMMARY_TEXT": "UNANIMOUS AGREEMENT ON OPERATOR ORIGIN"
+      },
+      "duration": 8
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Salt Typhoon is assessed with high confidence to be operated by China's Ministry of State Security — the MSS — which is China's foreign intelligence service, its secret police, and the organization responsible for overseas espionage, counterintelligence, and the surveillance of Chinese dissidents living abroad.",
+      "template": "80-threat-actor-card",
+      "theme": "THREAT",
+      "reasoning": "High-threat profile for MSS.",
+      "content": {
+        "TITLE_TEXT": "MSS OPERATOR",
+        "LABEL_1": "NATION STATE",
+        "LABEL_2": "ROLE",
+        "LABEL_3": "MISSION",
+        "TAG_1": "ESPIONAGE",
+        "TAG_2": "COUNTERINTEL",
+        "TAG_3": "SURVEILLANCE",
+        "STAT_VALUE_1": "HIGH",
+        "STAT_VALUE_2": "CONFIDENCE",
+        "CONTEXT_TEXT": "CHINA'S FOREIGN INTELLIGENCE SERVICE",
+        "ALERT_TEXT": "STATE-SPONSORED"
+      },
+      "duration": 15
+    },
+    {
+      "index": 7,
+      "type": "3D_RENDER",
+      "script": "Former NSA analyst Terry Dunlap described the group as \"a component of China's hundred-year strategy,\"",
+      "prompt": "A cinematic, high-contrast shot of a dark, modern office space with a single glowing computer monitor displaying complex data streams, symbolizing deep intelligence analysis, professional, moody lighting, 8k resolution.",
+      "environment": "physical spaces",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "Terry Dunlap, Former NSA Analyst",
+        "attribution": "Strategic Assessment",
+        "tone": "#FF6600"
+      },
+      "duration": 10
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "and that framing matters considerably for understanding what follows, because this is not opportunistic cybercrime and it is not ransomware.",
+      "template": "09-split-2panel",
+      "theme": "TECHNICAL",
+      "reasoning": "Contrasting cybercrime vs strategic intelligence.",
+      "content": {
+        "LEFT_HEAD": "CYBERCRIME",
+        "LEFT_SUB1": "OPPORTUNISTIC",
+        "LEFT_SUB2": "RANSOMWARE",
+        "LEFT_SUB3": "FINANCIAL",
+        "RIGHT_HEAD": "STRATEGIC",
+        "RIGHT_SUB1": "GENERATIONAL",
+        "RIGHT_SUB2": "METHODICAL",
+        "RIGHT_SUB3": "PATIENT",
+        "VERDICT_TEXT": "NOT CYBERCRIME"
+      },
+      "duration": 10
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "It is generational intelligence collection — patient, methodical, and designed to serve strategic objectives that extend decades into the future rather than quarters.",
+      "template": "04-linechart-draw",
+      "theme": "COLD",
+      "reasoning": "Long-term growth visualization.",
+      "content": {
+        "TITLE_TEXT": "STRATEGIC HORIZON",
+        "DATE_1": "2020",
+        "DATE_2": "2030",
+        "DATE_3": "2040",
+        "DATE_4": "2050",
+        "DATE_5": "2060",
+        "LINE_VALUE_1": "10",
+        "LINE_VALUE_2": "25",
+        "LINE_VALUE_3": "45",
+        "LINE_VALUE_4": "70",
+        "LINE_VALUE_5": "100"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "The group has been active since at least 2019, and in its early years it targeted hotels and government agencies across Southeast Asia and Europe in what appear to have been reconnaissance operations,",
+      "template": "34-map-dotplot",
+      "theme": "INTEL",
+      "reasoning": "Geographic spread of early operations.",
+      "content": {
+        "TITLE_TEXT": "RECONNAISSANCE PHASE",
+        "MAP_LABEL_1": "SOUTHEAST ASIA",
+        "MAP_LABEL_2": "EUROPE",
+        "MAP_LABEL_3": "HOTELS",
+        "MAP_LABEL_4": "GOVERNMENT"
+      },
+      "duration": 12
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "building a comprehensive picture of who travels where, who stays where, and who meets whom under conditions of official discretion.",
+      "template": "102-annotation-callout",
+      "theme": "TECHNICAL",
+      "reasoning": "Focus on data collection details.",
+      "content": {
+        "TITLE_TEXT": "DATA COLLECTION",
+        "SUBTITLE_TEXT": "OFFICIAL DISCRETION",
+        "CALLOUT_HEADER": "TARGETING",
+        "CALLOUT_BODY": "TRAVEL PATTERNS AND MEETINGS",
+        "DATA_LABEL": "COMPREHENSIVE"
+      },
+      "duration": 8
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "By 2021, based on the forensic evidence now available, it had shifted its primary focus to telecommunications infrastructure in the United States, where it would remain, completely undetected, for years.",
+      "template": "14-timeline-horizontal",
+      "theme": "THREAT",
+      "reasoning": "Timeline of shift to US infrastructure.",
+      "content": {
+        "TITLE_TEXT": "OPERATIONAL SHIFT",
+        "DATE_1": "2019",
+        "DATE_2": "2020",
+        "DATE_3": "2021",
+        "DATE_4": "2022",
+        "DATE_5": "2023",
+        "DATE_6": "2024",
+        "EVENT_1": "RECON",
+        "EVENT_2": "EXPANSION",
+        "EVENT_3": "US FOCUS",
+        "EVENT_4": "STEALTH",
+        "EVENT_5": "STEALTH",
+        "EVENT_6": "DETECTION"
+      },
+      "duration": 12
+    }
+  ]
+}

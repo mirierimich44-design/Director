@@ -1,0 +1,20 @@
+{
+    "template":  "104-alert-notification",
+    "name":  "Alert Notification",
+    "description":  "High-urgency security alert badge with pulse animation and structured data display",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "alert",
+                 "security",
+                 "notification",
+                 "urgency"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main alert title",
+                   "SUBTITLE_TEXT":  "Short secondary context",
+                   "SEVERITY_LEVEL":  "e.g. CRITICAL, WARNING, INFO",
+                   "TIMESTAMP_TEXT":  "Time of event",
+                   "DESCRIPTION_TEXT":  "Brief explanation of the alert"
+               }
+}

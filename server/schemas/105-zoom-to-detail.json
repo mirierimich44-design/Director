@@ -1,0 +1,19 @@
+{
+    "template":  "105-zoom-to-detail",
+    "name":  "Zoom to Detail",
+    "description":  "A cinematic transition that zooms from a broad overview into a specific data detail panel.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "zoom",
+                 "transition",
+                 "focus",
+                 "storytelling"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main headline for the overview screen",
+                   "SUBTITLE_TEXT":  "Supporting text for the overview screen",
+                   "DETAIL_LABEL":  "Title for the zoomed-in detail panel",
+                   "DETAIL_BODY":  "Detailed description text for the zoomed-in panel"
+               }
+}

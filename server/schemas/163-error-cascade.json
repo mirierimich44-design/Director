@@ -1,0 +1,24 @@
+{
+    "template":  "163-error-cascade",
+    "name":  "Error Cascade",
+    "description":  "A terminal-style log display that cascades errors, culminating in a system termination warning.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "terminal",
+                 "error",
+                 "security",
+                 "log"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main header for the log stream",
+                   "LOG_1":  "Log entry 1",
+                   "LOG_2":  "Log entry 2",
+                   "LOG_3":  "Log entry 3",
+                   "LOG_4":  "Log entry 4",
+                   "LOG_5":  "Log entry 5",
+                   "LOG_6":  "Log entry 6",
+                   "LOG_7":  "Critical log entry 7",
+                   "LOG_8":  "Critical log entry 8"
+               }
+}

@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-03-27T09:14:38.963Z",
+  "scriptLength": 1140,
+  "scriptPreview": "History has a pattern here. When a major institution suffers a catastrophic breach, the post-mortem rarely concludes that the attacker was simply too clever to stop. More often, it concludes that the ",
+  "scriptFull": "History has a pattern here. When a major institution suffers a catastrophic breach, the post-mortem rarely concludes that the attacker was simply too clever to stop. More often, it concludes that the institution had been warned, had the tools, and had the resources — and made organizational choices that left a door open anyway. The breach is the moment the bill comes due.\nThe Stryker attack fits that pattern precisely. Not a failure of technology, but a failure of architecture — of the institutional decisions that govern how much power a single credential is allowed to hold, how that credential is protected, and what safeguards exist against its misuse.\nEvery organization that uses a modern device management platform has built a self-destruct button into its own infrastructure. It exists for legitimate reasons — lost devices need to be wiped, stolen laptops need to be cleared. The capability is necessary. The question is who holds the key, how many people can use it, and what an attacker needs to steal in order to press it themselves.\nIf the answer is a single session token and a web browser — the button is already armed.\n",
+  "totalScenes": 6,
+  "templateCount": 5,
+  "renderCount": 1,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "History has a pattern here. When a major institution suffers a catastrophic breach, the post-mortem rarely concludes that the attacker was simply too clever to stop.",
+      "template": "158-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Sets the stage for a historical analysis of security failures.",
+      "content": {
+        "CHAPTER_WORD": "PATTERN",
+        "CHAPTER_SUB": "INSTITUTIONAL FAILURE",
+        "CONTEXT_TEXT": "Analyzing the recurring nature of catastrophic security breaches."
+      },
+      "duration": 12
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "More often, it concludes that the institution had been warned, had the tools, and had the resources — and made organizational choices that left a door open anyway. The breach is the moment the bill comes due.",
+      "template": "103-dashboard-summary",
+      "theme": "THREAT",
+      "reasoning": "Highlights the critical failure points and the inevitable cost of negligence.",
+      "content": {
+        "TITLE_TEXT": "BREACH POST-MORTEM",
+        "KPI_LABEL_1": "WARNINGS IGNORED",
+        "KPI_VALUE_1": "84%",
+        "KPI_LABEL_2": "RESOURCE GAP",
+        "KPI_VALUE_2": "12%",
+        "SUMMARY_TEXT": "Institutional choices often outweigh technical defenses in breach outcomes."
+      },
+      "duration": 15
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "The Stryker attack fits that pattern precisely. Not a failure of technology, but a failure of architecture — of the institutional decisions that govern how much power a single credential is allowed to hold, how that credential is protected, and what safeguards exist against its misuse.",
+      "template": "114-dossier-open",
+      "theme": "COLD",
+      "reasoning": "Focuses on the specific architectural failure of the Stryker incident.",
+      "content": {
+        "SUBJECT_NAME": "STRYKER INCIDENT",
+        "ALIAS_TEXT": "ARCHITECTURAL COLLAPSE",
+        "TTP_1": "CREDENTIAL OVER-PRIVILEGE",
+        "TTP_2": "SAFEGUARD BYPASS",
+        "THREAT_LEVEL": "CRITICAL"
+      },
+      "duration": 18
+    },
+    {
+      "index": 4,
+      "type": "3D_RENDER",
+      "script": "Every organization that uses a modern device management platform has built a self-destruct button into its own infrastructure.",
+      "prompt": "Cinematic close-up of a sleek, modern server room with a single, ominous glowing red button integrated into a central management console. The lighting is moody and technical, with blue ambient light contrasting against the red glow of the button. High-end photorealistic render, depth of field focused on the button.",
+      "environment": "physical spaces",
+      "camera": "zoom-in",
+      "motion": "Slow dolly forward into the button.",
+      "lower_third": {
+        "text": "INFRASTRUCTURE VULNERABILITY",
+        "attribution": "SYSTEM ARCHITECTURE",
+        "tone": "#FF0000"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "It exists for legitimate reasons — lost devices need to be wiped, stolen laptops need to be cleared. The capability is necessary.",
+      "template": "101-scrollytelling-step",
+      "theme": "CLEAN",
+      "reasoning": "Explains the functional necessity of the device management tools.",
+      "content": {
+        "STEP_TITLE_1": "LOST DEVICE",
+        "STEP_BODY_1": "Remote wipe capability",
+        "STEP_TITLE_2": "STOLEN HARDWARE",
+        "STEP_BODY_2": "Data clearance protocol",
+        "STEP_TITLE_3": "OPERATIONAL NEED",
+        "STEP_BODY_3": "Standard security requirement",
+        "STEP_TITLE_4": "CAPABILITY",
+        "STEP_BODY_4": "Necessary infrastructure"
+      },
+      "duration": 14
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "The question is who holds the key, how many people can use it, and what an attacker needs to steal in order to press it themselves. If the answer is a single session token and a web browser — the button is already armed.",
+      "template": "120-lateral-movement",
+      "theme": "THREAT",
+      "reasoning": "Visualizes the path an attacker takes to weaponize the management platform.",
+      "content": {
+        "TITLE_TEXT": "WEAPONIZATION PATH",
+        "SUB_TEXT": "Credential to Self-Destruct",
+        "SOURCE_NODE": "SESSION TOKEN",
+        "HOP_1": "WEB BROWSER",
+        "HOP_2": "MANAGEMENT API",
+        "HOP_3": "DEVICE COMMAND",
+        "TARGET_NODE": "SELF-DESTRUCT"
+      },
+      "duration": 16
+    }
+  ]
+}

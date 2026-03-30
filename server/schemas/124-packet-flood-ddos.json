@@ -1,0 +1,21 @@
+{
+    "template":  "124-packet-flood-ddos",
+    "name":  "Packet Flood DDoS",
+    "description":  "Visualizes multiple source IPs sending packets to a central target server, causing an overload state.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "ddos",
+                 "network",
+                 "security",
+                 "packets"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main heading for the visualization",
+                   "TARGET_NAME":  "Name of the target server",
+                   "SOURCE_IP_1":  "Label for source 1",
+                   "SOURCE_IP_2":  "Label for source 2",
+                   "SOURCE_IP_3":  "Label for source 3",
+                   "SOURCE_IP_4":  "Label for source 4"
+               }
+}

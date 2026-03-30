@@ -1,0 +1,21 @@
+{
+    "template":  "147-inflation-erosion",
+    "name":  "Inflation Erosion Chart",
+    "description":  "Visualizes the decline of purchasing power over time using a bar chart with dual-stat highlights.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "inflation",
+                 "economy",
+                 "charts"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "STAT_VALUE_1":  "Starting value (e.g. $1000)",
+                   "LABEL_1":  "Label for starting value",
+                   "STAT_VALUE_2":  "Ending value (e.g. $370)",
+                   "LABEL_2":  "Label for ending value",
+                   "DESC_1":  "Footer description or source note"
+               }
+}

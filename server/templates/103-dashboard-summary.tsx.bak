@@ -1,0 +1,50 @@
+import React, { useMemo } from 'react';
+import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+
+export const AnimationComponent = () => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+
+  const title = "TITLE_TEXT";
+  const kpi1Label = "KPI_LABEL_1";
+  const kpi1Value = "KPI_VALUE_1";
+  const kpi2Label = "KPI_LABEL_2";
+  const kpi2Value = "KPI_VALUE_2";
+  const summary = "SUMMARY_TEXT";
+
+  const opacity = (start: number, end: number) => interpolate(frame, [start, end], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const slide = (start: number, end: number) => interpolate(frame, [start, end], [40, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+
+  return (
+    <div style={{
+      position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR',
+      fontFamily: 'sans-serif', padding: '108px 192px', boxSizing: 'border-box'
+    }}>
+      <div style={{ opacity: opacity(0, 20), transform: `translateY(${slide(0, 20)}px)` }}>
+        <h1 style={{ fontSize: 40, color: 'PRIMARY_COLOR', letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>{title}</h1>
+        <div style={{ width: 120, height: 4, backgroundColor: 'ACCENT_COLOR', marginTop: 24, marginBottom: 48 }} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 40, marginTop: 40 }}>
+        {[ { l: kpi1Label, v: kpi1Value, d: 30 }, { l: kpi2Label, v: kpi2Value, d: 60 } ].map((item, i) => (
+          <div key={i} style={{
+            flex: 1, height: 300, backgroundColor: 'CHART_BG', borderRadius: 8, padding: 40, boxSizing: 'border-box',
+            opacity: opacity(item.d, item.d + 30), transform: `translateY(${slide(item.d, item.d + 30)}px)`
+          }}>
+            <div style={{ fontSize: 20, color: 'SUPPORT_COLOR', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{item.l}</div>
+            <div style={{ fontSize: 80, fontWeight: 'bold', color: 'TEXT_ON_PRIMARY', marginTop: 24, fontFamily: 'monospace' }}>{item.v}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        marginTop: 64, padding: 40, borderLeft: '4px solid PRIMARY_COLOR', backgroundColor: 'rgba(255,255,255,0.03)',
+        opacity: opacity(90, 120), transform: `translateY(${slide(90, 120)}px)`
+      }}>
+        <p style={{ fontSize: 24, color: 'TEXT_ON_SECONDARY', lineHeight: 1.5, margin: 0 }}>{summary}</p>
+      </div>
+    </div>
+  );
+};
+
+export default AnimationComponent;

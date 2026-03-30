@@ -62,30 +62,46 @@ Q9: Country/geography? → [TEMPLATE SCENE] → map templates
 Q10: Code/malware/exploit/terminal? → [TEMPLATE SCENE] → code/terminal templates
 Q11: Scale of spread/infection? → [TEMPLATE SCENE] → map-spread/particle templates
 Q12: Two contrasting states/before vs after? → [TEMPLATE SCENE] → split/comparison templates
-Q13: List of attack vectors/techniques? → [TEMPLATE SCENE] → icongrid/split templates
-Q14: Evidence item/document? → [TEMPLATE SCENE] → evidence-item
-Q15: Direct quote? → [3D RENDER] + lower-third
-Q16: Single punchy claim? → [3D RENDER] + lower-third
+Q13: Attack techniques, code, or technical lists? → [TEMPLATE SCENE] → icongrid/split/wireshark/ioc-list/hex-dump
+Q14: Evidence, documents, or archive records? → [TEMPLATE SCENE] → evidence-item / 157-archive-newspaper-reel
+Q15: Web discovery, search, or knowledge profiles? → [TEMPLATE SCENE] → 152-search-engine-reveal / 151-knowledge-card
+Q16: Social media, chat, or biometric identity? → [TEMPLATE SCENE] → 153-social-media-impact / 150-mobile-chat-ui / 156-biometric-access-scan
+Q17: Specific dates, calendars, or step-by-step phases? → [TEMPLATE SCENE] → 155-calendar-date-highlight / 119-kill-chain-steps
+Q18: Direct quote or single punchy claim? → [3D RENDER] + lower-third
 DEFAULT: [3D RENDER] with lower-third
 
-THEME SELECTION:
-THREAT (dark bg, red) → breaches, ransomware, active attacks
-COLD (dark bg, blue/cyan) → nation-state, espionage
-DARK (near-black) → chapter cards, transitions, cinematic beats
-INTEL (dark bg, amber) → dossiers, profiles, evidence
-TECHNICAL (very dark, green) → code, logs, terminal
-CLEAN (white bg, navy/red) → informational stats (use sparingly)
+STRICT VARIETY RULE: 
+- DO NOT repeat a template within the same chapter.
+- Rotate between 3D renders and Templates to maintain visual pacing.
+- Prefer a mix of "Micro" (code/logs) and "Macro" (maps/infrastructure) views.
+
+TEMPLATE SELECTION:
+- MAXIMIZE VARIETY: Do not over-use a few common templates. ARXXIS has a vast library (see below); select the most specific and visually appropriate one for each moment.
+- If multiple templates fit, choose the one used less frequently in this script.
+- Aim for a dynamic visual flow by alternating between different template categories (stats, timelines, networks, maps).
+
+MOOD-BASED THEME & COLOR SELECTION:
+Analyze the emotional "mood" of each scene before selecting its visual style:
+- URGENT / AGGRESSIVE (Breaches, active attacks, data loss) → Theme: THREAT. Use deep reds or dark charcoal backgrounds.
+- ANALYTICAL / COLD (Calculated moves, nation-state actors, code analysis) → Theme: COLD or TECHNICAL. Use midnight blues or dark cyans.
+- MYSTERIOUS / CLASSIFIED (Uncovering secrets, hidden identities, dossiers) → Theme: INTEL or DARK. Use deep purples or muted ambers.
+- DRAMATIC / TRANSITIONAL (Major reveals, shifting focus, chapter starts) → Theme: DARK. Use near-black (#050505).
+- NEUTRAL / INFORMATIONAL (General stats, market data, broad context) → Theme: CLEAN. Use soft off-whites or very light greys.
+
+CUSTOM COLOR OVERRIDE:
+If the standard themes don't perfectly match the mood, you MUST provide a specific hex code in the "background_color" field that better captures the atmosphere (e.g., a very dark forest green for "espionage in nature" or a deep blood-red for "catastrophic failure").
 
 TEMPLATE CATALOG (name [description]: fields):
 ${TEMPLATE_CATALOG}
 
-SENTENCE COMBINING RULES:
+SENTENCE SPLITTING & COMBINING RULES:
+- LONG SENTENCES (25+ words) that contain multiple distinct facts, stats, or ideas MUST be SPLIT into two or more scenes. Each sub-part gets its own scene with the most fitting template. Split at natural clause boundaries (commas, "and", "while", "but", dashes, semicolons). The "script" field for each split scene contains only its portion of the original sentence.
+- MEDIUM sentences (10-24 words) with a single idea → one scene each.
 - SHORT sentences (under 10 words) that flow together as a sequence, build the same mood, or describe the same moment MUST be combined into a single scene. Do not give each tiny fragment its own scene.
 - You MAY combine up to 4 consecutive short sentences into one scene if they share the same cinematic beat (e.g. "The phone: silent." + "Not crashed." + "Not frozen." → one 3D_RENDER scene).
-- LONGER sentences (10+ words) that introduce a new concept, statistic, or entity should each get their own scene — unless two consecutive ones describe the same stat or organization, in which case combining is fine.
 - Never combine sentences that would need fundamentally different templates (e.g. a map template and a terminal template).
-- The "script" field MUST contain ALL combined sentences verbatim, in order. Do not paraphrase or skip any sentence.
-- Every sentence from the input must appear in exactly one scene's "script" field. Do NOT drop any sentence.
+- The "script" field MUST contain the exact text for that scene (either the full sentence, the combined sentences, or the split portion).
+- Every word from the input must appear in exactly one scene's "script" field. Do NOT drop any content.
 
 CONTENT RULES:
 - Fill EVERY field from the schema using EXACT field names from the catalog above.
@@ -100,9 +116,10 @@ OUTPUT FORMAT — Return ONLY a JSON array, no markdown:
     "script": "exact sentence(s)",
     "template": "template-name-from-catalog",
     "theme": "THEME_NAME",
-    "reasoning": "one sentence why",
+    "background_color": "#HEXCODE",
+    "reasoning": "why this mood/color fits",
     "content": { "FIELD_NAME": "value", ... },
-    "duration": 8
+    "duration": 15
   },
   {
     "type": "3D_RENDER",
@@ -110,11 +127,12 @@ OUTPUT FORMAT — Return ONLY a JSON array, no markdown:
     "environment": "category",
     "camera": "angle",
     "lighting": "A/B/C",
+    "background_color": "#HEXCODE",
     "object_link": "This object represents X because Y",
     "prompt": "60-80 word render prompt",
-    "motion": "How the camera/scene should animate. Match the script energy. Examples: 'Slow dolly forward through smoke, camera drifts left', 'Static wide shot, subtle atmospheric haze drifts across frame', 'Slow zoom into screen, ambient light flickers', 'Crane up revealing full scale of damage, debris particles float'. Keep it cinematic and grounded.",
+    "motion": "Cinematic motion. Use keywords like 'zoom-in' (dolly forward), 'zoom-out' (dolly back), 'pan-left', or 'pan-right'. Describe it clearly.",
     "lower_third": { "text": "...", "attribution": "...", "tone": "#FF6600" },
-    "duration": 5
+    "duration": 15
   }
 ]`
 
@@ -212,7 +230,7 @@ function mergeShortRenderScenes(scenes) {
       // Merge: join scripts, keep first scene's visual fields as base
       const combinedScript = group.map(s => s.script).join(' ')
       const base = group[0]
-      const longestDuration = Math.max(...group.map(s => s.duration || 5))
+      const longestDuration = Math.max(...group.map(s => s.duration || 15))
       merged.push({
         ...base,
         script: combinedScript,
@@ -231,15 +249,71 @@ function mergeShortRenderScenes(scenes) {
 // ─────────────────────────────────────────────
 // Main function: script text → scene array
 // ─────────────────────────────────────────────
-export async function generateScenes(scriptText) {
+// ─────────────────────────────────────────────
+// Build dynamic prompt additions from project generation settings
+// ─────────────────────────────────────────────
+function buildSettingsPromptBlock(settings) {
+  if (!settings) return ''
+  const lines = []
+
+  // Template vs 3D_RENDER ratio
+  const ratio = settings.templateRatio ?? 60
+  lines.push(`\nVISUAL CONSISTENCY: Always use the theme "${settings.defaultTheme || 'THREAT'}" for every TEMPLATE scene.`)
+  lines.push(`\nTEMPLATE / IMAGE RATIO DIRECTIVE:`)
+  lines.push(`- Target approximately ${ratio}% TEMPLATE scenes and ${100 - ratio}% 3D_RENDER scenes.`)
+  if (ratio >= 80) lines.push(`- Strongly prefer templates over 3D renders. Only use 3D_RENDER for physical environments or quotes.`)
+  else if (ratio <= 30) lines.push(`- Strongly prefer 3D renders for visual richness. Only use TEMPLATE for hard statistics or timelines.`)
+
+  // Color scheme
+  if (settings.colorScheme && settings.colorScheme !== 'auto') {
+    if (settings.colorScheme === 'custom' && settings.customColors) {
+      lines.push(`\nCOLOR SCHEME OVERRIDE:`)
+      lines.push(`- Use this custom palette for ALL scenes unless the mood strongly demands otherwise:`)
+      lines.push(`  Primary: ${settings.customColors.primary}, Background: ${settings.customColors.background}, Accent: ${settings.customColors.accent}`)
+    } else {
+      lines.push(`\nCOLOR SCHEME OVERRIDE:`)
+      lines.push(`- Default theme for all scenes: ${settings.colorScheme}. Only deviate if the mood is clearly mismatched.`)
+    }
+  }
+
+  // Template variety enforcement
+  const variety = settings.templateVariety || 'high'
+  const maxReuse = settings.maxTemplateReuse ?? 1
+  lines.push(`\nTEMPLATE VARIETY ENFORCEMENT (${variety.toUpperCase()} mode):`)
+  if (variety === 'high') {
+    lines.push(`- CRITICAL: A template name MUST NOT appear more than ${maxReuse} time(s) across all scenes in this chapter.`)
+    lines.push(`- Before selecting a template, mentally review which templates you have already used and PICK A DIFFERENT ONE.`)
+    lines.push(`- If you run out of unique templates in a category, switch to a related category (e.g., use a different stat visualization, a different timeline style).`)
+    lines.push(`- NEVER repeat the same template in consecutive scenes.`)
+  } else if (variety === 'medium') {
+    lines.push(`- A template should not appear more than ${maxReuse + 1} times. Prefer variety but occasional reuse is acceptable.`)
+  } else {
+    lines.push(`- Template reuse is acceptable when the same visualization type fits multiple scenes.`)
+  }
+
+  // Custom user prompt
+  if (settings.customPrompt && settings.customPrompt.trim()) {
+    lines.push(`\nDIRECTOR'S ADDITIONAL INSTRUCTIONS:`)
+    lines.push(settings.customPrompt.trim())
+  }
+
+  return lines.join('\n')
+}
+
+export async function generateScenes(scriptText, generationSettings = null) {
   if (!scriptText || typeof scriptText !== 'string' || scriptText.trim().length === 0) {
     throw new Error('scriptText is empty or missing — the chapter has no script to analyze')
   }
   console.log(`\n🎬 Auto-Scene: Processing ${scriptText.length} chars of script...`)
+  if (generationSettings) console.log(`   ⚙️ Generation settings: ratio=${generationSettings.templateRatio}%, variety=${generationSettings.templateVariety}, scheme=${generationSettings.colorScheme}`)
+
+  // Build the full system prompt: base + project-level settings
+  const settingsBlock = buildSettingsPromptBlock(generationSettings)
+  const fullSystemPrompt = settingsBlock ? SYSTEM_PROMPT + '\n' + settingsBlock : SYSTEM_PROMPT
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
-    systemInstruction: SYSTEM_PROMPT,
+    systemInstruction: fullSystemPrompt,
     generationConfig: {
       temperature: 0.15,
       topP: 0.8,
@@ -258,21 +332,28 @@ export async function generateScenes(scriptText) {
 
   // Classify sentences by word count for the prompt hint
   const shortSentences = sentences.filter(s => s.split(/\s+/).length < 10)
-  const longSentences = sentences.filter(s => s.split(/\s+/).length >= 10)
+  const mediumSentences = sentences.filter(s => { const w = s.split(/\s+/).length; return w >= 10 && w < 25 })
+  const longSentences = sentences.filter(s => s.split(/\s+/).length >= 25)
+
+  function classifySentence(s) {
+    const words = s.split(/\s+/).length
+    if (words < 10) return 'SHORT — combine if possible'
+    if (words < 25) return 'MEDIUM — own scene'
+    return 'LONG — SPLIT into 2+ scenes'
+  }
 
   const userPrompt = `Analyze this script and generate the complete scene breakdown. Use EXACT field names from the template catalog.
 
 CRITICAL RULES:
-- This script has ${sentences.length} sentences total (${shortSentences.length} short, ${longSentences.length} long).
-- SHORT sentences (under 10 words) should be COMBINED with adjacent short sentences into a single scene — do NOT give each tiny fragment its own scene.
-- The final scene count will likely be FEWER than ${sentences.length} due to combining. That is correct and expected.
-- Every sentence must appear verbatim in exactly one scene's "script" field. Do NOT drop any.
+- You MUST generate exactly one scene for every sentence provided in the list below.
+- Do NOT combine sentences. Do NOT skip any sentences.
+- Every word from the input must appear in exactly one scene's "script" field. Do NOT drop any content.
 
 SCRIPT:
 ${scriptText}
 
-SENTENCES (for your reference — each must appear in exactly one scene):
-${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — combine if possible' : 'LONG — own scene'}] ${s}`).join('\n')}`
+SENTENCES (Generate one scene for each):
+${sentences.map((s, i) => `${i + 1}. ${s}`).join('\n')}`
 
   let rawResponse
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -312,20 +393,15 @@ ${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — 
     scenes = [scenes]
   }
 
-  const shortCount = sentences.filter(s => s.split(/\s+/).length < 10).length
-  console.log(`   ✅ Gemini returned ${scenes.length} scene(s) for ${sentences.length} sentence(s) (${shortCount} short — combining expected)`)
+  console.log(`   ✅ Gemini returned ${scenes.length} scene(s) for ${sentences.length} sentence(s)`)
 
-  // ── Post-process: merge consecutive short 3D_RENDER scenes ──────────────────
-  // The LLM sometimes ignores combining instructions; this guarantees it happens.
-  scenes = mergeShortRenderScenes(scenes)
-
-  // Verify coverage — check that every sentence appears in at least one scene
+  // --- COVERAGE CHECK & FALLBACK ---
   const coveredSentences = new Set()
   for (const scene of scenes) {
     if (scene.script) {
       for (let si = 0; si < sentences.length; si++) {
         // Check if the sentence (or a significant portion) appears in this scene's script
-        const needle = sentences[si].substring(0, Math.min(40, sentences[si].length)).toLowerCase()
+        const needle = sentences[si].substring(0, Math.min(30, sentences[si].length)).toLowerCase()
         if (scene.script.toLowerCase().includes(needle)) {
           coveredSentences.add(si)
         }
@@ -346,17 +422,17 @@ ${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — 
         environment: 'abstract',
         camera: 'medium shot',
         lighting: 'B',
-        prompt: `Cinematic documentary scene. ${missed.text.substring(0, 120)}. Dark moody atmosphere, volumetric lighting, no humans.`,
+        prompt: `Cinematic documentary scene. Visualizing: ${missed.text.substring(0, 100)}. Dark moody atmosphere, volumetric lighting, photorealistic 3D render, no humans.`,
         motion: 'Slow dolly forward, subtle atmospheric haze.',
         lower_third: { text: missed.text, attribution: '', tone: '#FFAA00' },
-        duration: 5,
+        duration: 15,
         _recovered: true,
       })
     }
     // Re-sort by approximate script order
     scenes.sort((a, b) => {
-      const aIdx = sentences.findIndex(s => a.script?.toLowerCase().includes(s.substring(0, 30).toLowerCase()))
-      const bIdx = sentences.findIndex(s => b.script?.toLowerCase().includes(s.substring(0, 30).toLowerCase()))
+      const aIdx = sentences.findIndex(s => a.script?.toLowerCase().includes(s.substring(0, 20).toLowerCase()))
+      const bIdx = sentences.findIndex(s => b.script?.toLowerCase().includes(s.substring(0, 20).toLowerCase()))
       return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx)
     })
   }
@@ -366,6 +442,11 @@ ${sentences.map((s, i) => `${i + 1}. [${s.split(/\s+/).length < 10 ? 'SHORT — 
   for (let i = 0; i < scenes.length; i++) {
     const scene = scenes[i]
     scene.index = i + 1
+    
+    // ENFORCE 15s DEFAULT: ensure every scene has a duration of 15 if missing or 0
+    if (!scene.duration || scene.duration < 1) {
+      scene.duration = 15
+    }
 
     if (scene.type === 'TEMPLATE' && scene.template) {
       // Resolve template name (fuzzy match prefix) — if not found, auto-generate

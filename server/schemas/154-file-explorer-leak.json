@@ -1,0 +1,22 @@
+{
+  "template": "154-file-explorer-leak",
+  "name": "File Explorer Data Leak",
+  "description": "A windowed file explorer UI showing a directory structure, selecting a file, and initiating a data exfiltration download.",
+  "category": "security",
+  "duration": 15,
+  "tags": [
+    "files",
+    "leak",
+    "exfiltration",
+    "breach",
+    "download",
+    "explorer"
+  ],
+  "fields": {
+    "DIRECTORY_PATH": "Current path (e.g. /home/user/backups)",
+    "FILE_1_NAME": "Name of an innocent file",
+    "FILE_2_NAME": "Name of another file",
+    "TARGET_FILE": "The sensitive file being targeted",
+    "STATUS_TEXT": "Current system status (e.g. EXFILTRATING...)"
+  }
+}

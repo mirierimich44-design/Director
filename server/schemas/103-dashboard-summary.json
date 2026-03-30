@@ -1,0 +1,21 @@
+{
+    "template":  "103-dashboard-summary",
+    "name":  "Executive Dashboard Summary",
+    "description":  "A professional summary card featuring two KPI metrics and a descriptive text block with staggered entrance animations.",
+    "category":  "storytelling",
+    "duration":  15,
+    "tags":  [
+                 "dashboard",
+                 "kpi",
+                 "summary",
+                 "executive"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main section title",
+                   "KPI_LABEL_1":  "Label for first metric",
+                   "KPI_VALUE_1":  "Value for first metric",
+                   "KPI_LABEL_2":  "Label for second metric",
+                   "KPI_VALUE_2":  "Value for second metric",
+                   "SUMMARY_TEXT":  "Executive summary paragraph"
+               }
+}

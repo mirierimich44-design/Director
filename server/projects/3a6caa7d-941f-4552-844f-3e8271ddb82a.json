@@ -1,0 +1,313 @@
+{
+    "id":  "3a6caa7d-941f-4552-844f-3e8271ddb82a",
+    "name":  "Stryker",
+    "description":  "",
+    "createdAt":  "2026-03-24T06:51:16.270Z",
+    "updatedAt":  "2026-03-25T11:51:54.594Z",
+    "status":  "active",
+    "chapters":  [
+                     {
+                         "id":  "5113c513-03b0-4103-995d-fe5fd4e6c788",
+                         "title":  "cold open",
+                         "scriptText":  "In the early hours of March 11, 2026, an employee at Stryker Corporation\u0027s Irish hub woke up to a ghost in their machine. They didn\u0027t see a notification or an incoming call. They saw a factory reset in progress.\nBefore they were fully awake, it was done. The phone: silent. The laptop in the next room: already dark, its fan winding down to nothing. Not crashed. Not frozen. Gone.\nAnd simultaneously — across nearly eighty countries, on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who never thought twice about connecting them to the company network — two hundred thousand devices were wiping themselves. A decade of work. Plans, correspondence, secrets — disappearing in real time.\nNo ransom note. No countdown timer. Just silence, spreading from device to device across the globe, as if a switch had been thrown somewhere in the dark.\nA twenty-five billion dollar company had just been erased.\nThis is the story of the most surgical corporate cyberattack ever documented. A wiper attack conducted entirely without a wiper. And it begins not with a line of malicious code, but with a stolen key — and a door that should never have opened from the outside.\nThis story is based on the factual reporting of Krebs on Security. Full sources and technical documentation are available in the video description.\n",
+                         "status":  "draft",
+                         "createdAt":  "2026-03-24T06:52:00.973Z",
+                         "updatedAt":  "2026-03-25T11:51:54.594Z",
+                         "sceneOffset":  0,
+                         "scenes":  [
+                                        {
+                                            "type":  "3D_RENDER",
+                                            "script":  "In the early hours of March 11, 2026, an employee at Stryker Corporation\u0027s Irish hub woke up to a ghost in their machine.",
+                                            "environment":  "bedroom",
+                                            "camera":  "low angle, close up",
+                                            "lighting":  "C",
+                                            "object_link":  "The bedroom represents the personal vulnerability of the employee.",
+                                            "prompt":  "Photorealistic bedroom interior at dawn, soft blue light filtering through curtains, a smartphone resting on a nightstand with a faint, ominous glow on the screen, cinematic depth of field, high detail, 8k.",
+                                            "motion":  "Slow dolly forward toward the nightstand, camera drifts slightly left.",
+                                            "lower_third":  {
+                                                                "text":  "March 11, 2026 | Stryker Corp Irish Hub",
+                                                                "attribution":  "ARXXIS",
+                                                                "tone":  "#FF6600"
+                                                            },
+                                            "duration":  15,
+                                            "index":  1,
+                                            "globalIndex":  1,
+                                            "chapterIndex":  1,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:45:18.899Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "imageUrl":  "/images/render_1774439118827_dzcc2m.jpg"
+                                        },
+                                        {
+                                            "type":  "3D_RENDER",
+                                            "script":  "They didn\u0027t see a notification or an incoming call. They saw a factory reset in progress. Before they were fully awake, it was done. The phone: silent.",
+                                            "environment":  "bedroom",
+                                            "camera":  "macro",
+                                            "lighting":  "A",
+                                            "object_link":  "The phone represents the primary point of infection.",
+                                            "prompt":  "Macro shot of a smartphone screen displaying a progress bar for a factory reset, dark background, sharp focus on the screen, cold blue light, high contrast, cinematic atmosphere.",
+                                            "motion":  "Static shot, subtle flickering of the screen light.",
+                                            "lower_third":  {
+                                                                "text":  "Device Compromised",
+                                                                "attribution":  "ARXXIS",
+                                                                "tone":  "#FF6600"
+                                                            },
+                                            "duration":  15,
+                                            "index":  2,
+                                            "globalIndex":  2,
+                                            "chapterIndex":  2,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:45:29.312Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "imageUrl":  "/images/render_1774439129293_4he863.jpg"
+                                        },
+                                        {
+                                            "type":  "3D_RENDER",
+                                            "script":  "The laptop in the next room: already dark, its fan winding down to nothing. Not crashed. Not frozen. Gone.",
+                                            "environment":  "home office",
+                                            "camera":  "wide shot",
+                                            "lighting":  "B",
+                                            "object_link":  "The laptop represents the secondary target of the attack.",
+                                            "prompt":  "A dark home office with a laptop on a desk, screen black, faint dust motes in the air, cold ambient lighting, cinematic composition, high detail.",
+                                            "motion":  "Slow pan across the desk, camera stops on the dark laptop screen.",
+                                            "lower_third":  {
+                                                                "text":  "System Failure",
+                                                                "attribution":  "ARXXIS",
+                                                                "tone":  "#FF6600"
+                                                            },
+                                            "duration":  15,
+                                            "index":  3,
+                                            "globalIndex":  3,
+                                            "chapterIndex":  3,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:45:38.611Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "imageUrl":  "/images/render_1774439138564_xkhd6q.jpg"
+                                        },
+                                        {
+                                            "type":  "TEMPLATE",
+                                            "script":  "And simultaneously — across nearly eighty countries, on surgical tablets in Michigan, on administrator consoles in Singapore, on the personal phones of thousands of employees who never thought twice about connecting them to the company network — two hundred thousand devices were wiping themselves.",
+                                            "template":  "140-botnet-spread",
+                                            "theme":  "THREAT",
+                                            "reasoning":  "Visualizes the massive scale of the device wipe across the globe.",
+                                            "content":  {
+                                                            "TITLE_TEXT":  "GLOBAL WIPE EVENT",
+                                                            "STAT_VALUE_1":  "80",
+                                                            "STAT_VALUE_2":  "200,000",
+                                                            "DESC_1":  "DEVICES WIPED SIMULTANEOUSLY"
+                                                        },
+                                            "duration":  15,
+                                            "index":  4,
+                                            "code":  "import React, { useMemo } from \u0027react\u0027;\nimport { useCurrentFrame, useVideoConfig, interpolate } from \u0027remotion\u0027;\n\nexport const AnimationComponent = () =\u003e {\n  const frame = useCurrentFrame();\n  const { width, height } = useVideoConfig();\n\n  const title = \u0027GLOBAL WIPE EVENT\u0027;\n  const stat1 = \u002780\u0027;\n  const stat2 = \u0027200,000\u0027;\n  const desc = \u0027DEVICES WIPED SIMULTANEOUSLY\u0027;\n\n  const nodes = useMemo(() =\u003e Array.from({ length: 12 }, (_, i) =\u003e ({\n    x: 300 + (i % 4) * 400 + Math.random() * 100,\n    y: 200 + Math.floor(i / 4) * 250 + Math.random() * 100,\n    delay: i * 15\n  })), []);\n\n  const titleOp = interpolate(frame, [0, 30], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n  const statOp = interpolate(frame, [40, 70], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n\n  return (\n    \u003cdiv style={{ position: \u0027absolute\u0027, top: 0, left: 0, width: 1920, height: 1080, overflow: \u0027hidden\u0027, backgroundColor: \u0027#FFF0EE\u0027 }}\u003e\n      \u003cdiv style={{ position: \u0027absolute\u0027, top: 60, left: 192, color: \u0027#FFFFFF\u0027, fontSize: 40, fontWeight: \u0027bold\u0027, letterSpacing: \u00272px\u0027, opacity: titleOp }}\u003e{title}\u003c/div\u003e\n      \n      \u003csvg style={{ position: \u0027absolute\u0027, top: 0, left: 0, width: 1920, height: 1080 }}\u003e\n        {nodes.map((node, i) =\u003e {\n          const nodeOp = interpolate(frame, [node.delay, node.delay + 30], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n          const rippleScale = interpolate(frame, [node.delay, node.delay + 60], [0, 3], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n          const rippleOp = interpolate(frame, [node.delay, node.delay + 60], [0.6, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n\n          return (\n            \u003cg key={i} style={{ opacity: nodeOp }}\u003e\n              \u003ccircle cx={node.x} cy={node.y} r={20 * rippleScale} fill=\"none\" stroke=\"#FFCC00\" strokeWidth={2} style={{ opacity: rippleOp }} /\u003e\n              \u003ccircle cx={node.x} cy={node.y} r={6} fill=\"#FFCC00\" /\u003e\n            \u003c/g\u003e\n          );\n        })}\n      \u003c/svg\u003e\n\n      \u003cdiv style={{ position: \u0027absolute\u0027, top: 800, left: 192, width: 600, opacity: statOp }}\u003e\n        \u003cdiv style={{ color: \u0027#FF2222\u0027, fontSize: 64, fontWeight: \u0027bold\u0027, fontFamily: \u0027monospace\u0027 }}\u003e{stat1}\u003c/div\u003e\n        \u003cdiv style={{ color: \u0027#FFFFFF\u0027, fontSize: 24, marginTop: 16 }}\u003e{desc}\u003c/div\u003e\n      \u003c/div\u003e\n\n      \u003cdiv style={{ position: \u0027absolute\u0027, top: 800, left: 1100, width: 600, opacity: statOp, textAlign: \u0027right\u0027 }}\u003e\n        \u003cdiv style={{ color: \u0027#FF6600\u0027, fontSize: 64, fontWeight: \u0027bold\u0027, fontFamily: \u0027monospace\u0027 }}\u003e{stat2}\u003c/div\u003e\n      \u003c/div\u003e\n    \u003c/div\u003e\n  );\n};\n\nexport default AnimationComponent;",
+                                            "codeLength":  2635,
+                                            "globalIndex":  4,
+                                            "chapterIndex":  4,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:48:39.098Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "videoUrl":  "/videos/Director_4a52ef81.mp4"
+                                        },
+                                        {
+                                            "type":  "TEMPLATE",
+                                            "script":  "A decade of work. Plans, correspondence, secrets — disappearing in real time. No ransom note. No countdown timer.",
+                                            "template":  "107-redacted-reveal",
+                                            "theme":  "INTEL",
+                                            "reasoning":  "Represents the loss of sensitive data and the lack of traditional extortion.",
+                                            "content":  {
+                                                            "CLASSIFIED_TITLE":  "DATA LOSS REPORT",
+                                                            "LINE_1":  "DECADE OF WORK",
+                                                            "LINE_2":  "PLANS",
+                                                            "LINE_3":  "CORRESPONDENCE",
+                                                            "LINE_4":  "SECRETS",
+                                                            "LINE_5":  "NO RANSOM",
+                                                            "LINE_6":  "NO COUNTDOWN"
+                                                        },
+                                            "duration":  15,
+                                            "index":  5,
+                                            "code":  "import React, { useMemo } from \u0027react\u0027;\nimport { useCurrentFrame, interpolate } from \u0027remotion\u0027;\n\nexport const AnimationComponent = () =\u003e {\n  const frame = useCurrentFrame();\n  const contents = [\u0027DECADE OF WORK\u0027, \u0027PLANS\u0027, \u0027CORRESPONDENCE\u0027, \u0027SECRETS\u0027, \u0027NO RANSOM\u0027, \u0027NO COUNTDOWN\u0027];\n  const filtered = useMemo(() =\u003e contents.filter(c =\u003e c !== \u0027\u0027 \u0026\u0026 c !== \u0027 \u0027), []);\n\n  return (\n    \u003cdiv style={{\n      position: \u0027absolute\u0027,\n      top: 0,\n      left: 0,\n      width: 1920,\n      height: 1080,\n      backgroundColor: \u0027#F4F2F8\u0027,\n      padding: \u0027108px 192px\u0027,\n      boxSizing: \u0027border-box\u0027,\n    }}\u003e\n      \u003cdiv style={{\n        fontSize: 40,\n        fontWeight: \u0027bold\u0027,\n        color: \u0027#1C1C14\u0027,\n        marginBottom: 64,\n        letterSpacing: \u00272px\u0027,\n        textTransform: \u0027uppercase\u0027,\n      }}\u003e\n        DATA LOSS REPORT\n      \u003c/div\u003e\n      {filtered.map((text, i) =\u003e {\n        const start = 30 + (i * 40);\n        const end = start + 30;\n        const reveal = interpolate(frame, [start, end], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n        const barWidth = interpolate(frame, [start, end], [100, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n\n        return (\n          \u003cdiv key={i} style={{\n            position: \u0027relative\u0027,\n            height: 60,\n            marginBottom: 24,\n            display: \u0027flex\u0027,\n            alignItems: \u0027center\u0027,\n          }}\u003e\n            \u003cdiv style={{\n              fontSize: 32,\n              color: \u0027#FFFFFF\u0027,\n              opacity: reveal,\n              fontFamily: \u0027monospace\u0027,\n            }}\u003e\n              {text}\n            \u003c/div\u003e\n            \u003cdiv style={{\n              position: \u0027absolute\u0027,\n              left: 0,\n              top: 0,\n              height: \u0027100%\u0027,\n              width: `${barWidth}%`,\n              backgroundColor: \u0027#FF6600\u0027,\n              zIndex: 2,\n            }} /\u003e\n          \u003c/div\u003e\n        );\n      })}\n    \u003c/div\u003e\n  );\n};\n\nexport default AnimationComponent;",
+                                            "codeLength":  1959,
+                                            "globalIndex":  5,
+                                            "chapterIndex":  5,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:48:14.174Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "videoUrl":  "/videos/Director_31e6710e.mp4"
+                                        },
+                                        {
+                                            "type":  "3D_RENDER",
+                                            "script":  "Just silence, spreading from device to device across the globe, as if a switch had been thrown somewhere in the dark.",
+                                            "environment":  "digital space",
+                                            "camera":  "wide",
+                                            "lighting":  "A",
+                                            "object_link":  "The digital space represents the global network.",
+                                            "prompt":  "Abstract digital representation of a global network, nodes going dark one by one in a wave, dark background, glowing blue lines fading to black, cinematic, high tech.",
+                                            "motion":  "Slow zoom out from a central point, showing the wave of darkness spreading.",
+                                            "lower_third":  {
+                                                                "text":  "Network Silence",
+                                                                "attribution":  "ARXXIS",
+                                                                "tone":  "#FF6600"
+                                                            },
+                                            "duration":  15,
+                                            "index":  6,
+                                            "globalIndex":  6,
+                                            "chapterIndex":  6,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:48:26.322Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "imageUrl":  "/images/render_1774439306132_ymb4kx.jpg"
+                                        },
+                                        {
+                                            "type":  "TEMPLATE",
+                                            "script":  "A twenty-five billion dollar company had just been erased.",
+                                            "template":  "44-chapter-countup",
+                                            "theme":  "THREAT",
+                                            "reasoning":  "Highlights the massive financial impact of the attack.",
+                                            "content":  {
+                                                            "TITLE_TEXT":  "TOTAL LOSS",
+                                                            "COUNT_VALUE":  "$25B",
+                                                            "COUNT_LABEL":  "MARKET VALUE",
+                                                            "SUB_LABEL":  "ERASED",
+                                                            "CONTEXT_TEXT":  "STRYKER CORPORATION"
+                                                        },
+                                            "duration":  15,
+                                            "index":  7,
+                                            "code":  "import React from \u0027react\u0027\r\nimport { useCurrentFrame, interpolate } from \u0027remotion\u0027\r\n\r\nexport const AnimationComponent = () =\u003e {\r\n  const frame = useCurrentFrame()\r\n\r\n  const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const barW = interpolate(frame, [15, 45], [0, 1920], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n\r\n  // Count up number\r\n  const countProgress = interpolate(frame, [20, 80], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n\r\n  const labelOp = interpolate(frame, [25, 40], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const labelTy = interpolate(frame, [25, 40], [20, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const subOp = interpolate(frame, [70, 85], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const subTy = interpolate(frame, [70, 85], [16, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const divW = interpolate(frame, [30, 55], [0, 300], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const accentOp = interpolate(frame, [78, 92], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n\r\n  const title = \"TOTAL LOSS\"\r\n  const countValue = \"$25B\"\r\n  const countLabel = \"MARKET VALUE\"\r\n  const subLabel = \"ERASED\"\r\n  const contextText = \"STRYKER CORPORATION\"\r\n\r\n  // Parse the count value for animation — default 247 for stub\r\n  const targetNumber = 247\r\n  const currentNumber = Math.floor(countProgress * targetNumber)\r\n\r\n  return (\r\n    \u003cdiv style={{\r\n      position: \u0027absolute\u0027,\r\n      top: 0,\r\n      left: 0,\r\n      width: 1920,\r\n      height: 1080,\r\n      overflow: \u0027hidden\u0027,\r\n      backgroundColor: \u0027#FFF0EE\u0027,\r\n    }}\u003e\r\n\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 0,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 5,\r\n        overflow: \u0027hidden\u0027,\r\n        backgroundColor: \u0027#FF2222\u0027,\r\n        opacity: titleOp,\r\n      }} /\u003e\r\n\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 1074,\r\n        left: 0,\r\n        width: barW,\r\n        height: 6,\r\n        overflow: \u0027hidden\u0027,\r\n        backgroundColor: \u0027#FF2222\u0027,\r\n      }} /\u003e\r\n\r\n      {/* Title */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 60,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 60,\r\n        overflow: \u0027hidden\u0027,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n        opacity: titleOp,\r\n        transform: `translateY(${titleTy}px)`,\r\n      }}\u003e\r\n        \u003cspan style={{\r\n          fontSize: 26,\r\n          fontWeight: 700,\r\n          color: \u0027#FF2222\u0027,\r\n          letterSpacing: 5,\r\n          textTransform: \u0027uppercase\u0027,\r\n          fontFamily: \u0027sans-serif\u0027,\r\n        }}\u003e\r\n          {title}\r\n        \u003c/span\u003e\r\n      \u003c/div\u003e\r\n\r\n      {/* Count label above number */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 280,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 60,\r\n        overflow: \u0027hidden\u0027,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n        opacity: labelOp,\r\n        transform: `translateY(${labelTy}px)`,\r\n      }}\u003e\r\n        \u003cspan style={{\r\n          fontSize: 24,\r\n          fontWeight: 600,\r\n          color: \u0027#CC4444\u0027,\r\n          fontFamily: \u0027sans-serif\u0027,\r\n          letterSpacing: 4,\r\n          textTransform: \u0027uppercase\u0027,\r\n        }}\u003e\r\n          {countLabel}\r\n        \u003c/span\u003e\r\n      \u003c/div\u003e\r\n\r\n      {/* Divider */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 358,\r\n        left: (1920 - 300) / 2,\r\n        width: divW,\r\n        height: 3,\r\n        overflow: \u0027hidden\u0027,\r\n        backgroundColor: \u0027#FFCC00\u0027,\r\n      }} /\u003e\r\n\r\n      {/* Animated count number */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 370,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 320,\r\n        overflow: \u0027hidden\u0027,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n      }}\u003e\r\n        \u003cspan style={{\r\n          fontSize: 280,\r\n          fontWeight: 900,\r\n          color: \u0027#FF2222\u0027,\r\n          fontFamily: \u0027sans-serif\u0027,\r\n          lineHeight: 1,\r\n          letterSpacing: -8,\r\n        }}\u003e\r\n          {currentNumber}\r\n        \u003c/span\u003e\r\n      \u003c/div\u003e\r\n\r\n      {/* Static count value shown after animation */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 370,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 320,\r\n        overflow: \u0027hidden\u0027,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n        opacity: accentOp,\r\n      }}\u003e\r\n        \u003cspan style={{\r\n          fontSize: 280,\r\n          fontWeight: 900,\r\n          color: \u0027#FF2222\u0027,\r\n          fontFamily: \u0027sans-serif\u0027,\r\n          lineHeight: 1,\r\n          letterSpacing: -8,\r\n        }}\u003e\r\n          {countValue}\r\n        \u003c/span\u003e\r\n      \u003c/div\u003e\r\n\r\n      {/* Sub label */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 730,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 60,\r\n        overflow: \u0027hidden\u0027,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n        opacity: subOp,\r\n        transform: `translateY(${subTy}px)`,\r\n      }}\u003e\r\n        \u003cspan style={{\r\n          fontSize: 28,\r\n          fontWeight: 600,\r\n          color: \u0027#FFCC00\u0027,\r\n          fontFamily: \u0027sans-serif\u0027,\r\n          letterSpacing: 3,\r\n          textTransform: \u0027uppercase\u0027,\r\n        }}\u003e\r\n          {subLabel}\r\n        \u003c/span\u003e\r\n      \u003c/div\u003e\r\n\r\n      {/* Context text */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 808,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 50,\r\n        overflow: \u0027hidden\u0027,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n        opacity: subOp,\r\n      }}\u003e\r\n        \u003cspan style={{\r\n          fontSize: 22,\r\n          fontWeight: 400,\r\n          color: \u0027#CC4444\u0027,\r\n          fontFamily: \u0027sans-serif\u0027,\r\n          textAlign: \u0027center\u0027,\r\n        }}\u003e\r\n          {contextText}\r\n        \u003c/span\u003e\r\n      \u003c/div\u003e\r\n\r\n    \u003c/div\u003e\r\n  )\r\n}\r\n\r\nexport default AnimationComponent",
+                                            "codeLength":  6311,
+                                            "globalIndex":  7,
+                                            "chapterIndex":  7,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:49:14.261Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "videoUrl":  "/videos/Director_7d5e0683.mp4"
+                                        },
+                                        {
+                                            "type":  "TEMPLATE",
+                                            "script":  "This is the story of the most surgical corporate cyberattack ever documented. A wiper attack conducted entirely without a wiper.",
+                                            "template":  "111-magazine-cover",
+                                            "theme":  "INTEL",
+                                            "reasoning":  "Introduces the core subject of the documentary.",
+                                            "content":  {
+                                                            "TITLE_TEXT":  "SURGICAL ATTACK",
+                                                            "SUBTITLE_TEXT":  "NO WIPER DETECTED",
+                                                            "STAT_VALUE_1":  "100%",
+                                                            "LABEL_1":  "PRECISION",
+                                                            "STAT_VALUE_2":  "0",
+                                                            "LABEL_2":  "MALWARE SIGNATURES"
+                                                        },
+                                            "duration":  15,
+                                            "index":  8,
+                                            "code":  "import React from \u0027react\u0027;\nimport { useCurrentFrame, useVideoConfig, interpolate } from \u0027remotion\u0027;\n\nexport const AnimationComponent = () =\u003e {\n  const frame = useCurrentFrame();\n  const { width, height } = useVideoConfig();\n\n  const title = \u0027SURGICAL ATTACK\u0027;\n  const subtitle = \u0027NO WIPER DETECTED\u0027;\n  const stat1 = \u0027100%\u0027;\n  const stat2 = \u00270\u0027;\n  const label1 = \u0027PRECISION\u0027;\n  const label2 = \u0027MALWARE SIGNATURES\u0027;\n\n  const opTitle = interpolate(frame, [0, 30], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n  const tyTitle = interpolate(frame, [0, 30], [40, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n  \n  const opSub = interpolate(frame, [30, 60], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n  const tySub = interpolate(frame, [30, 60], [20, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n\n  const opStat1 = interpolate(frame, [70, 100], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n  const opStat2 = interpolate(frame, [90, 120], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n\n  return (\n    \u003cdiv style={{\n      position: \u0027absolute\u0027,\n      top: 0,\n      left: 0,\n      width: 1920,\n      height: 1080,\n      backgroundColor: \u0027#F4F2F8\u0027,\n      overflow: \u0027hidden\u0027,\n    }}\u003e\n      \u003cdiv style={{\n        position: \u0027absolute\u0027,\n        top: 108,\n        left: 192,\n        width: 1536,\n        height: 300,\n        opacity: opTitle,\n        transform: `translateY(${tyTitle}px)`\n      }}\u003e\n        \u003ch1 style={{\n          fontSize: 120,\n          fontWeight: 900,\n          color: \u0027#1C1C14\u0027,\n          margin: 0,\n          lineHeight: 1.1,\n          letterSpacing: \u0027-0.02em\u0027,\n          textTransform: \u0027uppercase\u0027\n        }}\u003e\n          {title}\n        \u003c/h1\u003e\n      \u003c/div\u003e\n\n      \u003cdiv style={{\n        position: \u0027absolute\u0027,\n        top: 408,\n        left: 192,\n        width: 800,\n        height: 100,\n        opacity: opSub,\n        transform: `translateY(${tySub}px)`\n      }}\u003e\n        \u003cp style={{\n          fontSize: 32,\n          color: \u0027#FFFFFF\u0027,\n          opacity: 0.8,\n          margin: 0\n        }}\u003e\n          {subtitle}\n        \u003c/p\u003e\n      \u003c/div\u003e\n\n      \u003cdiv style={{\n        position: \u0027absolute\u0027,\n        top: 650,\n        left: 192,\n        width: 600,\n        height: 200,\n        opacity: opStat1\n      }}\u003e\n        \u003cdiv style={{ fontSize: 80, fontWeight: \u0027bold\u0027, color: \u0027#AAFF00\u0027, fontFamily: \u0027monospace\u0027 }}\u003e{stat1}\u003c/div\u003e\n        \u003cdiv style={{ fontSize: 24, color: \u0027#FFFFFF\u0027, opacity: 0.6, marginTop: 16 }}\u003e{label1}\u003c/div\u003e\n      \u003c/div\u003e\n\n      \u003cdiv style={{\n        position: \u0027absolute\u0027,\n        top: 650,\n        left: 850,\n        width: 600,\n        height: 200,\n        opacity: opStat2\n      }}\u003e\n        \u003cdiv style={{ fontSize: 80, fontWeight: \u0027bold\u0027, color: \u0027#FF6600\u0027, fontFamily: \u0027monospace\u0027 }}\u003e{stat2}\u003c/div\u003e\n        \u003cdiv style={{ fontSize: 24, color: \u0027#FFFFFF\u0027, opacity: 0.6, marginTop: 16 }}\u003e{label2}\u003c/div\u003e\n      \u003c/div\u003e\n    \u003c/div\u003e\n  );\n};\n\nexport default AnimationComponent;",
+                                            "codeLength":  2999,
+                                            "globalIndex":  8,
+                                            "chapterIndex":  8,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:50:03.073Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "videoUrl":  "/videos/Director_9c457e54.mp4"
+                                        },
+                                        {
+                                            "type":  "TEMPLATE",
+                                            "script":  "And it begins not with a line of malicious code, but with a stolen key — and a door that should never have opened from the outside.",
+                                            "template":  "121-exploit-chain",
+                                            "theme":  "TECHNICAL",
+                                            "reasoning":  "Visualizes the initial entry point of the attack.",
+                                            "content":  {
+                                                            "STEP_1_LABEL":  "STOLEN KEY",
+                                                            "STEP_1_DESC":  "CREDENTIAL THEFT",
+                                                            "STEP_2_LABEL":  "OPEN DOOR",
+                                                            "STEP_2_DESC":  "UNAUTHORIZED ACCESS",
+                                                            "STEP_3_LABEL":  "LATERAL MOVE",
+                                                            "STEP_3_DESC":  "NETWORK PENETRATION",
+                                                            "STEP_4_LABEL":  "EXECUTION",
+                                                            "STEP_4_DESC":  "FACTORY RESET",
+                                                            "STEP_5_LABEL":  "SILENCE",
+                                                            "STEP_5_DESC":  "DATA WIPED"
+                                                        },
+                                            "duration":  15,
+                                            "index":  9,
+                                            "code":  "import React, { useMemo } from \u0027react\u0027;\nimport { useCurrentFrame, useVideoConfig, interpolate } from \u0027remotion\u0027;\n\nexport const AnimationComponent = () =\u003e {\n  const frame = useCurrentFrame();\n  const { width, height } = useVideoConfig();\n\n  const steps = useMemo(() =\u003e [\n    { label: \u0027STOLEN KEY\u0027, desc: \u0027CREDENTIAL THEFT\u0027 },\n    { label: \u0027OPEN DOOR\u0027, desc: \u0027UNAUTHORIZED ACCESS\u0027 },\n    { label: \u0027LATERAL MOVE\u0027, desc: \u0027NETWORK PENETRATION\u0027 },\n    { label: \u0027EXECUTION\u0027, desc: \u0027FACTORY RESET\u0027 },\n    { label: \u0027SILENCE\u0027, desc: \u0027DATA WIPED\u0027 }\n  ].filter(s =\u003e s.label !== \u0027\u0027 \u0026\u0026 s.label !== \u0027 \u0027), []);\n\n  const count = steps.length;\n  const stepWidth = 280;\n  const gutter = 40;\n  const totalWidth = (count * stepWidth) + ((count - 1) * gutter);\n  const startX = (width - totalWidth) / 2;\n\n  return (\n    \u003cdiv style={{ position: \u0027absolute\u0027, top: 0, left: 0, width: 1920, height: 1080, overflow: \u0027hidden\u0027, backgroundColor: \u0027#1A1A1A\u0027 }}\u003e\n      {steps.map((step, i) =\u003e {\n        const startFrame = i * 30;\n        const opacity = interpolate(frame, [startFrame, startFrame + 20], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n        const translateY = interpolate(frame, [startFrame, startFrame + 20], [40, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n        const connectorWidth = interpolate(frame, [startFrame + 15, startFrame + 40], [0, gutter], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 });\n\n        return (\n          \u003cReact.Fragment key={i}\u003e\n            \u003cdiv style={{ position: \u0027absolute\u0027, top: 400, left: startX + (i * (stepWidth + gutter)), width: stepWidth, height: 280, opacity, transform: `translateY(${translateY}px)` }}\u003e\n              \u003cdiv style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: \u0027#AAFF00\u0027, display: \u0027flex\u0027, alignItems: \u0027center\u0027, justifyContent: \u0027center\u0027, color: \u0027#0A1A00\u0027, fontSize: 24, fontWeight: \u0027bold\u0027 }}\u003e{i + 1}\u003c/div\u003e\n              \u003cdiv style={{ marginTop: 24, fontSize: 24, fontWeight: \u0027bold\u0027, color: \u0027#0A1A00\u0027, letterSpacing: \u00270.12em\u0027 }}\u003e{step.label}\u003c/div\u003e\n              \u003cdiv style={{ marginTop: 12, fontSize: 16, color: \u0027#555555\u0027, lineHeight: 1.5 }}\u003e{step.desc}\u003c/div\u003e\n            \u003c/div\u003e\n            {i \u003c count - 1 \u0026\u0026 (\n              \u003cdiv style={{ position: \u0027absolute\u0027, top: 430, left: startX + stepWidth + (i * (stepWidth + gutter)), width: connectorWidth, height: 4, backgroundColor: \u0027#00CCEE\u0027, opacity }} /\u003e\n            )}\n          \u003c/React.Fragment\u003e\n        );\n      })}\n    \u003c/div\u003e\n  );\n};\n\nexport default AnimationComponent;",
+                                            "codeLength":  2519,
+                                            "globalIndex":  9,
+                                            "chapterIndex":  9,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:51:03.324Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "videoUrl":  "/videos/Director_299318a4.mp4"
+                                        },
+                                        {
+                                            "type":  "TEMPLATE",
+                                            "script":  "This story is based on the factual reporting of Krebs on Security. Full sources and technical documentation are available in the video description.",
+                                            "template":  "78-evidence-item",
+                                            "theme":  "INTEL",
+                                            "reasoning":  "Provides source attribution for the documentary.",
+                                            "content":  {
+                                                            "TITLE_TEXT":  "REPORTING SOURCE",
+                                                            "LABEL_1":  "KREBS ON SECURITY",
+                                                            "LABEL_2":  "FACTUAL REPORTING",
+                                                            "LABEL_3":  "TECHNICAL DOCS",
+                                                            "TAG_1":  "VERIFIED",
+                                                            "TAG_2":  "PUBLIC",
+                                                            "CONTEXT_TEXT":  "SOURCES IN DESCRIPTION",
+                                                            "ALERT_TEXT":  "DOCUMENTATION"
+                                                        },
+                                            "duration":  15,
+                                            "index":  10,
+                                            "code":  "import React from \u0027react\u0027\r\nimport { useCurrentFrame, interpolate } from \u0027remotion\u0027\r\n\r\nexport const AnimationComponent = () =\u003e {\r\n  const frame = useCurrentFrame()\r\n\r\n  const bgOp = interpolate(frame, [0, 18], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const barW = interpolate(frame, [10, 40], [0, 1920], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const panelOp = interpolate(frame, [12, 28], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const panelTy = interpolate(frame, [12, 28], [30, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const tagOp = interpolate(frame, [22, 36], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const titleOp = interpolate(frame, [28, 44], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const titleTy = interpolate(frame, [28, 44], [20, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const divW = interpolate(frame, [38, 60], [0, 800], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const bodyOp = interpolate(frame, [48, 65], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const bodyTy = interpolate(frame, [48, 65], [16, 0], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const metaOp = interpolate(frame, [62, 78], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const stampOp = interpolate(frame, [72, 88], [0, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n  const stampScale = interpolate(frame, [72, 88], [1.4, 1], { extrapolateLeft: \u0027clamp\u0027, extrapolateRight: \u0027clamp\u0027 })\r\n\r\n  const title = \"REPORTING SOURCE\"\r\n  const label1 = \"KREBS ON SECURITY\"\r\n  const label2 = \"FACTUAL REPORTING\"\r\n  const label3 = \"TECHNICAL DOCS\"\r\n  const tag1 = \"VERIFIED\"\r\n  const tag2 = \"PUBLIC\"\r\n  const contextText = \"SOURCES IN DESCRIPTION\"\r\n  const alertText = \"DOCUMENTATION\"\r\n\r\n  return (\r\n    \u003cdiv style={{\r\n      position: \u0027absolute\u0027,\r\n      top: 0,\r\n      left: 0,\r\n      width: 1920,\r\n      height: 1080,\r\n      overflow: \u0027hidden\u0027,\r\n      backgroundColor: \u0027#F4F2F8\u0027,\r\n    }}\u003e\r\n\r\n      {/* Top accent */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 0,\r\n        left: 0,\r\n        width: 1920,\r\n        height: 5,\r\n        overflow: \u0027hidden\u0027,\r\n        backgroundColor: \u0027#1C1C14\u0027,\r\n        opacity: bgOp,\r\n      }} /\u003e\r\n\r\n      {/* Bottom bar */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 1074,\r\n        left: 0,\r\n        width: barW,\r\n        height: 6,\r\n        overflow: \u0027hidden\u0027,\r\n        backgroundColor: \u0027#1C1C14\u0027,\r\n      }} /\u003e\r\n\r\n      {/* Main evidence panel */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 140,\r\n        left: 200,\r\n        width: 1180,\r\n        height: 780,\r\n        overflow: \u0027hidden\u0027,\r\n        backgroundColor: \u0027#FFFFFF\u0027,\r\n        borderRadius: 6,\r\n        boxSizing: \u0027border-box\u0027,\r\n        border: \u00271px solid\u0027,\r\n        borderColor: \u0027#CCBBEE\u0027,\r\n        opacity: panelOp,\r\n        transform: `translateY(${panelTy}px)`,\r\n      }}\u003e\r\n\r\n        {/* Header bar */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 0,\r\n          left: 0,\r\n          width: 1180,\r\n          height: 72,\r\n          overflow: \u0027hidden\u0027,\r\n          backgroundColor: \u0027#F4F2F8\u0027,\r\n          display: \u0027flex\u0027,\r\n          alignItems: \u0027center\u0027,\r\n          boxSizing: \u0027border-box\u0027,\r\n          padding: \u00270 32px\u0027,\r\n        }}\u003e\r\n          \u003cspan style={{\r\n            fontSize: 18,\r\n            fontWeight: 600,\r\n            color: \u0027#7766AA\u0027,\r\n            fontFamily: \u0027monospace\u0027,\r\n            letterSpacing: 2,\r\n            textTransform: \u0027uppercase\u0027,\r\n          }}\u003e\r\n            {title}\r\n          \u003c/span\u003e\r\n        \u003c/div\u003e\r\n\r\n        {/* Tags row */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 92,\r\n          left: 32,\r\n          width: 600,\r\n          height: 44,\r\n          overflow: \u0027hidden\u0027,\r\n          opacity: tagOp,\r\n          display: \u0027flex\u0027,\r\n          gap: 12,\r\n          alignItems: \u0027center\u0027,\r\n        }}\u003e\r\n          \u003cdiv style={{\r\n            position: \u0027absolute\u0027,\r\n            top: 0,\r\n            left: 0,\r\n            width: 160,\r\n            height: 44,\r\n            overflow: \u0027hidden\u0027,\r\n            backgroundColor: \u0027#1C1C14\u0027,\r\n            borderRadius: 4,\r\n            display: \u0027flex\u0027,\r\n            alignItems: \u0027center\u0027,\r\n            justifyContent: \u0027center\u0027,\r\n          }}\u003e\r\n            \u003cspan style={{\r\n              fontSize: 16,\r\n              fontWeight: 700,\r\n              color: \u0027#FFFFFF\u0027,\r\n              fontFamily: \u0027sans-serif\u0027,\r\n              letterSpacing: 2,\r\n              textTransform: \u0027uppercase\u0027,\r\n            }}\u003e\r\n              {tag1}\r\n            \u003c/span\u003e\r\n          \u003c/div\u003e\r\n          \u003cdiv style={{\r\n            position: \u0027absolute\u0027,\r\n            top: 0,\r\n            left: 176,\r\n            width: 160,\r\n            height: 44,\r\n            overflow: \u0027hidden\u0027,\r\n            backgroundColor: \u0027#FF6600\u0027,\r\n            borderRadius: 4,\r\n            display: \u0027flex\u0027,\r\n            alignItems: \u0027center\u0027,\r\n            justifyContent: \u0027center\u0027,\r\n          }}\u003e\r\n            \u003cspan style={{\r\n              fontSize: 16,\r\n              fontWeight: 700,\r\n              color: \u0027#FFFFFF\u0027,\r\n              fontFamily: \u0027sans-serif\u0027,\r\n              letterSpacing: 2,\r\n              textTransform: \u0027uppercase\u0027,\r\n            }}\u003e\r\n              {tag2}\r\n            \u003c/span\u003e\r\n          \u003c/div\u003e\r\n        \u003c/div\u003e\r\n\r\n        {/* Evidence title */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 158,\r\n          left: 32,\r\n          width: 1100,\r\n          height: 100,\r\n          overflow: \u0027hidden\u0027,\r\n          opacity: titleOp,\r\n          transform: `translateY(${titleTy}px)`,\r\n        }}\u003e\r\n          \u003cspan style={{\r\n            fontSize: 56,\r\n            fontWeight: 900,\r\n            color: \u0027#1C1C14\u0027,\r\n            fontFamily: \u0027sans-serif\u0027,\r\n            lineHeight: 1.1,\r\n            letterSpacing: -1,\r\n          }}\u003e\r\n            {label1}\r\n          \u003c/span\u003e\r\n        \u003c/div\u003e\r\n\r\n        {/* Divider */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 272,\r\n          left: 32,\r\n          width: divW,\r\n          height: 2,\r\n          overflow: \u0027hidden\u0027,\r\n          backgroundColor: \u0027#AAFF00\u0027,\r\n        }} /\u003e\r\n\r\n        {/* Body text */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 294,\r\n          left: 32,\r\n          width: 1100,\r\n          height: 200,\r\n          overflow: \u0027hidden\u0027,\r\n          opacity: bodyOp,\r\n          transform: `translateY(${bodyTy}px)`,\r\n        }}\u003e\r\n          \u003cspan style={{\r\n            fontSize: 28,\r\n            fontWeight: 400,\r\n            color: \u0027#FFFFFF\u0027,\r\n            fontFamily: \u0027sans-serif\u0027,\r\n            lineHeight: 1.6,\r\n          }}\u003e\r\n            {contextText}\r\n          \u003c/span\u003e\r\n        \u003c/div\u003e\r\n\r\n        {/* Meta row */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 530,\r\n          left: 32,\r\n          width: 1100,\r\n          height: 50,\r\n          overflow: \u0027hidden\u0027,\r\n          opacity: metaOp,\r\n          display: \u0027flex\u0027,\r\n          alignItems: \u0027center\u0027,\r\n        }}\u003e\r\n          \u003cspan style={{\r\n            fontSize: 20,\r\n            fontWeight: 500,\r\n            color: \u0027#AAFF00\u0027,\r\n            fontFamily: \u0027monospace\u0027,\r\n            letterSpacing: 1,\r\n          }}\u003e\r\n            {label2}\r\n          \u003c/span\u003e\r\n          \u003cspan style={{\r\n            fontSize: 20,\r\n            fontWeight: 400,\r\n            color: \u0027#7766AA\u0027,\r\n            fontFamily: \u0027monospace\u0027,\r\n            marginLeft: 40,\r\n          }}\u003e\r\n            {label3}\r\n          \u003c/span\u003e\r\n        \u003c/div\u003e\r\n\r\n        {/* Bottom alert bar */}\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 620,\r\n          left: 0,\r\n          width: 1180,\r\n          height: 60,\r\n          overflow: \u0027hidden\u0027,\r\n          backgroundColor: \u0027#FF6600\u0027,\r\n          opacity: metaOp,\r\n          display: \u0027flex\u0027,\r\n          alignItems: \u0027center\u0027,\r\n          boxSizing: \u0027border-box\u0027,\r\n          padding: \u00270 32px\u0027,\r\n        }}\u003e\r\n          \u003cspan style={{\r\n            fontSize: 20,\r\n            fontWeight: 700,\r\n            color: \u0027#FFFFFF\u0027,\r\n            fontFamily: \u0027monospace\u0027,\r\n            letterSpacing: 2,\r\n            textTransform: \u0027uppercase\u0027,\r\n          }}\u003e\r\n            {alertText}\r\n          \u003c/span\u003e\r\n        \u003c/div\u003e\r\n\r\n      \u003c/div\u003e\r\n\r\n      {/* Stamp — right side */}\r\n      \u003cdiv style={{\r\n        position: \u0027absolute\u0027,\r\n        top: 340,\r\n        left: 1460,\r\n        width: 340,\r\n        height: 340,\r\n        overflow: \u0027hidden\u0027,\r\n        opacity: stampOp,\r\n        transform: `scale(${stampScale})`,\r\n        display: \u0027flex\u0027,\r\n        alignItems: \u0027center\u0027,\r\n        justifyContent: \u0027center\u0027,\r\n      }}\u003e\r\n        \u003csvg width={340} height={340} style={{ position: \u0027absolute\u0027, top: 0, left: 0 }}\u003e\r\n          \u003ccircle cx={170} cy={170} r={155} fill=\"none\" stroke=\"#1C1C14\" strokeWidth={6} opacity={0.15} /\u003e\r\n          \u003ccircle cx={170} cy={170} r={130} fill=\"none\" stroke=\"#1C1C14\" strokeWidth={3} opacity={0.1} /\u003e\r\n        \u003c/svg\u003e\r\n        \u003cdiv style={{\r\n          position: \u0027absolute\u0027,\r\n          top: 80,\r\n          left: 20,\r\n          width: 300,\r\n          height: 180,\r\n          overflow: \u0027hidden\u0027,\r\n          display: \u0027flex\u0027,\r\n          alignItems: \u0027center\u0027,\r\n          justifyContent: \u0027center\u0027,\r\n        }}\u003e\r\n          \u003cspan style={{\r\n            fontSize: 38,\r\n            fontWeight: 900,\r\n            color: \u0027#1C1C14\u0027,\r\n            fontFamily: \u0027sans-serif\u0027,\r\n            textAlign: \u0027center\u0027,\r\n            textTransform: \u0027uppercase\u0027,\r\n            letterSpacing: 2,\r\n            opacity: 0.2,\r\n            lineHeight: 1.2,\r\n          }}\u003e\r\n            {tag1}\r\n          \u003c/span\u003e\r\n        \u003c/div\u003e\r\n      \u003c/div\u003e\r\n\r\n    \u003c/div\u003e\r\n  )\r\n}\r\n\r\nexport default AnimationComponent",
+                                            "codeLength":  9845,
+                                            "globalIndex":  10,
+                                            "chapterIndex":  10,
+                                            "status":  "rendered",
+                                            "flag":  null,
+                                            "notes":  "",
+                                            "renderedAt":  "2026-03-25T11:51:54.594Z",
+                                            "editHistory":  [
+
+                                                            ],
+                                            "videoUrl":  "/videos/Director_86fa1c81.mp4"
+                                        }
+                                    ],
+                         "notes":  ""
+                     }
+                 ],
+    "totalScenes":  10,
+    "settings":  {
+                     "defaultTheme":  "THREAT",
+                     "format":  "landscape"
+                 }
+}

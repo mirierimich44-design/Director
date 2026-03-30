@@ -1,0 +1,308 @@
+{
+  "timestamp": "2026-03-27T08:01:14.959Z",
+  "scriptLength": 3260,
+  "scriptPreview": "Once the shock subsided, the security community ran its post-mortem. And the conclusion was uncomfortable: the chaos had little to do with the sophistication of the attack. It had everything to do wit",
+  "scriptFull": "Once the shock subsided, the security community ran its post-mortem. And the conclusion was uncomfortable: the chaos had little to do with the sophistication of the attack. It had everything to do with an organizational failure to cope with a threat that should have been manageable.\nThe Stryker attack was not a brilliant zero-day exploit. There was no exotic malware, no cunning obfuscation. What it exploited was an architectural decision — that a single administrative account should hold permanent, always-on, global power over two hundred thousand devices.\nOne account. Two hundred thousand devices. No approval chain. No second signature. No expiration on the privilege.\nThe concept that stands against this is called Just-in-Time access. Under this model, administrators hold zero permissions by default. When they need to perform an elevated action — deploy a patch, run a diagnostic, wipe a device — they request that access through a formal workflow, for a specific task, for a specific window of time. The access is granted, the task is performed, the privilege expires. An attacker who steals your session token inherits only the permissions you held in that precise moment — not a standing, permanent, global kill-switch.\nMicrosoft's own identity platform offers exactly this capability. It is not a third-party add-on. It is a native feature of the same Microsoft ecosystem Stryker was already using. Whether it was implemented — and if not, why not — will be central to the post-incident analysis for years.\nThe second failure is almost embarrassingly simple: there was no multi-person authorization for a destructive command. Nuclear launch protocols require two officers to simultaneously turn their keys. Major financial transfers require dual authorization. The ability to simultaneously factory-reset every device in a fifty-six-thousand-person global company is — by any reasonable definition — catastrophic and irreversible. It should require more than one administrator to authorize. It should require a confirmation step that creates even a brief window for an alert system to fire.\nIt did not. Because convenience, accumulated across years of small decisions, had won out over friction. Because no one seriously imagined, until it happened, that this button would ever be pressed by the wrong hands.\nThe authentication failure is equally specific. Adversary-in-the-Middle phishing defeats standard multi-factor authentication — the industry has known this for years. The solution exists: hardware security keys are cryptographically bound to the legitimate domain. A relay cannot intercept them because there is nothing to intercept — the handshake between the key and the server cannot be faked or forwarded. They are called phishing-resistant for a reason. They are also the least deployed protection for the highest-privilege accounts, which is precisely where the stakes are greatest.\nThe tools to prevent this existed before it happened. Some were native features of platforms the organization already paid for. The gap was not technical. It was the accumulation of deferred decisions — and the universal human tendency to weigh convenience over the risk, to treat an unlikely disaster as someone else's problem. Until it isn't.\n",
+  "totalScenes": 17,
+  "templateCount": 14,
+  "renderCount": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "Once the shock subsided, the security community ran its post-mortem. And the conclusion was uncomfortable: the chaos had little to do with the sophistication of the attack. It had everything to do with an organizational failure to cope with a threat that should have been manageable.",
+      "prompt": "Cinematic, photorealistic shot of a dark, high-tech server room with flickering blue status lights, shadows stretching across rows of server racks, dust motes dancing in the light, moody atmosphere, 8k resolution, hyper-detailed.",
+      "environment": "office",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "POST-MORTEM ANALYSIS",
+        "attribution": "ARXXIS SECURITY",
+        "tone": "#FF6600"
+      },
+      "duration": 15
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "The Stryker attack was not a brilliant zero-day exploit. There was no exotic malware, no cunning obfuscation.",
+      "template": "106-word-highlight-scan",
+      "theme": "TECHNICAL",
+      "reasoning": "Analytical tone for debunking the complexity of the attack.",
+      "content": {
+        "WORD_1": "NOT",
+        "WORD_2": "BRILLIANT",
+        "WORD_3": "NO",
+        "WORD_4": "EXOTIC",
+        "WORD_5": "MALWARE",
+        "WORD_6": "NO",
+        "WORD_7": "CUNNING",
+        "WORD_8": "OBFUSCATION"
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "What it exploited was an architectural decision — that a single administrative account should hold permanent, always-on, global power over two hundred thousand devices.",
+      "template": "102-annotation-callout",
+      "theme": "THREAT",
+      "reasoning": "Highlighting the critical vulnerability of the administrative account.",
+      "content": {
+        "TITLE_TEXT": "ARCHITECTURAL FLAW",
+        "SUBTITLE_TEXT": "SINGLE POINT OF FAILURE",
+        "CALLOUT_HEADER": "GLOBAL POWER",
+        "CALLOUT_BODY": "200,000 DEVICES COMPROMISED",
+        "DATA_LABEL": "ADMIN_ROOT_ACCESS"
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "One account. Two hundred thousand devices. No approval chain. No second signature. No expiration on the privilege.",
+      "template": "30-icongrid-3x3",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the lack of security controls.",
+      "content": {
+        "TITLE_TEXT": "CONTROL DEFICIENCIES",
+        "ICON_LABEL_1": "ONE ACCOUNT",
+        "ICON_LABEL_2": "200K DEVICES",
+        "ICON_LABEL_3": "NO APPROVAL",
+        "ICON_LABEL_4": "NO SIGNATURE",
+        "ICON_LABEL_5": "NO EXPIRATION",
+        "ICON_LABEL_6": "UNRESTRICTED",
+        "ICON_LABEL_7": "PERMANENT",
+        "ICON_LABEL_8": "GLOBAL",
+        "ICON_LABEL_9": "VULNERABLE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "The concept that stands against this is called Just-in-Time access. Under this model, administrators hold zero permissions by default.",
+      "template": "119-kill-chain-steps",
+      "theme": "CLEAN",
+      "reasoning": "Explaining the security model.",
+      "content": {
+        "TITLE_TEXT": "JUST-IN-TIME ACCESS",
+        "STEP_1": "ZERO PERMISSIONS",
+        "STEP_2": "REQUEST ACCESS",
+        "STEP_3": "FORMAL WORKFLOW",
+        "STEP_4": "TASK EXECUTION",
+        "STEP_5": "PRIVILEGE EXPIRY",
+        "STEP_6": "SESSION END",
+        "STEP_7": "SECURE STATE",
+        "FOOTER_TEXT": "NATIVE IDENTITY PROTECTION"
+      },
+      "duration": 15
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "When they need to perform an elevated action — deploy a patch, run a diagnostic, wipe a device — they request that access through a formal workflow, for a specific task, for a specific window of time.",
+      "template": "101-scrollytelling-step",
+      "theme": "CLEAN",
+      "reasoning": "Detailing the workflow process.",
+      "content": {
+        "STEP_TITLE_1": "REQUEST",
+        "STEP_BODY_1": "ELEVATED ACTION",
+        "STEP_TITLE_2": "WORKFLOW",
+        "STEP_BODY_2": "FORMAL APPROVAL",
+        "STEP_TITLE_3": "WINDOW",
+        "STEP_BODY_3": "SPECIFIC TIME",
+        "STEP_TITLE_4": "EXECUTE",
+        "STEP_BODY_4": "TASK COMPLETION"
+      },
+      "duration": 15
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "The access is granted, the task is performed, the privilege expires.",
+      "template": "17-phase-horizontal",
+      "theme": "CLEAN",
+      "reasoning": "Linear flow of secure access.",
+      "content": {
+        "TITLE_TEXT": "ACCESS LIFECYCLE",
+        "PHASE_1": "GRANT",
+        "PHASE_2": "PERFORM",
+        "PHASE_3": "EXPIRE",
+        "PHASE_4": "REVOKE",
+        "STEP_1": "ACCESS GRANTED",
+        "STEP_2": "TASK DONE",
+        "STEP_3": "PRIVILEGE ENDS",
+        "STEP_4": "SECURE"
+      },
+      "duration": 10
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "An attacker who steals your session token inherits only the permissions you held in that precise moment — not a standing, permanent, global kill-switch.",
+      "template": "102-annotation-callout",
+      "theme": "TECHNICAL",
+      "reasoning": "Explaining the mitigation of token theft.",
+      "content": {
+        "TITLE_TEXT": "TOKEN SECURITY",
+        "SUBTITLE_TEXT": "MITIGATION STRATEGY",
+        "CALLOUT_HEADER": "LIMITED SCOPE",
+        "CALLOUT_BODY": "NO GLOBAL KILL-SWITCH",
+        "DATA_LABEL": "SESSION_TOKEN"
+      },
+      "duration": 12
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Microsoft's own identity platform offers exactly this capability. It is not a third-party add-on. It is a native feature of the same Microsoft ecosystem Stryker was already using.",
+      "template": "01-statcluster-3box",
+      "theme": "CLEAN",
+      "reasoning": "Highlighting native platform capabilities.",
+      "content": {
+        "STAT_VALUE_1": "NATIVE",
+        "STAT_VALUE_2": "BUILT-IN",
+        "STAT_VALUE_3": "AVAILABLE",
+        "LABEL_1": "IDENTITY PLATFORM",
+        "LABEL_2": "NO ADD-ONS",
+        "LABEL_3": "ECOSYSTEM",
+        "SUB_1": "JIT ACCESS",
+        "SUB_2": "NATIVE FEATURE",
+        "SUB_3": "ALREADY PAID",
+        "VERDICT_TEXT": "CAPABILITY WAS PRESENT"
+      },
+      "duration": 15
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "Whether it was implemented — and if not, why not — will be central to the post-incident analysis for years.",
+      "template": "108-stamped-verdict",
+      "theme": "INTEL",
+      "reasoning": "The lingering question of the investigation.",
+      "content": {
+        "STAMP_TEXT": "UNDER REVIEW",
+        "SUB_TEXT": "IMPLEMENTATION GAP",
+        "DATE_TEXT": "2024-2025",
+        "ID_TEXT": "INCIDENT-STRYKER-001"
+      },
+      "duration": 10
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "The second failure is almost embarrassingly simple: there was no multi-person authorization for a destructive command. Nuclear launch protocols require two officers to simultaneously turn their keys. Major financial transfers require dual authorization.",
+      "template": "09-split-2panel",
+      "theme": "THREAT",
+      "reasoning": "Comparing security protocols to the failure.",
+      "content": {
+        "LEFT_HEAD": "NUCLEAR PROTOCOL",
+        "LEFT_SUB1": "TWO OFFICERS",
+        "LEFT_SUB2": "SIMULTANEOUS KEYS",
+        "LEFT_SUB3": "DUAL AUTH",
+        "RIGHT_HEAD": "STRYKER FAILURE",
+        "RIGHT_SUB1": "SINGLE ADMIN",
+        "RIGHT_SUB2": "NO APPROVAL",
+        "RIGHT_SUB3": "DESTRUCTIVE COMMAND",
+        "VERDICT_TEXT": "LACK OF DUAL CONTROL"
+      },
+      "duration": 15
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "The ability to simultaneously factory-reset every device in a fifty-six-thousand-person global company is — by any reasonable definition — catastrophic and irreversible. It should require more than one administrator to authorize. It should require a confirmation step that creates even a brief window for an alert system to fire.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "Highlighting the catastrophic nature of the command.",
+      "content": {
+        "TITLE_TEXT": "CRITICAL FAILURE",
+        "SUBTITLE_TEXT": "FACTORY RESET COMMAND",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "SYSTEM-WIDE",
+        "DESCRIPTION_TEXT": "NO DUAL AUTHORIZATION"
+      },
+      "duration": 15
+    },
+    {
+      "index": 13,
+      "type": "3D_RENDER",
+      "script": "It did not. Because convenience, accumulated across years of small decisions, had won out over friction. Because no one seriously imagined, until it happened, that this button would ever be pressed by the wrong hands.",
+      "prompt": "Close-up, cinematic shot of a single, physical red button on a dark, brushed-metal console, soft rim lighting, shallow depth of field, high-tech industrial aesthetic, 8k resolution.",
+      "environment": "office",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "CONVENIENCE OVER SECURITY",
+        "attribution": "SYSTEMIC FAILURE",
+        "tone": "#FF6600"
+      },
+      "duration": 15
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "The authentication failure is equally specific. Adversary-in-the-Middle phishing defeats standard multi-factor authentication — the industry has known this for years.",
+      "template": "120-lateral-movement",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the phishing attack path.",
+      "content": {
+        "TITLE_TEXT": "AITM PHISHING",
+        "SUB_TEXT": "MFA BYPASS",
+        "SOURCE_NODE": "USER",
+        "HOP_1": "PROXY",
+        "HOP_2": "INTERCEPT",
+        "HOP_3": "TOKEN",
+        "TARGET_NODE": "SERVER"
+      },
+      "duration": 15
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "The solution exists: hardware security keys are cryptographically bound to the legitimate domain. A relay cannot intercept them because there is nothing to intercept — the handshake between the key and the server cannot be faked or forwarded.",
+      "template": "102-annotation-callout",
+      "theme": "CLEAN",
+      "reasoning": "Explaining the hardware key security.",
+      "content": {
+        "TITLE_TEXT": "PHISHING RESISTANCE",
+        "SUBTITLE_TEXT": "HARDWARE KEYS",
+        "CALLOUT_HEADER": "CRYPTOGRAPHIC BINDING",
+        "CALLOUT_BODY": "NO INTERCEPTION POSSIBLE",
+        "DATA_LABEL": "FIDO2_PROTOCOL"
+      },
+      "duration": 15
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "They are called phishing-resistant for a reason. They are also the least deployed protection for the highest-privilege accounts, which is precisely where the stakes are greatest.",
+      "template": "05-donutchart-fill",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlighting the deployment gap.",
+      "content": {
+        "TITLE_TEXT": "DEPLOYMENT RATE",
+        "DONUT_VALUE": "12%",
+        "DONUT_LABEL": "HARDWARE KEYS",
+        "CONTEXT_TEXT": "LEAST DEPLOYED PROTECTION"
+      },
+      "duration": 12
+    },
+    {
+      "index": 17,
+      "type": "3D_RENDER",
+      "script": "The tools to prevent this existed before it happened. Some were native features of platforms the organization already paid for. The gap was not technical. It was the accumulation of deferred decisions — and the universal human tendency to weigh convenience over the risk, to treat an unlikely disaster as someone else's problem. Until it isn't.",
+      "prompt": "Cinematic, abstract render of a digital hourglass made of glowing data particles, sand falling into a dark void, representing time and deferred decisions, dark aesthetic, high contrast, 8k resolution.",
+      "environment": "abstract",
+      "camera": "zoom-out",
+      "motion": "zoom-out",
+      "lower_third": {
+        "text": "THE COST OF CONVENIENCE",
+        "attribution": "ARXXIS ANALYSIS",
+        "tone": "#FF6600"
+      },
+      "duration": 20
+    }
+  ]
+}

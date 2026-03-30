@@ -1,0 +1,23 @@
+{
+    "template":  "125-hex-dump-scroll",
+    "name":  "Hex Dump Scroll",
+    "description":  "A scrolling hex editor visualization with staggered row reveals and highlight effects for payload analysis.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "security",
+                 "hex",
+                 "data",
+                 "analysis"
+             ],
+    "fields":  {
+                   "ROW_1":  "Hex data for line 1",
+                   "ROW_2":  "Hex data for line 2",
+                   "ROW_3":  "Hex data for line 3",
+                   "ROW_4":  "Hex data for line 4",
+                   "ROW_5":  "Hex data for line 5",
+                   "ROW_6":  "Hex data for line 6",
+                   "ROW_7":  "Hex data for line 7",
+                   "ROW_8":  "Hex data for line 8"
+               }
+}

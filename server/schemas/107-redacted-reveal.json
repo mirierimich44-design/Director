@@ -1,0 +1,22 @@
+{
+    "template":  "107-redacted-reveal",
+    "name":  "Redacted Reveal",
+    "description":  "A classified document aesthetic where lines of text are revealed sequentially by sliding off redaction bars.",
+    "category":  "text-reveal",
+    "duration":  15,
+    "tags":  [
+                 "classified",
+                 "investigation",
+                 "text",
+                 "reveal"
+             ],
+    "fields":  {
+                   "CLASSIFIED_TITLE":  "Main header for the document",
+                   "LINE_1":  "Text content for line 1",
+                   "LINE_2":  "Text content for line 2",
+                   "LINE_3":  "Text content for line 3",
+                   "LINE_4":  "Text content for line 4",
+                   "LINE_5":  "Text content for line 5",
+                   "LINE_6":  "Text content for line 6"
+               }
+}

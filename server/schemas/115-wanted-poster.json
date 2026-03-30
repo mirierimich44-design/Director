@@ -1,0 +1,20 @@
+{
+    "template":  "115-wanted-poster",
+    "name":  "Wanted Poster Profile",
+    "description":  "A high-impact hacker profile card with stamp-in animation and staggered data reveals.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "security",
+                 "profile",
+                 "hacker",
+                 "data"
+             ],
+    "fields":  {
+                   "MONIKER_TEXT":  "The primary handle or name of the subject",
+                   "ALIASES_TEXT":  "Comma separated list of known aliases",
+                   "AFFILIATION_TEXT":  "Nation-state or group affiliation",
+                   "TOOLS_TEXT":  "Primary software or techniques used",
+                   "STATUS_TEXT":  "Current threat status (e.g. WANTED, ACTIVE, CONTAINED)"
+               }
+}

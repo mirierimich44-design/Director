@@ -1,0 +1,30 @@
+{
+    "template":  "135-threat-actor-timeline",
+    "name":  "Threat Actor Timeline",
+    "description":  "A horizontal timeline visualizing cyber operations with staggered node reveals.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "timeline",
+                 "security",
+                 "operations",
+                 "cyber"
+             ],
+    "fields":  {
+                   "DATE_1":  "Date of first operation",
+                   "SECTOR_1":  "Target sector for operation 1",
+                   "TECH_1":  "Technique used in operation 1",
+                   "DATE_2":  "Date of second operation",
+                   "SECTOR_2":  "Target sector for operation 2",
+                   "TECH_2":  "Technique used in operation 2",
+                   "DATE_3":  "Date of third operation",
+                   "SECTOR_3":  "Target sector for operation 3",
+                   "TECH_3":  "Technique used in operation 3",
+                   "DATE_4":  "Date of fourth operation",
+                   "SECTOR_4":  "Target sector for operation 4",
+                   "TECH_4":  "Technique used in operation 4",
+                   "DATE_5":  "Date of fifth operation",
+                   "SECTOR_5":  "Target sector for operation 5",
+                   "TECH_5":  "Technique used in operation 5"
+               }
+}

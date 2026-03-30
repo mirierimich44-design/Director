@@ -1,0 +1,20 @@
+{
+    "template":  "128-sql-injection-demo",
+    "name":  "SQL Injection Demo",
+    "description":  "Visualizes the transformation of a benign SQL query into an injected malicious query.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "sql",
+                 "security",
+                 "injection",
+                 "cybersecurity"
+             ],
+    "fields":  {
+                   "SQL_INJECTION_TITLE":  "Main title for the animation",
+                   "QUERY_BASE":  "The original benign SQL query",
+                   "INJECTION_PAYLOAD":  "The malicious payload input",
+                   "RESULT_QUERY":  "The final combined SQL query",
+                   "STATUS_LABEL":  "Warning label text"
+               }
+}

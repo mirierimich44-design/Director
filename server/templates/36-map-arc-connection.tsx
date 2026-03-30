@@ -1,109 +1,167 @@
 import React, { useMemo } from 'react'
-import { useCurrentFrame, interpolate } from 'remotion'
+import { useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion'
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
-
-  const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const barW = interpolate(frame, [10, 40], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const mapOp = interpolate(frame, [12, 28], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const arcProgress = interpolate(frame, [28, 72], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const dotOp = interpolate(frame, [68, 82], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const labelOp = interpolate(frame, [75, 90], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const { width, height } = useVideoConfig()
 
   const title = "TITLE_TEXT"
   const arcFrom = "ARC_FROM"
   const rawTargetLabels = ["MAP_LABEL_1", "MAP_LABEL_2", "MAP_LABEL_3", "MAP_LABEL_4"]
   const rawTargets = [
-    { x: 280,  y: 310 },
-    { x: 790,  y: 240 },
-    { x: 820,  y: 440 },
-    { x: 1380, y: 480 },
+    { x: 380,  y: 350 },
+    { x: 790,  y: 280 },
+    { x: 820,  y: 540 },
+    { x: 1380, y: 580 },
   ]
 
   const filteredData = useMemo(() => {
     return rawTargetLabels
       .map((label, index) => ({ label, target: rawTargets[index] }))
       .filter(item => item.label !== '' && item.label !== 'Placeholder')
-  }, [])
+  }, [rawTargetLabels])
 
-  const stadiaKey = "STADIA_API_KEY"
-  const stadiaUrl = stadiaKey
-    ? `https://tiles.stadiamaps.com/static/alidade_smooth_dark/0,20,1.2/860x360@2x.png?api_key=${stadiaKey}`
-    : null
+  const mapOp = interpolate(frame, [0, 30], [0, 1], { extrapolateRight: 'clamp' })
+  const arcProgress = interpolate(frame, [30, 80], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(0.4, 0, 0.2, 1) })
+  const labelOp = interpolate(frame, [70, 95], [0, 1], { extrapolateRight: 'clamp' })
 
-  const mapX = 100
-  const mapY = 150
-  const mapW = 1720
-  const mapH = 720
+  const source = { x: 1100, y: 380 }
 
-  const source = { x: 1180, y: 290 }
-
-  const continents = [
-    "M 230,230 L 400,210 L 440,290 L 400,400 L 310,440 L 240,400 L 200,310 Z",
-    "M 330,460 L 410,440 L 450,520 L 430,640 L 360,660 L 320,600 L 330,510 Z",
-    "M 710,185 L 840,175 L 860,235 L 820,285 L 740,275 L 705,235 Z",
-    "M 710,305 L 840,295 L 880,425 L 840,565 L 760,585 L 700,505 L 695,385 Z",
-    "M 880,165 L 1180,155 L 1260,205 L 1280,325 L 1180,405 L 980,385 L 860,305 L 850,225 Z",
-    "M 1160,510 L 1280,490 L 1320,570 L 1260,630 L 1160,610 L 1120,550 Z",
-  ]
-
-  const getArcPath = (from: {x: number, y: number}, to: {x: number, y: number}, progress: number) => {
+  const getArcPath = (from: {x: number, y: number}, to: {x: number, y: number}) => {
     const cpx = (from.x + to.x) / 2
-    const cpy = Math.min(from.y, to.y) - Math.abs(to.x - from.x) * 0.25
-    const t = progress
-    const bx = (1-t)*(1-t)*from.x + 2*(1-t)*t*cpx + t*t*to.x
-    const by = (1-t)*(1-t)*from.y + 2*(1-t)*t*cpy + t*t*to.y
-    return `M ${from.x} ${from.y} Q ${cpx} ${cpy} ${bx} ${by}`
+    const cpy = Math.min(from.y, to.y) - Math.abs(to.x - from.x) * 0.3
+    return `M ${from.x} ${from.y} Q ${cpx} ${cpy} ${to.x} ${to.y}`
   }
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 5, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR', opacity: titleOp }} />
-      <div style={{ position: 'absolute', top: 1074, left: 0, width: barW, height: 6, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR' }} />
-      <div style={{ position: 'absolute', top: 50, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
-        <span style={{ fontSize: 28, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      
+      {/* Cinematic Background Grid */}
+      <div style={{
+        position: 'absolute', width: '100%', height: '100%',
+        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 80%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+        backgroundSize: '100% 100%, 80px 80px, 80px 80px',
+        opacity: mapOp * 0.6
+      }} />
+
+      {/* Modern Header */}
+      <div style={{ 
+          position: 'absolute', top: 60, left: 80, 
+          opacity: mapOp, transform: `translateY(${interpolate(frame, [0, 30], [20, 0], { extrapolateRight: 'clamp' })}px)`,
+          zIndex: 20 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div style={{ width: 6, height: 40, backgroundColor: 'PRIMARY_COLOR', borderRadius: 3, boxShadow: '0 0 15px PRIMARY_COLOR' }} />
+          <div style={{ fontSize: 42, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
+        </div>
+        <div style={{ fontSize: 14, color: 'ACCENT_COLOR', fontWeight: 800, letterSpacing: '0.4em', textTransform: 'uppercase', marginTop: 10, marginLeft: 26 }}>GLOBAL_OPERATIONS_MAP_v2.4</div>
       </div>
-      {stadiaUrl ? (
-        <img
-          src={stadiaUrl}
-          style={{ position: 'absolute', top: mapY, left: mapX, width: mapW, height: mapH, opacity: mapOp, borderRadius: 4, objectFit: 'cover' }}
-        />
-      ) : null}
+
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
-        {!stadiaUrl && <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="CHART_BG" rx={4} opacity={mapOp} />}
-        {!stadiaUrl && [0.25, 0.5, 0.75].map((r, i) => (
-          <line key={`h${i}`} x1={mapX} y1={mapY + r * mapH} x2={mapX + mapW} y2={mapY + r * mapH} stroke="GRID_LINE" strokeWidth={1} opacity={mapOp * 0.3} />
-        ))}
-        {!stadiaUrl && [0.2, 0.4, 0.6, 0.8].map((r, i) => (
-          <line key={`v${i}`} x1={mapX + r * mapW} y1={mapY} x2={mapX + r * mapW} y2={mapY + mapH} stroke="GRID_LINE" strokeWidth={1} opacity={mapOp * 0.3} />
-        ))}
-        {!stadiaUrl && continents.map((path, i) => (
-          <path key={i} d={path} fill="PANEL_LEFT_BG" stroke="LINE_STROKE" strokeWidth={1} opacity={mapOp * 0.5} />
-        ))}
-        <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="none" stroke="CHART_BORDER" strokeWidth={2} rx={4} opacity={mapOp} />
+        <defs>
+          <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="PRIMARY_COLOR" stopOpacity="0" />
+            <stop offset="50%" stopColor="ACCENT_COLOR" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="SECONDARY_COLOR" stopOpacity="0" />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Connection Arcs */}
+        {filteredData.map((item, i) => {
+          const path = getArcPath(source, item.target)
+          return (
+            <g key={`arc-${i}`}>
+              {/* Static Background Arc */}
+              <path 
+                d={path} 
+                fill="none" 
+                stroke="PRIMARY_COLOR" 
+                strokeWidth={2} 
+                opacity={mapOp * 0.15} 
+                strokeDasharray="4 4" 
+              />
+              
+              {/* Animated Reveal Arc */}
+              <path 
+                d={path} 
+                fill="none" 
+                stroke="ACCENT_COLOR" 
+                strokeWidth={3} 
+                strokeDasharray="1000"
+                strokeDashoffset={1000 * (1 - arcProgress)}
+                opacity={0.8}
+                filter="url(#glow)"
+              />
+
+              {/* Data Flow Particle */}
+              <circle r={4} fill="#fff" filter="url(#glow)">
+                <animateMotion 
+                  path={path} 
+                  dur={`${2 + i * 0.5}s`} 
+                  repeatCount="indefinite" 
+                  begin={`${i * 0.3}s`}
+                />
+              </circle>
+            </g>
+          )
+        })}
+
+        {/* Source Node */}
+        <g opacity={mapOp}>
+          <circle cx={source.x} cy={source.y} r={24} fill="rgba(15, 23, 42, 0.9)" stroke="PRIMARY_COLOR" strokeWidth={2} />
+          <circle cx={source.x} cy={source.y} r={8} fill="PRIMARY_COLOR" filter="url(#glow)">
+            <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite" />
+          </circle>
+        </g>
+
+        {/* Target Dots */}
         {filteredData.map((item, i) => (
-          <path key={i} d={getArcPath(source, item.target, arcProgress)} fill="none" stroke="SECONDARY_COLOR" strokeWidth={2.5} strokeDasharray="8 4" opacity={arcProgress > 0 ? 0.8 : 0} />
-        ))}
-        <circle cx={source.x} cy={source.y} r={18} fill="PRIMARY_COLOR" stroke="ACCENT_COLOR" strokeWidth={3} opacity={mapOp} />
-        <circle cx={source.x} cy={source.y} r={10} fill="BACKGROUND_COLOR" opacity={mapOp} />
-        {filteredData.map((item, i) => (
-          <g key={i} opacity={dotOp}>
-            <circle cx={item.target.x} cy={item.target.y} r={22} fill="none" stroke="SECONDARY_COLOR" strokeWidth={2} opacity={0.4} />
-            <circle cx={item.target.x} cy={item.target.y} r={14} fill="SECONDARY_COLOR" />
-            <circle cx={item.target.x} cy={item.target.y} r={6} fill="BACKGROUND_COLOR" />
+          <g key={`dot-${i}`} opacity={labelOp}>
+            <circle cx={item.target.x} cy={item.target.y} r={18} fill="none" stroke="ACCENT_COLOR" strokeWidth={1} opacity={0.3}>
+                <animate attributeName="r" values="18;28;18" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={item.target.x} cy={item.target.y} r={6} fill="ACCENT_COLOR" filter="url(#glow)" />
           </g>
         ))}
       </svg>
-      <div style={{ position: 'absolute', top: source.y - 50, left: source.x - 80, width: 160, height: 36, overflow: 'hidden', opacity: mapOp, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: 'TEXT_ON_PRIMARY', fontFamily: 'sans-serif', letterSpacing: 1, textTransform: 'uppercase' }}>{arcFrom}</span>
+
+      {/* Source Label (Glass) */}
+      <div style={{ 
+        position: 'absolute', top: source.y - 80, left: source.x - 100, 
+        width: 200, padding: '10px', backgroundColor: 'rgba(15, 23, 42, 0.9)', 
+        backdropFilter: 'blur(12px)', border: '1px solid PRIMARY_COLOR', 
+        borderRadius: 8, opacity: mapOp, textAlign: 'center'
+      }}>
+        <div style={{ fontSize: 10, color: 'PRIMARY_COLOR', fontWeight: 900, letterSpacing: '0.2em', marginBottom: 4 }}>ORIGIN_NODE</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', textTransform: 'uppercase' }}>{arcFrom}</div>
       </div>
+
+      {/* Target Labels */}
       {filteredData.map((item, i) => (
-        <div key={i} style={{ position: 'absolute', top: item.target.y + 28, left: item.target.x - 90, width: 180, height: 36, overflow: 'hidden', opacity: labelOp, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: 17, fontWeight: 600, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1 }}>{item.label}</span>
+        <div key={`label-${i}`} style={{ 
+            position: 'absolute', top: item.target.y + 30, left: item.target.x - 100, 
+            width: 200, opacity: labelOp, textAlign: 'center' 
+        }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>{item.label}</div>
+          <div style={{ height: 2, width: 40, backgroundColor: 'ACCENT_COLOR', margin: '8px auto', opacity: 0.6 }} />
         </div>
       ))}
+
+      {/* Bottom Forensic Detail */}
+      <div style={{ position: 'absolute', bottom: 40, right: 60, opacity: 0.2, textAlign: 'right' }}>
+         <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace' }}>
+            COORD_MAPPING: ENABLED<br />
+            ACTIVE_CONNECTIONS: {filteredData.length}<br />
+            STATUS: SECURE_RELAY_OK
+         </div>
+      </div>
     </div>
   )
 }

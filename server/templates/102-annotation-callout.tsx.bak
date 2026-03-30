@@ -1,0 +1,50 @@
+import React from 'react';
+import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+
+export const AnimationComponent = () => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+
+  const TITLE = 'TITLE_TEXT';
+  const SUBTITLE = 'SUBTITLE_TEXT';
+  const CALLOUT_HEADER = 'CALLOUT_HEADER';
+  const CALLOUT_BODY = 'CALLOUT_BODY';
+  const DATA_LABEL = 'DATA_LABEL';
+
+  const lineOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const lineLen = interpolate(frame, [20, 60], [0, 300], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const boxOp = interpolate(frame, [60, 90], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const boxScale = interpolate(frame, [60, 90], [0.8, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const textOp = interpolate(frame, [90, 130], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+
+  return (
+    <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
+      {/* Header Zone */}
+      <div style={{ position: 'absolute', top: 60, left: 192, width: 1536, height: 100, overflow: 'hidden' }}>
+        <div style={{ fontSize: 40, fontWeight: 'bold', color: 'PRIMARY_COLOR', letterSpacing: '2px' }}>{TITLE}</div>
+        <div style={{ fontSize: 22, color: 'SUPPORT_COLOR', marginTop: 8 }}>{SUBTITLE}</div>
+      </div>
+
+      {/* Annotation Elements */}
+      <svg style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, zIndex: 1 }}>
+        <line x1={960} y1={540} x2={960 + lineLen} y2={540 - lineLen} stroke="ACCENT_COLOR" strokeWidth={4} style={{ opacity: lineOp }} />
+        <circle cx={960} cy={540} r={8} fill="ACCENT_COLOR" style={{ opacity: lineOp }} />
+      </svg>
+
+      <div style={{ 
+        position: 'absolute', top: 180, left: 1260 + (1 - boxScale) * 50, width: 400, height: 240, 
+        backgroundColor: 'SECONDARY_COLOR', borderRadius: 8, padding: 32, boxSizing: 'border-box',
+        opacity: boxOp, transform: `scale(${boxScale})`, zIndex: 2
+      }}>
+        <div style={{ color: 'TEXT_ON_SECONDARY', fontSize: 24, fontWeight: 'bold', marginBottom: 16, opacity: textOp }}>{CALLOUT_HEADER}</div>
+        <div style={{ color: 'TEXT_ON_SECONDARY', fontSize: 18, lineHeight: 1.5, opacity: textOp }}>{CALLOUT_BODY}</div>
+      </div>
+
+      <div style={{ position: 'absolute', top: 560, left: 980, color: 'PRIMARY_COLOR', fontSize: 20, fontWeight: '600', opacity: textOp, zIndex: 2 }}>
+        {DATA_LABEL}
+      </div>
+    </div>
+  );
+};
+
+export default AnimationComponent;

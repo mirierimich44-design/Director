@@ -1,0 +1,38 @@
+import React from 'react';
+import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+
+export const AnimationComponent = () => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+
+  const title = 'TITLE_TEXT';
+  const subtitle = 'SUBTITLE_TEXT';
+  const severity = 'SEVERITY_LEVEL';
+  const timestamp = 'TIMESTAMP_TEXT';
+  const description = 'DESCRIPTION_TEXT';
+
+  const progress = interpolate(frame, [0, 30], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const scale = interpolate(frame, [0, 30], [0.8, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const ringScale = interpolate(frame, [20, 60], [1, 1.5], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const ringOpacity = interpolate(frame, [20, 60], [0.85, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const contentOp = interpolate(frame, [40, 70], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+
+  return (
+    <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
+      <div style={{ position: 'absolute', top: 340, left: 560, width: 800, height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: progress, transform: `scale(${scale})` }}>
+        <div style={{ position: 'relative', width: 160, height: 160, marginBottom: 40 }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: 160, height: 160, borderRadius: '50%', border: '8px solid PRIMARY_COLOR', transform: `scale(${ringScale})`, opacity: ringOpacity }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, width: 160, height: 160, borderRadius: '50%', backgroundColor: 'PRIMARY_COLOR', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'TEXT_ON_PRIMARY', fontSize: 64, fontWeight: 'bold' }}>!</div>
+        </div>
+        <div style={{ opacity: contentOp, textAlign: 'center' }}>
+          <div style={{ color: 'PRIMARY_COLOR', fontSize: 24, fontWeight: 900, letterSpacing: '0.12em', marginBottom: 16 }}>{severity}</div>
+          <div style={{ color: 'TEXT_ON_PRIMARY', fontSize: 48, fontWeight: 900, marginBottom: 8 }}>{title}</div>
+          <div style={{ color: 'TEXT_ON_PRIMARY', fontSize: 22, fontWeight: 600, marginBottom: 32 }}>{timestamp}</div>
+          <div style={{ color: 'TEXT_ON_PRIMARY', fontSize: 26, fontWeight: 500, maxWidth: 600, lineHeight: 1.5 }}>{description}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AnimationComponent;

@@ -43,7 +43,12 @@ export function fillTemplate(templateName, themeName, contentJson) {
   const theme = themes[themeName] || themes['CLEAN']
   Object.entries(theme).forEach(([key, val]) => {
     if (key !== 'name' && key !== 'description') {
-      code = safeReplace(code, key, val)
+      // Check for background override in content
+      if (key === 'BACKGROUND_COLOR' && contentJson.BACKGROUND_OVERRIDE) {
+        code = safeReplace(code, key, contentJson.BACKGROUND_OVERRIDE)
+      } else {
+        code = safeReplace(code, key, val)
+      }
     }
   })
 
@@ -75,6 +80,17 @@ export function fillTemplate(templateName, themeName, contentJson) {
 
   if (remaining.length > 0) {
     console.warn('⚠️  Unfilled placeholders:', remaining)
+    // Safety Fallback: Replace remaining theme placeholders with sensible defaults 
+    // to prevent "blank" or invalid CSS colors in the final render.
+    remaining.forEach(placeholder => {
+      let fallback = '#FF00FF'; // High-visibility magenta for debugging
+      if (placeholder.includes('BACKGROUND')) fallback = theme.BACKGROUND_COLOR || '#000000';
+      if (placeholder.includes('PRIMARY'))    fallback = theme.PRIMARY_COLOR || '#FFFFFF';
+      if (placeholder.includes('SECONDARY'))  fallback = theme.SECONDARY_COLOR || '#FF3333';
+      if (placeholder.includes('TEXT'))       fallback = theme.PRIMARY_COLOR || '#FFFFFF';
+      
+      code = safeReplace(code, placeholder, fallback);
+    });
   }
 
   return code

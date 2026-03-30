@@ -1,0 +1,20 @@
+{
+    "template":  "114-dossier-open",
+    "name":  "Dossier Open",
+    "description":  "A manila folder slides open to reveal a subject profile with photo, aliases, TTPs, and a threat level badge.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "dossier",
+                 "profile",
+                 "security",
+                 "investigation"
+             ],
+    "fields":  {
+                   "SUBJECT_NAME":  "Full name of the subject",
+                   "ALIAS_TEXT":  "Known aliases or codenames",
+                   "TTP_1":  "Primary Tactics, Techniques, or Procedures",
+                   "TTP_2":  "Secondary Tactics, Techniques, or Procedures",
+                   "THREAT_LEVEL":  "Threat classification (e.g., HIGH, CRITICAL)"
+               }
+}

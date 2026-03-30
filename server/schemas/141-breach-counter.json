@@ -1,0 +1,20 @@
+{
+    "template":  "141-breach-counter",
+    "name":  "Breach Counter",
+    "description":  "A high-impact, ticking counter animation for displaying stolen records or compromised data.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "counter",
+                 "security",
+                 "breach",
+                 "data"
+             ],
+    "fields":  {
+                   "STAT_VALUE_1":  "The final number to count up to (e.g., 1,250,000)",
+                   "RECORDS_COMPROMISED":  "Main heading text",
+                   "LABEL_1":  "Category label (e.g., \u0027DATA TYPE\u0027)",
+                   "SUB_1":  "Contextual detail 1 (e.g., \u0027ENCRYPTED\u0027)",
+                   "SUB_2":  "Contextual detail 2 (e.g., \u00272023 BREACH\u0027)"
+               }
+}

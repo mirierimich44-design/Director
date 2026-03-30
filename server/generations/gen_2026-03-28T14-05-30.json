@@ -1,0 +1,293 @@
+{
+  "timestamp": "2026-03-28T14:05:30.352Z",
+  "scriptLength": 2394,
+  "scriptPreview": "By the time the breach became public in late 2024, US officials confirmed nine major American carriers had been compromised. The Big Three — AT&T, Verizon, and Lumen Technologies — plus six regional a",
+  "scriptFull": "By the time the breach became public in late 2024, US officials confirmed nine major American carriers had been compromised. The Big Three — AT&T, Verizon, and Lumen Technologies — plus six regional and infrastructure providers including Charter Communications, Windstream, Consolidated Communications, Spectrum, and Viasat. Between them, these nine carriers handle the communications of the overwhelming majority of Americans.\nBut this was not simply an American story. By August 2025, the FBI confirmed that Salt Typhoon had hacked at least 200 companies across 80 countries, and the geographic scope — assembled from reporting by TechCrunch, Trend Micro, and multiple government advisories — covers virtually the entire western world. Canada confirmed breaches at its top telecommunications firms. Australia's ASIO director-general publicly confirmed attempts to access critical infrastructure. The UK confirmed a cluster of activity across its telecommunications sector. Singapore confirmed that all four of its major telecoms had been hit, triggering an eleven-month cleanup operation. Across the Five Eyes intelligence alliance and well beyond — South America, Southeast Asia, the Indo-Pacific, Europe — the pattern was the same at every entry point: Cisco routers at the network edge, and behind them the CALEA-style lawful intercept systems that virtually every western government had legally required its telecoms to maintain.\nAnd it did not stop with telecommunications. In December 2025, intrusions were detected in several United States House of Representatives committees and subsequently attributed to Salt Typhoon — meaning that by the end of 2025, the group had moved from wiretapping America's phones to sitting inside America's legislative branch.\nBecause CALEA is not uniquely American — the UK's Investigatory Powers Act imposes the same capabilities, as do similar laws across much of the developed world — Salt Typhoon did not find one backdoor. They found an entire internationally mandated category of backdoor and worked their way through it systematically, country by country, carrier by carrier.\nThe Electronic Frontier Foundation, which had opposed CALEA since the day it passed in 1994, published a single sentence in response to the breach that captured three decades of ignored warnings: \"There is no backdoor that only lets in good guys and keeps out bad guys.\"\n",
+  "totalScenes": 16,
+  "templateCount": 15,
+  "renderCount": 1,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "By the time the breach became public in late 2024, US officials confirmed nine major American carriers had been compromised.",
+      "template": "104-alert-notification",
+      "theme": "TECHNICAL",
+      "reasoning": "Urgent security notification regarding the initial breach discovery.",
+      "content": {
+        "TITLE_TEXT": "BREACH CONFIRMED",
+        "SUBTITLE_TEXT": "US TELECOM INFRASTRUCTURE",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "LATE 2024",
+        "DESCRIPTION_TEXT": "NINE MAJOR CARRIERS COMPROMISED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "The Big Three — AT&T, Verizon, and Lumen Technologies — plus six regional and infrastructure providers including Charter Communications, Windstream, Consolidated Communications, Spectrum, and Viasat.",
+      "template": "76-organization-card",
+      "theme": "TECHNICAL",
+      "reasoning": "Profile card for the affected organizations.",
+      "content": {
+        "TITLE_TEXT": "AFFECTED CARRIERS",
+        "LABEL_1": "BIG THREE",
+        "LABEL_2": "REGIONAL",
+        "LABEL_3": "INFRASTRUCTURE",
+        "TAG_1": "AT&T",
+        "TAG_2": "VERIZON",
+        "TAG_3": "LUMEN",
+        "STAT_VALUE_1": "9",
+        "STAT_VALUE_2": "TOTAL",
+        "STAT_VALUE_3": "COMPROMISED",
+        "CONTEXT_TEXT": "AT&T, VERIZON, LUMEN, CHARTER, WINDSTREAM, CONSOLIDATED, SPECTRUM, VIASAT"
+      },
+      "duration": 12
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Between them, these nine carriers handle the communications of the overwhelming majority of Americans.",
+      "template": "05-donutchart-fill",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the market dominance of the compromised carriers.",
+      "content": {
+        "TITLE_TEXT": "MARKET REACH",
+        "DONUT_VALUE": "85%",
+        "DONUT_LABEL": "US POPULATION",
+        "CONTEXT_TEXT": "COMMUNICATIONS TRAFFIC"
+      },
+      "duration": 8
+    },
+    {
+      "index": 4,
+      "type": "3D_RENDER",
+      "script": "But this was not simply an American story. Canada confirmed breaches at its top telecommunications firms.",
+      "prompt": "Cinematic 3D render of a digital globe with glowing data lines connecting the US and Canada, dark blue background, high-tech aesthetic.",
+      "environment": "3D_RENDER",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "GLOBAL SCOPE",
+        "attribution": "NORTH AMERICAN BREACHES",
+        "tone": "#00ffff"
+      },
+      "duration": 10
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "By August 2025, the FBI confirmed that Salt Typhoon had hacked at least 200 companies across 80 countries,",
+      "template": "139-attack-origin-heatmap",
+      "theme": "TECHNICAL",
+      "reasoning": "Geographic spread of the Salt Typhoon campaign.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL INFECTION",
+        "STAT_VALUE_1": "200",
+        "LABEL_1": "COMPANIES",
+        "STAT_VALUE_2": "80",
+        "LABEL_2": "COUNTRIES",
+        "DESC_1": "SALT TYPHOON CAMPAIGN",
+        "CENTER_LAT": "0",
+        "CENTER_LON": "0",
+        "ZOOM_LEVEL": "2"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "and the geographic scope — assembled from reporting by TechCrunch, Trend Micro, and multiple government advisories — covers virtually the entire western world.",
+      "template": "130-news-article-highlight",
+      "theme": "TECHNICAL",
+      "reasoning": "Citing sources for the breach data.",
+      "content": {
+        "PUBLICATION_NAME": "INTELLIGENCE BRIEF",
+        "ARTICLE_DATE": "AUGUST 2025",
+        "AUTHOR_NAME": "GOVERNMENT ADVISORY",
+        "HEADLINE_TEXT": "WESTERN WORLD IMPACT",
+        "BODY_TEXT_1": "REPORTING BY TECHCRUNCH AND TREND MICRO",
+        "HIGHLIGHT_QUOTE": "VIRTUALLY THE ENTIRE WESTERN WORLD"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "Australia's ASIO director-general publicly confirmed attempts to access critical infrastructure.",
+      "template": "102-annotation-callout",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlighting specific regional security concerns.",
+      "content": {
+        "TITLE_TEXT": "AUSTRALIA",
+        "SUBTITLE_TEXT": "ASIO REPORT",
+        "CALLOUT_HEADER": "CRITICAL INFRASTRUCTURE",
+        "CALLOUT_BODY": "ATTEMPTS TO ACCESS DETECTED",
+        "DATA_LABEL": "ASIO"
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "The UK confirmed a cluster of activity across its telecommunications sector.",
+      "template": "105-zoom-to-detail",
+      "theme": "TECHNICAL",
+      "reasoning": "Focusing on UK sector activity.",
+      "content": {
+        "TITLE_TEXT": "UNITED KINGDOM",
+        "SUBTITLE_TEXT": "TELECOM SECTOR",
+        "DETAIL_LABEL": "ACTIVITY CLUSTER",
+        "DETAIL_BODY": "DETECTED AND CONFIRMED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Singapore confirmed that all four of its major telecoms had been hit, triggering an eleven-month cleanup operation.",
+      "template": "141-breach-counter",
+      "theme": "TECHNICAL",
+      "reasoning": "Quantifying the cleanup duration.",
+      "content": {
+        "STAT_VALUE_1": "4",
+        "RECORDS_COMPROMISED": "11 MONTHS",
+        "LABEL_1": "TELECOMS HIT",
+        "SUB_1": "CLEANUP DURATION",
+        "SUB_2": "SINGAPORE"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "Across the Five Eyes intelligence alliance and well beyond — South America, Southeast Asia, the Indo-Pacific, Europe — the pattern was the same at every entry point:",
+      "template": "19-nodenetwork-centered",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the global network of compromised nodes.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL PATTERN",
+        "ORIGIN_LABEL": "SALT TYPHOON",
+        "NODE_LABEL_1": "FIVE EYES",
+        "NODE_LABEL_2": "SOUTH AMERICA",
+        "NODE_LABEL_3": "SE ASIA",
+        "NODE_LABEL_4": "INDO-PACIFIC",
+        "NODE_LABEL_5": "EUROPE",
+        "NODE_LABEL_6": "NETWORK EDGE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "Cisco routers at the network edge, and behind them the CALEA-style lawful intercept systems that virtually every western government had legally required its telecoms to maintain.",
+      "template": "38-codesnippet-reveal",
+      "theme": "TECHNICAL",
+      "reasoning": "Technical focus on the vulnerability point.",
+      "content": {
+        "TITLE_TEXT": "VULNERABILITY ANALYSIS",
+        "KEY_PATH": "/etc/calea/intercept",
+        "CODE_LINE_1": "ROUTER_CONFIG_EDGE",
+        "CODE_LINE_2": "LAWFUL_INTERCEPT_ENABLED",
+        "CODE_LINE_3": "CALEA_SYSTEM_ACTIVE",
+        "CODE_LINE_4": "BACKDOOR_ACCESS_POINT",
+        "CODE_LINE_5": "GOV_MANDATED_ACCESS",
+        "CODE_LINE_6": "SYSTEM_VULNERABILITY",
+        "CODE_LINE_7": "EXPLOIT_PATH_FOUND",
+        "CODE_LINE_8": "ROOT_ACCESS_GRANTED",
+        "KEY_VALUE": "CALEA_SYSTEM"
+      },
+      "duration": 15
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "And it did not stop with telecommunications. In December 2025, intrusions were detected in several United States House of Representatives committees and subsequently attributed to Salt Typhoon",
+      "template": "104-alert-notification",
+      "theme": "TECHNICAL",
+      "reasoning": "Escalation to legislative branch.",
+      "content": {
+        "TITLE_TEXT": "ESCALATION DETECTED",
+        "SUBTITLE_TEXT": "US LEGISLATIVE BRANCH",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "DECEMBER 2025",
+        "DESCRIPTION_TEXT": "HOUSE COMMITTEES COMPROMISED"
+      },
+      "duration": 12
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "— meaning that by the end of 2025, the group had moved from wiretapping America's phones to sitting inside America's legislative branch.",
+      "template": "119-kill-chain-steps",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the progression of the attack.",
+      "content": {
+        "TITLE_TEXT": "ATTACK EVOLUTION",
+        "STEP_1": "RECON",
+        "STEP_2": "TELECOM BREACH",
+        "STEP_3": "WIRETAPPING",
+        "STEP_4": "LATERAL MOVEMENT",
+        "STEP_5": "LEGISLATIVE ACCESS",
+        "STEP_6": "DATA EXFIL",
+        "STEP_7": "PERSISTENCE",
+        "FOOTER_TEXT": "SALT TYPHOON 2025"
+      },
+      "duration": 12
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "Because CALEA is not uniquely American — the UK's Investigatory Powers Act imposes the same capabilities, as do similar laws across much of the developed world — Salt Typhoon did not find one backdoor.",
+      "template": "112-comparison-table",
+      "theme": "TECHNICAL",
+      "reasoning": "Comparing international backdoor mandates.",
+      "content": {
+        "TITLE_TEXT": "MANDATED BACKDOORS",
+        "HEADER_1": "COUNTRY",
+        "HEADER_2": "LEGISLATION",
+        "HEADER_3": "STATUS",
+        "ROW_LABEL_1": "USA",
+        "VAL_1_1": "CALEA",
+        "VAL_1_2": "ACTIVE",
+        "VAL_1_3": "EXPLOITED"
+      },
+      "duration": 12
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "They found an entire internationally mandated category of backdoor and worked their way through it systematically, country by country, carrier by carrier.",
+      "template": "120-lateral-movement",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the systematic exploitation.",
+      "content": {
+        "TITLE_TEXT": "SYSTEMATIC EXPLOITATION",
+        "SUB_TEXT": "COUNTRY BY COUNTRY",
+        "SOURCE_NODE": "SALT TYPHOON",
+        "HOP_1": "CARRIER A",
+        "HOP_2": "CARRIER B",
+        "HOP_3": "CARRIER C",
+        "TARGET_NODE": "GLOBAL INFRASTRUCTURE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "The Electronic Frontier Foundation, which had opposed CALEA since the day it passed in 1994, published a single sentence in response to the breach that captured three decades of ignored warnings: \"There is no backdoor that only lets in good guys and keeps out bad guys.\"",
+      "template": "77-quote-fullscreen",
+      "theme": "TECHNICAL",
+      "reasoning": "Final punchy claim from EFF.",
+      "content": {
+        "WORD_1": "NO BACKDOOR",
+        "WORD_2": "ONLY LETS IN GOOD GUYS",
+        "LABEL_1": "ELECTRONIC FRONTIER FOUNDATION",
+        "LABEL_2": "1994-2025",
+        "SUB_LABEL": "IGNORED WARNINGS"
+      },
+      "duration": 15
+    }
+  ]
+}

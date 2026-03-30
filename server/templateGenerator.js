@@ -89,7 +89,7 @@ SECTION 1 — CRITICAL TECHNICAL RULES
 8. Every interpolate() MUST use { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
 9. Never call interpolate() inside template literals — assign to a variable first
 10. For lists/arrays of items, use useMemo to filter out empty placeholders: .filter(item => item !== '' && item !== ' ')
-11. Put content placeholder strings in const variables at top of component, or in arrays for list items
+11. Put content placeholder strings in camelCase const variables at top of component (e.g., const titleText = 'TITLE_TEXT'). NEVER use the exact placeholder name as the variable name.
 
 ═══════════════════════════════════════════════════════════
 SECTION 2 — LAYOUT & OVERLAP PREVENTION (MANDATORY)
@@ -155,12 +155,12 @@ SECTION 4 — TIMING STANDARDS
     • 25–40 frames: dramatic — use for hero stats, full-screen reveals
     • Over 50 frames: too slow — audience loses attention
 30. STAGGER BETWEEN SIBLINGS: 8–12 frames between each item in a group. Tight enough to feel connected, spaced enough to be individually readable.
-31. TIMING STRUCTURE for a full template:
-    • Frames 0–20:   Background, grid lines, axes — fade in at low opacity
-    • Frames 20–60:  Main structural frame (containers, axis labels, title)
-    • Frames 60–200: Data/content reveals — each element staggered
-    • Frames 200+:   Final hold — ALL elements fully visible, NOTHING animating
-32. FINAL HOLD: The last 60+ frames must be completely static. Every element at opacity: 1, final scale, final position. This is the frame the audience reads and the auditor screenshots.
+31. TIMING STRUCTURE for a full template (15 seconds / 450 frames):
+    • Frames 0–30:   Background, grid lines, axes — fade in at low opacity
+    • Frames 30–80:  Main structural frame (containers, axis labels, title)
+    • Frames 80–350: Data/content reveals — each element staggered
+    • Frames 350+:   Final hold — ALL elements fully visible, NOTHING animating
+32. FINAL HOLD: The last 100+ frames must be completely static. Every element at opacity: 1, final scale, final position. This is the frame the audience reads and the auditor screenshots.
 33. READING PACE for kinetic text: Reveal one word/phrase every 12–20 frames to match natural reading speed.
 
 ═══════════════════════════════════════════════════════════
@@ -171,11 +171,17 @@ SECTION 5 — VISUAL HIERARCHY & COMPOSITION
 36. VISUAL WEIGHT BALANCE: If left side is heavy (large text block), right side needs a visual anchor (chart, icon, stat). Unbalanced layouts feel unfinished.
 37. BREATHING ROOM: Every element needs minimum 40px of empty space around it. Crowded layouts read as amateur regardless of content quality.
 38. 8px GRID ALIGNMENT: All positions and sizes should be multiples of 8px (8, 16, 24, 32, 40, 48, 64, 80, 96…). Random pixel values like top: 73 are immediately visible as misaligned.
-39. F-PATTERN READING: Western viewers scan top-left → right → down-left. Place most important information top-left or center-top. Put supporting data bottom-right.
-40. VISUAL HIERARCHY SIZING:
-    • Primary (hero): largest, full PRIMARY_COLOR brightness
-    • Secondary (supporting): 65–75% size of primary, SECONDARY_COLOR or 80% brightness
-    • Tertiary (context): 50–60% size of primary, TEXT_ON_SECONDARY or 60% brightness
+39. MODERN UI STANDARDS (MANDATORY):
+    • ROUNDED CORNERS: Every panel, bar, or container MUST have borderRadius: '12px' (for small elements) or '24px' (for large panels). No sharp 90-degree corners.
+    • SUBTLE SHADOWS: Use box-shadow: '0 8px 32px rgba(0,0,0,0.15)' for panels to create depth.
+    • SOFT GRADIENTS: Use very subtle linear gradients for backgrounds (e.g., BACKGROUND_COLOR to a slightly darker/lighter version) to avoid a "flat" look.
+    • GLASSMORPHISM: For overlays, use backdrop-filter: 'blur(10px)' and a semi-transparent background (rgba).
+40. CONTRAST CHECK (MANDATORY):
+    • Text must ALWAYS be high-contrast against its direct background.
+    • If BACKGROUND_COLOR is dark, text MUST be light (rgba(255,255,255,0.92)).
+    • If BACKGROUND_COLOR is light, text MUST be dark (rgba(0,0,0,0.87)).
+    • PRIMARY_COLOR, SECONDARY_COLOR, and ACCENT_COLOR must be chosen/adjusted to remain legible on the current BACKGROUND_COLOR.
+    • Use a "halo" or "shadow" around text if it's placed over a complex background to maintain legibility.
 
 ═══════════════════════════════════════════════════════════
 SECTION 6 — TYPOGRAPHY STANDARDS
@@ -191,10 +197,10 @@ SECTION 6 — TYPOGRAPHY STANDARDS
     • Titles: letterSpacing: '2px' minimum
     • Normal body: letterSpacing: '0.02em'
 43. LINE HEIGHT: Body text lineHeight: 1.5. Titles lineHeight: 1.2. Never let multi-line text have lineHeight below 1.2.
-44. TEXT CONTRAST (WCAG AA minimum 4.5:1):
-    • Light text on dark bg: use 'rgba(255,255,255,0.92)' not pure white (pure white is too hot for video)
-    • Dark text on light bg: use 'rgba(0,0,0,0.87)' not pure black
-    • Never put yellow/orange text on white background or dark blue on black
+44. DYNAMIC BACKGROUNDS:
+    • The BACKGROUND_COLOR placeholder will be replaced by a hex code.
+    • Your styles MUST adapt. Use rgba() math where possible (e.g., color: BACKGROUND_COLOR === '#000000' ? 'white' : 'black' logic is NOT allowed in TSX, use the provided TEXT_ON_ placeholders instead).
+    • TEXT_ON_PRIMARY, TEXT_ON_SECONDARY, etc. are guaranteed to have high contrast with their respective background colors. ALWAYS use them for text overlays.
 45. ALIGNMENT: Left-align all text blocks longer than 3 words. Center-align only single words, numbers, or short labels under icons.
 46. ONE FONT FAMILY: Use only one fontFamily per template. Max two weights (regular + bold). Never mix monospace and sans-serif except hero stat (monospace) + label (sans-serif).
 
@@ -282,10 +288,50 @@ Return valid JSON only. No markdown fences.`
 }
 
 // ─────────────────────────────────────────────
+// Check if a template with a similar name already exists
+// ─────────────────────────────────────────────
+export function findExistingTemplateByName(name) {
+    if (!name) return null;
+    const schemasDir = path.join(__dirname, 'schemas');
+    if (!fs.existsSync(schemasDir)) return null;
+
+    const files = fs.readdirSync(schemasDir).filter(f => f.endsWith('.json'));
+    const searchName = name.toLowerCase().replace(/^\d+-/, '').trim().replace('.tsx', '').replace('.json', '');
+
+    for (const f of files) {
+        const templateId = f.replace('.json', '').toLowerCase().replace(/^\d+-/, '');
+        if (templateId === searchName) {
+            try {
+                const schemaPath = path.join(schemasDir, f);
+                const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+                return {
+                    template: schema.template,
+                    name: schema.name,
+                    description: schema.description,
+                    fields: schema.fields
+                };
+            } catch (e) {
+                // skip
+            }
+        }
+    }
+    return null;
+}
+
+// ─────────────────────────────────────────────
 // Main: generate a new template
 // ─────────────────────────────────────────────
 export async function generateTemplate(description, options = {}) {
   const { suggestedName = null, category = 'generated' } = options
+
+  // 0. Check if it already exists to avoid redundant generation
+  if (suggestedName) {
+      const existing = findExistingTemplateByName(suggestedName)
+      if (existing) {
+          console.log(`   ♻️  Reusing existing template: ${existing.template}`)
+          return existing
+      }
+  }
 
   console.log(`\n🏗️  Template Generator: "${description.substring(0, 80)}..."`)
 
@@ -305,7 +351,7 @@ REQUIREMENTS:
 - Category: ${category}
 - The template should be REUSABLE — it should work for any content that fits this visualization pattern
 - Include 4-8 content placeholder fields (enough to be useful, not so many it's rigid)
-- Animation should last ~8-10 seconds (240-300 frames at 30fps)
+- Animation should last ~15 seconds (450 frames at 30fps)
 - Make it visually impressive with staggered reveals
 
 Return the JSON object with "tsx" and "schema" keys.`
@@ -361,7 +407,7 @@ Return the JSON object with "tsx" and "schema" keys.`
   // Update schema with correct template name
   parsed.schema.template = fullName
   if (!parsed.schema.category) parsed.schema.category = category
-  if (!parsed.schema.duration) parsed.schema.duration = 9
+  if (!parsed.schema.duration) parsed.schema.duration = 15
   if (!parsed.schema.tags) parsed.schema.tags = ['generated', 'auto']
 
   // Validate TSX has required structure

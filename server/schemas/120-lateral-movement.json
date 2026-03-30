@@ -1,0 +1,22 @@
+{
+    "template":  "120-lateral-movement",
+    "name":  "Lateral Movement Graph",
+    "description":  "Animated network graph showing an attacker hopping between nodes to reach a target",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "network",
+                 "security",
+                 "attack",
+                 "graph"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main title of the attack sequence",
+                   "SUB_TEXT":  "Contextual description of the movement",
+                   "SOURCE_NODE":  "Label for the starting point",
+                   "HOP_1":  "Label for the first compromised system",
+                   "HOP_2":  "Label for the second compromised system",
+                   "HOP_3":  "Label for the third compromised system",
+                   "TARGET_NODE":  "Label for the final target"
+               }
+}

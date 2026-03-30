@@ -1,0 +1,27 @@
+{
+    "template":  "133-ioc-list-stream",
+    "name":  "IOC List Stream",
+    "description":  "A vertical scrolling feed of Indicators of Compromise with type badges and staggered entrance animations.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "security",
+                 "threat-intel",
+                 "list",
+                 "data-feed"
+             ],
+    "fields":  {
+                   "IOC_VAL_1":  "Value for first IOC (e.g. 192.168.1.1)",
+                   "IOC_TYPE_1":  "Label for first IOC",
+                   "IOC_VAL_2":  "Value for second IOC",
+                   "IOC_TYPE_2":  "Label for second IOC",
+                   "IOC_VAL_3":  "Value for third IOC",
+                   "IOC_TYPE_3":  "Label for third IOC",
+                   "IOC_VAL_4":  "Value for fourth IOC",
+                   "IOC_TYPE_4":  "Label for fourth IOC",
+                   "IOC_VAL_5":  "Value for fifth IOC",
+                   "IOC_TYPE_5":  "Label for fifth IOC",
+                   "IOC_VAL_6":  "Value for sixth IOC",
+                   "IOC_TYPE_6":  "Label for sixth IOC"
+               }
+}

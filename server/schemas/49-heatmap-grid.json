@@ -1,16 +1,16 @@
 {
-  "template": "49-heatmap-grid",
-  "description": "5x7 heatmap grid showing intensity by time period",
-  "fields": {
-    "TITLE_TEXT": "ATTACK FREQUENCY HEATMAP",
-    "LINE_LABEL_1": "Hour of Day",
-    "LINE_LABEL_2": "Day of Week"
-  },
-  "name": "49-heatmap-grid",
-  "category": "charts",
-  "duration": 10,
-  "tags": [
-    "grid",
-    "icons"
-  ]
+    "template":  "49-heatmap-grid",
+    "description":  "5x7 heatmap grid showing intensity by time period",
+    "fields":  {
+                   "TITLE_TEXT":  "ATTACK FREQUENCY HEATMAP",
+                   "LINE_LABEL_1":  "Hour of Day",
+                   "LINE_LABEL_2":  "Day of Week"
+               },
+    "name":  "49-heatmap-grid",
+    "category":  "charts",
+    "duration":  15,
+    "tags":  [
+                 "grid",
+                 "icons"
+             ]
 }

@@ -1,0 +1,132 @@
+{
+  "timestamp": "2026-03-28T14:46:55.928Z",
+  "scriptLength": 518,
+  "scriptPreview": "Somewhere in Washington D.C., in the late summer of 2023, a phone rings — and the person who answers it has no reason to think anything is wrong. Their network is provided by a company that employs th",
+  "scriptFull": "Somewhere in Washington D.C., in the late summer of 2023, a phone rings — and the person who answers it has no reason to think anything is wrong. Their network is provided by a company that employs thousands of cybersecurity professionals. Their government runs agencies whose entire budget is dedicated to detecting exactly this kind of threat. Their calls are protected, they believe, by the most advanced surveillance infrastructure in the world.\nThey answer, and in Chengdu, a recording begins.\nIt is still there.\n",
+  "totalScenes": 6,
+  "templateCount": 5,
+  "renderCount": 1,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "3D_RENDER",
+      "script": "Somewhere in Washington D.C., in the late summer of 2023, a phone rings",
+      "prompt": "Cinematic close-up of a modern smartphone resting on a dark mahogany desk in a dimly lit Washington D.C. office, late summer sunlight filtering through blinds, shallow depth of field, photorealistic, 8k.",
+      "environment": "office-interior",
+      "camera": "close-up",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "WASHINGTON D.C. | AUGUST 2023",
+        "attribution": "SECURE LINE",
+        "tone": "#00FFFF"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "— and the person who answers it has no reason to think anything is wrong.",
+      "template": "106-word-highlight-scan",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the false sense of security through a scanning text effect.",
+      "content": {
+        "WORD_1": "NO",
+        "WORD_2": "REASON",
+        "WORD_3": "TO",
+        "WORD_4": "THINK",
+        "WORD_5": "ANYTHING",
+        "WORD_6": "IS",
+        "WORD_7": "WRONG",
+        "WORD_8": ""
+      },
+      "duration": 10
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "Their network is provided by a company that employs thousands of cybersecurity professionals.",
+      "template": "76-organization-card",
+      "theme": "CLEAN",
+      "reasoning": "Displays the scale of the network provider's workforce.",
+      "content": {
+        "TITLE_TEXT": "NETWORK PROVIDER",
+        "LABEL_1": "EMPLOYEES",
+        "LABEL_2": "SECTOR",
+        "LABEL_3": "STATUS",
+        "TAG_1": "TELECOM",
+        "TAG_2": "INFRASTRUCTURE",
+        "TAG_3": "SECURE",
+        "STAT_VALUE_1": "12,000+",
+        "STAT_VALUE_2": "CYBER",
+        "STAT_VALUE_3": "ACTIVE",
+        "CONTEXT_TEXT": "Tier-1 global network infrastructure provider."
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "Their government runs agencies whose entire budget is dedicated to detecting exactly this kind of threat.",
+      "template": "01-statcluster-3box",
+      "theme": "COLD",
+      "reasoning": "Visualizes the massive financial commitment to threat detection.",
+      "content": {
+        "STAT_VALUE_1": "$85B",
+        "STAT_VALUE_2": "24/7",
+        "STAT_VALUE_3": "100%",
+        "LABEL_1": "ANNUAL BUDGET",
+        "LABEL_2": "MONITORING",
+        "LABEL_3": "COVERAGE",
+        "SUB_1": "INTEL SPEND",
+        "SUB_2": "ACTIVE OPS",
+        "SUB_3": "THREAT DETECTION",
+        "VERDICT_TEXT": "MAXIMUM VIGILANCE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "Their calls are protected, they believe, by the most advanced surveillance infrastructure in the world.",
+      "template": "19-nodenetwork-centered",
+      "theme": "TECHNICAL",
+      "reasoning": "Illustrates the complex, interconnected nature of global surveillance infrastructure.",
+      "content": {
+        "TITLE_TEXT": "SURVEILLANCE GRID",
+        "ORIGIN_LABEL": "TARGET",
+        "NODE_LABEL_1": "SATELLITE",
+        "NODE_LABEL_2": "FIBER",
+        "NODE_LABEL_3": "ENCRYPTION",
+        "NODE_LABEL_4": "SIGNAL",
+        "NODE_LABEL_5": "GATEWAY",
+        "NODE_LABEL_6": "PROTOCOL"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "They answer, and in Chengdu, a recording begins. It is still there.",
+      "template": "150-mobile-chat-ui",
+      "theme": "THREAT",
+      "reasoning": "Shows the immediate, cold transition to the recording state.",
+      "content": {
+        "CONTACT_NAME": "CHENGDU_NODE",
+        "STATUS_TEXT": "RECORDING ACTIVE",
+        "MSG_1": "CONNECTION ESTABLISHED",
+        "SENDER_1": "SYSTEM",
+        "MSG_2": "AUDIO STREAM START",
+        "SENDER_2": "SYSTEM",
+        "MSG_3": "DATA CAPTURE",
+        "SENDER_3": "SYSTEM",
+        "MSG_4": "PERSISTENCE CONFIRMED",
+        "SENDER_4": "SYSTEM",
+        "MSG_5": "FILE SAVED",
+        "SENDER_5": "SYSTEM",
+        "MSG_6": "STILL RECORDING",
+        "SENDER_6": "SYSTEM"
+      },
+      "duration": 15
+    }
+  ]
+}

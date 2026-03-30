@@ -1,0 +1,20 @@
+{
+    "template":  "132-ransom-note-reveal",
+    "name":  "Ransom Note Reveal",
+    "description":  "A high-tension, typewriter-style reveal of a ransom note with red accent warnings and data fields.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "ransomware",
+                 "security",
+                 "alert",
+                 "cyber"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main heading, e.g. \u0027SYSTEM ENCRYPTED\u0027",
+                   "BODY_TEXT":  "The main message body explaining the situation.",
+                   "BTC_ADDRESS":  "The cryptocurrency wallet address for payment.",
+                   "DEADLINE_TEXT":  "The time limit for the ransom payment.",
+                   "WARNING_TEXT":  "A final ominous warning message."
+               }
+}

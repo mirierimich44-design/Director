@@ -1,0 +1,25 @@
+{
+    "template":  "113-bracket-tournament",
+    "name":  "Tournament Bracket",
+    "description":  "An 8-team elimination bracket animation with staggered reveals and a central winner highlight.",
+    "category":  "layout",
+    "duration":  15,
+    "tags":  [
+                 "bracket",
+                 "tournament",
+                 "competition",
+                 "elimination"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main title for the bracket",
+                   "TEAM_1":  "Team name 1",
+                   "TEAM_2":  "Team name 2",
+                   "TEAM_3":  "Team name 3",
+                   "TEAM_4":  "Team name 4",
+                   "TEAM_5":  "Team name 5",
+                   "TEAM_6":  "Team name 6",
+                   "TEAM_7":  "Team name 7",
+                   "TEAM_8":  "Team name 8",
+                   "WINNER_TEXT":  "Name of the final winner"
+               }
+}

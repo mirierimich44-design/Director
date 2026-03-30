@@ -1,0 +1,23 @@
+{
+    "template":  "129-log-anomaly-detect",
+    "name":  "Log Anomaly Detection",
+    "description":  "A stream of log entries appearing on screen, with the final entry highlighting as a critical security anomaly.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "logs",
+                 "security",
+                 "threat",
+                 "data"
+             ],
+    "fields":  {
+                   "LOG_1":  "First log entry text",
+                   "LOG_2":  "Second log entry text",
+                   "LOG_3":  "Third log entry text",
+                   "LOG_4":  "Fourth log entry text",
+                   "LOG_5":  "Fifth log entry text",
+                   "LOG_6":  "Sixth log entry text",
+                   "LOG_7":  "Seventh log entry text",
+                   "LOG_8":  "Final anomalous log entry text"
+               }
+}

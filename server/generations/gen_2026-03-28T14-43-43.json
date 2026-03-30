@@ -1,0 +1,289 @@
+{
+  "timestamp": "2026-03-28T14:43:43.388Z",
+  "scriptLength": 3030,
+  "scriptPreview": "In December 2024, AT&T issued a statement. \"We detect no activity by nation-state actors in our networks at this time.\"\nRead that sentence again. Carefully.\nThey did not say no data was stolen. They d",
+  "scriptFull": "In December 2024, AT&T issued a statement. \"We detect no activity by nation-state actors in our networks at this time.\"\nRead that sentence again. Carefully.\nThey did not say no data was stolen. They did not say the breach had not occurred. They did not say anyone's communications were safe. They said they did not currently detect activity.\nThere is something else that barely made headlines. When the breach was first discovered, US officials attempted to keep the names of the nine compromised carriers out of the press entirely. The FBI and the intelligence community wanted to manage the disclosure — contain the story, control the narrative, avoid the market and public reaction that would follow. That effort failed. The Wall Street Journal obtained the names and published them. The story broke not because the government chose transparency, but because it couldn't stop a leak.\nVerizon's statement was similarly precise: \"Verizon has contained the cyber incident.\" An \"independent and highly respected cybersecurity firm\" had confirmed containment. They declined to name the firm.\nSenator Maria Cantwell, ranking member of the Senate Commerce Committee, was not satisfied. In June 2025, she wrote to the CEOs of AT&T and Verizon demanding documentation — the actual remediation plans, the vulnerability assessments, the records of what had been accessed and when. Both companies confirmed the existence of reports by Mandiant, a forensics firm, that would contain exactly this information. Neither company provided the reports.\nEight months later, in February 2026, Cantwell wrote again — this time to a Senate committee chairman, demanding that the telecom CEOs testify in person. Her letter cited expert testimony that the networks were still not fully secure. That Salt Typhoon may still have active footholds. That the scale of the network — tens of thousands of endpoints — made it effectively impossible to guarantee complete eradication.\nThere was one more institutional failure that received almost no coverage.\nIn January 2025, the US Treasury Department sanctioned Sichuan Juxinhe Network Technology Co., a Chinese cybersecurity company it accused of having direct involvement with Salt Typhoon — making it the only named entity the US government officially linked to the operation. The sanction was real, but its practical effect was limited: the company operates in China, beyond the reach of American courts, and the operatives behind it continue their work regardless.\nIn March 2025, the Trump administration fired every member of the Cyber Safety Review Board before it could complete its investigation of the Salt Typhoon breach. The board had been specifically convened to produce a definitive public account of what happened, how it happened, and what structural changes needed to follow — and that report will now never be written, because the investigation was terminated and the accountability process was quietly closed before it could produce findings that might have been inconvenient for anyone.\n",
+  "totalScenes": 16,
+  "templateCount": 15,
+  "renderCount": 1,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "In December 2024, AT&T issued a statement. \"We detect no activity by nation-state actors in our networks at this time.\"",
+      "template": "155-calendar-date-highlight",
+      "theme": "TECHNICAL",
+      "reasoning": "Establishing the timeline of the initial corporate response.",
+      "content": {
+        "TARGET_MONTH": "DECEMBER",
+        "TARGET_YEAR": "2024",
+        "TARGET_DAY": "01",
+        "EVENT_TITLE": "AT&T STATEMENT",
+        "EVENT_DESC": "NO NATION-STATE ACTIVITY DETECTED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "3D_RENDER",
+      "script": "Read that sentence again. Carefully. They did not say no data was stolen. They did not say the breach had not occurred. They did not say anyone's communications were safe. They said they did not currently detect activity.",
+      "prompt": "Cinematic, photorealistic shot of a dark, high-tech server room with blinking blue status lights. The camera slowly dollies forward into the darkness, emphasizing the lack of clarity in the corporate statement.",
+      "environment": "physical spaces",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "Corporate Ambiguity",
+        "attribution": "Analysis",
+        "tone": "#FF6600"
+      },
+      "duration": 15
+    },
+    {
+      "index": 3,
+      "type": "TEMPLATE",
+      "script": "There is something else that barely made headlines. When the breach was first discovered, US officials attempted to keep the names of the nine compromised carriers out of the press entirely.",
+      "template": "157-archive-newspaper-reel",
+      "theme": "INTEL",
+      "reasoning": "Visualizing the suppression of news regarding the breach.",
+      "content": {
+        "HEADLINE_1": "BREACH DISCOVERED",
+        "HEADLINE_2": "OFFICIALS SILENT",
+        "TARGET_HEADLINE": "CARRIER NAMES SUPPRESSED",
+        "PUBLICATION_NAME": "GOVERNMENT ARCHIVE",
+        "DATE_TEXT": "2024-2025",
+        "IMAGE_URL": ""
+      },
+      "duration": 12
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "The FBI and the intelligence community wanted to manage the disclosure — contain the story, control the narrative, avoid the market and public reaction that would follow.",
+      "template": "119-kill-chain-steps",
+      "theme": "COLD",
+      "reasoning": "Mapping the government's strategy to control the narrative.",
+      "content": {
+        "TITLE_TEXT": "DISCLOSURE MANAGEMENT",
+        "STEP_1": "CONTAIN STORY",
+        "STEP_2": "CONTROL NARRATIVE",
+        "STEP_3": "AVOID MARKET REACTION",
+        "STEP_4": "AVOID PUBLIC REACTION",
+        "STEP_5": "",
+        "STEP_6": "",
+        "STEP_7": "",
+        "FOOTER_TEXT": "STRATEGIC SUPPRESSION"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "That effort failed. The Wall Street Journal obtained the names and published them. The story broke not because the government chose transparency, but because it couldn't stop a leak.",
+      "template": "130-news-article-highlight",
+      "theme": "CLEAN",
+      "reasoning": "Highlighting the failure of the suppression effort.",
+      "content": {
+        "PUBLICATION_NAME": "WALL STREET JOURNAL",
+        "ARTICLE_DATE": "2025",
+        "AUTHOR_NAME": "INVESTIGATIVE DESK",
+        "HEADLINE_TEXT": "LEAKED CARRIER NAMES",
+        "BODY_TEXT_1": "GOVERNMENT ATTEMPTED TO HIDE DATA",
+        "HIGHLIGHT_QUOTE": "COULD NOT STOP A LEAK"
+      },
+      "duration": 12
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Verizon's statement was similarly precise: \"Verizon has contained the cyber incident.\" An \"independent and highly respected cybersecurity firm\" had confirmed containment. They declined to name the firm.",
+      "template": "76-organization-card",
+      "theme": "TECHNICAL",
+      "reasoning": "Profile of the Verizon incident response.",
+      "content": {
+        "TITLE_TEXT": "VERIZON INCIDENT",
+        "LABEL_1": "STATUS",
+        "LABEL_2": "CONTAINMENT",
+        "LABEL_3": "FIRM",
+        "TAG_1": "CYBER",
+        "TAG_2": "CONTAINED",
+        "TAG_3": "ANONYMOUS",
+        "STAT_VALUE_1": "100%",
+        "STAT_VALUE_2": "CONFIRMED",
+        "STAT_VALUE_3": "UNKNOWN",
+        "CONTEXT_TEXT": "VERIZON DECLINED TO NAME THE FIRM"
+      },
+      "duration": 12
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "Senator Maria Cantwell, ranking member of the Senate Commerce Committee, was not satisfied.",
+      "template": "75-person-profile",
+      "theme": "INTEL",
+      "reasoning": "Introducing the key political figure.",
+      "content": {
+        "TITLE_TEXT": "MARIA CANTWELL",
+        "LABEL_1": "ROLE",
+        "LABEL_2": "COMMITTEE",
+        "LABEL_3": "STATUS",
+        "TAG_1": "SENATE",
+        "TAG_2": "COMMERCE",
+        "TAG_3": "OVERSIGHT",
+        "CONTEXT_TEXT": "RANKING MEMBER NOT SATISFIED"
+      },
+      "duration": 8
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "In June 2025, she wrote to the CEOs of AT&T and Verizon demanding documentation — the actual remediation plans, the vulnerability assessments, the records of what had been accessed and when.",
+      "template": "107-redacted-reveal",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizing the demand for classified documentation.",
+      "content": {
+        "CLASSIFIED_TITLE": "DEMAND FOR RECORDS",
+        "LINE_1": "REMEDIATION PLANS",
+        "LINE_2": "VULNERABILITY ASSESSMENTS",
+        "LINE_3": "ACCESS RECORDS",
+        "LINE_4": "TIMESTAMPS",
+        "LINE_5": "MANDIANT REPORTS",
+        "LINE_6": "PENDING"
+      },
+      "duration": 12
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "Both companies confirmed the existence of reports by Mandiant, a forensics firm, that would contain exactly this information. Neither company provided the reports.",
+      "template": "112-comparison-table",
+      "theme": "TECHNICAL",
+      "reasoning": "Comparing the existence of reports vs. their availability.",
+      "content": {
+        "TITLE_TEXT": "MANDIANT REPORT STATUS",
+        "HEADER_1": "COMPANY",
+        "HEADER_2": "REPORT EXISTS",
+        "HEADER_3": "PROVIDED",
+        "ROW_LABEL_1": "AT&T / VERIZON",
+        "VAL_1_1": "YES",
+        "VAL_1_2": "YES",
+        "VAL_1_3": "NO"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "TEMPLATE",
+      "script": "Eight months later, in February 2026, Cantwell wrote again — this time to a Senate committee chairman, demanding that the telecom CEOs testify in person.",
+      "template": "155-calendar-date-highlight",
+      "theme": "INTEL",
+      "reasoning": "Escalation of the oversight process.",
+      "content": {
+        "TARGET_MONTH": "FEBRUARY",
+        "TARGET_YEAR": "2026",
+        "TARGET_DAY": "15",
+        "EVENT_TITLE": "TESTIMONY DEMAND",
+        "EVENT_DESC": "CEOS CALLED TO TESTIFY"
+      },
+      "duration": 10
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "Her letter cited expert testimony that the networks were still not fully secure. That Salt Typhoon may still have active footholds. That the scale of the network — tens of thousands of endpoints — made it effectively impossible to guarantee complete eradication.",
+      "template": "140-botnet-spread",
+      "theme": "THREAT",
+      "reasoning": "Visualizing the persistent threat within the network.",
+      "content": {
+        "TITLE_TEXT": "NETWORK FOOTHOLDS",
+        "STAT_VALUE_1": "10,000+",
+        "STAT_VALUE_2": "ACTIVE",
+        "DESC_1": "IMPOSSIBLE TO ERADICATE"
+      },
+      "duration": 15
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "There was one more institutional failure that received almost no coverage.",
+      "template": "158-chapter-word-drop",
+      "theme": "DARK",
+      "reasoning": "Transition to the final institutional failure.",
+      "content": {
+        "CHAPTER_WORD": "FAILURE",
+        "CHAPTER_SUB": "INSTITUTIONAL",
+        "CONTEXT_TEXT": "NO COVERAGE"
+      },
+      "duration": 8
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "In January 2025, the US Treasury Department sanctioned Sichuan Juxinhe Network Technology Co., a Chinese cybersecurity company it accused of having direct involvement with Salt Typhoon — making it the only named entity the US government officially linked to the operation.",
+      "template": "80-threat-actor-card",
+      "theme": "THREAT",
+      "reasoning": "Profile of the sanctioned entity.",
+      "content": {
+        "TITLE_TEXT": "SICHUAN JUXINHE",
+        "LABEL_1": "NATION",
+        "LABEL_2": "LINK",
+        "LABEL_3": "STATUS",
+        "TAG_1": "CHINA",
+        "TAG_2": "SALT TYPHOON",
+        "TAG_3": "SANCTIONED",
+        "STAT_VALUE_1": "1",
+        "STAT_VALUE_2": "LINKED",
+        "CONTEXT_TEXT": "ONLY NAMED ENTITY",
+        "ALERT_TEXT": "SANCTIONED"
+      },
+      "duration": 15
+    },
+    {
+      "index": 14,
+      "type": "TEMPLATE",
+      "script": "The sanction was real, but its practical effect was limited: the company operates in China, beyond the reach of American courts, and the operatives behind it continue their work regardless.",
+      "template": "07-comparisonchart-dual",
+      "theme": "COLD",
+      "reasoning": "Comparing the sanction vs. the reality of the threat.",
+      "content": {
+        "TITLE_TEXT": "SANCTION EFFECTIVENESS",
+        "COMPARE_LABEL_1": "SANCTION",
+        "COMPARE_LABEL_2": "OPERATIONS",
+        "COMPARE_VALUE_1": "100%",
+        "COMPARE_VALUE_2": "100%",
+        "CONTEXT_TEXT": "OPERATIONS CONTINUE REGARDLESS"
+      },
+      "duration": 12
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "In March 2025, the Trump administration fired every member of the Cyber Safety Review Board before it could complete its investigation of the Salt Typhoon breach.",
+      "template": "104-alert-notification",
+      "theme": "THREAT",
+      "reasoning": "High-urgency alert regarding the board termination.",
+      "content": {
+        "TITLE_TEXT": "BOARD TERMINATED",
+        "SUBTITLE_TEXT": "MARCH 2025",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "2025-03",
+        "DESCRIPTION_TEXT": "INVESTIGATION HALTED"
+      },
+      "duration": 12
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "The board had been specifically convened to produce a definitive public account of what happened, how it happened, and what structural changes needed to follow — and that report will now never be written, because the investigation was terminated and the accountability process was quietly closed before it could produce findings that might have been inconvenient for anyone.",
+      "template": "108-stamped-verdict",
+      "theme": "DARK",
+      "reasoning": "Finality of the accountability closure.",
+      "content": {
+        "STAMP_TEXT": "CLOSED",
+        "SUB_TEXT": "ACCOUNTABILITY TERMINATED",
+        "DATE_TEXT": "2025",
+        "ID_TEXT": "CSRB-FINAL"
+      },
+      "duration": 15
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+    "template":  "149-interest-rate-gauge",
+    "name":  "Interest Rate Gauge",
+    "description":  "A professional financial gauge visualization showing current interest rates against a historical spectrum.",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "economy",
+                 "gauge",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main header for the gauge",
+                   "CURRENT_RATE_VALUE":  "The numeric value to display (e.g. 5.25%)",
+                   "LABEL_LOW":  "Label for the left side of the gauge (e.g. LOW)",
+                   "LABEL_HIGH":  "Label for the right side of the gauge (e.g. HIGH)",
+                   "SUB_TEXT":  "Contextual sub-label below the rate"
+               }
+}

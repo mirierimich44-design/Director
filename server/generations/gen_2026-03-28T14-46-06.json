@@ -1,0 +1,355 @@
+{
+  "timestamp": "2026-03-28T14:46:06.564Z",
+  "scriptLength": 2745,
+  "scriptPreview": "In the days after the breach became public, the FBI did something that captured the entire situation in a single institutional moment: its cybersecurity officials publicly urged Americans to stop usin",
+  "scriptFull": "In the days after the breach became public, the FBI did something that captured the entire situation in a single institutional moment: its cybersecurity officials publicly urged Americans to stop using regular phone calls and text messages for anything sensitive, recommending instead that people switch to Signal, FaceTime, and end-to-end encrypted applications. The agency whose predecessor law — CALEA — had created the vulnerability was now telling the public to route around that vulnerability, because the system it had spent three decades insisting was secure had just been used by a foreign intelligence service to read its own wiretap logs.\nThe debate over encryption backdoors has been running since 1994. Law enforcement has consistently argued that end-to-end encryption — the kind that cannot be intercepted even by the carrier — makes it effectively impossible to investigate criminals and terrorists, and so they have pushed for keys, for backdoors, for lawful access mechanisms that preserve the government's ability to read what it needs to read. The security community has consistently responded that no such system can be built securely, that any mechanism designed to allow authorized access will inevitably be exploited by unauthorized access, and that a backdoor cannot distinguish between a federal judge issuing a lawful order and a foreign intelligence service looking for an open door.\nSalt Typhoon is not a theoretical argument in that debate. It is the empirical proof. The system built for authorized access became the entry point for the most consequential telecommunications breach in American history, China read American wiretaps for years without detection, and the FBI is now urging people to use tools that make CALEA-style interception technically impossible. The argument is settled. The wrong side won it in 1994, and the country has spent the years since building the infrastructure that would eventually make that defeat catastrophic.\nThere is no clean resolution to this story. Salt Typhoon remains active — as of early 2026, despite sanctions, despite the ten-million-dollar bounty, and despite public attribution by every major Western intelligence agency, the group continues to breach telecommunications networks around the world. The FCC has acknowledged that vulnerabilities are still being exploited. Security researchers have warned that some of the compromises may never be fully remediated, that networks of the scale involved make complete eradication effectively impossible to verify, and that in some cases the attackers may simply have built access paths too deeply embedded to find. CALEA remains law, and the next group willing to use it against America is already looking for a way in.\n",
+  "totalScenes": 20,
+  "templateCount": 17,
+  "renderCount": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "type": "TEMPLATE",
+      "script": "In the days after the breach became public, the FBI did something that captured the entire situation in a single institutional moment:",
+      "template": "155-calendar-date-highlight",
+      "theme": "TECHNICAL",
+      "reasoning": "Sets the temporal context for the institutional shift.",
+      "content": {
+        "TARGET_MONTH": "OCTOBER",
+        "TARGET_YEAR": "2025",
+        "TARGET_DAY": "14",
+        "EVENT_TITLE": "BREACH DISCLOSURE",
+        "EVENT_DESC": "FBI INSTITUTIONAL RESPONSE"
+      },
+      "duration": 10
+    },
+    {
+      "index": 2,
+      "type": "TEMPLATE",
+      "script": "its cybersecurity officials publicly urged Americans to stop using regular phone calls and text messages for anything sensitive, recommending instead that people switch to Signal, FaceTime, and end-to-end encrypted applications.",
+      "template": "150-mobile-chat-ui",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the shift to secure communication platforms.",
+      "content": {
+        "CONTACT_NAME": "FBI ADVISORY",
+        "STATUS_TEXT": "SECURE CHANNELS ONLY",
+        "MSG_1": "Stop using regular SMS.",
+        "SENDER_1": "FBI",
+        "MSG_2": "Switch to Signal.",
+        "SENDER_2": "FBI",
+        "MSG_3": "Use FaceTime.",
+        "SENDER_3": "FBI",
+        "MSG_4": "Enable E2EE.",
+        "SENDER_4": "FBI",
+        "MSG_5": "",
+        "SENDER_5": "",
+        "MSG_6": "",
+        "SENDER_6": ""
+      },
+      "duration": 12
+    },
+    {
+      "index": 3,
+      "type": "3D_RENDER",
+      "script": "The agency whose predecessor law — CALEA — had created the vulnerability was now telling the public to route around that vulnerability,",
+      "prompt": "Cinematic close-up of a high-tech server rack in a dark, cold data center. A single network port is glowing with a pulsing red light, symbolizing a hardware-level vulnerability. The camera slowly dollies forward into the port, emphasizing the structural flaw.",
+      "environment": "physical spaces",
+      "camera": "zoom-in",
+      "motion": "zoom-in",
+      "lower_third": {
+        "text": "CALEA VULNERABILITY",
+        "attribution": "INFRASTRUCTURE ANALYSIS",
+        "tone": "#FF0000"
+      },
+      "duration": 10
+    },
+    {
+      "index": 4,
+      "type": "TEMPLATE",
+      "script": "because the system it had spent three decades insisting was secure had just been used by a foreign intelligence service to read its own wiretap logs.",
+      "template": "127-wireshark-row-stream",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the unauthorized access to wiretap logs.",
+      "content": {
+        "SRC_IP_1": "192.168.1.1",
+        "DST_IP_1": "10.0.0.5",
+        "PROTO_1": "TCP",
+        "LEN_1": "1500",
+        "INFO_1": "WIRETAP_LOG_ACCESS",
+        "SRC_IP_5": "172.16.0.20",
+        "INFO_5": "UNAUTHORIZED_READ"
+      },
+      "duration": 12
+    },
+    {
+      "index": 5,
+      "type": "TEMPLATE",
+      "script": "The debate over encryption backdoors has been running since 1994.",
+      "template": "14-timeline-horizontal",
+      "theme": "CLEAN",
+      "reasoning": "Establishes the long-standing nature of the debate.",
+      "content": {
+        "TITLE_TEXT": "ENCRYPTION DEBATE TIMELINE",
+        "DATE_1": "1994",
+        "DATE_2": "2005",
+        "DATE_3": "2015",
+        "DATE_4": "2020",
+        "DATE_5": "2025",
+        "DATE_6": "2026",
+        "EVENT_1": "CALEA ENACTED",
+        "EVENT_2": "DIGITAL TRANSITION",
+        "EVENT_3": "MOBILE ENCRYPTION",
+        "EVENT_4": "BACKDOOR PUSH",
+        "EVENT_5": "SALT TYPHOON",
+        "EVENT_6": "DEBATE SETTLED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 6,
+      "type": "TEMPLATE",
+      "script": "Law enforcement has consistently argued that end-to-end encryption — the kind that cannot be intercepted even by the carrier — makes it effectively impossible to investigate criminals and terrorists,",
+      "template": "07-comparisonchart-dual",
+      "theme": "TECHNICAL",
+      "reasoning": "Contrasts the law enforcement perspective on investigation.",
+      "content": {
+        "TITLE_TEXT": "INVESTIGATION IMPACT",
+        "COMPARE_LABEL_1": "PRE-ENCRYPTION",
+        "COMPARE_LABEL_2": "POST-ENCRYPTION",
+        "COMPARE_VALUE_1": "95%",
+        "COMPARE_VALUE_2": "12%",
+        "CONTEXT_TEXT": "INVESTIGATIVE SUCCESS RATE"
+      },
+      "duration": 10
+    },
+    {
+      "index": 7,
+      "type": "TEMPLATE",
+      "script": "and so they have pushed for keys, for backdoors, for lawful access mechanisms that preserve the government's ability to read what it needs to read.",
+      "template": "121-exploit-chain",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the requested access mechanism chain.",
+      "content": {
+        "STEP_1_LABEL": "KEY GENERATION",
+        "STEP_1_DESC": "MASTER KEY CREATION",
+        "STEP_2_LABEL": "BACKDOOR",
+        "STEP_2_DESC": "SYSTEM HOOK",
+        "STEP_3_LABEL": "LAWFUL ACCESS",
+        "STEP_3_DESC": "GOVERNMENT INTERCEPT",
+        "STEP_4_LABEL": "DATA READ",
+        "STEP_4_DESC": "LOG EXFILTRATION",
+        "STEP_5_LABEL": "VULNERABILITY",
+        "STEP_5_DESC": "EXPLOITABLE PATH"
+      },
+      "duration": 12
+    },
+    {
+      "index": 8,
+      "type": "TEMPLATE",
+      "script": "The security community has consistently responded that no such system can be built securely, that any mechanism designed to allow authorized access will inevitably be exploited by unauthorized access,",
+      "template": "120-lateral-movement",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows how authorized access becomes unauthorized.",
+      "content": {
+        "TITLE_TEXT": "ACCESS EXPLOITATION",
+        "SUB_TEXT": "AUTHORIZED TO UNAUTHORIZED",
+        "SOURCE_NODE": "GOV_KEY",
+        "HOP_1": "SYSTEM_HOOK",
+        "HOP_2": "BACKDOOR",
+        "HOP_3": "EXPLOIT",
+        "TARGET_NODE": "THREAT_ACTOR"
+      },
+      "duration": 12
+    },
+    {
+      "index": 9,
+      "type": "TEMPLATE",
+      "script": "and that a backdoor cannot distinguish between a federal judge issuing a lawful order and a foreign intelligence service looking for an open door.",
+      "template": "104-alert-notification",
+      "theme": "TECHNICAL",
+      "reasoning": "Highlights the danger of indiscriminate access.",
+      "content": {
+        "TITLE_TEXT": "CRITICAL SECURITY ALERT",
+        "SUBTITLE_TEXT": "BACKDOOR INDISTINCTION",
+        "SEVERITY_LEVEL": "CRITICAL",
+        "TIMESTAMP_TEXT": "2026-01-15 09:00:00",
+        "DESCRIPTION_TEXT": "SYSTEM CANNOT DIFFERENTIATE BETWEEN LAWFUL ORDER AND FOREIGN EXPLOIT"
+      },
+      "duration": 10
+    },
+    {
+      "index": 10,
+      "type": "3D_RENDER",
+      "script": "Salt Typhoon is not a theoretical argument in that debate. It is the empirical proof.",
+      "prompt": "A dark, moody office desk with a single manila folder labeled 'SALT TYPHOON' lying open. The lighting is low and dramatic, casting long shadows. The camera pans slowly across the desk, emphasizing the weight of the evidence contained within the folder.",
+      "environment": "physical spaces",
+      "camera": "pan-right",
+      "motion": "pan-right",
+      "lower_third": {
+        "text": "SALT TYPHOON: EMPIRICAL PROOF",
+        "attribution": "THREAT INTELLIGENCE",
+        "tone": "#FF6600"
+      },
+      "duration": 10
+    },
+    {
+      "index": 11,
+      "type": "TEMPLATE",
+      "script": "The system built for authorized access became the entry point for the most consequential telecommunications breach in American history,",
+      "template": "117-breach-report-card",
+      "theme": "TECHNICAL",
+      "reasoning": "Summarizes the breach impact.",
+      "content": {
+        "TITLE_TEXT": "TELECOM BREACH IMPACT",
+        "ORG_NAME": "US TELECOM INFRASTRUCTURE",
+        "INCIDENT_DATE": "2025-10-14",
+        "RECORDS_STOLEN": "100M+",
+        "IMPACT_LEVEL": "CRITICAL",
+        "DATA_TYPES": "WIRETAP LOGS, METADATA"
+      },
+      "duration": 10
+    },
+    {
+      "index": 12,
+      "type": "TEMPLATE",
+      "script": "China read American wiretaps for years without detection, and the FBI is now urging people to use tools that make CALEA-style interception technically impossible.",
+      "template": "136-attribution-web",
+      "theme": "TECHNICAL",
+      "reasoning": "Connects the actor to the breach.",
+      "content": {
+        "NODE_LABEL_1": "CHINA",
+        "NODE_LABEL_2": "SALT TYPHOON",
+        "NODE_LABEL_3": "US WIRETAPS",
+        "NODE_LABEL_4": "CALEA VULNERABILITY",
+        "NODE_LABEL_5": "FBI",
+        "NODE_LABEL_6": "E2EE TOOLS"
+      },
+      "duration": 12
+    },
+    {
+      "index": 13,
+      "type": "TEMPLATE",
+      "script": "The argument is settled. The wrong side won it in 1994, and the country has spent the years since building the infrastructure that would eventually make that defeat catastrophic.",
+      "template": "108-stamped-verdict",
+      "theme": "TECHNICAL",
+      "reasoning": "Finalizes the verdict on the 1994 debate.",
+      "content": {
+        "STAMP_TEXT": "DEBATE SETTLED",
+        "SUB_TEXT": "WRONG SIDE WON",
+        "DATE_TEXT": "1994-2026",
+        "ID_TEXT": "CALEA-FAILURE-001"
+      },
+      "duration": 10
+    },
+    {
+      "index": 14,
+      "type": "3D_RENDER",
+      "script": "There is no clean resolution to this story.",
+      "prompt": "A close-up of a shattered glass surface reflecting a dark, distorted city skyline. The camera zooms out to reveal the full extent of the cracks, symbolizing the lack of a clean resolution to the breach. The mood is somber and unresolved.",
+      "environment": "physical spaces",
+      "camera": "zoom-out",
+      "motion": "zoom-out",
+      "lower_third": {
+        "text": "NO CLEAN RESOLUTION",
+        "attribution": "SYSTEMIC FAILURE",
+        "tone": "#FFFFFF"
+      },
+      "duration": 10
+    },
+    {
+      "index": 15,
+      "type": "TEMPLATE",
+      "script": "Salt Typhoon remains active — as of early 2026, despite sanctions, despite the ten-million-dollar bounty, and despite public attribution by every major Western intelligence agency,",
+      "template": "131-countdown-breach",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the ongoing nature of the threat.",
+      "content": {
+        "TITLE_TEXT": "SALT TYPHOON STATUS",
+        "LABEL_TEXT": "DAYS ACTIVE",
+        "TIME_VALUE": "500+",
+        "STATUS_TEXT": "ACTIVE"
+      },
+      "duration": 12
+    },
+    {
+      "index": 16,
+      "type": "TEMPLATE",
+      "script": "the group continues to breach telecommunications networks around the world.",
+      "template": "37-map-spread",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the global reach of the threat.",
+      "content": {
+        "TITLE_TEXT": "GLOBAL NETWORK BREACHES",
+        "ORIGIN_LABEL": "CHINA",
+        "COUNT_VALUE": "45",
+        "COUNT_LABEL": "NETWORKS COMPROMISED",
+        "MAP_LABEL_1": "NORTH AMERICA",
+        "MAP_LABEL_2": "EUROPE",
+        "DURATION_SECONDS": "5"
+      },
+      "duration": 10
+    },
+    {
+      "index": 17,
+      "type": "TEMPLATE",
+      "script": "The FCC has acknowledged that vulnerabilities are still being exploited.",
+      "template": "103-dashboard-summary",
+      "theme": "TECHNICAL",
+      "reasoning": "Summarizes the FCC findings.",
+      "content": {
+        "TITLE_TEXT": "FCC VULNERABILITY REPORT",
+        "KPI_LABEL_1": "ACTIVE EXPLOITS",
+        "KPI_VALUE_1": "12",
+        "KPI_LABEL_2": "NETWORKS AFFECTED",
+        "KPI_VALUE_2": "8",
+        "SUMMARY_TEXT": "VULNERABILITIES REMAIN UNPATCHED"
+      },
+      "duration": 10
+    },
+    {
+      "index": 18,
+      "type": "TEMPLATE",
+      "script": "Security researchers have warned that some of the compromises may never be fully remediated, that networks of the scale involved make complete eradication effectively impossible to verify,",
+      "template": "05-donutchart-fill",
+      "theme": "TECHNICAL",
+      "reasoning": "Shows the difficulty of remediation.",
+      "content": {
+        "TITLE_TEXT": "REMEDIATION VERIFICATION",
+        "DONUT_VALUE": "15",
+        "DONUT_LABEL": "VERIFIABLE",
+        "CONTEXT_TEXT": "COMPLETE ERADICATION PROBABILITY"
+      },
+      "duration": 10
+    },
+    {
+      "index": 19,
+      "type": "TEMPLATE",
+      "script": "and that in some cases the attackers may simply have built access paths too deeply embedded to find.",
+      "template": "126-memory-map",
+      "theme": "TECHNICAL",
+      "reasoning": "Visualizes the deeply embedded access paths.",
+      "content": {
+        "TEXT_SEGMENT": "KERNEL_CORE",
+        "DATA_SEGMENT": "SYSTEM_CONFIG",
+        "HEAP_SEGMENT": "NETWORK_STACK",
+        "STACK_SEGMENT": "USER_AUTH",
+        "INJECTED_CODE": "EMBEDDED_BACKDOOR"
+      },
+      "duration": 12
+    },
+    {
+      "index": 20,
+      "type": "TEMPLATE",
+      "script": "CALEA remains law, and the next group willing to use it against America is already looking for a way in.",
+      "template": "158-chapter-word-drop",
+      "theme": "TECHNICAL",
+      "reasoning": "Final ominous conclusion.",
+      "content": {
+        "CHAPTER_WORD": "VULNERABLE",
+        "CHAPTER_SUB": "THE NEXT THREAT",
+        "CONTEXT_TEXT": "CALEA REMAINS ACTIVE"
+      },
+      "duration": 10
+    }
+  ]
+}

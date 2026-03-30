@@ -1,17 +1,21 @@
 {
-  "template": "02-statcluster-2box",
-  "name": "2-Box Stat Cluster",
-  "description": "Two large stat boxes side by side, each with a value, label, and supporting context line",
-  "category": "charts",
-  "duration": 8,
-  "tags": ["statistics", "comparison", "summary"],
-  "fields": {
-    "TITLE_TEXT": "Short descriptor shown above the two boxes, e.g. 'BY THE NUMBERS'",
-    "STAT_VALUE_1": "The left statistic value, e.g. '$4.5B' or '93%'",
-    "LABEL_1": "Short label under left stat, e.g. 'TOTAL LOSSES'",
-    "SUB_1": "One-line context for left stat, e.g. 'Reported across 14 countries'",
-    "STAT_VALUE_2": "The right statistic value, e.g. '200M' or '47 days'",
-    "LABEL_2": "Short label under right stat, e.g. 'RECORDS STOLEN'",
-    "SUB_2": "One-line context for right stat, e.g. 'Including names, SSNs, and card data'"
-  }
+    "template":  "02-statcluster-2box",
+    "name":  "2-Box Stat Cluster",
+    "description":  "Two large stat boxes side by side, each with a value, label, and supporting context line",
+    "category":  "charts",
+    "duration":  15,
+    "tags":  [
+                 "statistics",
+                 "comparison",
+                 "summary"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Short descriptor shown above the two boxes, e.g. \u0027BY THE NUMBERS\u0027",
+                   "STAT_VALUE_1":  "The left statistic value, e.g. \u0027$4.5B\u0027 or \u002793%\u0027",
+                   "LABEL_1":  "Short label under left stat, e.g. \u0027TOTAL LOSSES\u0027",
+                   "SUB_1":  "One-line context for left stat, e.g. \u0027Reported across 14 countries\u0027",
+                   "STAT_VALUE_2":  "The right statistic value, e.g. \u0027200M\u0027 or \u002747 days\u0027",
+                   "LABEL_2":  "Short label under right stat, e.g. \u0027RECORDS STOLEN\u0027",
+                   "SUB_2":  "One-line context for right stat, e.g. \u0027Including names, SSNs, and card data\u0027"
+               }
 }

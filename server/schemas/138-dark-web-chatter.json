@@ -1,0 +1,27 @@
+{
+    "template":  "138-dark-web-chatter",
+    "name":  "Dark Web Chatter",
+    "description":  "A forum-style thread visualization with staggered message reveals, perfect for showing leaked logs or threat actor discussions.",
+    "category":  "security",
+    "duration":  15,
+    "tags":  [
+                 "chat",
+                 "logs",
+                 "forum",
+                 "breach"
+             ],
+    "fields":  {
+                   "USER_1":  "Handle for first speaker",
+                   "MESSAGE_1":  "Content of first message",
+                   "USER_2":  "Handle for second speaker",
+                   "MESSAGE_2":  "Content of second message",
+                   "USER_3":  "Handle for third speaker",
+                   "MESSAGE_3":  "Content of third message",
+                   "USER_4":  "Handle for fourth speaker",
+                   "MESSAGE_4":  "Content of fourth message",
+                   "USER_5":  "Handle for fifth speaker",
+                   "MESSAGE_5":  "Content of fifth message",
+                   "USER_6":  "Handle for sixth speaker",
+                   "MESSAGE_6":  "Content of sixth message"
+               }
+}

@@ -1,0 +1,20 @@
+{
+    "template":  "157-alert-notification",
+    "name":  "104-alert-notification",
+    "description":  "High-impact alert notification screen with staggered text reveal and critical severity styling.",
+    "category":  "scene-generated",
+    "duration":  15,
+    "tags":  [
+                 "alert",
+                 "critical",
+                 "security",
+                 "notification"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main alert header",
+                   "SUBTITLE_TEXT":  "Secondary descriptive header",
+                   "SEVERITY_LEVEL":  "Severity status (e.g. CRITICAL)",
+                   "TIMESTAMP_TEXT":  "Event timestamp",
+                   "DESCRIPTION_TEXT":  "Detailed event description"
+               }
+}

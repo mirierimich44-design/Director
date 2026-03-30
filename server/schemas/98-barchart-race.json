@@ -1,0 +1,20 @@
+{
+    "template":  "98-barchart-race",
+    "name":  "Bar Chart Race",
+    "description":  "Horizontal bar chart with staggered entrance animations for ranking data",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "ranking",
+                 "comparison",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "LABEL_1":  "Label for bar 1",
+                   "LABEL_2":  "Label for bar 2",
+                   "LABEL_3":  "Label for bar 3",
+                   "LABEL_4":  "Label for bar 4",
+                   "LABEL_5":  "Label for bar 5"
+               }
+}

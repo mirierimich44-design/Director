@@ -1,0 +1,20 @@
+{
+    "template":  "146-compound-interest-curve",
+    "name":  "Compound Interest Curve",
+    "description":  "Exponential growth visualization showing principal vs interest accumulation",
+    "category":  "finance",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "growth",
+                 "investment",
+                 "charts"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "PRINCIPAL_LABEL":  "Label for the base investment",
+                   "INTEREST_LABEL":  "Label for the growth portion",
+                   "STAT_VALUE_1":  "Numeric value for principal",
+                   "STAT_VALUE_2":  "Numeric value for interest"
+               }
+}

@@ -1,346 +1,124 @@
-import React from 'react'
-import { useCurrentFrame, useVideoConfig, interpolate } from 'remotion'
+import React, { useMemo } from 'react';
+import { useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
 
 export const AnimationComponent = () => {
-  const frame = useCurrentFrame()
+  const frame = useCurrentFrame();
+  const { width, height, durationInFrames } = useVideoConfig();
 
-  // Panel animation
-  const panelOp = interpolate(frame, [0, 20], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-  const panelTy = interpolate(frame, [0, 20], [30, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  const title = "TITLE_TEXT";
+  const stat1 = "STAT_VALUE_1";
+  const label1 = "LABEL_1";
+  const sub1 = "SUB_1";
+  const stat2 = "STAT_VALUE_2";
+  const label2 = "LABEL_2";
+  const sub2 = "SUB_2";
 
-  // Stat 1 animation
-  const stat1Op = interpolate(frame, [15, 35], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-  const stat1Ty = interpolate(frame, [15, 35], [40, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  // Entrance Timings
+  const entryStart = 10;
+  
+  // Header
+  const headerOp = interpolate(frame, [entryStart, entryStart + 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const headerTy = interpolate(frame, [entryStart, entryStart + 20], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
 
-  // Stat 2 animation
-  const stat2Op = interpolate(frame, [28, 48], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-  const stat2Ty = interpolate(frame, [28, 48], [40, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  // Left Card
+  const leftStart = entryStart + 20;
+  const leftOp = interpolate(frame, [leftStart, leftStart + 20], [0, 1], { extrapolateLeft: 'clamp' });
+  const leftScale = interpolate(frame, [leftStart, leftStart + 25], [0.9, 1], { extrapolateLeft: 'clamp', easing: Easing.backOut });
+  const leftTy = interpolate(frame, [leftStart, leftStart + 25], [40, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
-  // Label animations
-  const label1Op = interpolate(frame, [35, 50], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-  const label2Op = interpolate(frame, [45, 60], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  // Right Card
+  const rightStart = entryStart + 35;
+  const rightOp = interpolate(frame, [rightStart, rightStart + 20], [0, 1], { extrapolateLeft: 'clamp' });
+  const rightScale = interpolate(frame, [rightStart, rightStart + 25], [0.9, 1], { extrapolateLeft: 'clamp', easing: Easing.backOut });
+  const rightTy = interpolate(frame, [rightStart, rightStart + 25], [40, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
-  // Sub animations
-  const sub1Op = interpolate(frame, [50, 65], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-  const sub2Op = interpolate(frame, [58, 73], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  // Content inside cards
+  const contentOp = interpolate(frame, [entryStart + 50, entryStart + 70], [0, 1], { extrapolateLeft: 'clamp' });
 
-  // Divider line
-  const dividerW = interpolate(frame, [10, 40], [0, 860], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  // Content placeholders
-  const stat1 = "STAT_VALUE_1"
-  const stat2 = "STAT_VALUE_2"
-  const label1 = "LABEL_1"
-  const label2 = "LABEL_2"
-  const sub1 = "SUB_1"
-  const sub2 = "SUB_2"
-  const title = "TITLE_TEXT"
+  // Technical Card Style
+  const glassStyle = {
+    flex: 1,
+    height: 500,
+    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+    backdropFilter: 'blur(32px)',
+    borderRadius: 40,
+    border: '1px solid rgba(255,255,255,0.1)',
+    boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+    padding: '60px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+    position: 'relative' as const,
+    overflow: 'hidden' as const
+  };
 
   return (
     <div style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: 1920,
-      height: 1080,
-      overflow: 'hidden',
-      backgroundColor: 'BACKGROUND_COLOR',
+      position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden',
+      backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif'
     }}>
-
-      {/* Top accent bar */}
+      {/* Background Decor */}
       <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: 1920,
-        height: 6,
-        overflow: 'hidden',
-        backgroundColor: 'PRIMARY_COLOR',
-        opacity: panelOp,
+        position: 'absolute', width: '100%', height: '100%',
+        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 80%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+        backgroundSize: '100% 100%, 80px 80px, 80px 80px',
+        opacity: 0.5
       }} />
 
-      {/* Title */}
-      <div style={{
-        position: 'absolute',
-        top: 80,
-        left: 0,
-        width: 1920,
-        height: 80,
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: panelOp,
-        transform: `translateY(${panelTy}px)`,
+      {/* Header Area */}
+      <div style={{ 
+        position: 'absolute', top: 100, left: '50%', transform: `translateX(-50%) translateY(${headerTy}px)`, 
+        textAlign: 'center', opacity: headerOp, zIndex: 10 
       }}>
-        <span style={{
-          fontSize: 28,
-          fontWeight: 600,
-          color: 'SECONDARY_COLOR',
-          letterSpacing: 4,
-          textTransform: 'uppercase',
-          fontFamily: 'sans-serif',
-        }}>
-          {title}
-        </span>
+        <div style={{ fontSize: 24, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 12 }}>{title}</div>
+        <div style={{ width: 100, height: 4, backgroundColor: 'ACCENT_COLOR', margin: '0 auto', borderRadius: 2, boxShadow: '0 0 15px ACCENT_COLOR' }} />
       </div>
 
-      {/* Divider line */}
+      {/* Stat Cluster Container */}
       <div style={{
-        position: 'absolute',
-        top: 170,
-        left: 530,
-        width: dividerW,
-        height: 2,
-        overflow: 'hidden',
-        backgroundColor: 'ACCENT_COLOR',
-      }} />
-
-      {/* Left stat box */}
-      <div style={{
-        position: 'absolute',
-        top: 220,
-        left: 200,
-        width: 680,
-        height: 420,
-        overflow: 'hidden',
-        backgroundColor: 'PANEL_LEFT_BG',
-        borderRadius: 8,
-        boxSizing: 'border-box',
-        padding: '48px 56px',
-        opacity: stat1Op,
-        transform: `translateY(${stat1Ty}px)`,
+        position: 'absolute', top: 280, left: 160, right: 160,
+        display: 'flex', gap: 60, zIndex: 5
       }}>
-
-        {/* Stat value */}
+        
+        {/* Left Stat Card */}
         <div style={{
-          position: 'absolute',
-          top: 60,
-          left: 56,
-          width: 568,
-          height: 180,
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
+          ...glassStyle,
+          borderTop: '8px solid PRIMARY_COLOR',
+          opacity: leftOp,
+          transform: `scale(${leftScale}) translateY(${leftTy}px)`
         }}>
-          <span style={{
-            fontSize: 120,
-            fontWeight: 800,
-            color: 'PRIMARY_COLOR',
-            fontFamily: 'sans-serif',
-            lineHeight: 1,
-          }}>
-            {stat1}
-          </span>
+           <div style={{ position: 'absolute', top: 0, right: 0, width: 300, height: 300, background: 'radial-gradient(circle, PRIMARY_COLOR 0%, transparent 70%)', opacity: 0.1 }} />
+           <div style={{ color: 'PRIMARY_COLOR', fontSize: 130, fontWeight: 900, fontFamily: 'monospace', lineHeight: 1, letterSpacing: '-0.05em', marginBottom: 20, zIndex: 1 }}>{stat1}</div>
+           <div style={{ color: '#fff', fontSize: 36, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12, opacity: contentOp }}>{label1}</div>
+           <div style={{ height: 2, width: 60, backgroundColor: 'rgba(255,255,255,0.1)', marginBottom: 16, opacity: contentOp }} />
+           <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 22, fontWeight: 500, lineHeight: 1.4, opacity: contentOp }}>{sub1}</div>
         </div>
 
-        {/* Label */}
+        {/* Right Stat Card */}
         <div style={{
-          position: 'absolute',
-          top: 250,
-          left: 56,
-          width: 568,
-          height: 60,
-          overflow: 'hidden',
-          opacity: label1Op,
+          ...glassStyle,
+          borderTop: '8px solid ACCENT_COLOR',
+          opacity: rightOp,
+          transform: `scale(${rightScale}) translateY(${rightTy}px)`
         }}>
-          <span style={{
-            fontSize: 32,
-            fontWeight: 700,
-            color: 'TEXT_ON_SECONDARY',
-            fontFamily: 'sans-serif',
-            textTransform: 'uppercase',
-            letterSpacing: 2,
-          }}>
-            {label1}
-          </span>
+           <div style={{ position: 'absolute', top: 0, right: 0, width: 300, height: 300, background: 'radial-gradient(circle, ACCENT_COLOR 0%, transparent 70%)', opacity: 0.1 }} />
+           <div style={{ color: 'ACCENT_COLOR', fontSize: 130, fontWeight: 900, fontFamily: 'monospace', lineHeight: 1, letterSpacing: '-0.05em', marginBottom: 20, zIndex: 1 }}>{stat2}</div>
+           <div style={{ color: '#fff', fontSize: 36, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12, opacity: contentOp }}>{label2}</div>
+           <div style={{ height: 2, width: 60, backgroundColor: 'rgba(255,255,255,0.1)', marginBottom: 16, opacity: contentOp }} />
+           <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 22, fontWeight: 500, lineHeight: 1.4, opacity: contentOp }}>{sub2}</div>
         </div>
 
-        {/* Sub */}
-        <div style={{
-          position: 'absolute',
-          top: 320,
-          left: 56,
-          width: 568,
-          height: 60,
-          overflow: 'hidden',
-          opacity: sub1Op,
-        }}>
-          <span style={{
-            fontSize: 22,
-            fontWeight: 400,
-            color: 'SUPPORT_COLOR',
-            fontFamily: 'sans-serif',
-          }}>
-            {sub1}
-          </span>
-        </div>
-
-        {/* Left accent bar */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: 6,
-          height: 420,
-          overflow: 'hidden',
-          backgroundColor: 'PRIMARY_COLOR',
-          borderRadius: 8,
-        }} />
       </div>
 
-      {/* Right stat box */}
-      <div style={{
-        position: 'absolute',
-        top: 220,
-        left: 1040,
-        width: 680,
-        height: 420,
-        overflow: 'hidden',
-        backgroundColor: 'PANEL_RIGHT_BG',
-        borderRadius: 8,
-        boxSizing: 'border-box',
-        padding: '48px 56px',
-        opacity: stat2Op,
-        transform: `translateY(${stat2Ty}px)`,
-      }}>
-
-        {/* Stat value */}
-        <div style={{
-          position: 'absolute',
-          top: 60,
-          left: 56,
-          width: 568,
-          height: 180,
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-        }}>
-          <span style={{
-            fontSize: 120,
-            fontWeight: 800,
-            color: 'ACCENT_COLOR',
-            fontFamily: 'sans-serif',
-            lineHeight: 1,
-          }}>
-            {stat2}
-          </span>
-        </div>
-
-        {/* Label */}
-        <div style={{
-          position: 'absolute',
-          top: 250,
-          left: 56,
-          width: 568,
-          height: 60,
-          overflow: 'hidden',
-          opacity: label2Op,
-        }}>
-          <span style={{
-            fontSize: 32,
-            fontWeight: 700,
-            color: 'TEXT_ON_SECONDARY',
-            fontFamily: 'sans-serif',
-            textTransform: 'uppercase',
-            letterSpacing: 2,
-          }}>
-            {label2}
-          </span>
-        </div>
-
-        {/* Sub */}
-        <div style={{
-          position: 'absolute',
-          top: 320,
-          left: 56,
-          width: 568,
-          height: 60,
-          overflow: 'hidden',
-          opacity: sub2Op,
-        }}>
-          <span style={{
-            fontSize: 22,
-            fontWeight: 400,
-            color: 'SUPPORT_COLOR',
-            fontFamily: 'sans-serif',
-          }}>
-            {sub2}
-          </span>
-        </div>
-
-        {/* Right accent bar */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: 6,
-          height: 420,
-          overflow: 'hidden',
-          backgroundColor: 'ACCENT_COLOR',
-          borderRadius: 8,
-        }} />
-      </div>
-
-      {/* Bottom label */}
-      <div style={{
-        position: 'absolute',
-        top: 700,
-        left: 0,
-        width: 1920,
-        height: 60,
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: sub2Op,
-      }}>
-        <span style={{
-          fontSize: 20,
-          fontWeight: 400,
-          color: 'SUPPORT_COLOR',
-          fontFamily: 'sans-serif',
-          letterSpacing: 2,
-        }}>
-          {sub2}
-        </span>
+      {/* Decorative Technical Flair */}
+      <div style={{ position: 'absolute', bottom: 60, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 40, opacity: 0.2 }}>
+        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14 }}>METRIC_01_VAL: LOCKED</div>
+        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14 }}>METRIC_02_VAL: LOCKED</div>
+        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14 }}>SESSION_ID: 0xFD42</div>
       </div>
 
     </div>
-  )
-}
+  );
+};
 
-export default AnimationComponent
+export default AnimationComponent;

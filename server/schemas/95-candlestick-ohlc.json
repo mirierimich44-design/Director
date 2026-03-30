@@ -1,0 +1,18 @@
+{
+    "template":  "95-candlestick-ohlc",
+    "name":  "Candlestick OHLC Chart",
+    "description":  "Professional financial OHLC candlestick chart with staggered entrance animations.",
+    "category":  "data-charts",
+    "duration":  15,
+    "tags":  [
+                 "finance",
+                 "trading",
+                 "data"
+             ],
+    "fields":  {
+                   "TITLE_TEXT":  "Main chart title",
+                   "SOURCE_TEXT":  "Data source attribution",
+                   "AXIS_LABEL_X":  "Label for horizontal axis",
+                   "AXIS_LABEL_Y":  "Label for vertical axis"
+               }
+}

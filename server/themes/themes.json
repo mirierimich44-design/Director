@@ -118,5 +118,25 @@
     "GRID_LINE": "#333333",
     "CHART_BG": "#F5F5F0",
     "CHART_BORDER": "#CCCCCC"
+  },
+  "CREAM": {
+    "name": "Cream Magazine",
+    "description": "Sophisticated editorial style with warm parchment and deep navy",
+    "BACKGROUND_COLOR": "#FDFCF8",
+    "PANEL_LEFT_BG": "#F9F7F0",
+    "PANEL_RIGHT_BG": "#F3F0E6",
+    "PRIMARY_COLOR": "#1A2B44",
+    "SECONDARY_COLOR": "#C9A961",
+    "ACCENT_COLOR": "#E63946",
+    "SUPPORT_COLOR": "#706F6C",
+    "TEXT_ON_PRIMARY": "#FFFFFF",
+    "TEXT_ON_SECONDARY": "#1A2B44",
+    "TEXT_ON_ACCENT": "#FFFFFF",
+    "NODE_FILL": "#1A2B44",
+    "NODE_STROKE": "#C9A961",
+    "LINE_STROKE": "#1A2B44",
+    "GRID_LINE": "#E5E1D3",
+    "CHART_BG": "#F9F7F0",
+    "CHART_BORDER": "#DED9C4"
   }
 }

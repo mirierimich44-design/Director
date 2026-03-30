@@ -1,0 +1,21 @@
+{
+  "template": "155-calendar-date-highlight",
+  "name": "Calendar Date Highlight",
+  "description": "A rapid calendar flip animation that lands on a specific date and highlights it with a descriptive technical card.",
+  "category": "storytelling",
+  "duration": 15,
+  "tags": [
+    "calendar",
+    "date",
+    "timeline",
+    "history",
+    "event"
+  ],
+  "fields": {
+    "TARGET_MONTH": "The month name (e.g. October)",
+    "TARGET_YEAR": "The year (e.g. 2023)",
+    "TARGET_DAY": "The day of the month (e.g. 24)",
+    "EVENT_TITLE": "Title of the historical event",
+    "EVENT_DESC": "Brief description of the event"
+  }
+}
