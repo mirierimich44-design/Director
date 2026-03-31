@@ -22,6 +22,7 @@ import {
     VolumeUp as VolumeIcon,
     Refresh as RefreshIcon
 } from '@mui/icons-material';
+import VoiceoverPanel, { type TtsResult } from '../components/VoiceoverPanel';
 
 interface ProcessedFile {
     id: string;
@@ -336,6 +337,26 @@ const AudioProcessorView: React.FC = () => {
                         </IconButton>
                     </Tooltip>
                 </Stack>
+            </Box>
+
+            {/* TTS Generator */}
+            <Box sx={{ mb: 4 }}>
+                <VoiceoverPanel
+                    onGenerated={(result: TtsResult) => {
+                        setProcessedFiles(prev => {
+                            if (prev.some(f => f.filename === result.filename)) return prev;
+                            return [...prev, {
+                                id: result.audioUrl,
+                                filename: result.filename,
+                                originalFilename: `TTS: ${result.text}`,
+                                url: result.audioUrl,
+                                duration: result.duration,
+                                durationFormatted: formatTime(result.duration),
+                                status: 'completed' as const,
+                            }];
+                        });
+                    }}
+                />
             </Box>
 
             {/* Upload Area */}

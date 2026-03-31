@@ -40,16 +40,18 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 // ── Directories ──────────────────────────────────────────────────────────────
-const publicDir       = join(__dirname, '../public');
-const videosDir       = join(publicDir, 'videos');
-const audioDir        = join(publicDir, 'audio');
+const publicDir         = join(__dirname, '../public');
+const videosDir         = join(publicDir, 'videos');
+const audioDir          = join(publicDir, 'audio');
 const audioProcessedDir = join(publicDir, 'audio/processed');
-const imagesDir       = join(publicDir, 'images');
+const audioTtsDir       = join(publicDir, 'audio/tts');
+const imagesDir         = join(publicDir, 'images');
 
-await fs.mkdir(videosDir,        { recursive: true });
-await fs.mkdir(audioDir,         { recursive: true });
+await fs.mkdir(videosDir,         { recursive: true });
+await fs.mkdir(audioDir,          { recursive: true });
 await fs.mkdir(audioProcessedDir, { recursive: true });
-await fs.mkdir(imagesDir,        { recursive: true });
+await fs.mkdir(audioTtsDir,       { recursive: true });
+await fs.mkdir(imagesDir,         { recursive: true });
 await fs.mkdir(join(__dirname, 'projects'), { recursive: true });
 
 // ── Static serving ────────────────────────────────────────────────────────────
@@ -765,6 +767,59 @@ app.post('/api/templates/adjust/apply', async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// ── TTS (Kokoro / Orpheus) ────────────────────────────────────────────────────
+const TTS_SERVICE_URL = process.env.TTS_SERVICE_URL || 'http://127.0.0.1:8880';
+
+app.get('/api/tts/health', async (req, res) => {
+    try {
+        const resp = await fetch(`${TTS_SERVICE_URL}/health`, { signal: AbortSignal.timeout(2000) });
+        const data = await resp.json();
+        res.json({ success: true, ...data });
+    } catch (_err) {
+        res.status(503).json({ success: false, status: 'unavailable' });
+    }
+});
+
+app.get('/api/tts/voices', async (req, res) => {
+    try {
+        const resp = await fetch(`${TTS_SERVICE_URL}/voices`, { signal: AbortSignal.timeout(3000) });
+        if (!resp.ok) throw new Error(`TTS service responded ${resp.status}`);
+        const data = await resp.json();
+        res.json({ success: true, ...data });
+    } catch (err) {
+        res.status(503).json({ success: false, error: 'TTS service unavailable', detail: err.message });
+    }
+});
+
+app.post('/api/tts/generate', async (req, res) => {
+    const { text, voice = 'af_heart', speed = 1.0, engine = 'kokoro', filename } = req.body;
+    if (!text?.trim()) return res.status(400).json({ error: 'text is required' });
+
+    try {
+        const resp = await fetch(`${TTS_SERVICE_URL}/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, voice, speed, engine, output_filename: filename || undefined }),
+        });
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+            return res.status(resp.status).json({ error: err.detail || 'TTS generation failed' });
+        }
+        const data = await resp.json();
+        res.json({
+            success: true,
+            audioUrl: `/audio/tts/${data.filename}`,
+            filename: data.filename,
+            duration: data.duration,
+            voice: data.voice,
+            engine: data.engine,
+        });
+    } catch (err) {
+        console.error('🔈 TTS error:', err.message);
+        res.status(503).json({ error: 'TTS service unavailable', detail: err.message });
     }
 });
 
