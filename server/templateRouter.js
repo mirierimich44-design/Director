@@ -103,7 +103,9 @@ Return ONLY valid JSON. No code. No markdown. No explanation.
 
 Extract these values from the sentence below.
 Use the field descriptions as guidance.
-If a value cannot be determined, use a sensible short placeholder.
+If a value cannot be determined:
+- For text/label fields: use a sensible short placeholder string
+- For URL or image fields (field names containing URL, IMAGE, SRC, PATH, LINK, PHOTO): use an empty string ""
 
 FIELDS TO EXTRACT:
 ${JSON.stringify(schema, null, 2)}
