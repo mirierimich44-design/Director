@@ -19,7 +19,7 @@ import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKe
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';
-import { renderVideo as renderRemotion } from './engines/remotion/renderer.js';
+import { renderVideo as renderRemotion, warmupBundler, purgeOldTempDirs } from './engines/remotion/renderer.js';
 import { auditTemplate, applyFix, TEMPLATES_DIR, AUDIT_DIR, REPORT_PATH } from './templateAuditor.js';
 import { generateAdjustment, diffSummary, getAllPresets } from './adjustmentPresets.js';
 import {
@@ -208,6 +208,37 @@ async function generateFallbackImage(prompt, environment = 'standard') {
     return `/images/${imgId}.jpg`;
 }
 
+// ── Render concurrency semaphore ──────────────────────────────────────────────
+// Limits simultaneous Remotion renders so the VPS doesn't OOM.
+// Default: 2 for 6-CPU VPS. Override with env RENDER_CONCURRENCY.
+const MAX_CONCURRENT_RENDERS = Math.min(
+    parseInt(process.env.RENDER_CONCURRENCY) || 2,
+    2  // hard cap — never allow more than 2 on this VPS
+);
+let _activeRenders = 0;
+const _renderQueue = [];
+
+function acquireRenderSlot() {
+    return new Promise(resolve => {
+        if (_activeRenders < MAX_CONCURRENT_RENDERS) {
+            _activeRenders++;
+            resolve();
+        } else {
+            console.log(`⏳ Render queued (${_renderQueue.length + 1} waiting, ${_activeRenders}/${MAX_CONCURRENT_RENDERS} active)`);
+            _renderQueue.push(resolve);
+        }
+    });
+}
+
+function releaseRenderSlot() {
+    if (_renderQueue.length > 0) {
+        const next = _renderQueue.shift();
+        next(); // hand the slot to the next waiting render
+    } else {
+        _activeRenders--;
+    }
+}
+
 // Helper: start a background video render job and return { job, videoId }
 function startVideoRenderJob(filledCode, opts = {}) {
     const job = createRenderJob({});
@@ -219,7 +250,9 @@ function startVideoRenderJob(filledCode, opts = {}) {
     job.message = 'Preparing render...';
 
     (async () => {
+        await acquireRenderSlot();
         try {
+            job.message = 'Render slot acquired, starting...';
             await renderRemotion(filledCode, outputPath, {
                 ...renderOpts,
                 onProgress: (p) => {
@@ -267,6 +300,8 @@ function startVideoRenderJob(filledCode, opts = {}) {
             job.error = err.message;
             job.message = 'Render failed';
             console.error(`❌ Video render ${job.id} failed:`, err.message);
+        } finally {
+            releaseRenderSlot();
         }
     })();
 
@@ -1309,5 +1344,15 @@ app.get('/api/health', (req, res) => {
 app.listen(PORT, () => {
     console.log(`\n🎬 ARXXIS Director Studio`);
     console.log(`   Server: http://localhost:${PORT}`);
-    console.log(`   Frontend (dev): http://localhost:5174\n`);
+    console.log(`   Frontend (dev): http://localhost:5174`);
+    console.log(`   Render slots: ${MAX_CONCURRENT_RENDERS} max concurrent\n`);
+
+    // Pre-warm the Remotion bundler so first render is fast
+    warmupBundler().catch(err => console.warn('⚠️ Warmup error (non-critical):', err.message));
+
+    // Purge stale .temp dirs every 30 minutes
+    const tempRoot = new URL('../.temp', import.meta.url).pathname;
+    setInterval(() => {
+        purgeOldTempDirs(tempRoot).catch(() => {});
+    }, 30 * 60 * 1000);
 });

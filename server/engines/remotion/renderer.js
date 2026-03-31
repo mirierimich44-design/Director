@@ -28,7 +28,7 @@ async function cleanupTempDir(dirPath) {
 }
 
 // Purge all temp dirs older than maxAgeMs (default 1 hour)
-async function purgeOldTempDirs(tempRoot, maxAgeMs = 60 * 60 * 1000) {
+export async function purgeOldTempDirs(tempRoot, maxAgeMs = 60 * 60 * 1000) {
     try {
         const entries = await fs.readdir(tempRoot, { withFileTypes: true });
         const now = Date.now();
@@ -54,6 +54,15 @@ console.log(`⚡ Remotion render concurrency: ${RENDER_CONCURRENCY} (${os.cpus()
 
 // Bundle lock to prevent concurrent bundling (not thread-safe due to chdir)
 let bundleLock = Promise.resolve();
+
+// Reject a promise after ms milliseconds
+const withTimeout = (promise, ms, label) =>
+    Promise.race([
+        promise,
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error(`Timeout: ${label} exceeded ${ms / 1000}s`)), ms)
+        ),
+    ]);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -491,18 +500,21 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
 
             // console.log('   📦 Bundling Remotion project...');
             const publicDir = join(__dirname, '../../../public');
-            const loc = await bundle({
-                entryPoint: entryPath,
-                publicDir: publicDir,
-                onProgress: (progress) => {
-                    const pct = Math.round(progress * 100);
-                    progressBar.update(pct, { phase: 'Bundling' });
-                    if (onProgress) {
-                        // For the UI, bundling is the first 30%
-                        onProgress({ phase: 'bundling', progress: Math.round(progress * 30) });
-                    }
-                },
-            });
+            const loc = await withTimeout(
+                bundle({
+                    entryPoint: entryPath,
+                    publicDir: publicDir,
+                    onProgress: (progress) => {
+                        const pct = Math.round(progress * 100);
+                        progressBar.update(pct, { phase: 'Bundling' });
+                        if (onProgress) {
+                            onProgress({ phase: 'bundling', progress: Math.round(progress * 30) });
+                        }
+                    },
+                }),
+                90_000, // 90s bundle timeout
+                'bundling'
+            );
             // Cache the bundle info
             await fs.writeFile(bundleInfoPath, JSON.stringify({ location: loc }), 'utf-8');
             return loc;
@@ -520,21 +532,25 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         // console.log('   🎬 Rendering video...');
         progressBar.update(0, { phase: 'Rendering Video' });
         if (onProgress) onProgress({ phase: 'rendering', progress: 35 });
-        await renderMedia({
-            composition,
-            serveUrl: bundleLocation,
-            codec: 'h264',
-            outputLocation: outputPath,
-            concurrency: RENDER_CONCURRENCY,
-            browserExecutable: browserPath,
-            onProgress: ({ progress }) => {
-                const pct = Math.round(progress * 100);
-                progressBar.update(pct, { phase: 'Rendering' });
-                if (onProgress) {
-                    onProgress({ phase: 'rendering', progress: 30 + Math.round(progress * 70) });
-                }
-            },
-        });
+        await withTimeout(
+            renderMedia({
+                composition,
+                serveUrl: bundleLocation,
+                codec: 'h264',
+                outputLocation: outputPath,
+                concurrency: RENDER_CONCURRENCY,
+                browserExecutable: browserPath,
+                onProgress: ({ progress }) => {
+                    const pct = Math.round(progress * 100);
+                    progressBar.update(pct, { phase: 'Rendering' });
+                    if (onProgress) {
+                        onProgress({ phase: 'rendering', progress: 30 + Math.round(progress * 70) });
+                    }
+                },
+            }),
+            360_000, // 6-minute hard cap per render
+            'renderMedia'
+        );
 
         // console.log('   ✅ Video saved to:', outputPath);
         progressBar.update(100, { phase: 'Done' });
@@ -602,10 +618,11 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
             }
 
             const publicDir = join(__dirname, '../../../public');
-            const loc = await bundle({
-                entryPoint: entryPath,
-                publicDir: publicDir,
-            });
+            const loc = await withTimeout(
+                bundle({ entryPoint: entryPath, publicDir: publicDir }),
+                90_000,
+                'bundling (still)'
+            );
             await fs.writeFile(bundleInfoPath, JSON.stringify({ location: loc }), 'utf-8');
             return loc;
         }));
