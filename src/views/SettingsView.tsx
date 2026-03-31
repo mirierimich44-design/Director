@@ -30,6 +30,7 @@ interface Settings {
         heygenSet: boolean;
         pexelsSet: boolean;
     };
+    publicUrl: string;
     models: {
         language: {
             primary: string;
@@ -68,6 +69,7 @@ const SettingsView: React.FC = () => {
     const [stadiaKey, setStadiaKey] = useState('');
     const [heygenKey, setHeygenKey] = useState('');
     const [pexelsKey, setPexelsKey] = useState('');
+    const [publicUrl, setPublicUrl] = useState('');
     const [showGoogleKey, setShowGoogleKey] = useState(false);
     const [showAnthropicKey, setShowAnthropicKey] = useState(false);
     const [showStadiaKey, setShowStadiaKey] = useState(false);
@@ -89,6 +91,7 @@ const SettingsView: React.FC = () => {
             if (data.success) {
                 setSettings(data.settings);
                 setModelOptions(data.modelOptions);
+                setPublicUrl(data.settings.publicUrl || '');
             }
         } catch (err: any) {
             setError('Failed to load settings');
@@ -107,8 +110,9 @@ const SettingsView: React.FC = () => {
             const payload: any = {
                 models: settings.models,
                 providers: settings.providers,
+                publicUrl: publicUrl,
             };
-            // Only send keys if user typed new ones
+            // ... keys ...
             if (googleKey) payload.keys = { ...payload.keys, google: googleKey };
             if (anthropicKey) payload.keys = { ...(payload.keys || {}), anthropic: anthropicKey };
             if (stadiaKey) payload.keys = { ...(payload.keys || {}), stadia: stadiaKey };
@@ -379,6 +383,28 @@ const SettingsView: React.FC = () => {
                             />
                         </Box>
                     </Box>
+                </CardContent>
+            </Card>
+
+            {/* Deployment */}
+            <Card sx={sectionSx}>
+                <CardContent>
+                    <Typography variant="h6" sx={{ color: 'var(--text-primary)', mb: 2, fontWeight: 'bold', letterSpacing: 1 }}>
+                        DEPLOYMENT
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 3 }}>
+                        Set the public URL of this server so external APIs (like HeyGen) can access uploaded assets.
+                    </Typography>
+
+                    <TextField
+                        fullWidth
+                        size="small"
+                        label="Public URL Prefix (e.g., https://my-vps-ip.com)"
+                        value={publicUrl}
+                        onChange={(e) => setPublicUrl(e.target.value)}
+                        placeholder="https://your-public-address.com"
+                        sx={textFieldSx}
+                    />
                 </CardContent>
             </Card>
 

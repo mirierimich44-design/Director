@@ -74,11 +74,17 @@ router.get('/pexels-search', async (req, res) => {
 
 // ── HeyGen Generate ─────────────────────────────────────────────────────────
 router.post('/heygen-generate', async (req, res) => {
-    const { script, backgroundVideoUrl, bgMode, bgColor, avatarId, avatarType, voiceId, layout } = req.body;
+    let { script, backgroundVideoUrl, bgMode, bgColor, avatarId, avatarType, voiceId, layout } = req.body;
     const settings = getRawSettings();
     const apiKey = settings.keys.heygen;
+    const publicUrl = settings.publicUrl || '';
 
     if (!apiKey) return res.status(400).json({ error: 'HeyGen API Key not set' });
+
+    // Prepend publicUrl to local paths
+    if (backgroundVideoUrl && backgroundVideoUrl.startsWith('/') && publicUrl) {
+        backgroundVideoUrl = `${publicUrl.replace(/\/$/, '')}${backgroundVideoUrl}`;
+    }
 
     try {
         const character = avatarType === 'talking_photo' 

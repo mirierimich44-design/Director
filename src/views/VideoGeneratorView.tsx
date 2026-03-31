@@ -38,9 +38,10 @@ interface Scene {
 }
 
 const AVATARS = [
-    { id: 'jessica_suit_outfit', name: 'Jessica (Suit)', gender: 'female' },
-    { id: 'eric_casual_outfit', name: 'Eric (Casual)', gender: 'male' },
-    { id: 'waynn_business_outfit', name: 'Waynn (Business)', gender: 'male' },
+    { id: 'Daisy-working-suit-20230818', name: 'Daisy (Suit)', gender: 'female' },
+    { id: 'Maya-default-20230622', name: 'Maya (Casual)', gender: 'female' },
+    { id: 'Tyler-as-teacher-20230818', name: 'Tyler (Teacher)', gender: 'male' },
+    { id: 'custom', name: 'Custom ID...', gender: 'any' },
 ];
 
 const VOICES = [
@@ -59,6 +60,7 @@ const VideoGeneratorView: React.FC = () => {
     // Settings
     const [avatarMode, setAvatarMode] = useState<'stock' | 'generated'>('stock');
     const [avatar, setAvatar] = useState(AVATARS[0].id);
+    const [customAvatarId, setCustomAvatarId] = useState('');
     const [voice, setVoice] = useState(VOICES[0].id);
     const [layout, setLayout] = useState<'circle' | 'lower_third'>('lower_third');
 
@@ -67,6 +69,26 @@ const VideoGeneratorView: React.FC = () => {
     const [generatedAvatarUrl, setGeneratedAvatarUrl] = useState('');
     const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
     const [talkingPhotoId, setTalkingPhotoId] = useState('');
+
+    const handleUploadBackground = async (sceneId: string, file: File) => {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const res = await fetch('/api/upload-image', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await res.json();
+            if (data.success) {
+                setScenes(prev => prev.map(s => 
+                    s.id === sceneId ? { ...s, uploadUrl: data.url, bgMode: 'upload' } : s
+                ));
+            }
+        } catch (err) {
+            console.error('Upload failed:', err);
+        }
+    };
 
     const handleGenerateAvatar = async () => {
         if (!avatarPrompt.trim()) return;
@@ -151,7 +173,9 @@ const VideoGeneratorView: React.FC = () => {
                     backgroundVideoUrl: mode === 'pexels' ? scene.videoUrl : (mode === 'upload' ? scene.uploadUrl : undefined),
                     bgMode: mode,
                     bgColor: scene.bgColor || '#00FF00',
-                    avatarId: avatarMode === 'stock' ? avatar : talkingPhotoId,
+                    avatarId: avatarMode === 'stock' 
+                        ? (avatar === 'custom' ? customAvatarId : avatar)
+                        : talkingPhotoId,
                     avatarType: avatarMode === 'stock' ? 'avatar' : 'talking_photo',
                     voiceId: voice,
                     layout: layout
@@ -258,17 +282,30 @@ const VideoGeneratorView: React.FC = () => {
                             </ToggleButtonGroup>
 
                             {avatarMode === 'stock' ? (
-                                <FormControl fullWidth size="small">
-                                    <InputLabel sx={{ color: 'var(--text-secondary)' }}>Avatar</InputLabel>
-                                    <Select
-                                        value={avatar}
-                                        label="Avatar"
-                                        onChange={(e) => setAvatar(e.target.value)}
-                                        sx={{ bgcolor: 'var(--bg-primary)', color: '#fff' }}
-                                    >
-                                        {AVATARS.map(a => <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>)}
-                                    </Select>
-                                </FormControl>
+                                <Stack spacing={2}>
+                                    <FormControl fullWidth size="small">
+                                        <InputLabel sx={{ color: 'var(--text-secondary)' }}>Avatar</InputLabel>
+                                        <Select
+                                            value={avatar}
+                                            label="Avatar"
+                                            onChange={(e) => setAvatar(e.target.value)}
+                                            sx={{ bgcolor: 'var(--bg-primary)', color: '#fff' }}
+                                        >
+                                            {AVATARS.map(a => <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                    {avatar === 'custom' && (
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            label="Custom HeyGen Avatar ID"
+                                            placeholder="Paste avatar ID from HeyGen..."
+                                            value={customAvatarId}
+                                            onChange={(e) => setCustomAvatarId(e.target.value)}
+                                            sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
+                                        />
+                                    )}
+                                </Stack>
                             ) : (
                                 <Box sx={{ p: 2, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px solid var(--border-color)' }}>
                                     <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>
@@ -419,14 +456,35 @@ const VideoGeneratorView: React.FC = () => {
                                                 )}
 
                                                 {scene.bgMode === 'upload' && (
-                                                    <TextField
-                                                        fullWidth
-                                                        size="small"
-                                                        label="Direct Video/Image URL (.mp4, .jpg, .png)"
-                                                        value={scene.uploadUrl || ''}
-                                                        onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, uploadUrl: e.target.value } : s))}
-                                                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
-                                                    />
+                                                    <Box>
+                                                        <TextField
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Media URL"
+                                                            value={scene.uploadUrl || ''}
+                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, uploadUrl: e.target.value } : s))}
+                                                            sx={{ mb: 1, '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
+                                                        />
+                                                        <Button
+                                                            fullWidth
+                                                            component="label"
+                                                            variant="outlined"
+                                                            size="small"
+                                                            startIcon={<AddIcon />}
+                                                            sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
+                                                        >
+                                                            Upload File
+                                                            <input
+                                                                type="file"
+                                                                hidden
+                                                                accept="image/*,video/*"
+                                                                onChange={(e) => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file) handleUploadBackground(scene.id, file);
+                                                                }}
+                                                            />
+                                                        </Button>
+                                                    </Box>
                                                 )}
                                             </Grid>
                                             <Grid size={{ xs: 12, md: 3 }}>

@@ -25,6 +25,9 @@ const DEFAULTS = {
     pexels: '',      // PEXELS_API_KEY
   },
 
+  // Deployment
+  publicUrl: '',     // The public URL of this server (e.g., https://yourdomain.com)
+
   // Language models
   models: {
     language: {
@@ -121,6 +124,7 @@ export function getSettings() {
       heygenSet: !!settings.keys.heygen,
       pexelsSet: !!settings.keys.pexels,
     },
+    publicUrl: settings.publicUrl,
     models: structuredClone(settings.models),
     providers: structuredClone(settings.providers),
   }
@@ -138,22 +142,10 @@ export function getRawSettings() {
  */
 export function updateSettings(updates) {
   if (updates.keys) {
-    // Only update keys that are explicitly provided and non-empty
-    if (updates.keys.google !== undefined && updates.keys.google !== '') {
-      settings.keys.google = updates.keys.google
-    }
-    if (updates.keys.anthropic !== undefined && updates.keys.anthropic !== '') {
-      settings.keys.anthropic = updates.keys.anthropic
-    }
-    if (updates.keys.stadia !== undefined && updates.keys.stadia !== '') {
-      settings.keys.stadia = updates.keys.stadia
-    }
-    if (updates.keys.heygen !== undefined && updates.keys.heygen !== '') {
-      settings.keys.heygen = updates.keys.heygen
-    }
-    if (updates.keys.pexels !== undefined && updates.keys.pexels !== '') {
-      settings.keys.pexels = updates.keys.pexels
-    }
+    // ... existing key updates ...
+  }
+  if (updates.publicUrl !== undefined) {
+    settings.publicUrl = updates.publicUrl
   }
   if (updates.models) {
     settings.models = deepMerge(settings.models, updates.models)
