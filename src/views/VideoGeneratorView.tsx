@@ -28,6 +28,7 @@ import {
     CloudUpload as UploadIcon,
     Palette as ColorIcon,
     VideoLibrary as StockIcon,
+    Face as FaceIcon,
 } from '@mui/icons-material';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -218,28 +219,87 @@ const VideoGeneratorView: React.FC = () => {
                 );
             case 1: // Avatar
                 return (
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
-                        {STOCK_AVATARS.map((av) => (
-                            <Grid item xs={12} sm={6} md={3} key={av.id}>
-                                <Card sx={{ 
-                                    bgcolor: selectedAvatar === av.id ? 'rgba(201,169,97,0.2)' : 'var(--bg-secondary)',
-                                    border: selectedAvatar === av.id ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)',
-                                    transition: '0.2s',
-                                    '&:hover': { transform: 'translateY(-4px)' }
-                                }}>
-                                    <CardActionArea onClick={() => setSelectedAvatar(av.id)}>
-                                        <Box sx={{ position: 'relative', pt: '125%', overflow: 'hidden' }}>
-                                            <img src={av.thumbnail} alt={av.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        </Box>
-                                        <CardContent sx={{ p: 1.5, textAlign: 'center' }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: selectedAvatar === av.id ? 'var(--accent-gold)' : '#fff' }}>{av.name}</Typography>
-                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{av.gender.toUpperCase()}</Typography>
-                                        </CardContent>
-                                    </CardActionArea>
-                                </Card>
+                    <Box sx={{ mt: 2 }}>
+                        <ToggleButtonGroup
+                            value={avatarMode}
+                            exclusive
+                            onChange={(_, m) => m && setAvatarMode(m)}
+                            size="small"
+                            fullWidth
+                            sx={{ mb: 4 }}
+                        >
+                            <ToggleButton value="stock" sx={{ color: 'var(--text-secondary)' }}>
+                                <AvatarIcon sx={{ mr: 1, fontSize: 18 }} /> Stock Avatars
+                            </ToggleButton>
+                            <ToggleButton value="generated" sx={{ color: 'var(--text-secondary)' }}>
+                                <FaceIcon sx={{ mr: 1, fontSize: 18 }} /> Gemini AI Face
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+
+                        {avatarMode === 'stock' ? (
+                            <Grid container spacing={2}>
+                                {STOCK_AVATARS.map((av) => (
+                                    <Grid size={{ xs: 12, sm: 6, md: 3 }} key={av.id}>
+                                        <Card sx={{ 
+                                            bgcolor: selectedAvatar === av.id ? 'rgba(201,169,97,0.2)' : 'var(--bg-secondary)',
+                                            border: selectedAvatar === av.id ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)',
+                                            transition: '0.2s',
+                                            '&:hover': { transform: 'translateY(-4px)' }
+                                        }}>
+                                            <CardActionArea onClick={() => setSelectedAvatar(av.id)}>
+                                                <Box sx={{ position: 'relative', pt: '125%', overflow: 'hidden' }}>
+                                                    <img src={av.thumbnail} alt={av.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                </Box>
+                                                <CardContent sx={{ p: 1.5, textAlign: 'center' }}>
+                                                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: selectedAvatar === av.id ? 'var(--accent-gold)' : '#fff' }}>{av.name}</Typography>
+                                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{av.gender.toUpperCase()}</Typography>
+                                                </CardContent>
+                                            </CardActionArea>
+                                        </Card>
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
-                    </Grid>
+                        ) : (
+                            <Box sx={{ p: 4, bgcolor: 'rgba(0,0,0,0.2)', borderRadius: 2, textAlign: 'center' }}>
+                                <Typography variant="h6" sx={{ color: 'var(--accent-gold)', mb: 2 }}>Generate Custom Face with Gemini</Typography>
+                                <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
+                                    <TextField
+                                        fullWidth
+                                        placeholder="e.g. A friendly elderly scientist with glasses..."
+                                        value={avatarPrompt}
+                                        onChange={(e) => setAvatarPrompt(e.target.value)}
+                                        sx={{ '& .MuiOutlinedInput-root': { color: '#fff' } }}
+                                    />
+                                    <Button 
+                                        variant="contained" 
+                                        onClick={handleGenerateAvatar}
+                                        disabled={isGeneratingAvatar || !avatarPrompt.trim()}
+                                        sx={{ bgcolor: 'var(--accent-gold)', color: '#000', minWidth: 120 }}
+                                    >
+                                        {isGeneratingAvatar ? <CircularProgress size={20} /> : 'Generate'}
+                                    </Button>
+                                </Stack>
+
+                                {generatedAvatarUrl && (
+                                    <Box sx={{ mb: 4 }}>
+                                        <img src={generatedAvatarUrl} alt="AI Face" style={{ width: 200, height: 200, borderRadius: '50%', border: '3px solid var(--accent-gold)', objectFit: 'cover' }} />
+                                        <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mt: 2 }}>
+                                            Step 1: Save this image.<br />
+                                            Step 2: Upload to HeyGen "Talking Photo" section.<br />
+                                            Step 3: Paste the <b>Talking Photo ID</b> below.
+                                        </Typography>
+                                        <TextField
+                                            sx={{ mt: 3, maxWidth: 400, mx: 'auto', display: 'block', '& .MuiOutlinedInput-root': { color: '#fff' } }}
+                                            fullWidth
+                                            label="Talking Photo ID from HeyGen"
+                                            value={talkingPhotoId}
+                                            onChange={(e) => setTalkingPhotoId(e.target.value)}
+                                        />
+                                    </Box>
+                                )}
+                            </Box>
+                        )}
+                    </Box>
                 );
             case 2: // Voice
                 return (
@@ -281,7 +341,7 @@ const VideoGeneratorView: React.FC = () => {
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 2 }}>Choose Background Style</Typography>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} md={4}>
+                            <Grid size={{ xs: 12, md: 4 }}>
                                 <Card sx={{ bgcolor: bgMode === 'color' ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)', border: bgMode === 'color' ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
                                     <CardActionArea onClick={() => setBgMode('color')} sx={{ p: 2, textAlign: 'center' }}>
                                         <ColorIcon sx={{ fontSize: 40, color: 'var(--accent-gold)', mb: 1 }} />
@@ -296,7 +356,7 @@ const VideoGeneratorView: React.FC = () => {
                                     </CardActionArea>
                                 </Card>
                             </Grid>
-                            <Grid item xs={12} md={4}>
+                            <Grid size={{ xs: 12, md: 4 }}>
                                 <Card sx={{ bgcolor: bgMode === 'upload' ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)', border: bgMode === 'upload' ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
                                     <CardActionArea component="label" sx={{ p: 2, textAlign: 'center' }}>
                                         <UploadIcon sx={{ fontSize: 40, color: 'var(--accent-gold)', mb: 1 }} />
@@ -307,7 +367,7 @@ const VideoGeneratorView: React.FC = () => {
                                     </CardActionArea>
                                 </Card>
                             </Grid>
-                            <Grid item xs={12} md={4}>
+                            <Grid size={{ xs: 12, md: 4 }}>
                                 <Card sx={{ bgcolor: bgMode === 'pexels' ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)', border: bgMode === 'pexels' ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
                                     <CardActionArea onClick={() => setBgMode('pexels')} sx={{ p: 2, textAlign: 'center' }}>
                                         <StockIcon sx={{ fontSize: 40, color: 'var(--accent-gold)', mb: 1 }} />
@@ -322,6 +382,7 @@ const VideoGeneratorView: React.FC = () => {
                                                 value={pexelsQuery} 
                                                 onChange={(e) => setPexelsQuery(e.target.value)} 
                                                 placeholder="Search e.g. nature..."
+                                                sx={{ '& .MuiOutlinedInput-root': { color: '#fff' } }}
                                                 InputProps={{ endAdornment: <IconButton size="small" onClick={searchPexels}><SearchIcon sx={{ color: 'var(--accent-gold)' }}/></IconButton> }}
                                             />
                                             {pexelsVideo && <img src={pexelsVideo.image} style={{ width: '100%', height: 60, objectFit: 'cover', marginTop: 8, borderRadius: 4 }} />}
@@ -410,7 +471,7 @@ const VideoGeneratorView: React.FC = () => {
                                 <Button
                                     variant="contained"
                                     onClick={handleNext}
-                                    disabled={activeStep === 0 && !script.trim()}
+                                    disabled={(activeStep === 0 && !script.trim()) || (activeStep === 1 && avatarMode === 'generated' && !talkingPhotoId)}
                                     endIcon={<NextIcon />}
                                     sx={{ bgcolor: 'var(--accent-gold)', color: '#000', fontWeight: 'bold', px: 4 }}
                                 >
