@@ -21,22 +21,27 @@ const DEFAULTS = {
     google: '',      // GOOGLE_AI_API_KEY
     anthropic: '',   // ANTHROPIC_API_KEY
     stadia: '',      // STADIA_API_KEY (Stadia Maps — free map tiles)
+    heygen: '',      // HEYGEN_API_KEY
+    pexels: '',      // PEXELS_API_KEY
   },
 
   // Language models
   models: {
     language: {
-      primary: 'gemini-2.5-flash',            // Main generation (TSX, scene routing, template gen)
-      fast: 'gemini-2.5-flash',               // Fast/cheap JSON tasks (routing, extraction)
-      claude: 'claude-sonnet-4-5',             // Claude primary
-      claudeFast: 'claude-haiku-3-5',          // Claude fast
+      primary: 'gemini-2.0-flash',            // Main generation (TSX, scene routing, template gen)
+      fast: 'gemini-2.0-flash',               // Fast/cheap JSON tasks (routing, extraction)
+      claude: 'claude-3-7-sonnet-latest',      // Claude primary
+      claudeFast: 'claude-3-5-haiku-latest',   // Claude fast
+    },
+    tts: {
+      engine: 'kokoro',                        // 'kokoro' or 'orpheus'
     },
     image: {
-      primary: 'imagen-4.0-generate-001',      // Image generation
-      fallback: 'imagen-4.0-fast-generate-001', // Fallback image model
+      primary: 'imagen-3.0-generate-001',      // Image generation
+      fallback: 'imagen-3.0-fast-generate-001', // Fallback image model
     },
     video: {
-      primary: 'veo-3.0-generate-preview',      // Video generation (Veo 3)
+      primary: 'veo-2.0-generate-001',      // Video generation (Veo 2)
     },
   },
 
@@ -108,9 +113,13 @@ export function getSettings() {
       google: maskKey(settings.keys.google),
       anthropic: maskKey(settings.keys.anthropic),
       stadia: maskKey(settings.keys.stadia),
+      heygen: maskKey(settings.keys.heygen),
+      pexels: maskKey(settings.keys.pexels),
       googleSet: !!settings.keys.google,
       anthropicSet: !!settings.keys.anthropic,
       stadiaSet: !!settings.keys.stadia,
+      heygenSet: !!settings.keys.heygen,
+      pexelsSet: !!settings.keys.pexels,
     },
     models: structuredClone(settings.models),
     providers: structuredClone(settings.providers),
@@ -138,6 +147,12 @@ export function updateSettings(updates) {
     }
     if (updates.keys.stadia !== undefined && updates.keys.stadia !== '') {
       settings.keys.stadia = updates.keys.stadia
+    }
+    if (updates.keys.heygen !== undefined && updates.keys.heygen !== '') {
+      settings.keys.heygen = updates.keys.heygen
+    }
+    if (updates.keys.pexels !== undefined && updates.keys.pexels !== '') {
+      settings.keys.pexels = updates.keys.pexels
     }
   }
   if (updates.models) {

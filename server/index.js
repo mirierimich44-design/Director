@@ -16,6 +16,7 @@ import multer from 'multer';
 import archiver from 'archiver';
 
 import { getSettings, updateSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
+import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { renderVideo as renderRemotion } from './engines/remotion/renderer.js';
 import { auditTemplate, applyFix, TEMPLATES_DIR, AUDIT_DIR, REPORT_PATH } from './templateAuditor.js';
@@ -86,6 +87,8 @@ function createRenderJob(data = {}) {
 }
 
 // ── SETTINGS ─────────────────────────────────────────────────────────────────
+app.use('/api/video-gen', videoGeneratorRouter);
+
 app.get('/api/settings', (req, res) => {
     res.json({ success: true, settings: getSettings(), modelOptions: MODEL_OPTIONS });
 });

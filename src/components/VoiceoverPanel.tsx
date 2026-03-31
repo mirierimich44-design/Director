@@ -79,12 +79,23 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
         setError('');
     };
 
-    // Ping service on mount
+    // Ping service on mount and load settings
     useEffect(() => {
         fetch('/api/tts/health')
             .then(r => r.json())
             .then(d => setServiceStatus(d.success !== false ? 'online' : 'offline'))
             .catch(() => setServiceStatus('offline'));
+
+        fetch('/api/settings')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.settings.models.tts?.engine) {
+                    const globalEngine = data.settings.models.tts.engine;
+                    setEngine(globalEngine);
+                    setVoice(globalEngine === 'kokoro' ? 'af_heart' : 'tara');
+                }
+            })
+            .catch(err => console.warn('Failed to load global TTS settings:', err));
     }, []);
 
     // Insert emotion tag at cursor position

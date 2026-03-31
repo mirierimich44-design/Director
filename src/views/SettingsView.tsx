@@ -22,9 +22,13 @@ interface Settings {
         google: string;
         anthropic: string;
         stadia: string;
+        heygen: string;
+        pexels: string;
         googleSet: boolean;
         anthropicSet: boolean;
         stadiaSet: boolean;
+        heygenSet: boolean;
+        pexelsSet: boolean;
     };
     models: {
         language: {
@@ -32,6 +36,9 @@ interface Settings {
             fast: string;
             claude: string;
             claudeFast: string;
+        };
+        tts: {
+            engine: 'kokoro' | 'orpheus';
         };
         image: {
             primary: string;
@@ -59,9 +66,13 @@ const SettingsView: React.FC = () => {
     const [googleKey, setGoogleKey] = useState('');
     const [anthropicKey, setAnthropicKey] = useState('');
     const [stadiaKey, setStadiaKey] = useState('');
+    const [heygenKey, setHeygenKey] = useState('');
+    const [pexelsKey, setPexelsKey] = useState('');
     const [showGoogleKey, setShowGoogleKey] = useState(false);
     const [showAnthropicKey, setShowAnthropicKey] = useState(false);
     const [showStadiaKey, setShowStadiaKey] = useState(false);
+    const [showHeygenKey, setShowHeygenKey] = useState(false);
+    const [showPexelsKey, setShowPexelsKey] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
@@ -101,6 +112,8 @@ const SettingsView: React.FC = () => {
             if (googleKey) payload.keys = { ...payload.keys, google: googleKey };
             if (anthropicKey) payload.keys = { ...(payload.keys || {}), anthropic: anthropicKey };
             if (stadiaKey) payload.keys = { ...(payload.keys || {}), stadia: stadiaKey };
+            if (heygenKey) payload.keys = { ...(payload.keys || {}), heygen: heygenKey };
+            if (pexelsKey) payload.keys = { ...(payload.keys || {}), pexels: pexelsKey };
 
             const res = await fetch('/api/settings', {
                 method: 'PUT',
@@ -114,6 +127,8 @@ const SettingsView: React.FC = () => {
             setGoogleKey('');
             setAnthropicKey('');
             setStadiaKey('');
+            setHeygenKey('');
+            setPexelsKey('');
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
         } catch (err: any) {
@@ -283,7 +298,111 @@ const SettingsView: React.FC = () => {
                                 }}
                             />
                         </Box>
+
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
+                                    HeyGen API Key
+                                </Typography>
+                                <Chip
+                                    label={settings.keys.heygenSet ? 'CONFIGURED' : 'NOT SET'}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: settings.keys.heygenSet ? 'rgba(0,200,0,0.15)' : 'rgba(255,50,50,0.15)',
+                                        color: settings.keys.heygenSet ? '#00CC00' : '#FF4444',
+                                        fontSize: '0.65rem',
+                                    }}
+                                />
+                            </Box>
+                            {settings.keys.heygen && (
+                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mb: 1, display: 'block' }}>
+                                    Current: {settings.keys.heygen}
+                                </Typography>
+                            )}
+                            <TextField
+                                fullWidth
+                                size="small"
+                                type={showHeygenKey ? 'text' : 'password'}
+                                value={heygenKey}
+                                onChange={(e) => setHeygenKey(e.target.value)}
+                                placeholder="Enter HeyGen API key"
+                                sx={textFieldSx}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton size="small" onClick={() => setShowHeygenKey(!showHeygenKey)} sx={{ color: 'var(--text-secondary)' }}>
+                                                {showHeygenKey ? <HideIcon fontSize="small" /> : <ShowIcon fontSize="small" />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </Box>
+
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
+                                    Pexels API Key
+                                </Typography>
+                                <Chip
+                                    label={settings.keys.pexelsSet ? 'CONFIGURED' : 'NOT SET'}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: settings.keys.pexelsSet ? 'rgba(0,200,0,0.15)' : 'rgba(255,50,50,0.15)',
+                                        color: settings.keys.pexelsSet ? '#00CC00' : '#FF4444',
+                                        fontSize: '0.65rem',
+                                    }}
+                                />
+                            </Box>
+                            {settings.keys.pexels && (
+                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mb: 1, display: 'block' }}>
+                                    Current: {settings.keys.pexels}
+                                </Typography>
+                            )}
+                            <TextField
+                                fullWidth
+                                size="small"
+                                type={showPexelsKey ? 'text' : 'password'}
+                                value={pexelsKey}
+                                onChange={(e) => setPexelsKey(e.target.value)}
+                                placeholder="Enter Pexels API key"
+                                sx={textFieldSx}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton size="small" onClick={() => setShowPexelsKey(!showPexelsKey)} sx={{ color: 'var(--text-secondary)' }}>
+                                                {showPexelsKey ? <HideIcon fontSize="small" /> : <ShowIcon fontSize="small" />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </Box>
                     </Box>
+                </CardContent>
+            </Card>
+
+            {/* TTS Engine */}
+            <Card sx={sectionSx}>
+                <CardContent>
+                    <Typography variant="h6" sx={{ color: 'var(--text-primary)', mb: 2, fontWeight: 'bold', letterSpacing: 1 }}>
+                        TTS ENGINE
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 3 }}>
+                        Select the primary text-to-speech engine for video generation.
+                    </Typography>
+
+                    <FormControl fullWidth size="small" sx={selectSx}>
+                        <InputLabel>Primary TTS Engine</InputLabel>
+                        <Select
+                            value={settings.models.tts?.engine || 'kokoro'}
+                            label="Primary TTS Engine"
+                            onChange={(e) => updateModel('models.tts.engine', e.target.value)}
+                        >
+                            <MenuItem value="kokoro">Kokoro (Fast, CPU)</MenuItem>
+                            <MenuItem value="orpheus">Orpheus (Rich, slow on CPU)</MenuItem>
+                        </Select>
+                    </FormControl>
                 </CardContent>
             </Card>
 

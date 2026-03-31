@@ -4,15 +4,17 @@ import ProjectDirectorView from './views/ProjectDirectorView';
 import AudioProcessorView from './views/AudioProcessorView';
 import SettingsView from './views/SettingsView';
 import TemplateAuditorView from './views/TemplateAuditorView';
+import VideoGeneratorView from './views/VideoGeneratorView';
 import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import {
     FolderSpecial as ProjectIcon,
     GraphicEq as AudioIcon,
     Settings as SettingsIcon,
     BugReport as AuditIcon,
+    AutoFixHigh as VideoGenIcon,
 } from '@mui/icons-material';
 
-type Mode = 'project-director' | 'audio' | 'auditor' | 'settings';
+type Mode = 'project-director' | 'audio' | 'auditor' | 'settings' | 'video-generator';
 
 const App: React.FC = () => {
     const [mode, setMode] = useState<Mode>(() =>
@@ -23,6 +25,7 @@ const App: React.FC = () => {
 
     const nav = [
         { id: 'project-director', label: 'Project Director', icon: <ProjectIcon />, desc: 'Chapter-based Projects' },
+        { id: 'video-generator',  label: 'B-Roll Avatar',     icon: <VideoGenIcon />, desc: 'Gemini + Pexels + HeyGen' },
         { id: 'audio',            label: 'Audio Studio',     icon: <AudioIcon />,   desc: 'Voiceover Processor' },
         { id: 'auditor',          label: 'Template Auditor', icon: <AuditIcon />,   desc: 'Gemini Vision QA' },
         { id: 'settings',         label: 'LLM Settings',     icon: <SettingsIcon />, desc: 'API Keys & Models' },
@@ -75,6 +78,7 @@ const App: React.FC = () => {
 
             <Box sx={{ flexGrow: 1, overflow: 'auto', bgcolor: 'var(--bg-primary)' }}>
                 {mode === 'project-director' && <ProjectDirectorView />}
+                {mode === 'video-generator'  && <VideoGeneratorView />}
                 {mode === 'audio'            && <AudioProcessorView />}
                 {mode === 'auditor'          && <TemplateAuditorView />}
                 {mode === 'settings'         && <SettingsView />}
@@ -84,3 +88,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
