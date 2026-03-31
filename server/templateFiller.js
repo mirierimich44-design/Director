@@ -3,6 +3,15 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { getStadiaKey } from './settings.js'
 
+// Returns 0–1 relative luminance of a hex color
+function hexLuminance(hex) {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    const lin = c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const themes = JSON.parse(
@@ -101,6 +110,31 @@ export function fillTemplate(templateName, themeName, contentJson) {
       
       code = safeReplace(code, placeholder, fallback);
     });
+  }
+
+  // Step 4: Light-background safety sweep
+  // If the theme background is light (luminance > 0.5), hardcoded white text colors
+  // would be invisible. Replace them with the theme's primary (dark) color.
+  const bgHex = (theme.BACKGROUND_COLOR || '#000000').replace(/['"]/g, '');
+  if (/^#[0-9a-f]{6}$/i.test(bgHex) && hexLuminance(bgHex) > 0.5) {
+      const darkText = theme.PRIMARY_COLOR || '#111111';
+      const dimText  = theme.SUPPORT_COLOR  || '#555555';
+      // Replace exact white color: values in style objects (text color only, not backgroundColor)
+      // Pattern: color: '#fff' | color: "#fff" | color: 'white' | color: '#ffffff' | color: '#FFF' etc.
+      code = code.replace(/(\bcolor:\s*)(['"])(?:#[Ff]{3,6}|white)\2/g, `$1'${darkText}'`);
+      // Replace rgba(255,255,255, alpha) used as text color where alpha >= 0.4 (visible-intent text)
+      // Only in a `color:` context, not `backgroundColor:` or `border:`
+      code = code.replace(
+          /(\bcolor:\s*['"]?)rgba\(\s*255\s*,\s*255\s*,\s*255\s*,\s*([\d.]+)\s*\)/g,
+          (match, prefix, alpha) => {
+              const a = parseFloat(alpha);
+              // Skip very transparent whites — decorative/overlay, not main text
+              if (a < 0.35) return match;
+              // For semi-transparent text, blend with dark: use dimText at reduced opacity
+              return `${prefix}rgba(26,43,68,${a})`;
+          }
+      );
+      console.log(`   🎨 Light-background sweep applied (bg luminance ${hexLuminance(bgHex).toFixed(2)})`);
   }
 
   return code

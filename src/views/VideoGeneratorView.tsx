@@ -853,8 +853,85 @@ const VideoGeneratorView: React.FC = () => {
                 </Box>
             </Stack>
 
-            {/* Video recovery panel — paste a HeyGen video ID to fetch a completed video */}
+            {/* Video recovery panel */}
             {status === 'idle' && <VideoRecoveryPanel onRecovered={(url) => { setSuccessVideoUrl(url); setStatus('completed'); }} />}
+
+            {/* ── Generation History (shown above wizard when idle) ────────── */}
+            {status === 'idle' && history.length > 0 && (
+                <Box sx={{ mb: 4 }}>
+                    <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+                        <HistoryIcon sx={{ color: 'var(--accent-gold)', fontSize: 20 }} />
+                        <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', fontVariant: 'small-caps', letterSpacing: 1, flex: 1 }}>
+                            Previous Generations
+                        </Typography>
+                        <Chip size="small" label={`${history.length} video${history.length !== 1 ? 's' : ''}`}
+                            sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.68rem' }} />
+                    </Stack>
+
+                    <Grid container spacing={2}>
+                        {history.map((entry) => (
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={entry.videoId}>
+                                <Card sx={{
+                                    bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
+                                    borderRadius: 2, overflow: 'hidden', transition: '0.2s',
+                                    '&:hover': { borderColor: 'rgba(201,169,97,0.4)', transform: 'translateY(-2px)' },
+                                }}>
+                                    <Box sx={{ position: 'relative', bgcolor: '#000' }}>
+                                        <video
+                                            src={entry.videoUrl}
+                                            style={{ width: '100%', display: 'block', maxHeight: 160, objectFit: 'cover' }}
+                                            muted preload="metadata"
+                                            onMouseEnter={e => (e.currentTarget as HTMLVideoElement).play()}
+                                            onMouseLeave={e => { const v = e.currentTarget as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
+                                        />
+                                        <Chip size="small" label={entry.renderTime} sx={{
+                                            position: 'absolute', bottom: 6, right: 6,
+                                            bgcolor: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '0.6rem', height: 18,
+                                        }} />
+                                    </Box>
+                                    <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                                        <Typography variant="body2" sx={{
+                                            color: 'var(--text-primary)', fontSize: '0.76rem',
+                                            display: '-webkit-box', WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.4, mb: 1,
+                                        }}>"{entry.scriptSnippet}"</Typography>
+                                        <Stack direction="row" flexWrap="wrap" sx={{ mb: 1.5, gap: 0.5 }}>
+                                            <Chip size="small" label={entry.avatarName}
+                                                icon={<AvatarIcon sx={{ fontSize: '11px !important' }} />}
+                                                sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.6rem', height: 18 }} />
+                                            <Chip size="small" label={entry.voiceName}
+                                                icon={<VoiceIcon sx={{ fontSize: '11px !important' }} />}
+                                                sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.6rem', height: 18 }} />
+                                            <Chip size="small"
+                                                label={new Date(entry.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.6rem', height: 18 }} />
+                                        </Stack>
+                                        <Stack direction="row" spacing={0.5}>
+                                            <Button size="small" variant="outlined"
+                                                onClick={() => { setSuccessVideoUrl(entry.videoUrl); setStatus('completed'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                                sx={{ flex: 1, color: 'var(--accent-gold)', borderColor: 'rgba(201,169,97,0.35)', fontSize: '0.7rem', py: 0.4 }}>
+                                                View
+                                            </Button>
+                                            <Tooltip title="Download">
+                                                <IconButton size="small" component="a" href={entry.videoUrl} download
+                                                    sx={{ color: 'var(--text-secondary)', border: '1px solid var(--border-color)', borderRadius: 1 }}>
+                                                    <DownloadIcon sx={{ fontSize: 14 }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Remove from history">
+                                                <IconButton size="small" onClick={() => deleteFromHistory(entry.videoId)}
+                                                    sx={{ color: 'var(--text-secondary)', border: '1px solid var(--border-color)', borderRadius: 1, '&:hover': { color: '#f44336', borderColor: '#f44336' } }}>
+                                                    <DeleteIcon sx={{ fontSize: 14 }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+            )}
 
             {status === 'completed' && successVideoUrl ? (
                 <Card sx={{ bgcolor: 'var(--bg-secondary)', p: 4, textAlign: 'center', border: '1px solid var(--accent-gold)' }}>
@@ -923,101 +1000,6 @@ const VideoGeneratorView: React.FC = () => {
                 </>
             )}
 
-            {/* ── Generation History ───────────────────────────────────────── */}
-            {history.length > 0 && (
-                <Box sx={{ mt: 6 }}>
-                    <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
-                        <HistoryIcon sx={{ color: 'var(--accent-gold)', fontSize: 22 }} />
-                        <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontVariant: 'small-caps', letterSpacing: 1, flex: 1 }}>
-                            Generation History
-                        </Typography>
-                        <Chip size="small" label={`${history.length} video${history.length !== 1 ? 's' : ''}`}
-                            sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.68rem' }} />
-                    </Stack>
-
-                    <Grid container spacing={2}>
-                        {history.map((entry) => (
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={entry.videoId}>
-                                <Card sx={{
-                                    bgcolor: 'var(--bg-secondary)',
-                                    border: '1px solid var(--border-color)',
-                                    borderRadius: 2,
-                                    overflow: 'hidden',
-                                    transition: '0.2s',
-                                    '&:hover': { borderColor: 'rgba(201,169,97,0.4)', transform: 'translateY(-2px)' },
-                                }}>
-                                    {/* Video preview */}
-                                    <Box sx={{ position: 'relative', bgcolor: '#000' }}>
-                                        <video
-                                            src={entry.videoUrl}
-                                            style={{ width: '100%', display: 'block', maxHeight: 180, objectFit: 'cover' }}
-                                            muted
-                                            preload="metadata"
-                                            onMouseEnter={e => (e.currentTarget as HTMLVideoElement).play()}
-                                            onMouseLeave={e => { const v = e.currentTarget as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
-                                        />
-                                        <Chip
-                                            size="small"
-                                            label={entry.renderTime}
-                                            sx={{
-                                                position: 'absolute', bottom: 6, right: 6,
-                                                bgcolor: 'rgba(0,0,0,0.7)', color: '#fff',
-                                                fontSize: '0.62rem', height: 18,
-                                            }}
-                                        />
-                                    </Box>
-
-                                    <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                                        {/* Script snippet */}
-                                        <Typography variant="body2" sx={{
-                                            color: 'var(--text-primary)', fontSize: '0.78rem',
-                                            display: '-webkit-box', WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                                            lineHeight: 1.4, mb: 1,
-                                        }}>
-                                            "{entry.scriptSnippet}"
-                                        </Typography>
-
-                                        {/* Meta */}
-                                        <Stack direction="row" spacing={0.5} flexWrap="wrap" sx={{ mb: 1.5, gap: 0.5 }}>
-                                            <Chip size="small" label={entry.avatarName}
-                                                icon={<AvatarIcon sx={{ fontSize: '12px !important' }} />}
-                                                sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.62rem', height: 18 }} />
-                                            <Chip size="small" label={entry.voiceName}
-                                                icon={<VoiceIcon sx={{ fontSize: '12px !important' }} />}
-                                                sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.62rem', height: 18 }} />
-                                            <Chip size="small"
-                                                label={new Date(entry.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                                sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.62rem', height: 18 }} />
-                                        </Stack>
-
-                                        {/* Actions */}
-                                        <Stack direction="row" spacing={0.5}>
-                                            <Button size="small" variant="outlined"
-                                                onClick={() => { setSuccessVideoUrl(entry.videoUrl); setStatus('completed'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                                sx={{ flex: 1, color: 'var(--accent-gold)', borderColor: 'rgba(201,169,97,0.35)', fontSize: '0.7rem', py: 0.4 }}>
-                                                View
-                                            </Button>
-                                            <Tooltip title="Download">
-                                                <IconButton size="small" component="a" href={entry.videoUrl} download
-                                                    sx={{ color: 'var(--text-secondary)', border: '1px solid var(--border-color)', borderRadius: 1 }}>
-                                                    <DownloadIcon sx={{ fontSize: 15 }} />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Remove from history">
-                                                <IconButton size="small" onClick={() => deleteFromHistory(entry.videoId)}
-                                                    sx={{ color: 'var(--text-secondary)', border: '1px solid var(--border-color)', borderRadius: 1, '&:hover': { color: '#f44336', borderColor: '#f44336' } }}>
-                                                    <DeleteIcon sx={{ fontSize: 15 }} />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Stack>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Box>
-            )}
         </Box>
     );
 };
