@@ -579,8 +579,9 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         console.log(`   🖼️ 3D Render saved: ${imgId}.jpg`);
         res.json({ success: true, url: `/images/${imgId}.jpg` });
     } catch (err) {
-        console.error('❌ render-3d error:', err.message);
-        res.status(500).json({ success: false, error: err.message });
+        const cause = err.cause ? ` | cause: ${err.cause?.code || err.cause?.message || JSON.stringify(err.cause)}` : '';
+        console.error(`❌ render-3d error: ${err.message}${cause}`);
+        res.status(500).json({ success: false, error: err.message, cause: String(err.cause || '') });
     }
 });
 
