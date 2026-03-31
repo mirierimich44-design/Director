@@ -3,7 +3,8 @@ import {
     Box, Typography, TextField, Button, Card, CardContent, Chip, LinearProgress,
     IconButton, Tooltip, Stack, Paper, Grid, ToggleButtonGroup, ToggleButton,
     Select, MenuItem, FormControl, InputLabel, Alert, Divider, CircularProgress,
-    Dialog, DialogTitle, DialogContent, DialogActions
+    Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel,
+    CardActionArea, Avatar as MuiAvatar
 } from '@mui/material';
 import {
     AutoFixHigh as VideoGenIcon,
@@ -21,72 +22,80 @@ import {
     ContentPaste as PasteIcon,
     Lightbulb as TopicIcon,
     YouTube as YouTubeIcon,
+    NavigateNext as NextIcon,
+    NavigateBefore as BackIcon,
+    VolumeUp as VoiceIcon,
+    CloudUpload as UploadIcon,
+    Palette as ColorIcon,
+    VideoLibrary as StockIcon,
 } from '@mui/icons-material';
 
-interface Scene {
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface AvatarOption {
     id: string;
-    script: string;
-    background_query: string;
-    bgMode?: 'pexels' | 'color' | 'upload';
-    bgColor?: string;
-    uploadUrl?: string;
-    videoUrl?: string;
-    thumbnailUrl?: string;
-    heygenStatus?: 'idle' | 'processing' | 'completed' | 'error';
-    heygenVideoUrl?: string;
-    error?: string;
+    name: string;
+    gender: string;
+    thumbnail: string;
 }
 
-const AVATARS = [
-    { id: 'Daisy-working-suit-20230818', name: 'Daisy (Suit)', gender: 'female' },
-    { id: 'Maya-default-20230622', name: 'Maya (Casual)', gender: 'female' },
-    { id: 'Tyler-as-teacher-20230818', name: 'Tyler (Teacher)', gender: 'male' },
-    { id: 'custom', name: 'Custom ID...', gender: 'any' },
+interface VoiceOption {
+    id: string;
+    name: string;
+    gender: string;
+    previewUrl?: string;
+}
+
+const STOCK_AVATARS: AvatarOption[] = [
+    { id: 'Daisy-working-suit-20230818', name: 'Daisy (Suit)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/9f8c6b446a814c81881a53f0f7a6f235_26955/preview_target.webp' },
+    { id: 'Maya-default-20230622', name: 'Maya (Casual)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/423f85885f81498b965f7c320d365691_26046/preview_target.webp' },
+    { id: 'Tyler-as-teacher-20230818', name: 'Tyler (Teacher)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/88029983401546998634812306509743/preview_target.webp' },
+    { id: 'Ekar-casual-20230531', name: 'Ekar (Casual)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/10834311028754546876274438343869/preview_target.webp' },
 ];
 
-const VOICES = [
-    { id: 'en-US-JennyNeural', name: 'Jenny (US)', gender: 'female' },
-    { id: 'en-US-GuyNeural', name: 'Guy (US)', gender: 'male' },
+const STOCK_VOICES: VoiceOption[] = [
+    { id: 'en-US-JennyNeural', name: 'Jenny (US)', gender: 'female', previewUrl: 'https://files2.heygen.ai/voice/preview/en-US-JennyNeural.mp3' },
+    { id: 'en-US-GuyNeural', name: 'Guy (US)', gender: 'male', previewUrl: 'https://files2.heygen.ai/voice/preview/en-US-GuyNeural.mp3' },
+    { id: 'en-US-AriaNeural', name: 'Aria (US)', gender: 'female', previewUrl: 'https://files2.heygen.ai/voice/preview/en-US-AriaNeural.mp3' },
+    { id: 'en-GB-RyanNeural', name: 'Ryan (UK)', gender: 'male', previewUrl: 'https://files2.heygen.ai/voice/preview/en-GB-RyanNeural.mp3' },
 ];
+
+const STEPS = ['Write Script', 'Select Avatar', 'Choose Voice', 'Background & Render'];
 
 const VideoGeneratorView: React.FC = () => {
-    const [mode, setMode] = useState<'topic' | 'paste'>('topic');
-    const [input, setInput] = useState('');
-    const [scenes, setScenes] = useState<Scene[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [generating, setGenerating] = useState(false);
-    const [error, setError] = useState('');
+    const [activeStep, setActiveStep] = useState(0);
+    const [script, setScript] = useState('');
+    const [selectedAvatar, setSelectedAvatar] = useState(STOCK_AVATARS[0].id);
+    const [selectedVoice, setSelectedVoice] = useState(STOCK_VOICES[0].id);
+    const [bgMode, setBgMode] = useState<'color' | 'upload' | 'pexels'>('color');
+    const [bgColor, setBgColor] = useState('#00FF00');
+    const [uploadUrl, setUploadUrl] = useState('');
+    const [pexelsQuery, setPexelsQuery] = useState('modern office');
+    const [pexelsVideo, setPexelsVideo] = useState<{link: string, image: string} | null>(null);
     
-    // Settings
+    // Avatar Logic
     const [avatarMode, setAvatarMode] = useState<'stock' | 'generated'>('stock');
-    const [avatar, setAvatar] = useState(AVATARS[0].id);
-    const [customAvatarId, setCustomAvatarId] = useState('');
-    const [voice, setVoice] = useState(VOICES[0].id);
-    const [layout, setLayout] = useState<'circle' | 'lower_third'>('lower_third');
-
-    // Generated Avatar State
     const [avatarPrompt, setAvatarPrompt] = useState('');
     const [generatedAvatarUrl, setGeneratedAvatarUrl] = useState('');
     const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
     const [talkingPhotoId, setTalkingPhotoId] = useState('');
 
-    const handleUploadBackground = async (sceneId: string, file: File) => {
-        const formData = new FormData();
-        formData.append('image', file);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [successVideoUrl, setSuccessVideoUrl] = useState('');
+    const [status, setStatus] = useState<'idle' | 'processing' | 'completed'>('idle');
 
-        try {
-            const res = await fetch('/api/upload-image', {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await res.json();
-            if (data.success) {
-                setScenes(prev => prev.map(s => 
-                    s.id === sceneId ? { ...s, uploadUrl: data.url, bgMode: 'upload' } : s
-                ));
-            }
-        } catch (err) {
-            console.error('Upload failed:', err);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // ── Handlers ──────────────────────────────────────────────────────────────
+
+    const handleNext = () => setActiveStep((prev) => prev + 1);
+    const handleBack = () => setActiveStep((prev) => prev - 1);
+
+    const playPreview = (url: string) => {
+        if (audioRef.current) {
+            audioRef.current.src = url;
+            audioRef.current.play();
         }
     };
 
@@ -111,483 +120,309 @@ const VideoGeneratorView: React.FC = () => {
         }
     };
 
-    const handleAnalyze = async () => {
-        if (!input.trim()) return;
+    const handleUpload = async (file: File) => {
         setLoading(true);
-        setError('');
+        const formData = new FormData();
+        formData.append('image', file);
         try {
-            const res = await fetch('/api/video-gen/analyze', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ input, mode }),
-            });
+            const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
             const data = await res.json();
-            if (!data.success) throw new Error(data.error);
-            setScenes(data.scenes.map((s: any, i: number) => ({
-                ...s,
-                id: `scene_${Date.now()}_${i}`,
-                heygenStatus: 'idle'
-            })));
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+            if (data.success) setUploadUrl(data.url);
+        } catch (err) { setError('Upload failed'); }
+        finally { setLoading(false); }
     };
 
-    const handleSearchPexels = async (sceneId: string, query: string) => {
+    const searchPexels = async () => {
+        setLoading(true);
         try {
-            const res = await fetch(`/api/video-gen/pexels-search?query=${encodeURIComponent(query)}`);
+            const res = await fetch(`/api/video-gen/pexels-search?query=${encodeURIComponent(pexelsQuery)}`);
             const data = await res.json();
             if (data.success && data.videos.length > 0) {
-                setScenes(prev => prev.map(s =>
-                    s.id === sceneId ? { ...s, videoUrl: data.videos[0].link, thumbnailUrl: data.videos[0].image } : s
-                ));
+                setPexelsVideo(data.videos[0]);
             }
-        } catch (err) {
-            console.error('Pexels search failed:', err);
-        }
+        } catch (err) { setError('Pexels search failed'); }
+        finally { setLoading(false); }
     };
 
-    const handleGenerateHeyGen = async (sceneId: string) => {
-        const scene = scenes.find(s => s.id === sceneId);
-        if (!scene) return;
-        
-        const mode = scene.bgMode || 'pexels';
-        if (mode === 'pexels' && !scene.videoUrl) return;
-        if (mode === 'upload' && !scene.uploadUrl) return;
-        
-        if (avatarMode === 'generated' && !talkingPhotoId) {
-            setScenes(prev => prev.map(s => s.id === sceneId ? { ...s, error: 'Please enter a Talking Photo ID first.' } : s));
-            return;
-        }
-
-        setScenes(prev => prev.map(s => s.id === sceneId ? { ...s, heygenStatus: 'processing', error: '' } : s));
-
+    const handleGenerate = async () => {
+        setLoading(true);
+        setError('');
+        setStatus('processing');
         try {
             const res = await fetch('/api/video-gen/heygen-generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    script: scene.script,
-                    backgroundVideoUrl: mode === 'pexels' ? scene.videoUrl : (mode === 'upload' ? scene.uploadUrl : undefined),
-                    bgMode: mode,
-                    bgColor: scene.bgColor || '#00FF00',
-                    avatarId: avatarMode === 'stock' 
-                        ? (avatar === 'custom' ? customAvatarId : avatar)
-                        : talkingPhotoId,
+                    script,
+                    backgroundVideoUrl: bgMode === 'upload' ? uploadUrl : (bgMode === 'pexels' ? pexelsVideo?.link : undefined),
+                    bgMode,
+                    bgColor,
+                    avatarId: avatarMode === 'stock' ? selectedAvatar : talkingPhotoId,
                     avatarType: avatarMode === 'stock' ? 'avatar' : 'talking_photo',
-                    voiceId: voice,
-                    layout: layout
+                    voiceId: selectedVoice,
+                    layout: 'lower_third'
                 }),
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
 
-            // Poll for status
-            pollHeyGenStatus(sceneId, data.video_id);
+            pollStatus(data.video_id);
         } catch (err: any) {
-            setScenes(prev => prev.map(s => s.id === sceneId ? { ...s, heygenStatus: 'error', error: err.message } : s));
+            setError(err.message);
+            setStatus('idle');
+            setLoading(false);
         }
     };
 
-    const pollHeyGenStatus = (sceneId: string, videoId: string) => {
+    const pollStatus = (videoId: string) => {
         const interval = setInterval(async () => {
             try {
                 const res = await fetch(`/api/video-gen/heygen-status/${videoId}`);
                 const data = await res.json();
                 if (data.status === 'completed') {
                     clearInterval(interval);
-                    setScenes(prev => prev.map(s => s.id === sceneId ? { ...s, heygenStatus: 'completed', heygenVideoUrl: data.video_url } : s));
+                    setSuccessVideoUrl(data.video_url);
+                    setStatus('completed');
+                    setLoading(false);
                 } else if (data.status === 'failed') {
                     clearInterval(interval);
-                    setScenes(prev => prev.map(s => s.id === sceneId ? { ...s, heygenStatus: 'error', error: data.error } : s));
+                    setError(data.error || 'HeyGen render failed');
+                    setStatus('idle');
+                    setLoading(false);
                 }
             } catch (err) {
-                console.error('Polling failed:', err);
                 clearInterval(interval);
+                setLoading(false);
             }
         }, 5000);
     };
 
-    return (
-        <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
-                <VideoGenIcon sx={{ fontSize: 40, color: 'var(--accent-gold)' }} />
-                <Box>
-                    <Typography variant="h4" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', fontVariant: 'small-caps' }}>
-                        B-Roll Avatar Generator
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ color: 'var(--text-secondary)' }}>
-                        Gemini Scripting + Pexels B-Roll + HeyGen Avatar
-                    </Typography>
-                </Box>
-            </Stack>
+    // ── Render Steps ──────────────────────────────────────────────────────────
 
-            {/* Setup Panel */}
-            <Paper sx={{ p: 3, mb: 4, bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 2 }}>
-                <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)', mb: 2 }}>Input Mode</Typography>
-                        <ToggleButtonGroup
-                            value={mode}
-                            exclusive
-                            onChange={(_, m) => m && setMode(m)}
-                            size="small"
-                            fullWidth
-                            sx={{ mb: 2 }}
-                        >
-                            <ToggleButton value="topic" sx={{ color: 'var(--text-secondary)' }}>
-                                <TopicIcon sx={{ mr: 1, fontSize: 18 }} /> Topic Prompt
-                            </ToggleButton>
-                            <ToggleButton value="paste" sx={{ color: 'var(--text-secondary)' }}>
-                                <PasteIcon sx={{ mr: 1, fontSize: 18 }} /> Paste Script
-                            </ToggleButton>
-                        </ToggleButtonGroup>
+    const renderStepContent = () => {
+        switch (activeStep) {
+            case 0: // Script
+                return (
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 2 }}>Paste your full video script below</Typography>
                         <TextField
                             fullWidth
                             multiline
-                            rows={4}
-                            placeholder={mode === 'topic' ? "Describe the video topic (e.g. 'How fusion energy works')..." : "Paste your full script here..."}
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            sx={{
-                                '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: 'var(--text-primary)' }
-                            }}
+                            rows={10}
+                            placeholder="Hello, I am your AI avatar. Today we are talking about..."
+                            value={script}
+                            onChange={(e) => setScript(e.target.value)}
+                            sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }}
                         />
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleAnalyze}
-                            disabled={loading || !input.trim()}
-                            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SearchIcon />}
-                            sx={{ mt: 2, bgcolor: 'var(--accent-gold)', color: '#000', fontWeight: 'bold' }}
-                        >
-                            {loading ? 'Analyzing Content...' : 'Generate Scenes & B-Roll'}
-                        </Button>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)', mb: 2 }}>Visual Style</Typography>
-                        <Stack spacing={2}>
-                            <ToggleButtonGroup
-                                value={avatarMode}
-                                exclusive
-                                onChange={(_, m) => m && setAvatarMode(m)}
-                                size="small"
-                                fullWidth
-                            >
-                                <ToggleButton value="stock" sx={{ color: 'var(--text-secondary)' }}>Stock Avatar</ToggleButton>
-                                <ToggleButton value="generated" sx={{ color: 'var(--text-secondary)' }}>Generated (Talking Photo)</ToggleButton>
-                            </ToggleButtonGroup>
-
-                            {avatarMode === 'stock' ? (
-                                <Stack spacing={2}>
-                                    <FormControl fullWidth size="small">
-                                        <InputLabel sx={{ color: 'var(--text-secondary)' }}>Avatar</InputLabel>
-                                        <Select
-                                            value={avatar}
-                                            label="Avatar"
-                                            onChange={(e) => setAvatar(e.target.value)}
-                                            sx={{ bgcolor: 'var(--bg-primary)', color: '#fff' }}
-                                        >
-                                            {AVATARS.map(a => <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>)}
-                                        </Select>
-                                    </FormControl>
-                                    {avatar === 'custom' && (
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            label="Custom HeyGen Avatar ID"
-                                            placeholder="Paste avatar ID from HeyGen..."
-                                            value={customAvatarId}
-                                            onChange={(e) => setCustomAvatarId(e.target.value)}
-                                            sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
-                                        />
-                                    )}
-                                </Stack>
-                            ) : (
-                                <Box sx={{ p: 2, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px solid var(--border-color)' }}>
-                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>
-                                        Generate an avatar face using Gemini (Imagen 3).
-                                    </Typography>
-                                    <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            placeholder="e.g. A futuristic cyberpunk hacker..."
-                                            value={avatarPrompt}
-                                            onChange={(e) => setAvatarPrompt(e.target.value)}
-                                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff' } }}
-                                        />
-                                        <Button 
-                                            variant="contained" 
-                                            onClick={handleGenerateAvatar}
-                                            disabled={isGeneratingAvatar || !avatarPrompt.trim()}
-                                            sx={{ bgcolor: 'var(--accent-gold)', color: '#000', minWidth: 100 }}
-                                        >
-                                            {isGeneratingAvatar ? <CircularProgress size={20} /> : 'Generate'}
-                                        </Button>
-                                    </Stack>
-                                    
-                                    {generatedAvatarUrl && (
-                                        <Box sx={{ textAlign: 'center', mb: 2 }}>
-                                            <img src={generatedAvatarUrl} alt="Generated Avatar" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-gold)' }} />
-                                            <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'var(--text-secondary)' }}>
-                                                Upload this image to HeyGen to get a Talking Photo ID.
-                                            </Typography>
+                    </Box>
+                );
+            case 1: // Avatar
+                return (
+                    <Grid container spacing={2} sx={{ mt: 2 }}>
+                        {STOCK_AVATARS.map((av) => (
+                            <Grid item xs={12} sm={6} md={3} key={av.id}>
+                                <Card sx={{ 
+                                    bgcolor: selectedAvatar === av.id ? 'rgba(201,169,97,0.2)' : 'var(--bg-secondary)',
+                                    border: selectedAvatar === av.id ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)',
+                                    transition: '0.2s',
+                                    '&:hover': { transform: 'translateY(-4px)' }
+                                }}>
+                                    <CardActionArea onClick={() => setSelectedAvatar(av.id)}>
+                                        <Box sx={{ position: 'relative', pt: '125%', overflow: 'hidden' }}>
+                                            <img src={av.thumbnail} alt={av.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </Box>
-                                    )}
-
-                                    <TextField
-                                        fullWidth
-                                        size="small"
-                                        label="HeyGen Talking Photo ID"
-                                        value={talkingPhotoId}
-                                        onChange={(e) => setTalkingPhotoId(e.target.value)}
-                                        sx={{ '& .MuiOutlinedInput-root': { color: '#fff' } }}
-                                    />
-                                </Box>
-                            )}
-
-                            <FormControl fullWidth size="small">
-                                <InputLabel sx={{ color: 'var(--text-secondary)' }}>Voice</InputLabel>
-                                <Select
-                                    value={voice}
-                                    label="Voice"
-                                    onChange={(e) => setVoice(e.target.value)}
-                                    sx={{ bgcolor: 'var(--bg-primary)', color: '#fff' }}
-                                >
-                                    {VOICES.map(v => <MenuItem key={v.id} value={v.id}>{v.name}</MenuItem>)}
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth size="small">
-                                <InputLabel sx={{ color: 'var(--text-secondary)' }}>Avatar Layout</InputLabel>
-                                <Select
-                                    value={layout}
-                                    label="Avatar Layout"
-                                    onChange={(e) => setLayout(e.target.value)}
-                                    sx={{ bgcolor: 'var(--bg-primary)', color: '#fff' }}
-                                >
-                                    <MenuItem value="lower_third">Lower Third (Rectangle)</MenuItem>
-                                    <MenuItem value="circle">Circle Overlay</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </Paper>
-
-            {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
-
-            {/* Scene Builder */}
-            {scenes.length > 0 && (
-                <Box>
-                    <Typography variant="h6" sx={{ color: 'var(--text-primary)', mb: 2 }}>
-                        Storyboard & Production Queue
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {scenes.map((scene, idx) => (
-                            <Grid size={{ xs: 12 }} key={scene.id}>
-                                <Card sx={{ bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', position: 'relative' }}>
-                                    <CardContent>
-                                        <Grid container spacing={3} alignItems="center">
-                                            <Grid size={{ xs: 12, md: 1 }}>
-                                                <Typography variant="h5" sx={{ color: 'var(--accent-gold)', textAlign: 'center' }}>#{idx + 1}</Typography>
-                                            </Grid>
-                                            <Grid size={{ xs: 12, md: 5 }}>
-                                                <TextField
-                                                    fullWidth
-                                                    multiline
-                                                    rows={3}
-                                                    label="Script Segment"
-                                                    value={scene.script}
-                                                    onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, script: e.target.value } : s))}
-                                                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
-                                                />
-                                                
-                                                <Box sx={{ mb: 2 }}>
-                                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>Background Type</Typography>
-                                                    <ToggleButtonGroup
-                                                        value={scene.bgMode || 'pexels'}
-                                                        exclusive
-                                                        onChange={(_, m) => m && setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, bgMode: m } : s))}
-                                                        size="small"
-                                                        fullWidth
-                                                    >
-                                                        <ToggleButton value="pexels" sx={{ py: 0.5, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pexels B-Roll</ToggleButton>
-                                                        <ToggleButton value="color" sx={{ py: 0.5, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Solid Color</ToggleButton>
-                                                        <ToggleButton value="upload" sx={{ py: 0.5, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Custom URL</ToggleButton>
-                                                    </ToggleButtonGroup>
-                                                </Box>
-
-                                                {(scene.bgMode || 'pexels') === 'pexels' && (
-                                                    <Stack direction="row" spacing={1} alignItems="center">
-                                                        <TextField
-                                                            fullWidth
-                                                            size="small"
-                                                            label="B-Roll Query"
-                                                            value={scene.background_query}
-                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, background_query: e.target.value } : s))}
-                                                            sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
-                                                        />
-                                                        <IconButton onClick={() => handleSearchPexels(scene.id, scene.background_query)} sx={{ color: 'var(--accent-gold)' }}>
-                                                            <RefreshIcon />
-                                                        </IconButton>
-                                                    </Stack>
-                                                )}
-
-                                                {scene.bgMode === 'color' && (
-                                                    <Stack direction="row" spacing={1} alignItems="center">
-                                                        <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>Hex Color:</Typography>
-                                                        <input 
-                                                            type="color" 
-                                                            value={scene.bgColor || '#00FF00'} 
-                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, bgColor: e.target.value } : s))}
-                                                            style={{ width: 40, height: 30, padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
-                                                        />
-                                                        <TextField 
-                                                            size="small"
-                                                            value={scene.bgColor || '#00FF00'}
-                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, bgColor: e.target.value } : s))}
-                                                            sx={{ width: 100, '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
-                                                        />
-                                                    </Stack>
-                                                )}
-
-                                                {scene.bgMode === 'upload' && (
-                                                    <Box>
-                                                        <TextField
-                                                            fullWidth
-                                                            size="small"
-                                                            label="Media URL"
-                                                            value={scene.uploadUrl || ''}
-                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, uploadUrl: e.target.value } : s))}
-                                                            sx={{ mb: 1, '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
-                                                        />
-                                                        <Button
-                                                            fullWidth
-                                                            component="label"
-                                                            variant="outlined"
-                                                            size="small"
-                                                            startIcon={<AddIcon />}
-                                                            sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
-                                                        >
-                                                            Upload File
-                                                            <input
-                                                                type="file"
-                                                                hidden
-                                                                accept="image/*,video/*"
-                                                                onChange={(e) => {
-                                                                    const file = e.target.files?.[0];
-                                                                    if (file) handleUploadBackground(scene.id, file);
-                                                                }}
-                                                            />
-                                                        </Button>
-                                                    </Box>
-                                                )}
-                                            </Grid>
-                                            <Grid size={{ xs: 12, md: 3 }}>
-                                                {(scene.bgMode || 'pexels') === 'pexels' ? (
-                                                    scene.videoUrl ? (
-                                                        <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
-                                                            <img src={scene.thumbnailUrl} alt="B-roll" style={{ width: '100%', display: 'block' }} />
-                                                            <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, bgcolor: 'rgba(0,0,0,0.6)', p: 0.5 }}>
-                                                                <Typography variant="caption" sx={{ color: '#fff' }}>Stock B-Roll Selected</Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    ) : (
-                                                        <Box sx={{ height: 100, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px dashed var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>Searching Pexels...</Typography>
-                                                        </Box>
-                                                    )
-                                                ) : scene.bgMode === 'color' ? (
-                                                    <Box sx={{ height: 100, bgcolor: scene.bgColor || '#00FF00', borderRadius: 1, border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        <Typography variant="caption" sx={{ color: '#000', bgcolor: 'rgba(255,255,255,0.7)', px: 1, borderRadius: 1 }}>{scene.bgColor || '#00FF00'}</Typography>
-                                                    </Box>
-                                                ) : (
-                                                    <Box sx={{ height: 100, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px dashed var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', p: 1 }}>
-                                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
-                                                            {scene.uploadUrl ? 'Custom Media URL' : 'Enter URL to use custom background'}
-                                                        </Typography>
-                                                    </Box>
-                                                )}
-                                            </Grid>
-                                            <Grid size={{ xs: 12, md: 3 }}>
-                                                <Stack spacing={1}>
-                                                    {scene.heygenStatus === 'idle' && (
-                                                        <Button
-                                                            fullWidth
-                                                            variant="contained"
-                                                            startIcon={<MovieIcon />}
-                                                            onClick={() => handleGenerateHeyGen(scene.id)}
-                                                            disabled={(scene.bgMode || 'pexels') === 'pexels' ? !scene.videoUrl : ((scene.bgMode === 'upload' && !scene.uploadUrl) ? true : false)}
-                                                            sx={{ bgcolor: 'var(--accent-gold)', color: '#000' }}
-                                                        >
-                                                            Render Scene
-                                                        </Button>
-                                                    )}
-                                                    {scene.heygenStatus === 'processing' && (
-                                                        <Box sx={{ textAlign: 'center' }}>
-                                                            <CircularProgress size={24} sx={{ mb: 1, color: 'var(--accent-gold)' }} />
-                                                            <Typography variant="caption" sx={{ display: 'block', color: 'var(--text-secondary)' }}>HeyGen Rendering...</Typography>
-                                                        </Box>
-                                                    )}
-                                                    {scene.heygenStatus === 'completed' && (
-                                                        <Button
-                                                            fullWidth
-                                                            variant="outlined"
-                                                            startIcon={<PlayIcon />}
-                                                            onClick={() => window.open(scene.heygenVideoUrl, '_blank')}
-                                                            sx={{ color: '#4CAF50', borderColor: '#4CAF50' }}
-                                                        >
-                                                            View Render
-                                                        </Button>
-                                                    )}
-                                                    {scene.heygenStatus === 'error' && (
-                                                        <Box>
-                                                            <Typography variant="caption" color="error" sx={{ mb: 1, display: 'block' }}>{scene.error}</Typography>
-                                                            <Button size="small" onClick={() => handleGenerateHeyGen(scene.id)}>Retry</Button>
-                                                        </Box>
-                                                    )}
-                                                </Stack>
-                                            </Grid>
-                                        </Grid>
-                                    </CardContent>
+                                        <CardContent sx={{ p: 1.5, textAlign: 'center' }}>
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: selectedAvatar === av.id ? 'var(--accent-gold)' : '#fff' }}>{av.name}</Typography>
+                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{av.gender.toUpperCase()}</Typography>
+                                        </CardContent>
+                                    </CardActionArea>
                                 </Card>
                             </Grid>
                         ))}
                     </Grid>
-
-                    {/* YouTube Metadata Panel */}
-                    <Paper sx={{ p: 3, mt: 4, bgcolor: 'rgba(255,0,0,0.05)', border: '1px solid rgba(255,0,0,0.2)', borderRadius: 2 }}>
-                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                            <YouTubeIcon color="error" />
-                            <Typography variant="h6" sx={{ color: '#fff' }}>YouTube Publishing Kit</Typography>
+                );
+            case 2: // Voice
+                return (
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 2 }}>Select a professional AI voice</Typography>
+                        <Stack spacing={1}>
+                            {STOCK_VOICES.map((v) => (
+                                <Paper key={v.id} sx={{ 
+                                    p: 2, 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'space-between',
+                                    bgcolor: selectedVoice === v.id ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)',
+                                    border: selectedVoice === v.id ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)',
+                                    cursor: 'pointer'
+                                }} onClick={() => setSelectedVoice(v.id)}>
+                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                        <MuiAvatar sx={{ bgcolor: v.gender === 'female' ? '#e91e63' : '#2196f3', width: 32, height: 32 }}>
+                                            <AvatarIcon sx={{ fontSize: 18 }} />
+                                        </MuiAvatar>
+                                        <Box>
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#fff' }}>{v.name}</Typography>
+                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>English (United States)</Typography>
+                                        </Box>
+                                    </Stack>
+                                    <IconButton 
+                                        onClick={(e) => { e.stopPropagation(); if(v.previewUrl) playPreview(v.previewUrl); }}
+                                        sx={{ color: 'var(--accent-gold)' }}
+                                    >
+                                        <PlayIcon />
+                                    </IconButton>
+                                </Paper>
+                            ))}
                         </Stack>
-                        <Grid container spacing={2}>
-                            <Grid size={{ xs: 12, md: 8 }}>
-                                <TextField fullWidth size="small" label="Generated Title" sx={{ mb: 2, '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }} />
-                                <TextField fullWidth multiline rows={3} label="Optimized Description" sx={{ mb: 2, '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }} />
-                                <TextField fullWidth size="small" label="SEO Tags" sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }} />
+                    </Box>
+                );
+            case 3: // Finalize
+                return (
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 2 }}>Choose Background Style</Typography>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} md={4}>
+                                <Card sx={{ bgcolor: bgMode === 'color' ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)', border: bgMode === 'color' ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
+                                    <CardActionArea onClick={() => setBgMode('color')} sx={{ p: 2, textAlign: 'center' }}>
+                                        <ColorIcon sx={{ fontSize: 40, color: 'var(--accent-gold)', mb: 1 }} />
+                                        <Typography variant="h6" sx={{ color: '#fff' }}>Solid Color</Typography>
+                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>Best for Green Screen / Editing</Typography>
+                                        {bgMode === 'color' && (
+                                            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} />
+                                                <Typography variant="body2" sx={{ color: '#fff' }}>{bgColor}</Typography>
+                                            </Box>
+                                        )}
+                                    </CardActionArea>
+                                </Card>
                             </Grid>
-                            <Grid size={{ xs: 12, md: 4 }}>
-                                <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1, height: '100%' }}>
-                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>Credits & Attribution</Typography>
-                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
-                                        Videos by Pexels<br />
-                                        Avatar by HeyGen<br />
-                                        Script by Google Gemini
-                                    </Typography>
-                                </Box>
+                            <Grid item xs={12} md={4}>
+                                <Card sx={{ bgcolor: bgMode === 'upload' ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)', border: bgMode === 'upload' ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
+                                    <CardActionArea component="label" sx={{ p: 2, textAlign: 'center' }}>
+                                        <UploadIcon sx={{ fontSize: 40, color: 'var(--accent-gold)', mb: 1 }} />
+                                        <Typography variant="h6" sx={{ color: '#fff' }}>Upload Own</Typography>
+                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>Use your own image or video</Typography>
+                                        <input type="file" hidden accept="image/*,video/*" onChange={(e) => { if(e.target.files?.[0]) handleUpload(e.target.files[0]); }} />
+                                        {uploadUrl && <Chip size="small" label="File Ready" sx={{ mt: 1, bgcolor: '#4caf50', color: '#fff' }} />}
+                                    </CardActionArea>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <Card sx={{ bgcolor: bgMode === 'pexels' ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)', border: bgMode === 'pexels' ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
+                                    <CardActionArea onClick={() => setBgMode('pexels')} sx={{ p: 2, textAlign: 'center' }}>
+                                        <StockIcon sx={{ fontSize: 40, color: 'var(--accent-gold)', mb: 1 }} />
+                                        <Typography variant="h6" sx={{ color: '#fff' }}>Stock B-Roll</Typography>
+                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>Free videos from Pexels</Typography>
+                                    </CardActionArea>
+                                    {bgMode === 'pexels' && (
+                                        <Box sx={{ p: 1 }}>
+                                            <TextField 
+                                                fullWidth 
+                                                size="small" 
+                                                value={pexelsQuery} 
+                                                onChange={(e) => setPexelsQuery(e.target.value)} 
+                                                placeholder="Search e.g. nature..."
+                                                InputProps={{ endAdornment: <IconButton size="small" onClick={searchPexels}><SearchIcon sx={{ color: 'var(--accent-gold)' }}/></IconButton> }}
+                                            />
+                                            {pexelsVideo && <img src={pexelsVideo.image} style={{ width: '100%', height: 60, objectFit: 'cover', marginTop: 8, borderRadius: 4 }} />}
+                                        </Box>
+                                    )}
+                                </Card>
                             </Grid>
                         </Grid>
-                    </Paper>
+                    </Box>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <Box sx={{ p: 4, maxWidth: 1000, mx: 'auto' }}>
+            <audio ref={audioRef} />
+            
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
+                <VideoGenIcon sx={{ fontSize: 40, color: 'var(--accent-gold)' }} />
+                <Box>
+                    <Typography variant="h4" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', fontVariant: 'small-caps' }}>
+                        AI Avatar Creator
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ color: 'var(--text-secondary)' }}>
+                        Professional video in 4 simple steps
+                    </Typography>
                 </Box>
+            </Stack>
+
+            {status === 'completed' && successVideoUrl ? (
+                <Card sx={{ bgcolor: 'var(--bg-secondary)', p: 4, textAlign: 'center', border: '1px solid var(--accent-gold)' }}>
+                    <SuccessIcon sx={{ fontSize: 60, color: '#4caf50', mb: 2 }} />
+                    <Typography variant="h5" sx={{ color: '#fff', mb: 3 }}>Video Generated Successfully!</Typography>
+                    <video src={successVideoUrl} controls style={{ width: '100%', maxWidth: 600, borderRadius: 8, border: '1px solid var(--border-color)' }} />
+                    <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
+                        <Button variant="contained" onClick={() => window.open(successVideoUrl, '_blank')} startIcon={<DownloadIcon />} sx={{ bgcolor: 'var(--accent-gold)', color: '#000' }}>Download Video</Button>
+                        <Button variant="outlined" onClick={() => { setStatus('idle'); setSuccessVideoUrl(''); setActiveStep(0); }} sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}>Create Another</Button>
+                    </Box>
+                </Card>
+            ) : status === 'processing' ? (
+                <Card sx={{ bgcolor: 'var(--bg-secondary)', p: 8, textAlign: 'center' }}>
+                    <CircularProgress size={60} sx={{ color: 'var(--accent-gold)', mb: 3 }} />
+                    <Typography variant="h5" sx={{ color: '#fff', mb: 1 }}>HeyGen is rendering your video...</Typography>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>This usually takes 2-5 minutes depending on script length.</Typography>
+                    <LinearProgress variant="indeterminate" sx={{ mt: 4, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }} />
+                </Card>
+            ) : (
+                <>
+                    <Stepper activeStep={activeStep} sx={{ mb: 6, '& .MuiStepLabel-label': { color: 'var(--text-secondary)' }, '& .MuiStepLabel-label.Mui-active': { color: 'var(--accent-gold)' }, '& .MuiStepIcon-root.Mui-active': { color: 'var(--accent-gold)' }, '& .MuiStepIcon-root.Mui-completed': { color: '#4caf50' } }}>
+                        {STEPS.map((label) => (
+                            <Step key={label}>
+                                <StepLabel>{label}</StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+
+                    <Paper sx={{ p: 4, bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 2 }}>
+                        {renderStepContent()}
+
+                        {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
+
+                        <Divider sx={{ my: 4, borderColor: 'var(--border-color)' }} />
+
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Button
+                                disabled={activeStep === 0 || loading}
+                                onClick={handleBack}
+                                startIcon={<BackIcon />}
+                                sx={{ color: 'var(--text-secondary)' }}
+                            >
+                                Back
+                            </Button>
+                            {activeStep === STEPS.length - 1 ? (
+                                <Button
+                                    variant="contained"
+                                    onClick={handleGenerate}
+                                    disabled={loading || !script.trim() || (bgMode === 'upload' && !uploadUrl) || (bgMode === 'pexels' && !pexelsVideo)}
+                                    startIcon={loading ? <CircularProgress size={20} /> : <MovieIcon />}
+                                    sx={{ bgcolor: 'var(--accent-gold)', color: '#000', fontWeight: 'bold', px: 4 }}
+                                >
+                                    Generate Video
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="contained"
+                                    onClick={handleNext}
+                                    disabled={activeStep === 0 && !script.trim()}
+                                    endIcon={<NextIcon />}
+                                    sx={{ bgcolor: 'var(--accent-gold)', color: '#000', fontWeight: 'bold', px: 4 }}
+                                >
+                                    Continue
+                                </Button>
+                            )}
+                        </Box>
+                    </Paper>
+                </>
             )}
         </Box>
     );
 };
 
 export default VideoGeneratorView;
-
