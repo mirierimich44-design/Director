@@ -31,8 +31,8 @@ const DEFAULTS = {
   // Language models
   models: {
     language: {
-      primary: 'gemini-2.5-flash',            // Main generation (TSX, scene routing, template gen)
-      fast: 'gemini-2.5-flash',               // Fast/cheap JSON tasks (routing, extraction)
+      primary: 'gemini-1.5-flash',            // Main generation (TSX, scene routing, template gen)
+      fast: 'gemini-1.5-flash',               // Fast/cheap JSON tasks (routing, extraction)
       claude: 'claude-3-7-sonnet-latest',      // Claude primary
       claudeFast: 'claude-3-5-haiku-latest',   // Claude fast
     },
@@ -40,8 +40,8 @@ const DEFAULTS = {
       engine: 'kokoro',                        // 'kokoro', 'orpheus', or 'heygen'
     },
     image: {
-      primary: 'imagen-4.0-generate-001',      // Image generation
-      fallback: 'imagen-4.0-generate-001',    // Fallback image model
+      primary: 'imagen-3.0-generate-001',      // Image generation
+      fallback: 'imagen-3.0-generate-001',    // Fallback image model
     },
     video: {
       primary: 'veo-2.0-generate-001',      // Video generation (Veo 2)
@@ -212,7 +212,7 @@ export function getImageFallback() {
 }
 
 export function getVideoModel() {
-  return settings.models.video?.primary || 'veo-3.0-generate-preview'
+  return settings.models.video?.primary || 'veo-2.0-generate-001'
 }
 
 export function getGenerationProvider() {
@@ -224,22 +224,18 @@ export function getGenerationProvider() {
 // ─────────────────────────────────────────────
 export const MODEL_OPTIONS = {
   language: [
-    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'google' },
-    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'google' },
     { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'google' },
-    { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro (Preview)', provider: 'google' },
-    { id: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash Lite (Preview)', provider: 'google' },
-    { id: 'claude-sonnet-4-5', name: 'Claude Sonnet 4.5', provider: 'anthropic' },
-    { id: 'claude-haiku-3-5', name: 'Claude Haiku 3.5', provider: 'anthropic' },
-    { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', provider: 'anthropic' },
+    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', provider: 'google' },
+    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', provider: 'google' },
+    { id: 'claude-3-7-sonnet-latest', name: 'Claude 3.7 Sonnet', provider: 'anthropic' },
+    { id: 'claude-3-5-sonnet-latest', name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
+    { id: 'claude-3-5-haiku-latest', name: 'Claude 3.5 Haiku', provider: 'anthropic' },
   ],
   image: [
-    { id: 'imagen-4.0-generate-001', name: 'Imagen 4.0', provider: 'google' },
-    { id: 'imagen-4.0-fast-generate-001', name: 'Imagen 4.0 Fast', provider: 'google' },
-    { id: 'imagen-4.0-ultra-generate-001', name: 'Imagen 4.0 Ultra', provider: 'google' },
+    { id: 'imagen-3.0-generate-001', name: 'Imagen 3.0', provider: 'google' },
+    { id: 'imagen-3.0-fast-generate-001', name: 'Imagen 3.0 Fast', provider: 'google' },
   ],
   video: [
-    { id: 'veo-3.0-generate-preview', name: 'Veo 3.0 (Preview)', provider: 'google' },
     { id: 'veo-2.0-generate-001', name: 'Veo 2.0', provider: 'google' },
   ],
 }

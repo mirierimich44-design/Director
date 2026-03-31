@@ -47,16 +47,13 @@ interface VoiceOption {
     previewUrl?: string;
 }
 
-const STOCK_AVATARS: AvatarOption[] = [
-    { id: 'jessica_suit_outfit', name: 'Jessica (Suit)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/9f8c6b446a814c81881a53f0f7a6f235_26955/preview_target.webp' },
-    { id: 'eric_casual_outfit', name: 'Eric (Casual)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/423f85885f81498b965f7c320d365691_26046/preview_target.webp' },
-    { id: 'waynn_business_outfit', name: 'Waynn (Business)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/88029983401546998634812306509743/preview_target.webp' },
-    { id: 'lily_pro_outfit', name: 'Lily (Pro)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/10834311028754546876274438343869/preview_target.webp' },
+// Fallback avatars — only used if HeyGen API key is not set
+const FALLBACK_AVATARS: AvatarOption[] = [
+    { id: '', name: 'Loading…', gender: '', thumbnail: '' },
 ];
 
-const STOCK_VOICES: VoiceOption[] = [
-    { id: 'en-US-JennyNeural', name: 'Jenny (US)', gender: 'female', previewUrl: 'https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/songs/white-christmas.mp3' }, // Generic placeholder as HeyGen CDN can be picky
-    { id: 'en-US-GuyNeural', name: 'Guy (US)', gender: 'male', previewUrl: '' },
+const FALLBACK_VOICES: VoiceOption[] = [
+    { id: '', name: 'Loading…', gender: '', previewUrl: '' },
 ];
 
 const STEPS = ['Write Script', 'Select Avatar', 'Choose Voice', 'Background & Render'];
@@ -64,8 +61,12 @@ const STEPS = ['Write Script', 'Select Avatar', 'Choose Voice', 'Background & Re
 const VideoGeneratorView: React.FC = () => {
     const [activeStep, setActiveStep] = useState(0);
     const [script, setScript] = useState('');
-    const [selectedAvatar, setSelectedAvatar] = useState(STOCK_AVATARS[0].id);
-    const [selectedVoice, setSelectedVoice] = useState(STOCK_VOICES[0].id);
+    const [stockAvatars, setStockAvatars] = useState<AvatarOption[]>(FALLBACK_AVATARS);
+    const [stockVoices, setStockVoices] = useState<VoiceOption[]>(FALLBACK_VOICES);
+    const [avatarsLoading, setAvatarsLoading] = useState(true);
+    const [voicesLoading, setVoicesLoading] = useState(true);
+    const [selectedAvatar, setSelectedAvatar] = useState('');
+    const [selectedVoice, setSelectedVoice] = useState('');
     const [callbackUrl, setCallbackUrl] = useState('');
     const [bgMode, setBgMode] = useState<'color' | 'upload' | 'pexels'>('color');
     const [bgColor, setBgColor] = useState('#00FF00');
@@ -86,6 +87,35 @@ const VideoGeneratorView: React.FC = () => {
     const [status, setStatus] = useState<'idle' | 'processing' | 'completed'>('idle');
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // ── Load avatars + voices from HeyGen API ─────────────────────────────────
+    useEffect(() => {
+        fetch('/api/video-gen/heygen-avatars')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.avatars.length > 0) {
+                    setStockAvatars(data.avatars);
+                    setSelectedAvatar(data.avatars[0].id);
+                } else {
+                    setStockAvatars([]);
+                }
+            })
+            .catch(() => setStockAvatars([]))
+            .finally(() => setAvatarsLoading(false));
+
+        fetch('/api/video-gen/heygen-voices')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.voices.length > 0) {
+                    setStockVoices(data.voices);
+                    setSelectedVoice(data.voices[0].id);
+                } else {
+                    setStockVoices([]);
+                }
+            })
+            .catch(() => setStockVoices([]))
+            .finally(() => setVoicesLoading(false));
+    }, []);
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -237,7 +267,22 @@ const VideoGeneratorView: React.FC = () => {
 
                         {avatarMode === 'stock' ? (
                             <Grid container spacing={2}>
-                                {STOCK_AVATARS.map((av) => (
+                                {avatarsLoading && (
+                                    <Grid size={{ xs: 12 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: 'var(--text-secondary)' }}>
+                                            <CircularProgress size={16} sx={{ color: 'var(--accent-gold)' }} />
+                                            <Typography variant="caption">Loading avatars from HeyGen…</Typography>
+                                        </Box>
+                                    </Grid>
+                                )}
+                                {!avatarsLoading && stockAvatars.length === 0 && (
+                                    <Grid size={{ xs: 12 }}>
+                                        <Alert severity="warning" sx={{ bgcolor: 'rgba(255,152,0,0.1)', color: '#ffb74d' }}>
+                                            No avatars found. Make sure your HeyGen API key is set in LLM Settings.
+                                        </Alert>
+                                    </Grid>
+                                )}
+                                {stockAvatars.filter(av => av.id).map((av) => (
                                     <Grid size={{ xs: 12, sm: 6, md: 3 }} key={av.id}>
                                         <Card sx={{ 
                                             bgcolor: selectedAvatar === av.id ? 'rgba(201,169,97,0.2)' : 'var(--bg-secondary)',
@@ -304,32 +349,45 @@ const VideoGeneratorView: React.FC = () => {
                 return (
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 2 }}>Select a professional AI voice</Typography>
+                        {voicesLoading && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: 'var(--text-secondary)', mb: 2 }}>
+                                <CircularProgress size={16} sx={{ color: 'var(--accent-gold)' }} />
+                                <Typography variant="caption">Loading voices from HeyGen…</Typography>
+                            </Box>
+                        )}
+                        {!voicesLoading && stockVoices.length === 0 && (
+                            <Alert severity="warning" sx={{ bgcolor: 'rgba(255,152,0,0.1)', color: '#ffb74d', mb: 2 }}>
+                                No voices found. Make sure your HeyGen API key is set in LLM Settings.
+                            </Alert>
+                        )}
                         <Stack spacing={1}>
-                            {STOCK_VOICES.map((v) => (
-                                <Paper key={v.id} sx={{ 
-                                    p: 2, 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
+                            {stockVoices.filter(v => v.id).map((v) => (
+                                <Paper key={v.id} sx={{
+                                    p: 2,
+                                    display: 'flex',
+                                    alignItems: 'center',
                                     justifyContent: 'space-between',
                                     bgcolor: selectedVoice === v.id ? 'rgba(201,169,97,0.1)' : 'var(--bg-secondary)',
                                     border: selectedVoice === v.id ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)',
                                     cursor: 'pointer'
                                 }} onClick={() => setSelectedVoice(v.id)}>
                                     <Stack direction="row" alignItems="center" spacing={2}>
-                                        <MuiAvatar sx={{ bgcolor: v.gender === 'female' ? '#e91e63' : '#2196f3', width: 32, height: 32 }}>
+                                        <MuiAvatar sx={{ bgcolor: v.gender === 'Female' ? '#e91e63' : '#2196f3', width: 32, height: 32 }}>
                                             <AvatarIcon sx={{ fontSize: 18 }} />
                                         </MuiAvatar>
                                         <Box>
                                             <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#fff' }}>{v.name}</Typography>
-                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>English (United States)</Typography>
+                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{v.gender}</Typography>
                                         </Box>
                                     </Stack>
-                                    <IconButton 
-                                        onClick={(e) => { e.stopPropagation(); if(v.previewUrl) playPreview(v.previewUrl); }}
-                                        sx={{ color: 'var(--accent-gold)' }}
-                                    >
-                                        <PlayIcon />
-                                    </IconButton>
+                                    {v.previewUrl && (
+                                        <IconButton
+                                            onClick={(e) => { e.stopPropagation(); playPreview(v.previewUrl!); }}
+                                            sx={{ color: 'var(--accent-gold)' }}
+                                        >
+                                            <PlayIcon />
+                                        </IconButton>
+                                    )}
                                 </Paper>
                             ))}
                         </Stack>
@@ -408,7 +466,7 @@ const VideoGeneratorView: React.FC = () => {
                         AI Avatar Creator
                     </Typography>
                     <Typography variant="subtitle1" sx={{ color: 'var(--text-secondary)' }}>
-                        Professional video in 4 simple steps
+                        Professional video in 4 simple steps • <Chip label="v2.5.2-DEBUG" size="small" sx={{ height: 18, fontSize: '0.6rem', bgcolor: 'rgba(255,255,255,0.1)', color: '#fff' }} />
                     </Typography>
                 </Box>
             </Stack>

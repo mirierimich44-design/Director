@@ -467,7 +467,10 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         if (!prompt) return res.status(400).json({ error: 'prompt is required' });
 
         const apiKey = getGoogleKey();
-        if (!apiKey) return res.status(503).json({ error: 'Google API key not configured' });
+        if (!apiKey) {
+            console.error('❌ Imagen API: Google API key not configured in settings');
+            return res.status(503).json({ error: 'Google API key not configured' });
+        }
 
         const imageModel = getImageModel() || 'imagen-3.0-generate-001';
 
@@ -1239,26 +1242,37 @@ app.post('/api/tts/generate', async (req, res) => {
     try {
         if (engine === 'heygen') {
             const settings = getRawSettings();
-            const apiKey = settings.keys.heygen;
-            if (!apiKey) return res.status(400).json({ error: 'HeyGen API Key not set' });
+            const apiKey = settings.keys?.heygen;
+            if (!apiKey) return res.status(400).json({ error: 'HeyGen API Key not set in LLM Settings' });
 
+            // Call HeyGen TTS API
             const resp = await fetch('https://api.heygen.com/v1/audio/text_to_speech', {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Api-Key': apiKey
-                },
+                headers: { 'Content-Type': 'application/json', 'X-Api-Key': apiKey },
                 body: JSON.stringify({ text, voice_id: voice, speed }),
             });
 
             const data = await resp.json();
-            if (data.error) throw new Error(data.error.message);
+            if (!resp.ok || data.error) {
+                const msg = data.error?.message || data.message || `HeyGen error ${resp.status}`;
+                return res.status(resp.status || 500).json({ error: msg });
+            }
+
+            const remoteUrl = data.data?.audio_url;
+            if (!remoteUrl) return res.status(500).json({ error: 'No audio_url in HeyGen response' });
+
+            // Download and save locally so it works in the processed queue
+            const audioResp = await fetch(remoteUrl);
+            const audioBuffer = await audioResp.arrayBuffer();
+            const outFilename = filename || `tts_heygen_${uuidv4().slice(0, 12)}.mp3`;
+            await fs.writeFile(join(audioTtsDir, outFilename), Buffer.from(audioBuffer));
 
             return res.json({
                 success: true,
-                audioUrl: data.data.audio_url,
-                filename: data.data.audio_url.split('/').pop(),
-                voice: voice,
+                audioUrl: `/audio/tts/${outFilename}`,
+                filename: outFilename,
+                duration: data.data?.duration || 0,
+                voice,
                 engine: 'heygen',
             });
         }
