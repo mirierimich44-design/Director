@@ -216,7 +216,7 @@ const TemplateLibraryView: React.FC = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Stack direction="row" spacing={1} justifyContent="flex-end">
                             <Button 
                                 size="small" 
@@ -372,3 +372,4 @@ const TemplateLibraryView: React.FC = () => {
 };
 
 export default TemplateLibraryView;
+

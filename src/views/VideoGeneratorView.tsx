@@ -194,7 +194,7 @@ const VideoGeneratorView: React.FC = () => {
             {/* Setup Panel */}
             <Paper sx={{ p: 3, mb: 4, bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 2 }}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)', mb: 2 }}>Input Mode</Typography>
                         <ToggleButtonGroup
                             value={mode}
@@ -234,7 +234,7 @@ const VideoGeneratorView: React.FC = () => {
                         </Button>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)', mb: 2 }}>Visual Style</Typography>
                         <Stack spacing={2}>
                             <ToggleButtonGroup
@@ -342,14 +342,14 @@ const VideoGeneratorView: React.FC = () => {
                     </Typography>
                     <Grid container spacing={2}>
                         {scenes.map((scene, idx) => (
-                            <Grid item xs={12} key={scene.id}>
+                            <Grid size={{ xs: 12 }} key={scene.id}>
                                 <Card sx={{ bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', position: 'relative' }}>
                                     <CardContent>
                                         <Grid container spacing={3} alignItems="center">
-                                            <Grid item xs={12} md={1}>
+                                            <Grid size={{ xs: 12, md: 1 }}>
                                                 <Typography variant="h5" sx={{ color: 'var(--accent-gold)', textAlign: 'center' }}>#{idx + 1}</Typography>
                                             </Grid>
-                                            <Grid item xs={12} md={5}>
+                                            <Grid size={{ xs: 12, md: 5 }}>
                                                 <TextField
                                                     fullWidth
                                                     multiline
@@ -373,7 +373,7 @@ const VideoGeneratorView: React.FC = () => {
                                                     </IconButton>
                                                 </Stack>
                                             </Grid>
-                                            <Grid item xs={12} md={3}>
+                                            <Grid size={{ xs: 12, md: 3 }}>
                                                 {scene.videoUrl ? (
                                                     <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
                                                         <img src={scene.thumbnailUrl} alt="B-roll" style={{ width: '100%', display: 'block' }} />
@@ -387,7 +387,7 @@ const VideoGeneratorView: React.FC = () => {
                                                     </Box>
                                                 )}
                                             </Grid>
-                                            <Grid item xs={12} md={3}>
+                                            <Grid size={{ xs: 12, md: 3 }}>
                                                 <Stack spacing={1}>
                                                     {scene.heygenStatus === 'idle' && (
                                                         <Button
@@ -440,12 +440,12 @@ const VideoGeneratorView: React.FC = () => {
                             <Typography variant="h6" sx={{ color: '#fff' }}>YouTube Publishing Kit</Typography>
                         </Stack>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} md={8}>
+                            <Grid size={{ xs: 12, md: 8 }}>
                                 <TextField fullWidth size="small" label="Generated Title" sx={{ mb: 2, '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }} />
                                 <TextField fullWidth multiline rows={3} label="Optimized Description" sx={{ mb: 2, '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }} />
                                 <TextField fullWidth size="small" label="SEO Tags" sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }} />
                             </Grid>
-                            <Grid item xs={12} md={4}>
+                            <Grid size={{ xs: 12, md: 4 }}>
                                 <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1, height: '100%' }}>
                                     <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>Credits & Attribution</Typography>
                                     <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
@@ -464,3 +464,4 @@ const VideoGeneratorView: React.FC = () => {
 };
 
 export default VideoGeneratorView;
+

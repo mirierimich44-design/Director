@@ -759,7 +759,7 @@ const AnimationGeneratorView: React.FC = () => {
                         {activeCat && (
                             <Grid container spacing={2}>
                                 {activeCat.types.map(type => (
-                                    <Grid item xs={12} sm={6} md={6} lg={4} key={type.id}>
+                                    <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4 }} key={type.id}>
                                         <TypeCard
                                             type={{ ...type, categoryId: activeCatId!, categoryLabel: activeCat.label }}
                                             catColor={CATEGORY_COLORS[activeCatId!] || '#c9a961'}
@@ -811,3 +811,4 @@ const AnimationGeneratorView: React.FC = () => {
 };
 
 export default AnimationGeneratorView;
+

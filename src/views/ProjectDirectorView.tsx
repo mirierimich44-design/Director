@@ -1430,7 +1430,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                 progress={prog?.progress || 0} 
                                                                 phase={prog?.phase || 'starting'} 
                                                                 message={prog?.message} 
-                                                                logs={prog?.logs}
+                                                                
                                                             />
                                                         </Box>
                                                     )}
@@ -1552,7 +1552,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                                 const isImage = ['IMAGE_URL', 'PROFILE_IMAGE', 'SUBJECT_IMAGE_URL', 'AVATAR_URL'].includes(field.toUpperCase()) || field.toUpperCase().endsWith('_IMAGE');
                                                                                 
                                                                                 return (
-                                                                                    <Grid item xs={12} sm={6} key={field}>
+                                                                                    <Grid size={{ xs: 12, sm: 6 }} key={field}>
                                                                                         <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
                                                                                             <TextField
                                                                                                 fullWidth
@@ -1610,7 +1610,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                 )}
 
                                                                 {scene.renderStatus === 'error' && (
-                                                                    <Alert severity="error" sx={{ mt: 2 }} size="small">{scene.error}</Alert>
+                                                                    <Alert severity="error" sx={{ mt: 2 }} > {scene.error}</Alert>
                                                                 )}
                                                             </Grid>
 
@@ -1916,7 +1916,7 @@ const ProjectDirectorView: React.FC = () => {
                                             if (selectedProject) {
                                                 const chapter = selectedProject.chapters[0];
                                                 const sceneIdx = chapter.scenes.length;
-                                                renderScene(selectedProject.id, chapter.id, sceneIdx);
+                                                renderScene(chapter.id, sceneIdx);
                                                 setQuickTestOpen(false);
                                             } else {
                                                 setError('Please create or select a project first');
@@ -1961,3 +1961,4 @@ const ProjectDirectorView: React.FC = () => {
 };
 
 export default ProjectDirectorView;
+
