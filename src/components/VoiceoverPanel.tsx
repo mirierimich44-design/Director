@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
     Box, Typography, TextField, Button, Select, MenuItem, FormControl,
     InputLabel, Chip, CircularProgress, Alert, Slider, Stack, Paper,
-    IconButton, Tooltip, ToggleButtonGroup, ToggleButton, ListSubheader,
+    IconButton, Tooltip, ToggleButtonGroup, ToggleButton, Pagination,
+    LinearProgress, InputAdornment,
 } from '@mui/material';
 import {
     RecordVoiceOver as TTSIcon,
@@ -11,9 +12,11 @@ import {
     Download as DownloadIcon,
     Add as AddToQueueIcon,
     PlayArrow as PlayIcon,
+    Search as SearchIcon,
+    Person as PersonIcon,
 } from '@mui/icons-material';
 
-// ── Static voice data (Kokoro & Orpheus never change) ─────────────────────────
+// ── Static voice data (Kokoro & Orpheus) ──────────────────────────────────────
 
 const KOKORO_VOICES = [
     { id: 'af_heart',    label: 'Heart',    group: 'American F' },
@@ -40,6 +43,8 @@ const ORPHEUS_VOICES = [
 ];
 
 const EMOTION_TAGS = ['<laugh>', '<chuckle>', '<sigh>', '<gasp>', '<cough>', '<sniffle>', '<groan>', '<yawn>'];
+
+const VOICES_PER_PAGE = 10;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -70,30 +75,42 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
     const [result, setResult] = useState<TtsResult | null>(null);
     const [serviceStatus, setServiceStatus] = useState<'checking' | 'online' | 'offline'>('checking');
 
-    // Dynamic voices for HeyGen (loaded from API)
+    // HeyGen voices
     const [heygenVoices, setHeygenVoices] = useState<DynVoice[]>([]);
     const [heygenLoading, setHeygenLoading] = useState(false);
+    const [heygenError, setHeygenError] = useState('');
     const [voiceSearch, setVoiceSearch] = useState('');
+    const [heygenPage, setHeygenPage] = useState(1);
 
     const textRef = useRef<HTMLTextAreaElement>(null);
     const previewAudioRef = useRef<HTMLAudioElement | null>(null);
 
-    // All voices for current engine
+    // ── Derived ───────────────────────────────────────────────────────────────
+
     const staticVoices: DynVoice[] = engine === 'kokoro'
         ? KOKORO_VOICES.map(v => ({ id: v.id, label: v.label, group: v.group }))
         : ORPHEUS_VOICES.map(v => ({ id: v.id, label: v.label, group: v.group }));
 
-    const activeVoices = engine === 'heygen' ? heygenVoices : staticVoices;
-
-    const filteredVoices = voiceSearch.trim()
-        ? activeVoices.filter(v =>
+    const filteredHeygenVoices = voiceSearch.trim()
+        ? heygenVoices.filter(v =>
             v.label.toLowerCase().includes(voiceSearch.toLowerCase()) ||
             v.group.toLowerCase().includes(voiceSearch.toLowerCase())
           )
-        : activeVoices;
+        : heygenVoices;
 
-    // Group voices for display
-    const groups = [...new Set(filteredVoices.map(v => v.group))];
+    const totalHeygenPages = Math.ceil(filteredHeygenVoices.length / VOICES_PER_PAGE);
+    const pagedHeygenVoices = filteredHeygenVoices.slice(
+        (heygenPage - 1) * VOICES_PER_PAGE,
+        heygenPage * VOICES_PER_PAGE
+    );
+
+    const staticGroups = [...new Set(staticVoices.map(v => v.group))];
+    const currentVoiceLabel = engine === 'heygen'
+        ? heygenVoices.find(v => v.id === voice)?.label ?? voice
+        : staticVoices.find(v => v.id === voice)?.label ?? voice;
+
+    const isOfflineBlocked = engine !== 'heygen' && serviceStatus === 'offline';
+    const statusColor = serviceStatus === 'online' ? '#4CAF50' : serviceStatus === 'offline' ? '#f44336' : '#888';
 
     // ── Side effects ──────────────────────────────────────────────────────────
 
@@ -104,10 +121,10 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
             .catch(() => setServiceStatus('offline'));
     }, []);
 
-    // Load HeyGen voices when engine switches to heygen
     useEffect(() => {
         if (engine !== 'heygen' || heygenVoices.length > 0) return;
         setHeygenLoading(true);
+        setHeygenError('');
         fetch('/api/video-gen/heygen-voices')
             .then(r => r.json())
             .then(data => {
@@ -120,11 +137,16 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                     }));
                     setHeygenVoices(mapped);
                     setVoice(mapped[0]?.id || '');
+                } else {
+                    setHeygenError(data.error || 'Failed to load voices');
                 }
             })
-            .catch(() => {})
+            .catch(() => setHeygenError('Could not reach server'))
             .finally(() => setHeygenLoading(false));
     }, [engine]);
+
+    // Reset HeyGen page when search changes
+    useEffect(() => { setHeygenPage(1); }, [voiceSearch]);
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -136,7 +158,6 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
         setError('');
         if (val === 'kokoro') setVoice('af_heart');
         else if (val === 'orpheus') setVoice('tara');
-        // heygen: voice set after fetch
     };
 
     const insertTag = (tag: string) => {
@@ -169,7 +190,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                 body: JSON.stringify({ text, voice, speed, engine }),
             });
             const data = await resp.json();
-            if (!resp.ok) throw new Error(data.error || 'Generation failed');
+            if (!resp.ok) throw new Error(data.error || data.detail || 'Generation failed');
 
             const res: TtsResult = {
                 audioUrl: data.audioUrl + `?t=${Date.now()}`,
@@ -188,12 +209,6 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
         }
     };
 
-    // ── Derived ───────────────────────────────────────────────────────────────
-
-    const statusColor = serviceStatus === 'online' ? '#4CAF50' : serviceStatus === 'offline' ? '#f44336' : '#888';
-    const currentVoiceLabel = activeVoices.find(v => v.id === voice)?.label ?? voice;
-    const isOfflineBlocked = engine !== 'heygen' && serviceStatus === 'offline';
-
     // ── Render ────────────────────────────────────────────────────────────────
 
     return (
@@ -210,7 +225,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                     fontSize: '0.65rem', fontWeight: 700, letterSpacing: 1, height: 20,
                 }} />
                 {serviceStatus === 'offline' && (
-                    <Tooltip title="Retry">
+                    <Tooltip title="Retry connection">
                         <IconButton size="small" sx={{ color: 'var(--text-secondary)' }} onClick={() => {
                             setServiceStatus('checking');
                             fetch('/api/tts/health').then(r => r.json())
@@ -242,12 +257,12 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                     <ToggleButton value="orpheus">Orpheus</ToggleButton>
                     <ToggleButton value="heygen">HeyGen</ToggleButton>
                 </ToggleButtonGroup>
-                {engine === 'kokoro'  && <Chip size="small" label="Fast · CPU"         sx={{ bgcolor: 'rgba(76,175,80,0.12)',   color: '#81c784', fontSize: '0.65rem', height: 20 }} />}
-                {engine === 'orpheus' && <Chip size="small" label="Rich · Slow on CPU"  sx={{ bgcolor: 'rgba(255,152,0,0.12)',   color: '#ffb74d', fontSize: '0.65rem', height: 20 }} />}
-                {engine === 'heygen'  && <Chip size="small" label="Premium · API"        sx={{ bgcolor: 'rgba(33,150,243,0.12)',  color: '#90caf9', fontSize: '0.65rem', height: 20 }} />}
+                {engine === 'kokoro'  && <Chip size="small" label="Fast · CPU"        sx={{ bgcolor: 'rgba(76,175,80,0.12)',  color: '#81c784', fontSize: '0.65rem', height: 20 }} />}
+                {engine === 'orpheus' && <Chip size="small" label="Rich · Slow on CPU" sx={{ bgcolor: 'rgba(255,152,0,0.12)',  color: '#ffb74d', fontSize: '0.65rem', height: 20 }} />}
+                {engine === 'heygen'  && <Chip size="small" label="Premium · API"      sx={{ bgcolor: 'rgba(33,150,243,0.12)', color: '#90caf9', fontSize: '0.65rem', height: 20 }} />}
             </Stack>
 
-            {/* Orpheus warning */}
+            {/* Orpheus info */}
             {engine === 'orpheus' && (
                 <Alert severity="info" sx={{ mb: 2, bgcolor: 'rgba(33,150,243,0.08)', color: '#90caf9', '& .MuiAlert-icon': { color: '#90caf9' }, fontSize: '0.8rem' }}>
                     Orpheus runs via llama.cpp on CPU — expect 2–5 min per clip. Supports emotion tags below.
@@ -288,49 +303,98 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
 
                 {/* Voice selector */}
                 <Box sx={{ flex: 1, minWidth: 180 }}>
-                    {engine === 'heygen' && (
-                        <TextField size="small" fullWidth placeholder="Search voices…" value={voiceSearch}
-                            onChange={e => setVoiceSearch(e.target.value)}
-                            sx={{
-                                mb: 0.75,
-                                '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: 'var(--text-primary)', '& fieldset': { borderColor: 'var(--border-color)' } },
-                                '& .MuiInputBase-input::placeholder': { color: 'var(--text-secondary)', opacity: 1 },
-                            }}
-                        />
-                    )}
-                    <FormControl size="small" fullWidth>
-                        <InputLabel sx={{ color: 'var(--text-secondary)', '&.Mui-focused': { color: 'var(--accent-gold)' } }}>Voice</InputLabel>
-                        <Select value={voice} onChange={e => setVoice(e.target.value)} label="Voice"
-                            disabled={engine === 'heygen' && heygenLoading}
-                            sx={{
-                                color: 'var(--text-primary)', bgcolor: 'var(--bg-primary)',
-                                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--border-color)' },
-                                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--accent-gold)' },
-                                '& .MuiSvgIcon-root': { color: 'var(--text-secondary)' },
-                            }}
-                            MenuProps={{ PaperProps: { sx: { bgcolor: 'var(--bg-secondary)', maxHeight: 320 } } }}
-                        >
-                            {engine === 'heygen' && heygenLoading && (
-                                <MenuItem disabled><CircularProgress size={14} sx={{ mr: 1 }} /> Loading…</MenuItem>
+                    {engine === 'heygen' ? (
+                        // ── HeyGen: paginated voice list ──────────────────────
+                        <Box>
+                            <TextField
+                                size="small" fullWidth placeholder="Search voices…"
+                                value={voiceSearch} onChange={e => setVoiceSearch(e.target.value)}
+                                InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 16, color: 'var(--text-secondary)' }} /></InputAdornment> }}
+                                sx={{
+                                    mb: 1,
+                                    '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: 'var(--text-primary)', '& fieldset': { borderColor: 'var(--border-color)' } },
+                                    '& .MuiInputBase-input::placeholder': { color: 'var(--text-secondary)', opacity: 1 },
+                                }}
+                            />
+                            {heygenLoading && <LinearProgress sx={{ mb: 1, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }} />}
+                            {heygenError && (
+                                <Alert severity="warning" sx={{ mb: 1, bgcolor: 'rgba(255,152,0,0.08)', color: '#ffb74d', fontSize: '0.78rem', py: 0.5 }}>
+                                    {heygenError.includes('not set') ? 'HeyGen API key not set — go to LLM Settings' : heygenError}
+                                </Alert>
                             )}
-                            {groups.map(group => [
-                                <ListSubheader key={`g-${group}`} sx={{ bgcolor: 'var(--bg-primary)', color: 'var(--accent-gold)', fontSize: '0.7rem', lineHeight: '28px' }}>
-                                    {group}
-                                </ListSubheader>,
-                                ...filteredVoices.filter(v => v.group === group).map(v => (
-                                    <MenuItem key={v.id} value={v.id} sx={{ color: 'var(--text-primary)', fontSize: '0.85rem', display: 'flex', justifyContent: 'space-between' }}>
-                                        <span>{v.label}</span>
-                                        {v.previewUrl && (
-                                            <IconButton size="small" onClick={e => { e.stopPropagation(); playPreview(v.previewUrl!); }}
-                                                sx={{ color: 'var(--accent-gold)', p: 0.25, ml: 1 }}>
-                                                <PlayIcon sx={{ fontSize: 14 }} />
-                                            </IconButton>
-                                        )}
-                                    </MenuItem>
-                                ))
-                            ])}
-                        </Select>
-                    </FormControl>
+                            {!heygenLoading && pagedHeygenVoices.length > 0 && (
+                                <Box sx={{ border: '1px solid var(--border-color)', borderRadius: 1, overflow: 'hidden' }}>
+                                    {pagedHeygenVoices.map((v, i) => (
+                                        <Box
+                                            key={v.id}
+                                            onClick={() => setVoice(v.id)}
+                                            sx={{
+                                                display: 'flex', alignItems: 'center', px: 1.5, py: 0.75,
+                                                bgcolor: voice === v.id ? 'rgba(201,169,97,0.15)' : (i % 2 === 0 ? 'var(--bg-primary)' : 'rgba(255,255,255,0.02)'),
+                                                borderBottom: i < pagedHeygenVoices.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                                                cursor: 'pointer',
+                                                '&:hover': { bgcolor: 'rgba(255,255,255,0.06)' },
+                                            }}
+                                        >
+                                            <PersonIcon sx={{ fontSize: 14, color: 'var(--text-secondary)', mr: 1, flexShrink: 0 }} />
+                                            <Typography sx={{ flex: 1, fontSize: '0.82rem', color: voice === v.id ? 'var(--accent-gold)' : 'var(--text-primary)', fontWeight: voice === v.id ? 700 : 400 }}>
+                                                {v.label}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mr: 1, fontSize: '0.65rem', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                {v.group}
+                                            </Typography>
+                                            {v.previewUrl && (
+                                                <IconButton size="small" onClick={e => { e.stopPropagation(); playPreview(v.previewUrl!); }}
+                                                    sx={{ color: 'var(--accent-gold)', p: 0.25 }}>
+                                                    <PlayIcon sx={{ fontSize: 14 }} />
+                                                </IconButton>
+                                            )}
+                                        </Box>
+                                    ))}
+                                </Box>
+                            )}
+                            {totalHeygenPages > 1 && (
+                                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 0.75 }}>
+                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
+                                        {(heygenPage - 1) * VOICES_PER_PAGE + 1}–{Math.min(heygenPage * VOICES_PER_PAGE, filteredHeygenVoices.length)} of {filteredHeygenVoices.length}
+                                    </Typography>
+                                    <Pagination
+                                        count={totalHeygenPages} page={heygenPage}
+                                        onChange={(_, p) => setHeygenPage(p)} size="small"
+                                        sx={{
+                                            '& .MuiPaginationItem-root': { color: 'var(--text-secondary)', minWidth: 24, height: 24, fontSize: '0.7rem' },
+                                            '& .MuiPaginationItem-root.Mui-selected': { bgcolor: 'rgba(201,169,97,0.2)', color: 'var(--accent-gold)' },
+                                        }}
+                                    />
+                                </Stack>
+                            )}
+                        </Box>
+                    ) : (
+                        // ── Kokoro / Orpheus: dropdown ────────────────────────
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ color: 'var(--text-secondary)', '&.Mui-focused': { color: 'var(--accent-gold)' } }}>Voice</InputLabel>
+                            <Select value={voice} onChange={e => setVoice(e.target.value)} label="Voice"
+                                sx={{
+                                    color: 'var(--text-primary)', bgcolor: 'var(--bg-primary)',
+                                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--border-color)' },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--accent-gold)' },
+                                    '& .MuiSvgIcon-root': { color: 'var(--text-secondary)' },
+                                }}
+                                MenuProps={{ PaperProps: { sx: { bgcolor: 'var(--bg-secondary)', maxHeight: 300 } } }}
+                            >
+                                {staticGroups.map(group => [
+                                    <MenuItem key={`g-${group}`} disabled sx={{ color: 'var(--accent-gold)', fontSize: '0.7rem', opacity: 1, py: 0.25, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
+                                        {group}
+                                    </MenuItem>,
+                                    ...staticVoices.filter(v => v.group === group).map(v => (
+                                        <MenuItem key={v.id} value={v.id} sx={{ color: 'var(--text-primary)', fontSize: '0.85rem', pl: 3 }}>
+                                            {v.label}
+                                        </MenuItem>
+                                    ))
+                                ])}
+                            </Select>
+                        </FormControl>
+                    )}
                 </Box>
 
                 {/* Speed (Kokoro only) */}
@@ -346,7 +410,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
 
                 {/* Generate button */}
                 <Button variant="contained" onClick={handleGenerate}
-                    disabled={loading || !text.trim() || !voice || isOfflineBlocked}
+                    disabled={loading || !text.trim() || !voice || isOfflineBlocked || (engine === 'heygen' && heygenLoading)}
                     startIcon={loading ? <CircularProgress size={14} sx={{ color: '#000' }} /> : result ? <RegenerateIcon /> : <TTSIcon />}
                     sx={{
                         bgcolor: 'var(--accent-gold)', color: '#000', fontWeight: 700, whiteSpace: 'nowrap',
@@ -358,7 +422,16 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                 </Button>
             </Stack>
 
-            {error && <Alert severity="error" sx={{ mb: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#ef9a9a' }}>{error}</Alert>}
+            {error && (
+                <Alert severity="error" sx={{ mb: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#ef9a9a' }}>
+                    {error}
+                    {error.includes('API key') && (
+                        <Typography variant="caption" sx={{ display: 'block', mt: 0.5, opacity: 0.8 }}>
+                            Set your HeyGen API key in LLM Settings → API Keys
+                        </Typography>
+                    )}
+                </Alert>
+            )}
 
             {/* Result */}
             {result && (

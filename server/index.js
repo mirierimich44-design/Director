@@ -1297,7 +1297,7 @@ app.post('/api/tts/generate', async (req, res) => {
         });
     } catch (err) {
         console.error('🔈 TTS error:', err.message);
-        res.status(503).json({ error: 'TTS service unavailable', detail: err.message });
+        res.status(503).json({ error: err.message || 'TTS generation failed', detail: err.message });
     }
 });
 
