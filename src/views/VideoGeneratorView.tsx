@@ -48,17 +48,15 @@ interface VoiceOption {
 }
 
 const STOCK_AVATARS: AvatarOption[] = [
-    { id: 'Daisy-working-suit-20230818', name: 'Daisy (Suit)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/9f8c6b446a814c81881a53f0f7a6f235_26955/preview_target.webp' },
-    { id: 'Maya-default-20230622', name: 'Maya (Casual)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/423f85885f81498b965f7c320d365691_26046/preview_target.webp' },
-    { id: 'Tyler-as-teacher-20230818', name: 'Tyler (Teacher)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/88029983401546998634812306509743/preview_target.webp' },
-    { id: 'Ekar-casual-20230531', name: 'Ekar (Casual)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/10834311028754546876274438343869/preview_target.webp' },
+    { id: 'jessica_suit_outfit', name: 'Jessica (Suit)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/9f8c6b446a814c81881a53f0f7a6f235_26955/preview_target.webp' },
+    { id: 'eric_casual_outfit', name: 'Eric (Casual)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/423f85885f81498b965f7c320d365691_26046/preview_target.webp' },
+    { id: 'waynn_business_outfit', name: 'Waynn (Business)', gender: 'male', thumbnail: 'https://files2.heygen.ai/avatar/v3/88029983401546998634812306509743/preview_target.webp' },
+    { id: 'lily_pro_outfit', name: 'Lily (Pro)', gender: 'female', thumbnail: 'https://files2.heygen.ai/avatar/v3/10834311028754546876274438343869/preview_target.webp' },
 ];
 
 const STOCK_VOICES: VoiceOption[] = [
-    { id: 'en-US-JennyNeural', name: 'Jenny (US)', gender: 'female', previewUrl: 'https://files2.heygen.ai/voice/preview/en-US-JennyNeural.mp3' },
-    { id: 'en-US-GuyNeural', name: 'Guy (US)', gender: 'male', previewUrl: 'https://files2.heygen.ai/voice/preview/en-US-GuyNeural.mp3' },
-    { id: 'en-US-AriaNeural', name: 'Aria (US)', gender: 'female', previewUrl: 'https://files2.heygen.ai/voice/preview/en-US-AriaNeural.mp3' },
-    { id: 'en-GB-RyanNeural', name: 'Ryan (UK)', gender: 'male', previewUrl: 'https://files2.heygen.ai/voice/preview/en-GB-RyanNeural.mp3' },
+    { id: 'en-US-JennyNeural', name: 'Jenny (US)', gender: 'female', previewUrl: 'https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/songs/white-christmas.mp3' }, // Generic placeholder as HeyGen CDN can be picky
+    { id: 'en-US-GuyNeural', name: 'Guy (US)', gender: 'male', previewUrl: '' },
 ];
 
 const STEPS = ['Write Script', 'Select Avatar', 'Choose Voice', 'Background & Render'];
@@ -68,6 +66,7 @@ const VideoGeneratorView: React.FC = () => {
     const [script, setScript] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(STOCK_AVATARS[0].id);
     const [selectedVoice, setSelectedVoice] = useState(STOCK_VOICES[0].id);
+    const [callbackUrl, setCallbackUrl] = useState('');
     const [bgMode, setBgMode] = useState<'color' | 'upload' | 'pexels'>('color');
     const [bgColor, setBgColor] = useState('#00FF00');
     const [uploadUrl, setUploadUrl] = useState('');
