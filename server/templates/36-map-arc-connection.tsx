@@ -149,7 +149,7 @@ export const AnimationComponent = () => {
             position: 'absolute', top: item.target.y + 30, left: item.target.x - 100, 
             width: 200, opacity: labelOp, textAlign: 'center' 
         }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>{item.label}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em', textShadow: '0 2px 10px rgba(0,0,0,0.80)' }}>{item.label}</div>
           <div style={{ height: 2, width: 40, backgroundColor: 'ACCENT_COLOR', margin: '8px auto', opacity: 0.6 }} />
         </div>
       ))}

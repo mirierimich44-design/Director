@@ -122,29 +122,24 @@ export const ADJUSTMENT_PRESETS = {
     ],
   },
 
-  fix: {
-    label: 'Fix',
-    color: '#ef9a9a',
+  aggressive: {
+    label: 'Aggressive',
+    color: '#e63946',
     presets: [
       {
-        id: 'fix-hardcoded',
-        label: 'Fix Hardcoded Values',
-        prompt: 'Replace any remaining hardcoded stub numbers or text strings with proper ALL_CAPS placeholder variables following the existing naming convention.',
+        id: 'aggressive-ken-burns',
+        label: 'Aggressive Ken Burns',
+        prompt: 'Make the image motion (zoom/pan) significantly more dramatic. Increase interpolate output ranges for scale from [1, 1.2] to [1, 1.45] and for translateX/Y from [0, 100] to [0, 300]. Use Easing.out(Easing.quad) for smoother, faster deceleration.',
       },
       {
-        id: 'fix-overflow',
-        label: 'Fix Overflow Hidden',
-        prompt: 'Find all overflow:\'hidden\' declarations. For any that sit on containers holding dynamic text content from placeholders, change to overflow:\'visible\' or remove the overflow property.',
+        id: 'dramatic-shadows',
+        label: 'Dramatic Shadows',
+        prompt: 'Amplify all shadows. Set box-shadow to "0 40px 100px rgba(0,0,0,0.85), 0 20px 40px rgba(0,0,0,0.6)". For image drop-shadows, increase blur to 40px and opacity to 0.7. Darken any vignettes.',
       },
       {
-        id: 'remove-nowrap',
-        label: 'Remove Nowrap',
-        prompt: 'Remove all instances of whiteSpace:\'nowrap\' on elements that render placeholder variable content. This prevents text overflow on long values.',
-      },
-      {
-        id: 'fix-scale',
-        label: 'Fix 1920×1080 Scale',
-        prompt: 'Audit all absolute pixel values and ensure elements are properly proportioned for a 1920×1080 canvas. Fix any elements that appear too small (< 5% canvas width) or oversized (> 90% canvas width) without reason.',
+        id: 'high-velocity',
+        label: 'High Velocity',
+        prompt: 'Reduce entrance animation durations by 50% but increase the distance traveled (translateX/Y). Make elements "slam" into place with significant overshoot (1.15 scale or 20px past destination) then settle.',
       },
     ],
   },

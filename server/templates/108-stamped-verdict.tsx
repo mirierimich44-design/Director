@@ -57,7 +57,7 @@ export const AnimationComponent = () => {
         position: 'relative', width: 1400, height: 800,
         backgroundColor: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(24px)',
         borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         opacity: entryOp, overflow: 'hidden'
       }}>
@@ -84,8 +84,8 @@ export const AnimationComponent = () => {
                 textTransform: 'uppercase',
                 letterSpacing: '0.15em',
                 lineHeight: 1,
-                boxShadow: '0 0 50px rgba(0,0,0,0.5), inset 0 0 30px PRIMARY_COLOR33',
-                textShadow: '4px 6px 15px rgba(0,0,0,0.4)',
+                boxShadow: '0 0 50px rgba(0,0,0,0.80), inset 0 0 30px PRIMARY_COLOR33',
+                textShadow: '4px 8px 24px rgba(0,0,0,0.64)',
                 backgroundColor: 'rgba(0,0,0,0.1)',
                 backdropFilter: 'blur(4px)'
             }}>

@@ -26,7 +26,7 @@ export const AnimationComponent = () => {
   const metaOp = interpolate(frame, [35, 50], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   
   const imageOp = interpolate(frame, [45, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const imageScale = interpolate(frame, [45, 60], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const imageScale = interpolate(frame, [45, 60], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const bodyOp = interpolate(frame, [55, 75], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
@@ -67,7 +67,7 @@ export const AnimationComponent = () => {
         border: '1px solid rgba(255,255,255,0.1)',
         borderTop: '4px solid PRIMARY_COLOR',
         borderRadius: '24px 24px 0 0',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
         padding: '60px 80px',
         opacity: articleOp,
         transform: `translateY(${articleY}px)`,

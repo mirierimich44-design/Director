@@ -36,7 +36,7 @@ export const AnimationComponent = () => {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const photoScale = interpolate(frame, [15, 45], [1.08, 1], {
+  const photoScale = interpolate(frame, [15, 45], [1.22, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })

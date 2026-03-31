@@ -75,7 +75,7 @@ export const AnimationComponent = () => {
           
           const op = interpolate(frame, [startFrame, startFrame + 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
           const tx = interpolate(frame, [startFrame, startFrame + 20], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-          const scale = interpolate(frame, [startFrame, startFrame + 15], [0.98, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+          const scale = interpolate(frame, [startFrame, startFrame + 15], [0.88, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
           // Typing effect for the value
           const charCount = item.val.length;
@@ -90,7 +90,7 @@ export const AnimationComponent = () => {
               borderLeft: `8px solid ${color}`,
               display: 'flex', alignItems: 'center', padding: '0 40px',
               opacity: op, transform: `translateX(${tx}px) scale(${scale})`,
-              boxShadow: `0 12px 32px rgba(0,0,0,0.3), 0 0 15px ${color}11`
+              boxShadow: `0 12px 32px rgba(0,0,0,0.77), 0 0 15px ${color}11`
             }}>
               {/* Classification Badge */}
               <div style={{

@@ -31,7 +31,7 @@ export const AnimationComponent = () => {
     backdropFilter: 'blur(24px)',
     border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '24px',
-    boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+    boxShadow: '0 30px 80px rgba(0,0,0,0.80)',
   }
 
   return (

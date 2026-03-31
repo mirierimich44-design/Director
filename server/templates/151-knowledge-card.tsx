@@ -16,11 +16,11 @@ export const AnimationComponent = () => {
 
   // Entrance Animations
   const cardOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const cardScale = interpolate(frame, [0, 25], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const cardScale = interpolate(frame, [0, 25], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const cardTy = interpolate(frame, [0, 25], [50, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const contentOp = interpolate(frame, [20, 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const imageScale = interpolate(frame, [25, 50], [1.1, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const imageScale = interpolate(frame, [25, 50], [1.25, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   const resolvedImageUrl = useMemo(() => {
       if (!imageUrl || imageUrl.startsWith('IMAGE_')) return null;
@@ -49,7 +49,7 @@ export const AnimationComponent = () => {
         position: 'relative', width: 1200, height: 800,
         backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(32px)',
         borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
         display: 'flex', overflow: 'hidden',
         opacity: cardOp, transform: `scale(${cardScale}) translateY(${cardTy}px)`
       }}>

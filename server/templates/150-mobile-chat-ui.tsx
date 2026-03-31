@@ -46,7 +46,7 @@ export const AnimationComponent = () => {
       <div style={{
         width: 1000, height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.95)',
         borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)',
-        display: 'flex', flexDirection: 'column', opacity: entryOp, boxShadow: '0 0 100px rgba(0,0,0,0.5)'
+        display: 'flex', flexDirection: 'column', opacity: entryOp, boxShadow: '0 0 100px rgba(0,0,0,0.80)'
       }}>
         
         {/* Header Bar */}
@@ -100,7 +100,7 @@ export const AnimationComponent = () => {
                 const appearFrame = startDelay + (i * framesPerMsg);
                 
                 const op = interpolate(frame, [appearFrame, appearFrame + 12], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-                const sc = interpolate(frame, [appearFrame, appearFrame + 15], [0.85, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.backOut });
+                const sc = interpolate(frame, [appearFrame, appearFrame + 15], [0.75, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.backOut });
                 const tx = interpolate(frame, [appearFrame, appearFrame + 12], [isMe ? 40 : -40, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
                 const bubbleBg = isMe ? 'PRIMARY_COLOR' : 'rgba(255,255,255,0.08)';
@@ -115,7 +115,7 @@ export const AnimationComponent = () => {
                     <div style={{
                     backgroundColor: bubbleBg, padding: '24px 32px',
                     borderRadius: isMe ? '32px 32px 4px 32px' : '32px 32px 32px 4px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.32)',
                     fontSize: 26, fontWeight: 500, lineHeight: 1.4, color: textColor
                     }}>
                     {msg.text}

@@ -84,7 +84,7 @@ export const AnimationComponent = () => {
           const startFrame = startDelay + (i * framesPerMessage); // Stagger reveals
           const opacity = interpolate(frame, [startFrame, startFrame + 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
           const translateY = interpolate(frame, [startFrame, startFrame + 20], [60, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-          const scale = interpolate(frame, [startFrame, startFrame + 20], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+          const scale = interpolate(frame, [startFrame, startFrame + 20], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
           // Animated typing indicator before the message appears
           const isTyping = frame >= startFrame - 20 && frame < startFrame;
@@ -109,7 +109,7 @@ export const AnimationComponent = () => {
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderLeft: `8px solid ${color}`,
                 padding: '32px 48px',
-                boxShadow: `0 24px 48px rgba(0,0,0,0.5), 0 0 20px ${color}22`,
+                boxShadow: `0 24px 48px rgba(0,0,0,0.92), 0 0 20px ${color}22`,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 40

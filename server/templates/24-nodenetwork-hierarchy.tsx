@@ -74,7 +74,7 @@ export const AnimationComponent = () => {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.48)',
     position: 'absolute'
   }
 

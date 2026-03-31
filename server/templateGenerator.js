@@ -173,8 +173,11 @@ SECTION 5 — VISUAL HIERARCHY & COMPOSITION
 38. 8px GRID ALIGNMENT: All positions and sizes should be multiples of 8px (8, 16, 24, 32, 40, 48, 64, 80, 96…). Random pixel values like top: 73 are immediately visible as misaligned.
 39. MODERN UI STANDARDS (MANDATORY):
     • ROUNDED CORNERS: Every panel, bar, or container MUST have borderRadius: '12px' (for small elements) or '24px' (for large panels). No sharp 90-degree corners.
-    • SUBTLE SHADOWS: Use box-shadow: '0 8px 32px rgba(0,0,0,0.15)' for panels to create depth.
-    • SOFT GRADIENTS: Use very subtle linear gradients for backgrounds (e.g., BACKGROUND_COLOR to a slightly darker/lighter version) to avoid a "flat" look.
+    • DRAMATIC SHADOWS: Use aggressive shadows for professional depth.
+      - Standard panels: box-shadow: '0 32px 64px rgba(0,0,0,0.5), 0 16px 32px rgba(0,0,0,0.3)'
+      - Floating elements: box-shadow: '0 50px 100px rgba(0,0,0,0.8)'
+      - Text: Always use text-shadow: '0 2px 10px rgba(0,0,0,0.8)' for legibility.
+    • SOFT GRADIENTS: Use subtle linear gradients for backgrounds (e.g., BACKGROUND_COLOR to a slightly darker version) to avoid a "flat" look.
     • GLASSMORPHISM: For overlays, use backdrop-filter: 'blur(10px)' and a semi-transparent background (rgba).
 40. CONTRAST CHECK (MANDATORY):
     • Text must ALWAYS be high-contrast against its direct background.

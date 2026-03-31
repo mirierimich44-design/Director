@@ -10,8 +10,8 @@
  *   node server/templateAuditor.js --skip-render     # static analysis only
  *
  * Best Gemini models:
- *   Vision analysis  → gemini-2.5-pro   (most accurate multimodal reasoning)
- *   Code fix gen     → gemini-2.5-flash (fast, cheap, already used in project)
+ *   Vision analysis  → gemini-3.1-pro   (most accurate multimodal reasoning)
+ *   Code fix gen     → gemini-3.1-flash (fast, cheap, already used in project)
  */
 
 import { readdir, readFile, writeFile, mkdir } from 'fs/promises'

@@ -113,7 +113,7 @@ export const AnimationComponent = () => {
                 width: 220, padding: '24px 20px',
                 backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(16px)',
                 borderRadius: 16, border: `1px solid ${isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)'}`,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.5)', opacity: op,
+                boxShadow: '0 20px 40px rgba(0,0,0,0.80)', opacity: op,
                 textAlign: 'center', borderTop: `4px solid ${isActive ? 'PRIMARY_COLOR' : 'transparent'}`
               }}>
                 <div style={{

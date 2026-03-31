@@ -14,7 +14,7 @@ router.post('/analyze', async (req, res) => {
 
     try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const modelName = settings.models?.language?.fast || "gemini-1.5-flash";
+        const modelName = settings.models?.language?.fast || "gemini-3.1-flash-lite-preview";
         const model = genAI.getGenerativeModel({ model: modelName });
 
         const prompt = mode === 'topic'

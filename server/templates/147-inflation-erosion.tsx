@@ -57,7 +57,7 @@ export const AnimationComponent = () => {
          <div style={{
              flex: 1, padding: '40px', backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(24px)',
              borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)', borderLeft: '8px solid PRIMARY_COLOR',
-             opacity: stat1Op, boxShadow: '0 24px 48px rgba(0,0,0,0.4)'
+             opacity: stat1Op, boxShadow: '0 24px 48px rgba(0,0,0,0.64)'
          }}>
             <div style={{ fontSize: 64, fontWeight: 900, color: '#fff', fontFamily: 'monospace', lineHeight: 1 }}>{stat1}</div>
             <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 12 }}>{label1}</div>
@@ -65,7 +65,7 @@ export const AnimationComponent = () => {
          <div style={{
              flex: 1, padding: '40px', backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(24px)',
              borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)', borderLeft: '8px solid ACCENT_COLOR',
-             opacity: stat2Op, boxShadow: '0 24px 48px rgba(0,0,0,0.4)'
+             opacity: stat2Op, boxShadow: '0 24px 48px rgba(0,0,0,0.64)'
          }}>
             <div style={{ fontSize: 64, fontWeight: 900, color: 'ACCENT_COLOR', fontFamily: 'monospace', lineHeight: 1 }}>{stat2}</div>
             <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 12 }}>{label2}</div>
@@ -91,7 +91,7 @@ export const AnimationComponent = () => {
                       background: 'linear-gradient(to top, PRIMARY_COLOR 0%, ACCENT_COLOR 100%)',
                       borderRadius: '8px 8px 0 0', opacity: 0.8,
                       transform: `scaleY(${barSc})`, transformOrigin: 'bottom',
-                      boxShadow: '0 0 20px rgba(0,0,0,0.2)'
+                      boxShadow: '0 0 20px rgba(0,0,0,0.32)'
                   }} />
                   {/* Leading Edge Glow */}
                   <div style={{

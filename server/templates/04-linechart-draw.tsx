@@ -99,14 +99,14 @@ export const AnimationComponent = () => {
           <div style={{ width: 12, height: 48, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, boxShadow: '0 0 20px PRIMARY_COLOR' }} />
           <div style={{ 
             fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', 
-            textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.8)' 
+            textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.92)' 
           }}>
             {title}
           </div>
         </div>
         <div style={{ 
           fontSize: 24, color: 'SUPPORT_COLOR', marginLeft: 36, marginTop: 4, 
-          fontWeight: 600, letterSpacing: '0.05em', textShadow: '0 1px 10px rgba(0,0,0,0.3)' 
+          fontWeight: 600, letterSpacing: '0.05em', textShadow: '0 1px 10px rgba(0,0,0,0.48)' 
         }}>
           ANALYTIC_STREAM_v4.0
         </div>
@@ -195,7 +195,7 @@ export const AnimationComponent = () => {
             position: 'absolute', top: p.y - 100, left: p.x, transform: `translateX(-50%) translateY(${ty}px)`,
             opacity: op, backgroundColor: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(12px)',
             borderRadius: 12, border: '1px solid rgba(255,255,255,0.2)', padding: '12px 20px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 10, minWidth: 120, textAlign: 'center'
+            boxShadow: '0 10px 30px rgba(0,0,0,0.80)', zIndex: 10, minWidth: 120, textAlign: 'center'
           }}>
             <div style={{ color: 'ACCENT_COLOR', fontSize: 28, fontWeight: 900, letterSpacing: '-0.02em' }}>
               {lineValues[i]}

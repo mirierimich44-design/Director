@@ -71,7 +71,7 @@ export const AnimationComponent = () => {
           extrapolateLeft: 'clamp',
           extrapolateRight: 'clamp',
         })
-        const scaleX = interpolate(frame, [tile.delay, tile.delay + 16], [0.85, 1], {
+        const scaleX = interpolate(frame, [tile.delay, tile.delay + 16], [0.75, 1], {
           extrapolateLeft: 'clamp',
           extrapolateRight: 'clamp',
         })

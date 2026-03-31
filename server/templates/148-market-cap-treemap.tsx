@@ -35,7 +35,7 @@ export const AnimationComponent = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+            boxShadow: '0 10px 30px rgba(0,0,0,0.48)'
           }}>
             <div style={{ color: 'TEXT_ON_PRIMARY', fontSize: 40, fontWeight: 'bold', letterSpacing: '0.05em' }}>{item.name}</div>
             <div style={{ color: 'TEXT_ON_PRIMARY', fontSize: 24, opacity: 0.8, marginTop: 16 }}>{item.val}</div>

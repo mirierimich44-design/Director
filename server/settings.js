@@ -31,20 +31,20 @@ const DEFAULTS = {
   // Language models
   models: {
     language: {
-      primary: 'gemini-1.5-flash',            // Main generation (TSX, scene routing, template gen)
-      fast: 'gemini-1.5-flash',               // Fast/cheap JSON tasks (routing, extraction)
-      claude: 'claude-3-7-sonnet-latest',      // Claude primary
-      claudeFast: 'claude-3-5-haiku-latest',   // Claude fast
+      primary: 'gemini-3.1-flash-lite-preview',            // Main generation (TSX, scene routing, template gen)
+      fast: 'gemini-3.1-flash-lite-preview',               // Fast/cheap JSON tasks (routing, extraction)
+      claude: 'claude-sonnet-4-5',                         // Claude primary
+      claudeFast: 'claude-haiku-4-0',                      // Claude fast
     },
     tts: {
       engine: 'kokoro',                        // 'kokoro', 'orpheus', or 'heygen'
     },
     image: {
-      primary: 'imagen-3.0-generate-001',      // Image generation
-      fallback: 'imagen-3.0-generate-001',    // Fallback image model
+      primary: 'imagen-4.0-generate-001',      // Image generation
+      fallback: 'imagen-4.0-fast-generate-001',    // Fallback image model
     },
     video: {
-      primary: 'veo-2.0-generate-001',      // Video generation (Veo 2)
+      primary: 'veo-3.0-generate-preview',      // Video generation (Veo 3)
     },
   },
 
@@ -224,18 +224,26 @@ export function getGenerationProvider() {
 // ─────────────────────────────────────────────
 export const MODEL_OPTIONS = {
   language: [
+    { id: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash Lite', provider: 'google' },
+    { id: 'gemini-3.0-flash', name: 'Gemini 3.0 Flash', provider: 'google' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'google' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'google' },
     { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'google' },
-    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', provider: 'google' },
     { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', provider: 'google' },
+    { id: 'claude-sonnet-4-5', name: 'Claude 4.5 Sonnet', provider: 'anthropic' },
     { id: 'claude-3-7-sonnet-latest', name: 'Claude 3.7 Sonnet', provider: 'anthropic' },
     { id: 'claude-3-5-sonnet-latest', name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
-    { id: 'claude-3-5-haiku-latest', name: 'Claude 3.5 Haiku', provider: 'anthropic' },
+    { id: 'claude-haiku-4-0', name: 'Claude 4.0 Haiku', provider: 'anthropic' },
   ],
   image: [
-    { id: 'imagen-3.0-generate-001', name: 'Imagen 3.0', provider: 'google' },
-    { id: 'imagen-3.0-fast-generate-001', name: 'Imagen 3.0 Fast', provider: 'google' },
+    { id: 'gemini-3.1-flash-image-preview', name: 'Nano Banana 2', provider: 'google' },
+    { id: 'gemini-3-pro-image-preview', name: 'Nano Banana Pro', provider: 'google' },
+    { id: 'gemini-2.5-flash-image', name: 'Nano Banana', provider: 'google' },
+    { id: 'imagen-4.0-generate-001', name: 'Imagen 4.0', provider: 'google' },
+    { id: 'imagen-4.0-fast-generate-001', name: 'Imagen 4.0 Fast', provider: 'google' },
   ],
   video: [
+    { id: 'veo-3.0-generate-preview', name: 'Veo 3.0', provider: 'google' },
     { id: 'veo-2.0-generate-001', name: 'Veo 2.0', provider: 'google' },
   ],
 }

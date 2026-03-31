@@ -19,6 +19,7 @@ import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKe
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';
+import { generateImage as generateGeminiImage } from './services/gemini.js';
 import { renderVideo as renderRemotion, warmupBundler, purgeOldTempDirs } from './engines/remotion/renderer.js';
 import { auditTemplate, applyFix, TEMPLATES_DIR, AUDIT_DIR, REPORT_PATH } from './templateAuditor.js';
 import { generateAdjustment, diffSummary, getAllPresets } from './adjustmentPresets.js';
@@ -108,7 +109,7 @@ async function generateFallback3DPrompt(script, template, theme, content) {
     }
 
     const model = googleAI.getGenerativeModel({
-        model: 'gemini-2.5-flash-exp',
+        model: 'gemini-3.1-flash-lite-preview',
         generationConfig: {
             temperature: 0.2,
             maxOutputTokens: 1024,
@@ -150,13 +151,22 @@ async function generateFallbackImage(prompt, environment = 'standard') {
         throw new Error('Google API key not configured for image generation');
     }
 
-    const imageModel = getImageModel() || 'imagen-3.0-generate-001';
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
+    const imageModel = getImageModel() || 'imagen-4.0-generate-001';
 
     let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
     if (environment === 'editorial-illustration') {
         promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
     }
+
+    // Support for Gemini Image Models (Nano Banana)
+    if (imageModel.startsWith('gemini-')) {
+        console.log(`   📡 Calling Gemini Image API (Fallback): ${imageModel}`);
+        const res = await generateGeminiImage(`${prompt}${promptSuffix}`, { model: imageModel });
+        if (res.success) return res.url;
+        throw new Error(`Gemini Image Fallback failed: ${res.error}`);
+    }
+
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
 
     const body = {
         instances: [{ prompt: `${prompt}${promptSuffix}` }],
@@ -507,7 +517,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
             return res.status(503).json({ error: 'Google API key not configured' });
         }
 
-        const imageModel = getImageModel() || 'imagen-3.0-generate-001';
+        const imageModel = getImageModel() || 'imagen-4.0-generate-001';
 
         // Choose prompt suffix based on environment
         let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
@@ -516,6 +526,15 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : 'PHOTOREALISTIC'}`);
+
+        // Support for Gemini Image Models (Nano Banana)
+        if (imageModel.startsWith('gemini-')) {
+            const imgResult = await generateGeminiImage(`${prompt}${promptSuffix}`, { model: imageModel });
+            if (imgResult.success) {
+                return res.json({ success: true, url: imgResult.url });
+            }
+            throw new Error(imgResult.error);
+        }
 
         // Call Imagen via Google AI REST API
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;

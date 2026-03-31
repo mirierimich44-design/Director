@@ -12,7 +12,7 @@ export const AnimationComponent = () => {
   const desc = 'DESCRIPTION_TEXT';
 
   const op = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const scale = interpolate(frame, [0, 20], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const scale = interpolate(frame, [0, 20], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const reveal1 = interpolate(frame, [30, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const reveal2 = interpolate(frame, [60, 90], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const reveal3 = interpolate(frame, [90, 120], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });

@@ -87,7 +87,7 @@ export const AnimationComponent = () => {
         backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(24px)',
         borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)',
         padding: '48px', opacity: anomalyOp, transform: `scale(${anomalyScale})`,
-        boxShadow: '0 32px 64px rgba(0,0,0,0.5), 0 0 20px rgba(230,57,70,0.2)',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.80), 0 0 20px rgba(230,57,70,0.30)',
         borderTop: '8px solid #e63946'
       }}>
         <div style={{ 

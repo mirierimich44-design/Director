@@ -67,7 +67,7 @@ export const AnimationComponent = () => {
         position: 'relative', width: 1200, height: 700,
         backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(32px)',
         borderRadius: 40, border: `2px solid ${isUrgent && frame % 10 < 5 ? '#e63946' : 'rgba(255,255,255,0.1)'}`,
-        boxShadow: `0 40px 100px rgba(0,0,0,0.6), 0 0 ${isUrgent ? 30 * alarmPulse : 0}px rgba(230,57,70,0.2)`,
+        boxShadow: `0 40px 100px rgba(0,0,0,0.92), 0 0 ${isUrgent ? 30 * alarmPulse : 0}px rgba(230,57,70,0.45)`,
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         opacity: entryOp,
         overflow: 'hidden'
@@ -96,7 +96,7 @@ export const AnimationComponent = () => {
              <div style={{ 
                fontSize: 220, fontWeight: 900, color: '#fff', 
                fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: 0.9,
-               textShadow: `0 0 40px ${isUrgent ? 'rgba(230,57,70,0.5)' : 'rgba(255,255,255,0.1)'}`
+               textShadow: `0 0 40px ${isUrgent ? 'rgba(230,57,70,0.85)' : 'rgba(255,255,255,0.22)'}`
              }}>
                {main}
              </div>

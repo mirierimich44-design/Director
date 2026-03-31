@@ -37,7 +37,7 @@ export const AnimationComponent = () => {
   const entranceStart = 5
   const bgOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const mainPanelOp = interpolate(frame, [entranceStart, entranceStart + 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const mainPanelScale = interpolate(frame, [entranceStart, entranceStart + 30], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
+  const mainPanelScale = interpolate(frame, [entranceStart, entranceStart + 30], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
   
   const contentOp = interpolate(frame, [entranceStart + 15, entranceStart + 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const contentTy = interpolate(frame, [entranceStart + 15, entranceStart + 40], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
@@ -48,7 +48,7 @@ export const AnimationComponent = () => {
     backdropFilter: 'blur(32px)',
     border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '32px',
-    boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+    boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
     position: 'absolute'
   }
 
@@ -89,7 +89,7 @@ export const AnimationComponent = () => {
                width: 180, height: 180, backgroundColor: 'PRIMARY_COLOR', borderRadius: 24,
                display: 'flex', alignItems: 'center', justifyContent: 'center',
                fontSize: 80, fontWeight: 900, color: '#0A0A14',
-               boxShadow: '0 20px 50px rgba(0,0,0,0.4)'
+               boxShadow: '0 20px 50px rgba(0,0,0,0.64)'
            }}>
              {label1.charAt(0)}
            </div>

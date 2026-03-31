@@ -41,7 +41,7 @@ export const AnimationComponent = () => {
         fontWeight: 'bold',
         letterSpacing: '0.05em',
         textTransform: 'uppercase',
-        textShadow: '4px 0 rgba(230, 57, 70, 0.5), -4px 0 rgba(79, 195, 247, 0.5)'
+        textShadow: '4px 0 rgba(230,57,70,0.75), -4px 0 rgba(79,195,247,0.75)'
       }}>
         {title}
       </div>

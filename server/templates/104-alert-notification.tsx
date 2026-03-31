@@ -17,7 +17,7 @@ export const AnimationComponent = () => {
   const severityColor = isCritical ? '#e63946' : isWarning ? '#f4a261' : '#4fc3f7';
 
   // Entrance animations
-  const cardScale = interpolate(frame, [0, 25], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const cardScale = interpolate(frame, [0, 25], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const cardOpacity = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const cardTranslateY = interpolate(frame, [0, 25], [50, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   
@@ -64,7 +64,7 @@ export const AnimationComponent = () => {
         backdropFilter: 'blur(24px)',
         borderRadius: '32px',
         border: '2px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: `0 32px 64px rgba(0, 0, 0, 0.4), 0 0 20px ${severityColor}22`,
+        boxShadow: `0 32px 64px rgba(0,0,0,0.92), 0 0 20px ${severityColor}22`,
         display: 'flex',
         overflow: 'hidden',
         opacity: cardOpacity,

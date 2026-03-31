@@ -21,7 +21,7 @@ export const AnimationComponent = () => {
   const entranceStart = 5
   const bgOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const panelOp = interpolate(frame, [entranceStart, entranceStart + 25], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const panelScale = interpolate(frame, [entranceStart, entranceStart + 35], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
+  const panelScale = interpolate(frame, [entranceStart, entranceStart + 35], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
   
   const contentOp = interpolate(frame, [entranceStart + 20, entranceStart + 45], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const contentTy = interpolate(frame, [entranceStart + 20, entranceStart + 45], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
@@ -31,7 +31,7 @@ export const AnimationComponent = () => {
     backdropFilter: 'blur(32px)',
     border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '32px',
-    boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+    boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
     position: 'absolute',
     overflow: 'hidden'
   }

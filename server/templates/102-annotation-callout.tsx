@@ -27,7 +27,7 @@ export const AnimationComponent = () => {
 
   // Card Reveal
   const cardOp = interpolate(frame, [55, 75], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const cardScale = interpolate(frame, [55, 80], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const cardScale = interpolate(frame, [55, 80], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const cardTy = interpolate(frame, [55, 80], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   // Pulsing Point
@@ -84,7 +84,7 @@ export const AnimationComponent = () => {
         position: 'absolute', top: lineY2 - 320, left: lineX2,
         width: 500, backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(24px)',
         borderRadius: 24, border: '1px solid rgba(255,255,255,0.15)',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.5)', padding: '48px',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.80)', padding: '48px',
         opacity: cardOp, transform: `scale(${cardScale}) translateY(${cardTy}px)`,
         zIndex: 10, borderLeft: '8px solid PRIMARY_COLOR'
       }}>

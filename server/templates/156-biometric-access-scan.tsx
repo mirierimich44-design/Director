@@ -12,7 +12,7 @@ export const AnimationComponent = () => {
 
   // 1. Entrance
   const cardOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp' });
-  const cardScale = interpolate(frame, [0, 25], [0.95, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const cardScale = interpolate(frame, [0, 25], [0.82, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   // 2. Scanning Phase (1s to 3s)
   const scanStart = 30;
@@ -53,7 +53,7 @@ export const AnimationComponent = () => {
         position: 'relative', width: 1000, height: 800,
         backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(32px)',
         borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
         display: 'flex', overflow: 'hidden',
         opacity: cardOp, transform: `scale(${cardScale})`
       }}>

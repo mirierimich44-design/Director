@@ -19,11 +19,11 @@ export const AnimationComponent = () => {
 
   const kpi1Start = entryStart + 20;
   const kpi1Op = interpolate(frame, [kpi1Start, kpi1Start + 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const kpi1Scale = interpolate(frame, [kpi1Start, kpi1Start + 50], [0.95, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const kpi1Scale = interpolate(frame, [kpi1Start, kpi1Start + 50], [0.82, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   const kpi2Start = entryStart + 35;
   const kpi2Op = interpolate(frame, [kpi2Start, kpi2Start + 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const kpi2Scale = interpolate(frame, [kpi2Start, kpi2Start + 50], [0.95, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const kpi2Scale = interpolate(frame, [kpi2Start, kpi2Start + 50], [0.82, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   const summaryStart = entryStart + 60;
   const summaryOp = interpolate(frame, [summaryStart, summaryStart + 40], [0, 1], { extrapolateLeft: 'clamp' });
@@ -65,7 +65,7 @@ export const AnimationComponent = () => {
         <div style={{
           flex: 1, minHeight: 280, backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(32px)',
           borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)', borderTop: '6px solid PRIMARY_COLOR',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.5)', padding: '40px 50px',
+          boxShadow: '0 32px 64px rgba(0,0,0,0.80)', padding: '40px 50px',
           opacity: kpi1Op, transform: `scale(${kpi1Scale})`,
           display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden'
         }}>
@@ -77,7 +77,7 @@ export const AnimationComponent = () => {
         <div style={{
           flex: 1, minHeight: 280, backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(32px)',
           borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)', borderTop: '6px solid ACCENT_COLOR',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.5)', padding: '40px 50px',
+          boxShadow: '0 32px 64px rgba(0,0,0,0.80)', padding: '40px 50px',
           opacity: kpi2Op, transform: `scale(${kpi2Scale})`,
           display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden'
         }}>
@@ -90,7 +90,7 @@ export const AnimationComponent = () => {
       <div style={{
         backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(32px)',
         borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)', borderLeft: '12px solid PRIMARY_COLOR',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.5)', padding: '50px 60px',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.80)', padding: '50px 60px',
         opacity: summaryOp, transform: `translateY(${summaryTy}px)`,
         zIndex: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center',
         flex: 1 // Take remaining space

@@ -39,7 +39,7 @@ export const AnimationComponent = () => {
 
   // Entrance
   const entryOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const mapScale = interpolate(frame, [0, 120], [1.1, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const mapScale = interpolate(frame, [0, 120], [1.25, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   
   // Heat clusters pulsing
   const pulse = interpolate(Math.sin(frame / 12), [-1, 1], [0.8, 1.2]);
@@ -92,14 +92,14 @@ export const AnimationComponent = () => {
           <div style={{ width: 12, height: 48, backgroundColor: '#e63946', borderRadius: 4, boxShadow: '0 0 20px #e63946' }} />
           <div style={{ 
             fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', 
-            textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.8)' 
+            textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.92)' 
           }}>
             {title}
           </div>
         </div>
         <div style={{ 
           fontSize: 24, color: 'SUPPORT_COLOR', marginLeft: 36, marginTop: 4, 
-          fontWeight: 600, textShadow: '0 2px 10px rgba(0,0,0,0.4)' 
+          fontWeight: 600, textShadow: '0 2px 10px rgba(0,0,0,0.64)' 
         }}>GLOBAL_THREAT_MONITORING</div>
       </div>
 
@@ -108,7 +108,7 @@ export const AnimationComponent = () => {
         position: 'absolute', bottom: 80, left: 80, right: 80, height: 260,
         backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(32px)',
         borderRadius: 32, border: '1px solid rgba(255,255,255,0.15)',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6)', zIndex: 10,
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)', zIndex: 10,
         padding: '60px 80px', display: 'flex', gap: 100, opacity: entryOp
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 300 }}>
@@ -130,7 +130,7 @@ export const AnimationComponent = () => {
 
       {/* UI Elements */}
       <div style={{ position: 'absolute', top: 60, right: 80, zIndex: 10, opacity: 0.7, textAlign: 'right' }}>
-        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14, textShadow: '0 2px 4px rgba(0,0,0,0.80)' }}>
           SIGNAL_LOCK: TRUE<br />
           COORDINATES: {centerLat.toFixed(2)}N / {centerLon.toFixed(2)}E<br />
           DENSITY_ALGORITHM: v2.4

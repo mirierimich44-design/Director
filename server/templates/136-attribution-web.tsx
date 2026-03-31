@@ -92,7 +92,7 @@ export const AnimationComponent = () => {
               width: 240, backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(20px)',
               borderRadius: 16, border: `2px solid ${color}`, padding: '24px 20px',
               display: 'flex', flexDirection: 'column', alignItems: 'center',
-              boxShadow: `0 20px 40px rgba(0,0,0,0.5), 0 0 20px ${color}22`
+              boxShadow: `0 20px 40px rgba(0,0,0,0.92), 0 0 20px ${color}22`
             }}>
               <div style={{ 
                 fontSize: 14, fontWeight: 900, color: color, 
@@ -113,7 +113,7 @@ export const AnimationComponent = () => {
                  position: 'absolute', top: -10, left: -10, right: -10, bottom: -10,
                  border: '2px solid #e63946', borderRadius: 20,
                  opacity: interpolate(frame % 45, [0, 45], [0.8, 0]),
-                 transform: `scale(${interpolate(frame % 45, [0, 45], [1, 1.15])})`
+                 transform: `scale(${interpolate(frame % 45, [0, 45], [1, 1.30])})`
                }} />
             )}
           </div>

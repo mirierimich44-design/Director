@@ -59,7 +59,7 @@ export const AnimationComponent = () => {
         position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) perspective(1000px) rotateX(10deg)',
         width: 1400, height: 700, backgroundColor: 'rgba(15, 23, 42, 0.8)',
         borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6)', overflow: 'hidden',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)', overflow: 'hidden',
         display: 'flex'
       }}>
         {/* Left Side: Raw Hex */}

@@ -58,10 +58,10 @@ export const AnimationComponent = () => {
         backdropFilter: 'blur(30px)',
         borderRadius: 40,
         border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 50px 100px rgba(0,0,0,0.7)',
+        boxShadow: '0 50px 100px rgba(0,0,0,0.92)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         opacity: entryOp,
-        transform: `scale(${interpolate(frame, [0, 30], [0.95, 1], { extrapolateRight: 'clamp' })})`
+        transform: `scale(${interpolate(frame, [0, 30], [0.82, 1], { extrapolateRight: 'clamp' })})`
       }}>
 
         {/* Main Odometer Gauge */}
@@ -92,7 +92,7 @@ export const AnimationComponent = () => {
             <div style={{ 
               fontSize: 120, fontWeight: 900, color: '#ffffff', 
               fontFamily: 'monospace', letterSpacing: '-0.03em', lineHeight: 1,
-              textShadow: '0 0 30px rgba(0,0,0,0.5)'
+              textShadow: '0 0 30px rgba(0,0,0,0.80)'
             }}>
               {currentNum.toLocaleString()}
             </div>

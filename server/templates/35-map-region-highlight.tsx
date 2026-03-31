@@ -28,7 +28,7 @@ export const AnimationComponent = () => {
   const barW = interpolate(frame, [10, 40], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const mapOp = interpolate(frame, [12, 28], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const regionOp = interpolate(frame, [28, 48], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const regionScale = interpolate(frame, [28, 48], [0.95, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const regionScale = interpolate(frame, [28, 48], [0.82, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const pulseOp = interpolate(frame % 60, [0, 30, 60], [0.8, 0.2, 0.8], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const labelOp = interpolate(frame, [45, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const labelTy = interpolate(frame, [45, 60], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })

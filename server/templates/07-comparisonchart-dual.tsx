@@ -27,20 +27,20 @@ export const AnimationComponent = () => {
   const titleTy = interpolate(frame, [entranceStart, entranceStart + 30], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
   
   const col1Op = interpolate(frame, [entranceStart + 20, entranceStart + 50], [0, 1], { extrapolateRight: 'clamp' })
-  const col1Scale = interpolate(frame, [entranceStart + 20, entranceStart + 55], [0.95, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
+  const col1Scale = interpolate(frame, [entranceStart + 20, entranceStart + 55], [0.82, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
   
   const vsOp = interpolate(frame, [entranceStart + 40, entranceStart + 60], [0, 1], { extrapolateRight: 'clamp' })
   const vsScale = interpolate(frame, [entranceStart + 40, entranceStart + 65], [0.5, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.back(1.5)) })
 
   const col2Op = interpolate(frame, [entranceStart + 30, entranceStart + 60], [0, 1], { extrapolateRight: 'clamp' })
-  const col2Scale = interpolate(frame, [entranceStart + 30, entranceStart + 65], [0.95, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
+  const col2Scale = interpolate(frame, [entranceStart + 30, entranceStart + 65], [0.82, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
 
   const glassStyle: React.CSSProperties = {
     backgroundColor: 'rgba(15, 23, 42, 0.92)',
     backdropFilter: 'blur(32px)',
     border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '32px',
-    boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+    boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -74,8 +74,8 @@ export const AnimationComponent = () => {
 
       {/* Header UI */}
       <div style={{ position: 'absolute', top: 80, width: '100%', textAlign: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
-        <div style={{ fontSize: 16, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: '0.6em', textTransform: 'uppercase', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>DIFFERENTIAL_ANALYSIS_v9.2</div>
-        <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>{title}</div>
+        <div style={{ fontSize: 16, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: '0.6em', textTransform: 'uppercase', textShadow: '0 2px 10px rgba(0,0,0,0.80)' }}>DIFFERENTIAL_ANALYSIS_v9.2</div>
+        <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.92)' }}>{title}</div>
         <div style={{ width: 120, height: 4, backgroundColor: 'PRIMARY_COLOR', margin: '20px auto', borderRadius: 2, boxShadow: '0 0 20px PRIMARY_COLOR' }} />
       </div>
 
@@ -109,7 +109,7 @@ export const AnimationComponent = () => {
             width: 100, height: 100, borderRadius: '50%', backgroundColor: 'rgba(15, 23, 42, 0.95)',
             border: '2px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: vsOp, transform: `scale(${vsScale})`, zIndex: 10, backdropFilter: 'blur(10px)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+            boxShadow: '0 10px 30px rgba(0,0,0,0.80)'
         }}>
             <div style={{ fontSize: 28, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: '0.1em' }}>VS</div>
         </div>
@@ -140,14 +140,14 @@ export const AnimationComponent = () => {
           position: 'absolute', bottom: 100, width: '100%', textAlign: 'center', 
           opacity: col2Op, transform: `translateY(${interpolate(frame, [entranceStart + 40, entranceStart + 70], [20, 0], { extrapolateRight: 'clamp' })}px)` 
       }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto', fontSize: 24, color: '#fff', lineHeight: 1.6, fontWeight: 500, textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto', fontSize: 24, color: '#fff', lineHeight: 1.6, fontWeight: 500, textShadow: '0 2px 10px rgba(0,0,0,0.92)' }}>
             {contextText}
         </div>
       </div>
 
       {/* Decorative Side Elements */}
       <div style={{ position: 'absolute', bottom: 60, left: 80, opacity: 0.3 }}>
-        <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+        <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace', textShadow: '0 1px 4px rgba(0,0,0,0.80)' }}>
             COORD_SYNC: STABLE // MODE: CROSS_REF<br />
             ID: 0x{Math.floor(frame * 77).toString(16).toUpperCase()}
         </div>

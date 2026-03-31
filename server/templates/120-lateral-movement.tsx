@@ -194,7 +194,7 @@ export const AnimationComponent = () => {
                   position: 'absolute', top: -12, left: -12, right: -12, bottom: -12,
                   border: '2px solid #e63946', borderRadius: 24,
                   opacity: interpolate(frame % 45, [0, 45], [0.8, 0]),
-                  transform: `scale(${interpolate(frame % 45, [0, 45], [1, 1.15])})`,
+                  transform: `scale(${interpolate(frame % 45, [0, 45], [1, 1.30])})`,
                   pointerEvents: 'none'
                 }} />
               )}

@@ -43,7 +43,7 @@ export const AnimationComponent = () => {
     backdropFilter: 'blur(32px)',
     borderRadius: 40,
     border: '1px solid rgba(255,255,255,0.1)',
-    boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
+    boxShadow: '0 40px 100px rgba(0,0,0,0.92)',
     padding: '60px',
     display: 'flex',
     flexDirection: 'column' as const,

@@ -56,7 +56,7 @@ export const AnimationComponent = () => {
       <div style={{
         position: 'relative', width: 900, backgroundColor: 'rgba(15, 23, 42, 0.95)',
         backdropFilter: 'blur(30px)', borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.6)', padding: '60px',
+        boxShadow: '0 40px 100px rgba(0,0,0,0.92)', padding: '60px',
         opacity: cardOp, transform: `scale(${cardScale})`
       }}>
         

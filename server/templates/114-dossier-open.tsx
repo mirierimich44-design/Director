@@ -48,7 +48,7 @@ export const AnimationComponent = () => {
         position: 'relative', width: 1300, height: 850,
         backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(32px)',
         borderRadius: 40, border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 50px 100px rgba(0,0,0,0.7)',
+        boxShadow: '0 50px 100px rgba(0,0,0,0.92)',
         display: 'flex', overflow: 'hidden',
         opacity: folderOp, transform: `translateY(${folderTy}px)`
       }}>
@@ -121,7 +121,7 @@ export const AnimationComponent = () => {
                backdropFilter: 'blur(12px)', borderRadius: 20, border: '2px solid #e63946',
                display: 'flex', flexDirection: 'column', alignItems: 'center',
                opacity: badgeOp,
-               boxShadow: '0 0 30px rgba(230,57,70,0.2)'
+               boxShadow: '0 0 30px rgba(230,57,70,0.30)'
            }}>
               <div style={{ color: '#e63946', fontSize: 14, fontWeight: 900, letterSpacing: '0.1em', marginBottom: 4 }}>THREAT_LEVEL</div>
               <div style={{ color: '#fff', fontSize: 32, fontWeight: 900 }}>{threatLevel}</div>

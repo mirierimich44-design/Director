@@ -192,7 +192,7 @@ export const AnimationComponent = () => {
                 backdropFilter: 'blur(16px)',
                 borderRadius: 16,
                 border: '1px solid rgba(255,255,255,0.15)',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.80)',
                 padding: '24px',
                 opacity: cardOp,
                 transform: `translateY(${cardTranslateY}px)`,

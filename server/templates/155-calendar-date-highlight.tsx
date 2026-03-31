@@ -50,7 +50,7 @@ export const AnimationComponent = () => {
       {/* Main Calendar Container */}
       <div style={{
         width: 800, height: 800, backgroundColor: 'rgba(255,255,255,0.95)',
-        borderRadius: 32, boxShadow: '0 40px 100px rgba(0,0,0,0.4)',
+        borderRadius: 32, boxShadow: '0 40px 100px rgba(0,0,0,0.64)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
         // Increased the shift distance to ensure no overlap and added extrapolateRight: 'clamp'
         transform: `translateX(${interpolate(frame, [cardStart, cardStart + 20], [0, -400], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}px)`,
@@ -83,7 +83,7 @@ export const AnimationComponent = () => {
                                position: 'absolute', width: 70, height: 70, borderRadius: '50%', 
                                backgroundColor: '#e63946', zIndex: -1,
                                transform: `scale(${highlightScale})`,
-                               boxShadow: '0 0 20px rgba(230,57,70,0.5)'
+                               boxShadow: '0 0 20px rgba(230,57,70,0.75)'
                            }} />
                        )}
                        {dayNum}
@@ -101,7 +101,7 @@ export const AnimationComponent = () => {
           width: 650,
           backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(32px)',
           borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)',
-          padding: '60px', boxShadow: '0 32px 64px rgba(0,0,0,0.5)',
+          padding: '60px', boxShadow: '0 32px 64px rgba(0,0,0,0.80)',
           opacity: cardOp, 
           transform: `translateY(${cardTy}px)`,
           borderLeft: '10px solid #e63946',
