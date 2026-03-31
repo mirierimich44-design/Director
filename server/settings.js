@@ -28,13 +28,13 @@ const DEFAULTS = {
   // Language models
   models: {
     language: {
-      primary: 'gemini-2.0-flash',            // Main generation (TSX, scene routing, template gen)
-      fast: 'gemini-2.0-flash',               // Fast/cheap JSON tasks (routing, extraction)
+      primary: 'gemini-2.5-flash',            // Main generation (TSX, scene routing, template gen)
+      fast: 'gemini-2.5-flash',               // Fast/cheap JSON tasks (routing, extraction)
       claude: 'claude-3-7-sonnet-latest',      // Claude primary
       claudeFast: 'claude-3-5-haiku-latest',   // Claude fast
     },
     tts: {
-      engine: 'kokoro',                        // 'kokoro' or 'orpheus'
+      engine: 'kokoro',                        // 'kokoro', 'orpheus', or 'heygen'
     },
     image: {
       primary: 'imagen-4.0-generate-001',      // Image generation

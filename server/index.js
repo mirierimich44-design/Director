@@ -1237,6 +1237,32 @@ app.post('/api/tts/generate', async (req, res) => {
     if (!text?.trim()) return res.status(400).json({ error: 'text is required' });
 
     try {
+        if (engine === 'heygen') {
+            const settings = getRawSettings();
+            const apiKey = settings.keys.heygen;
+            if (!apiKey) return res.status(400).json({ error: 'HeyGen API Key not set' });
+
+            const resp = await fetch('https://api.heygen.com/v1/audio/text_to_speech', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-Api-Key': apiKey
+                },
+                body: JSON.stringify({ text, voice_id: voice, speed }),
+            });
+
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error.message);
+
+            return res.json({
+                success: true,
+                audioUrl: data.data.audio_url,
+                filename: data.data.audio_url.split('/').pop(),
+                voice: voice,
+                engine: 'heygen',
+            });
+        }
+
         const resp = await fetch(`${TTS_SERVICE_URL}/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

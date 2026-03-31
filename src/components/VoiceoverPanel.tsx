@@ -38,6 +38,14 @@ const ORPHEUS_VOICES = [
     { id: 'zac',  label: 'Zac',  group: 'Male'   },
 ];
 
+const HEYGEN_VOICES = [
+    { id: 'en-US-JennyNeural', label: 'Jenny', group: 'US Female' },
+    { id: 'en-US-GuyNeural',   label: 'Guy',   group: 'US Male' },
+    { id: 'en-US-AriaNeural',  label: 'Aria',  group: 'US Female' },
+    { id: 'en-GB-SoniaNeural', label: 'Sonia', group: 'UK Female' },
+    { id: 'en-GB-RyanNeural',  label: 'Ryan',  group: 'UK Male' },
+];
+
 const EMOTION_TAGS = ['<laugh>', '<chuckle>', '<sigh>', '<gasp>', '<cough>', '<sniffle>', '<groan>', '<yawn>'];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -58,7 +66,7 @@ interface VoiceoverPanelProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
-    const [engine, setEngine] = useState<'kokoro' | 'orpheus'>('kokoro');
+    const [engine, setEngine] = useState<'kokoro' | 'orpheus' | 'heygen'>('kokoro');
     const [text, setText] = useState('');
     const [voice, setVoice] = useState('af_heart');
     const [speed, setSpeed] = useState(1.0);
@@ -68,13 +76,14 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
     const [serviceStatus, setServiceStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const textRef = useRef<HTMLTextAreaElement>(null);
 
-    const voices = engine === 'kokoro' ? KOKORO_VOICES : ORPHEUS_VOICES;
+    const voices = engine === 'kokoro' ? KOKORO_VOICES : (engine === 'orpheus' ? ORPHEUS_VOICES : HEYGEN_VOICES);
 
     // Reset voice to first of new engine when switching
-    const handleEngineChange = (_: React.MouseEvent, val: 'kokoro' | 'orpheus' | null) => {
+    const handleEngineChange = (_: React.MouseEvent, val: 'kokoro' | 'orpheus' | 'heygen' | null) => {
         if (!val) return;
         setEngine(val);
-        setVoice(val === 'kokoro' ? 'af_heart' : 'tara');
+        const firstVoice = val === 'kokoro' ? 'af_heart' : (val === 'orpheus' ? 'tara' : 'en-US-JennyNeural');
+        setVoice(firstVoice);
         setResult(null);
         setError('');
     };
@@ -215,6 +224,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                 >
                     <ToggleButton value="kokoro">Kokoro</ToggleButton>
                     <ToggleButton value="orpheus">Orpheus</ToggleButton>
+                    <ToggleButton value="heygen">HeyGen</ToggleButton>
                 </ToggleButtonGroup>
 
                 {engine === 'kokoro' && (
@@ -222,6 +232,9 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                 )}
                 {engine === 'orpheus' && (
                     <Chip size="small" label="Richer · Slow on CPU" sx={{ bgcolor: 'rgba(255,152,0,0.12)', color: '#ffb74d', fontSize: '0.65rem', height: 20 }} />
+                )}
+                {engine === 'heygen' && (
+                    <Chip size="small" label="Premium · API" sx={{ bgcolor: 'rgba(33,150,243,0.12)', color: '#90caf9', fontSize: '0.65rem', height: 20 }} />
                 )}
             </Stack>
 
@@ -337,7 +350,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                 <Button
                     variant="contained"
                     onClick={handleGenerate}
-                    disabled={loading || !text.trim() || serviceStatus === 'offline'}
+                    disabled={loading || !text.trim() || (engine !== 'heygen' && serviceStatus === 'offline')}
                     startIcon={loading ? <CircularProgress size={14} sx={{ color: '#000' }} /> : result ? <RegenerateIcon /> : <TTSIcon />}
                     sx={{
                         bgcolor: 'var(--accent-gold)',
