@@ -197,16 +197,32 @@ export function updateChapterScenes(projectId, chapterId, scenes) {
   const chapter = project.chapters.find(c => c.id === chapterId)
   if (!chapter) throw new Error('Chapter not found')
 
-  chapter.scenes = scenes.map((scene, i) => ({
-    ...scene,
-    globalIndex: chapter.sceneOffset + i + 1,
-    chapterIndex: i + 1,
-    status: 'pending',
-    flag: null,
-    notes: '',
-    renderedAt: null,
-    editHistory: scene.editHistory || [],
-  }))
+  // Build a lookup of already-rendered scenes by script text so we don't
+  // throw away video/image URLs when a chapter is re-analyzed.
+  const renderedByScript = new Map()
+  ;(chapter.scenes || []).forEach(s => {
+    if (s.script && (s.videoUrl || s.imageUrl)) {
+      renderedByScript.set(s.script.trim(), s)
+    }
+  })
+
+  chapter.scenes = scenes.map((scene, i) => {
+    const prev = renderedByScript.get((scene.script || '').trim())
+    const alreadyRendered = prev && (prev.videoUrl || prev.imageUrl)
+    return {
+      ...scene,
+      globalIndex: chapter.sceneOffset + i + 1,
+      chapterIndex: i + 1,
+      // Preserve render output if this exact sentence was already rendered
+      status:     alreadyRendered ? prev.status     : 'pending',
+      flag:       alreadyRendered ? prev.flag       : null,
+      notes:      alreadyRendered ? prev.notes      : '',
+      renderedAt: alreadyRendered ? prev.renderedAt : null,
+      videoUrl:   alreadyRendered ? prev.videoUrl   : undefined,
+      imageUrl:   alreadyRendered ? prev.imageUrl   : undefined,
+      editHistory: scene.editHistory || prev?.editHistory || [],
+    }
+  })
 
   chapter.updatedAt = new Date().toISOString()
 

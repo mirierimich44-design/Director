@@ -711,54 +711,87 @@ const ProjectDirectorView: React.FC = () => {
         });
     };
 
+    // Helper: is a scene renderable and not yet done?
+    const isPendingScene = (scene: Scene) =>
+        ((scene.code && scene.type === 'TEMPLATE') || ((scene as any).prompt && (scene.type === '3D_RENDER' || scene.type === 'ILLUSTRATION')))
+        && scene.status !== 'rendered'
+        && scene.renderStatus !== 'rendering';
+
+    const runBatchRender = async (queue: Array<{ chapterId: string; idx: number; scene: Scene; label: string }>) => {
+        renderAbortedRef.current = false;
+        let skipped = 0;
+        for (let i = 0; i < queue.length; i++) {
+            if (renderAbortedRef.current) break;
+            const { chapterId, idx, scene, label } = queue[i];
+            setBatchState({
+                active: true,
+                current: i + 1 - skipped,
+                total: queue.length,
+                sceneLabel: label,
+                phase: 'starting',
+                progress: 0,
+                message: 'Starting...'
+            });
+            await renderScene(chapterId, idx, (prog) => {
+                setBatchState(prev => prev ? { ...prev, phase: prog.phase, progress: prog.progress, message: prog.message } : prev);
+            });
+            // If the scene ended in error, count as skipped but keep going
+            const proj = selectedProjectRef.current;
+            const ch = proj?.chapters.find(c => c.id === chapterId);
+            if (ch?.scenes[idx]?.renderStatus === 'error') skipped++;
+        }
+        setBatchState(null);
+        renderAbortedRef.current = false;
+    };
+
     const handleRenderAllScenes = async (chapterId: string) => {
         if (!selectedProject) return;
         const chapter = selectedProject.chapters.find(c => c.id === chapterId);
         if (!chapter) return;
 
-        const scenesToRender = chapter.scenes
-            .map((scene, idx) => ({ scene, idx }))
-            .filter(({ scene }) =>
-                ((scene.code && scene.type === 'TEMPLATE') || ((scene as any).prompt && (scene.type === '3D_RENDER' || scene.type === 'ILLUSTRATION')))
-                && scene.status !== 'rendered'
-                && scene.renderStatus !== 'rendering'
-            );
+        const queue = chapter.scenes
+            .map((scene, idx) => ({ scene, idx, chapterId, label: `Scene ${scene.globalIndex}${scene.script ? ': ' + scene.script.slice(0, 50) + (scene.script.length > 50 ? '…' : '') : ''}` }))
+            .filter(({ scene }) => isPendingScene(scene));
 
-        if (scenesToRender.length === 0) {
+        if (queue.length === 0) {
             confirmAction('No Pending Scenes', 'No pending scenes to render in this chapter.', () => {}, true);
             return;
         }
 
         confirmAction(
-            'Render All Scenes',
-            `Start rendering ${scenesToRender.length} scenes one by one?`,
-            async () => {
-                renderAbortedRef.current = false;
-                for (let i = 0; i < scenesToRender.length; i++) {
-                    if (renderAbortedRef.current) {
-                        console.log('🛑 Batch render aborted by user');
-                        break;
-                    }
-                    const { scene, idx } = scenesToRender[i];
-                    const sceneLabel = `Scene ${scene.globalIndex}${scene.script ? ': ' + scene.script.slice(0, 50) + (scene.script.length > 50 ? '…' : '') : ''}`;
+            'Render Chapter Scenes',
+            `Start rendering ${queue.length} pending scene${queue.length !== 1 ? 's' : ''} in "${chapter.title}"? Failed scenes will be skipped automatically.`,
+            () => runBatchRender(queue)
+        );
+    };
 
-                    setBatchState({
-                        active: true,
-                        current: i + 1,
-                        total: scenesToRender.length,
-                        sceneLabel,
-                        phase: 'starting',
-                        progress: 0,
-                        message: 'Starting...'
-                    });
+    const handleRenderAllChapters = async () => {
+        if (!selectedProject) return;
 
-                    await renderScene(chapterId, idx, (prog) => {
-                        setBatchState(prev => prev ? { ...prev, phase: prog.phase, progress: prog.progress, message: prog.message } : prev);
+        const queue: Array<{ chapterId: string; idx: number; scene: Scene; label: string }> = [];
+        for (const chapter of selectedProject.chapters) {
+            if (chapter.status === 'locked') continue;
+            chapter.scenes.forEach((scene, idx) => {
+                if (isPendingScene(scene)) {
+                    queue.push({
+                        chapterId: chapter.id,
+                        idx,
+                        scene,
+                        label: `[${chapter.title}] Scene ${scene.globalIndex}${scene.script ? ': ' + scene.script.slice(0, 45) + (scene.script.length > 45 ? '…' : '') : ''}`,
                     });
                 }
-                setBatchState(null);
-                renderAbortedRef.current = false;
-            }
+            });
+        }
+
+        if (queue.length === 0) {
+            confirmAction('Nothing to Render', 'All scenes are already rendered or locked.', () => {}, true);
+            return;
+        }
+
+        confirmAction(
+            'Render All Chapters',
+            `Continuously render ${queue.length} pending scene${queue.length !== 1 ? 's' : ''} across all unlocked chapters? Failed scenes are skipped automatically.`,
+            () => runBatchRender(queue)
         );
     };
 
@@ -1034,12 +1067,21 @@ const ProjectDirectorView: React.FC = () => {
                             </Button>
                             <Button
                                 variant="contained"
+                                startIcon={batchState?.active ? <CircularProgress size={18} sx={{ color: '#000' }} /> : <RenderIcon />}
+                                onClick={handleRenderAllChapters}
+                                disabled={!!batchState?.active || selectedProject.totalScenes === 0}
+                                sx={{ bgcolor: '#4caf50', color: '#000', fontWeight: 'bold', '&:hover': { bgcolor: '#66bb6a' } }}
+                            >
+                                Render All Chapters
+                            </Button>
+                            <Button
+                                variant="contained"
                                 startIcon={<DownloadIcon />}
                                 onClick={handleExportProject}
                                 disabled={selectedProject.totalScenes === 0}
                                 sx={{ bgcolor: 'var(--accent-gold)', color: '#000', '&:hover': { bgcolor: '#fff' } }}
                             >
-                                Export Full Project ZIP
+                                Export ZIP
                             </Button>
                             <Tooltip title="Generation Settings">
                                 <IconButton onClick={() => setSettingsOpen(!settingsOpen)} sx={{ color: settingsOpen ? 'var(--accent-gold)' : 'var(--text-secondary)', border: '1px solid var(--border-color)' }}>
@@ -1053,6 +1095,49 @@ const ProjectDirectorView: React.FC = () => {
                             </Tooltip>
                         </Box>
                     </Paper>
+
+                    {/* Project-level Batch Render Banner (visible when rendering across chapters) */}
+                    {batchState?.active && (
+                        <Paper sx={{
+                            p: 2.5, mb: 3,
+                            bgcolor: 'rgba(76,175,80,0.08)',
+                            border: '1px solid #4caf50',
+                            borderRadius: 2,
+                            position: 'sticky', top: 8, zIndex: 10,
+                        }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="subtitle2" sx={{ color: '#4caf50', fontWeight: 'bold', letterSpacing: 1 }}>
+                                    RENDERING {batchState.current} OF {batchState.total}
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
+                                        {PHASE_LABELS[batchState.phase] || (batchState.phase || 'RENDERING').toUpperCase()}
+                                        {batchState.progress > 0 ? ` — ${Math.round(batchState.progress)}%` : ''}
+                                    </Typography>
+                                    {!renderAbortedRef.current && (
+                                        <Button size="small" variant="outlined" color="error"
+                                            onClick={handleStopRendering}
+                                            sx={{ py: 0, px: 1, fontSize: '0.65rem', height: 20 }}>
+                                            Stop
+                                        </Button>
+                                    )}
+                                </Box>
+                            </Box>
+                            <Typography variant="body2" sx={{ color: '#fff', mb: 1.5, fontSize: '0.85rem' }}>
+                                {batchState.sceneLabel || 'Preparing...'}
+                            </Typography>
+                            <LinearProgress
+                                variant="determinate"
+                                value={batchState.total > 0 ? (((batchState.current - 1) / batchState.total) * 100 + (batchState.progress / batchState.total)) : 0}
+                                sx={{ height: 6, borderRadius: 3, mb: 1, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { bgcolor: '#4caf50', borderRadius: 3 } }}
+                            />
+                            <LinearProgress
+                                variant={batchState.progress > 0 ? 'determinate' : 'indeterminate'}
+                                value={batchState.progress}
+                                sx={{ height: 3, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { bgcolor: 'rgba(76,175,80,0.5)', borderRadius: 3 } }}
+                            />
+                        </Paper>
+                    )}
 
                     {/* Generation Settings Panel */}
                     <Collapse in={settingsOpen}>
