@@ -27,6 +27,9 @@ interface Scene {
     id: string;
     script: string;
     background_query: string;
+    bgMode?: 'pexels' | 'color' | 'upload';
+    bgColor?: string;
+    uploadUrl?: string;
     videoUrl?: string;
     thumbnailUrl?: string;
     heygenStatus?: 'idle' | 'processing' | 'completed' | 'error';
@@ -126,7 +129,11 @@ const VideoGeneratorView: React.FC = () => {
 
     const handleGenerateHeyGen = async (sceneId: string) => {
         const scene = scenes.find(s => s.id === sceneId);
-        if (!scene || !scene.videoUrl) return;
+        if (!scene) return;
+        
+        const mode = scene.bgMode || 'pexels';
+        if (mode === 'pexels' && !scene.videoUrl) return;
+        if (mode === 'upload' && !scene.uploadUrl) return;
         
         if (avatarMode === 'generated' && !talkingPhotoId) {
             setScenes(prev => prev.map(s => s.id === sceneId ? { ...s, error: 'Please enter a Talking Photo ID first.' } : s));
@@ -141,7 +148,9 @@ const VideoGeneratorView: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     script: scene.script,
-                    backgroundVideoUrl: scene.videoUrl,
+                    backgroundVideoUrl: mode === 'pexels' ? scene.videoUrl : (mode === 'upload' ? scene.uploadUrl : undefined),
+                    bgMode: mode,
+                    bgColor: scene.bgColor || '#00FF00',
                     avatarId: avatarMode === 'stock' ? avatar : talkingPhotoId,
                     avatarType: avatarMode === 'stock' ? 'avatar' : 'talking_photo',
                     voiceId: voice,
@@ -359,31 +368,90 @@ const VideoGeneratorView: React.FC = () => {
                                                     onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, script: e.target.value } : s))}
                                                     sx={{ mb: 2, '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
                                                 />
-                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                
+                                                <Box sx={{ mb: 2 }}>
+                                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>Background Type</Typography>
+                                                    <ToggleButtonGroup
+                                                        value={scene.bgMode || 'pexels'}
+                                                        exclusive
+                                                        onChange={(_, m) => m && setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, bgMode: m } : s))}
+                                                        size="small"
+                                                        fullWidth
+                                                    >
+                                                        <ToggleButton value="pexels" sx={{ py: 0.5, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pexels B-Roll</ToggleButton>
+                                                        <ToggleButton value="color" sx={{ py: 0.5, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Solid Color</ToggleButton>
+                                                        <ToggleButton value="upload" sx={{ py: 0.5, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Custom URL</ToggleButton>
+                                                    </ToggleButtonGroup>
+                                                </Box>
+
+                                                {(scene.bgMode || 'pexels') === 'pexels' && (
+                                                    <Stack direction="row" spacing={1} alignItems="center">
+                                                        <TextField
+                                                            fullWidth
+                                                            size="small"
+                                                            label="B-Roll Query"
+                                                            value={scene.background_query}
+                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, background_query: e.target.value } : s))}
+                                                            sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
+                                                        />
+                                                        <IconButton onClick={() => handleSearchPexels(scene.id, scene.background_query)} sx={{ color: 'var(--accent-gold)' }}>
+                                                            <RefreshIcon />
+                                                        </IconButton>
+                                                    </Stack>
+                                                )}
+
+                                                {scene.bgMode === 'color' && (
+                                                    <Stack direction="row" spacing={1} alignItems="center">
+                                                        <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>Hex Color:</Typography>
+                                                        <input 
+                                                            type="color" 
+                                                            value={scene.bgColor || '#00FF00'} 
+                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, bgColor: e.target.value } : s))}
+                                                            style={{ width: 40, height: 30, padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
+                                                        />
+                                                        <TextField 
+                                                            size="small"
+                                                            value={scene.bgColor || '#00FF00'}
+                                                            onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, bgColor: e.target.value } : s))}
+                                                            sx={{ width: 100, '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
+                                                        />
+                                                    </Stack>
+                                                )}
+
+                                                {scene.bgMode === 'upload' && (
                                                     <TextField
                                                         fullWidth
                                                         size="small"
-                                                        label="B-Roll Query"
-                                                        value={scene.background_query}
-                                                        onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, background_query: e.target.value } : s))}
+                                                        label="Direct Video/Image URL (.mp4, .jpg, .png)"
+                                                        value={scene.uploadUrl || ''}
+                                                        onChange={(e) => setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, uploadUrl: e.target.value } : s))}
                                                         sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff' } }}
                                                     />
-                                                    <IconButton onClick={() => handleSearchPexels(scene.id, scene.background_query)} sx={{ color: 'var(--accent-gold)' }}>
-                                                        <RefreshIcon />
-                                                    </IconButton>
-                                                </Stack>
+                                                )}
                                             </Grid>
                                             <Grid size={{ xs: 12, md: 3 }}>
-                                                {scene.videoUrl ? (
-                                                    <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
-                                                        <img src={scene.thumbnailUrl} alt="B-roll" style={{ width: '100%', display: 'block' }} />
-                                                        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, bgcolor: 'rgba(0,0,0,0.6)', p: 0.5 }}>
-                                                            <Typography variant="caption" sx={{ color: '#fff' }}>Stock B-Roll Selected</Typography>
+                                                {(scene.bgMode || 'pexels') === 'pexels' ? (
+                                                    scene.videoUrl ? (
+                                                        <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                                                            <img src={scene.thumbnailUrl} alt="B-roll" style={{ width: '100%', display: 'block' }} />
+                                                            <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, bgcolor: 'rgba(0,0,0,0.6)', p: 0.5 }}>
+                                                                <Typography variant="caption" sx={{ color: '#fff' }}>Stock B-Roll Selected</Typography>
+                                                            </Box>
                                                         </Box>
+                                                    ) : (
+                                                        <Box sx={{ height: 100, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px dashed var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>Searching Pexels...</Typography>
+                                                        </Box>
+                                                    )
+                                                ) : scene.bgMode === 'color' ? (
+                                                    <Box sx={{ height: 100, bgcolor: scene.bgColor || '#00FF00', borderRadius: 1, border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                        <Typography variant="caption" sx={{ color: '#000', bgcolor: 'rgba(255,255,255,0.7)', px: 1, borderRadius: 1 }}>{scene.bgColor || '#00FF00'}</Typography>
                                                     </Box>
                                                 ) : (
-                                                    <Box sx={{ height: 100, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px dashed var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>Searching Pexels...</Typography>
+                                                    <Box sx={{ height: 100, bgcolor: 'var(--bg-primary)', borderRadius: 1, border: '1px dashed var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', p: 1 }}>
+                                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
+                                                            {scene.uploadUrl ? 'Custom Media URL' : 'Enter URL to use custom background'}
+                                                        </Typography>
                                                     </Box>
                                                 )}
                                             </Grid>
@@ -395,7 +463,7 @@ const VideoGeneratorView: React.FC = () => {
                                                             variant="contained"
                                                             startIcon={<MovieIcon />}
                                                             onClick={() => handleGenerateHeyGen(scene.id)}
-                                                            disabled={!scene.videoUrl}
+                                                            disabled={(scene.bgMode || 'pexels') === 'pexels' ? !scene.videoUrl : ((scene.bgMode === 'upload' && !scene.uploadUrl) ? true : false)}
                                                             sx={{ bgcolor: 'var(--accent-gold)', color: '#000' }}
                                                         >
                                                             Render Scene

@@ -14,7 +14,9 @@ router.post('/analyze', async (req, res) => {
 
     try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        // Use gemini-2.5-flash as the primary fast generation model
+        const modelName = settings.models?.language?.fast || "gemini-2.5-flash";
+        const model = genAI.getGenerativeModel({ model: modelName });
 
         const prompt = mode === 'topic'
             ? `You are a video producer. Based on the topic "${input}", write a short, engaging script for a 1-minute video. 
@@ -39,7 +41,8 @@ router.post('/analyze', async (req, res) => {
         res.json({ success: true, scenes: data.scenes });
     } catch (err) {
         console.error('Gemini Analysis Error:', err);
-        res.status(500).json({ error: err.message });
+        // Better error message format to surface exact cause
+        res.status(500).json({ error: err.message || 'Gemini API failed to respond' });
     }
 });
 
@@ -71,7 +74,7 @@ router.get('/pexels-search', async (req, res) => {
 
 // ── HeyGen Generate ─────────────────────────────────────────────────────────
 router.post('/heygen-generate', async (req, res) => {
-    const { script, backgroundVideoUrl, avatarId, avatarType, voiceId, layout } = req.body;
+    const { script, backgroundVideoUrl, bgMode, bgColor, avatarId, avatarType, voiceId, layout } = req.body;
     const settings = getRawSettings();
     const apiKey = settings.keys.heygen;
 
@@ -89,6 +92,34 @@ router.post('/heygen-generate', async (req, res) => {
                 avatar_style: "normal"
               };
 
+        let background = {
+            type: "video",
+            video_asset_url: backgroundVideoUrl,
+            play_style: "fit"
+        };
+
+        if (bgMode === 'color') {
+            background = {
+                type: "color",
+                value: bgColor || "#00FF00"
+            };
+        } else if (bgMode === 'upload' && backgroundVideoUrl) {
+            const isVideo = backgroundVideoUrl.toLowerCase().endsWith('.mp4') || backgroundVideoUrl.toLowerCase().endsWith('.webm');
+            if (isVideo) {
+                background = {
+                    type: "video",
+                    video_asset_url: backgroundVideoUrl,
+                    play_style: "fit"
+                };
+            } else {
+                background = {
+                    type: "image",
+                    url: backgroundVideoUrl,
+                    play_style: "fit"
+                };
+            }
+        }
+
         const body = {
             video_inputs: [
                 {
@@ -98,11 +129,7 @@ router.post('/heygen-generate', async (req, res) => {
                         input_text: script,
                         voice_id: voiceId
                     },
-                    background: {
-                        type: "video",
-                        video_asset_url: backgroundVideoUrl,
-                        play_style: "fit"
-                    }
+                    background
                 }
             ],
             dimension: { width: 1920, height: 1080 }
