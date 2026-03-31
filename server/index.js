@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import archiver from 'archiver';
 
-import { getSettings, updateSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
+import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';

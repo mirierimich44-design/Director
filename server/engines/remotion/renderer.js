@@ -52,6 +52,9 @@ async function purgeOldTempDirs(tempRoot, maxAgeMs = 60 * 60 * 1000) {
 const RENDER_CONCURRENCY = parseInt(process.env.RENDER_CONCURRENCY) || Math.max(1, Math.floor(os.cpus().length / 2));
 console.log(`⚡ Remotion render concurrency: ${RENDER_CONCURRENCY} (${os.cpus().length} CPU cores detected)`);
 
+// Bundle lock to prevent concurrent bundling (not thread-safe due to chdir)
+let bundleLock = Promise.resolve();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -472,23 +475,23 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         const jobName = outputPath.split(/[\\/]/).pop().split('.')[0] || hash.substring(0, 8);
         const progressBar = multibar.create(100, 0, { jobId: jobName, phase: 'Bundling' });
 
-        // Check for cached bundle info
-        try {
-            const bundleInfo = JSON.parse(await fs.readFile(bundleInfoPath, 'utf-8'));
-            await fs.access(bundleInfo.location);
-            bundleLocation = bundleInfo.location;
-            isCached = true;
-            // console.log('   📦 Using cached bundle');
-            progressBar.update(100, { phase: 'Cached Bundle' });
-            if (onProgress) onProgress({ phase: 'bundling', progress: 30 });
-        } catch (e) {
-            isCached = false;
-        }
+        // Acquire lock and perform bundling
+        bundleLocation = await (bundleLock = bundleLock.then(async () => {
+            // Check for cached bundle info
+            try {
+                const bundleInfo = JSON.parse(await fs.readFile(bundleInfoPath, 'utf-8'));
+                await fs.access(bundleInfo.location);
+                // console.log('   📦 Using cached bundle');
+                progressBar.update(100, { phase: 'Cached Bundle' });
+                if (onProgress) onProgress({ phase: 'bundling', progress: 30 });
+                return bundleInfo.location;
+            } catch (e) {
+                // Not cached or invalid, proceed to bundle
+            }
 
-        if (!isCached) {
             // console.log('   📦 Bundling Remotion project...');
             const publicDir = join(__dirname, '../../../public');
-            bundleLocation = await bundle({
+            const loc = await bundle({
                 entryPoint: entryPath,
                 publicDir: publicDir,
                 onProgress: (progress) => {
@@ -501,8 +504,9 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                 },
             });
             // Cache the bundle info
-            await fs.writeFile(bundleInfoPath, JSON.stringify({ location: bundleLocation }), 'utf-8');
-        }
+            await fs.writeFile(bundleInfoPath, JSON.stringify({ location: loc }), 'utf-8');
+            return loc;
+        }));
 
         // console.log('   🎥 Selecting composition...');
         progressBar.update(0, { phase: 'Selecting Composition' });
@@ -536,15 +540,13 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         progressBar.update(100, { phase: 'Done' });
         progressBar.stop();
 
-        // Clean up temp directory after successful render
-        await cleanupTempDir(tempDir);
+        // Note: immediate cleanup removed to allow caching and avoid races.
+        // Purge logic handles old temp dirs.
 
         return outputPath;
 
     } catch (error) {
         console.error('Render failed:', error);
-        // Still try to clean up on failure
-        await cleanupTempDir(tempDir);
         throw error;
     }
 }
@@ -588,24 +590,25 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
         let bundleLocation;
         let isCached = false;
 
-        // Check for cached bundle info
-        try {
-            const bundleInfo = JSON.parse(await fs.readFile(bundleInfoPath, 'utf-8'));
-            await fs.access(bundleInfo.location);
-            bundleLocation = bundleInfo.location;
-            isCached = true;
-        } catch (e) {
-            isCached = false;
-        }
+        // Acquire lock and perform bundling
+        bundleLocation = await (bundleLock = bundleLock.then(async () => {
+            // Check for cached bundle info
+            try {
+                const bundleInfo = JSON.parse(await fs.readFile(bundleInfoPath, 'utf-8'));
+                await fs.access(bundleInfo.location);
+                return bundleInfo.location;
+            } catch (e) {
+                // Not cached or invalid, proceed to bundle
+            }
 
-        if (!isCached) {
             const publicDir = join(__dirname, '../../../public');
-            bundleLocation = await bundle({
+            const loc = await bundle({
                 entryPoint: entryPath,
                 publicDir: publicDir,
             });
-            await fs.writeFile(bundleInfoPath, JSON.stringify({ location: bundleLocation }), 'utf-8');
-        }
+            await fs.writeFile(bundleInfoPath, JSON.stringify({ location: loc }), 'utf-8');
+            return loc;
+        }));
 
         const composition = await selectComposition({
             serveUrl: bundleLocation,
@@ -626,13 +629,12 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
             browserExecutable: browserPath,
         });
 
-        // Clean up temp directory after successful render
-        await cleanupTempDir(tempDir);
+        // Note: immediate cleanup removed to allow caching and avoid races.
+        // Purge logic handles old temp dirs.
 
         return outputPath;
     } catch (error) {
         console.error('Still render failed:', error);
-        await cleanupTempDir(tempDir);
         throw error;
     }
 }
