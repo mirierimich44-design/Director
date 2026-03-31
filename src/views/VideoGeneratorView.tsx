@@ -58,6 +58,66 @@ const FALLBACK_VOICES: VoiceOption[] = [
 ];
 
 const STEPS = ['Write Script', 'Select Avatar', 'Choose Voice', 'Background & Render'];
+
+// ── Video recovery helper ─────────────────────────────────────────────────────
+
+const VideoRecoveryPanel: React.FC<{ onRecovered: (url: string) => void }> = ({ onRecovered }) => {
+    const [open, setOpen] = useState(false);
+    const [videoId, setVideoId] = useState('');
+    const [checking, setChecking] = useState(false);
+    const [recoverError, setRecoverError] = useState('');
+
+    const check = async () => {
+        if (!videoId.trim()) return;
+        setChecking(true);
+        setRecoverError('');
+        try {
+            const res = await fetch(`/api/video-gen/heygen-status/${videoId.trim()}`);
+            const data = await res.json();
+            if (data.status === 'completed' && data.video_url) {
+                onRecovered(data.video_url);
+                setOpen(false);
+            } else if (data.status === 'failed') {
+                setRecoverError(`Video failed on HeyGen: ${data.error || 'unknown reason'}`);
+            } else {
+                setRecoverError(`Status: ${data.status || 'unknown'} — video not ready yet`);
+            }
+        } catch (e: any) {
+            setRecoverError(e.message);
+        } finally {
+            setChecking(false);
+        }
+    };
+
+    if (!open) return (
+        <Box sx={{ mb: 3, textAlign: 'right' }}>
+            <Button size="small" onClick={() => setOpen(true)} startIcon={<RefreshIcon sx={{ fontSize: 14 }} />}
+                sx={{ color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'none' }}>
+                Recover a previous render by video ID
+            </Button>
+        </Box>
+    );
+
+    return (
+        <Paper sx={{ p: 2.5, mb: 3, bgcolor: 'var(--bg-secondary)', border: '1px solid rgba(201,169,97,0.3)', borderRadius: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: 'var(--accent-gold)', mb: 1.5 }}>Recover Completed Video</Typography>
+            <Stack direction="row" spacing={1}>
+                <TextField
+                    size="small" fullWidth placeholder="Paste HeyGen video ID…"
+                    value={videoId} onChange={e => setVideoId(e.target.value)}
+                    sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'var(--bg-primary)', color: '#fff', '& fieldset': { borderColor: 'var(--border-color)' } } }}
+                    onKeyDown={e => e.key === 'Enter' && check()}
+                />
+                <Button variant="contained" onClick={check} disabled={checking || !videoId.trim()}
+                    sx={{ bgcolor: 'var(--accent-gold)', color: '#000', whiteSpace: 'nowrap' }}>
+                    {checking ? <CircularProgress size={18} sx={{ color: '#000' }} /> : 'Fetch Video'}
+                </Button>
+                <Button onClick={() => { setOpen(false); setRecoverError(''); }} sx={{ color: 'var(--text-secondary)' }}>Cancel</Button>
+            </Stack>
+            {recoverError && <Alert severity="warning" sx={{ mt: 1.5, bgcolor: 'rgba(255,152,0,0.08)', color: '#ffb74d', fontSize: '0.8rem' }}>{recoverError}</Alert>}
+        </Paper>
+    );
+};
 const AVATARS_PER_PAGE = 10;
 const VOICES_PER_PAGE = 10;
 
@@ -668,18 +728,13 @@ const VideoGeneratorView: React.FC = () => {
                     const isActive = i === stageIndex;
                     const isPast = i < stageIndex;
                     return (
-                        <Chip
-                            key={stage}
-                            label={stage}
-                            size="small"
-                            sx={{
-                                bgcolor: isActive ? 'rgba(201,169,97,0.2)' : isPast ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.05)',
-                                color: isActive ? 'var(--accent-gold)' : isPast ? '#81c784' : 'var(--text-secondary)',
-                                border: isActive ? '1px solid rgba(201,169,97,0.4)' : '1px solid transparent',
-                                fontWeight: isActive ? 700 : 400,
-                                textTransform: 'capitalize',
-                            }}
-                        />
+                        <Chip key={stage} label={stage} size="small" sx={{
+                            bgcolor: isActive ? 'rgba(201,169,97,0.2)' : isPast ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.05)',
+                            color: isActive ? 'var(--accent-gold)' : isPast ? '#81c784' : 'var(--text-secondary)',
+                            border: isActive ? '1px solid rgba(201,169,97,0.4)' : '1px solid transparent',
+                            fontWeight: isActive ? 700 : 400,
+                            textTransform: 'capitalize',
+                        }} />
                     );
                 })}
             </Stack>
@@ -696,20 +751,42 @@ const VideoGeneratorView: React.FC = () => {
             </Typography>
 
             {/* Determinate progress */}
-            <Box sx={{ mt: 3, px: 2 }}>
-                <LinearProgress
-                    variant="determinate"
-                    value={renderProgress}
-                    sx={{
-                        height: 8, borderRadius: 4,
-                        bgcolor: 'rgba(255,255,255,0.08)',
-                        '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)', borderRadius: 4 }
-                    }}
-                />
+            <Box sx={{ mt: 3, mb: 3, px: 2 }}>
+                <LinearProgress variant="determinate" value={renderProgress} sx={{
+                    height: 8, borderRadius: 4,
+                    bgcolor: 'rgba(255,255,255,0.08)',
+                    '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)', borderRadius: 4 }
+                }} />
                 <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mt: 0.5, display: 'block' }}>
                     ~{Math.round(renderProgress)}% estimated
                 </Typography>
             </Box>
+
+            {/* Poll error (non-fatal) */}
+            {pollError && (
+                <Alert severity="warning" sx={{ mb: 2, bgcolor: 'rgba(255,152,0,0.08)', color: '#ffb74d', textAlign: 'left', fontSize: '0.8rem' }}>
+                    {pollError}
+                </Alert>
+            )}
+
+            {/* Video ID + manual check */}
+            {activeVideoId && (
+                <Box sx={{ mt: 1, p: 2, bgcolor: 'rgba(0,0,0,0.2)', borderRadius: 1.5, textAlign: 'left' }}>
+                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 0.5 }}>
+                        HeyGen Video ID (save this in case you need to recover the video):
+                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography sx={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--accent-gold)', flex: 1, wordBreak: 'break-all' }}>
+                            {activeVideoId}
+                        </Typography>
+                        <Button size="small" variant="outlined" onClick={handleManualCheck}
+                            startIcon={<RefreshIcon sx={{ fontSize: 14 }} />}
+                            sx={{ color: 'var(--accent-gold)', borderColor: 'rgba(201,169,97,0.4)', whiteSpace: 'nowrap', fontSize: '0.72rem' }}>
+                            Check Now
+                        </Button>
+                    </Stack>
+                </Box>
+            )}
         </Card>
     );
 
@@ -730,6 +807,9 @@ const VideoGeneratorView: React.FC = () => {
                     </Typography>
                 </Box>
             </Stack>
+
+            {/* Video recovery panel — paste a HeyGen video ID to fetch a completed video */}
+            {status === 'idle' && <VideoRecoveryPanel onRecovered={(url) => { setSuccessVideoUrl(url); setStatus('completed'); }} />}
 
             {status === 'completed' && successVideoUrl ? (
                 <Card sx={{ bgcolor: 'var(--bg-secondary)', p: 4, textAlign: 'center', border: '1px solid var(--accent-gold)' }}>
