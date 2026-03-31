@@ -12,13 +12,23 @@ const themes = JSON.parse(
   )
 )
 
-// Helper: Safe replace that only replaces whole word matches
-// This prevents partial matches like "PRIMARY_COLOR" matching inside "PRIMARY_COLORS_USED"
+// Helper: Safe replace that only replaces whole word matches or quoted placeholders
 function safeReplace(code, placeholder, value) {
-  // Create a regex that matches the placeholder as a whole word
-  // Uses word boundaries \b to ensure exact match
-  const regex = new RegExp(`\\b${escapeRegex(placeholder)}\\b`, 'g')
-  return code.replace(regex, String(value))
+  const escaped = escapeRegex(placeholder)
+  // Match the placeholder as a whole word, or inside quotes: "PLACEHOLDER" or 'PLACEHOLDER'
+  const regex = new RegExp(`(['"])${escaped}\\1|\\b${escaped}\\b`, 'g')
+  
+  return code.replace(regex, (match, quote) => {
+    // If it was quoted, return the quoted value (escaped for JS string safety)
+    if (quote) {
+      const safeVal = String(value).replace(/['"\\\n\r]/g, s => ({
+        "'": "\\'", '"': '\\"', '\\': '\\\\', '\n': '\\n', '\r': '\\r'
+      }[s]))
+      return `${quote}${safeVal}${quote}`
+    }
+    // Otherwise return the raw value
+    return String(value)
+  })
 }
 
 // Escape special regex characters in placeholder string
