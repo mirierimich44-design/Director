@@ -81,8 +81,20 @@ def get_orpheus():
     try:
         from orpheus_cpp import OrpheusCpp
         logger.info("Loading Orpheus-CPP model (first load downloads ~6 GB)...")
-        _orpheus = OrpheusCpp()
-        logger.info("Orpheus-CPP ready.")
+        # We wrap the instantiation as this is where llama_context is created
+        try:
+            _orpheus = OrpheusCpp()
+            logger.info("Orpheus-CPP ready.")
+        except Exception as instantiation_error:
+            error_msg = str(instantiation_error)
+            logger.error(f"Failed to initialize Orpheus model: {error_msg}")
+            if "llama_context" in error_msg.lower() or "memory" in error_msg.lower():
+                raise RuntimeError(
+                    f"Orpheus initialization failed (llama_context): {error_msg}. "
+                    "This is usually caused by insufficient RAM (needs ~6GB). "
+                    "Try adding a swap file on your VPS or upgrading your RAM."
+                )
+            raise instantiation_error
     except ImportError:
         raise RuntimeError(
             "orpheus-cpp not installed. Run: pip3 install orpheus-cpp llama-cpp-python"
@@ -128,6 +140,8 @@ def list_voices():
     }
 
 
+import traceback
+
 @app.post("/generate", response_model=GenerateResponse)
 def generate(req: GenerateRequest):
     if not req.text.strip():
@@ -149,6 +163,7 @@ def generate(req: GenerateRequest):
             raise HTTPException(status_code=503, detail=str(e))
         except Exception as e:
             logger.error(f"Kokoro error: {e}")
+            logger.error(traceback.format_exc())
             raise HTTPException(status_code=500, detail=f"Kokoro failed: {e}")
 
         sf.write(str(output_path), samples, sample_rate)
@@ -159,11 +174,14 @@ def generate(req: GenerateRequest):
         voice = req.voice if req.voice in ORPHEUS_VOICE_IDS else "tara"
         try:
             orpheus = get_orpheus()
+            # This is where the heavy CPU work happens
             chunks = list(orpheus.generate_speech(req.text, voice=voice))
         except RuntimeError as e:
+            # Caught from our custom get_orpheus handler
             raise HTTPException(status_code=503, detail=str(e))
         except Exception as e:
             logger.error(f"Orpheus error: {e}")
+            logger.error(traceback.format_exc())
             raise HTTPException(status_code=500, detail=f"Orpheus failed: {e}")
 
         # chunks are raw int16 PCM at 24000 Hz
@@ -174,7 +192,12 @@ def generate(req: GenerateRequest):
         else:
             samples = np.zeros(sample_rate, dtype=np.float32)
 
-        sf.write(str(output_path), samples, sample_rate)
+        try:
+            sf.write(str(output_path), samples, sample_rate)
+        except Exception as e:
+            logger.error(f"File write error: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to save audio: {e}")
+            
         duration = round(len(samples) / sample_rate, 2)
 
     else:

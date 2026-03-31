@@ -98,9 +98,13 @@ const VideoGeneratorView: React.FC = () => {
     const [status, setStatus] = useState<'idle' | 'processing' | 'completed'>('idle');
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const [renderingStatus, setRenderingStatus] = useState('waiting');
+    const [activeVideoId, setActiveVideoId] = useState('');
+    const [pollError, setPollError] = useState('');
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const pollCountRef = useRef(0);
 
     // ── Derived values ────────────────────────────────────────────────────────
 
@@ -163,6 +167,23 @@ const VideoGeneratorView: React.FC = () => {
         }
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [status]);
+
+    // Restore pending video_id from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('heygen_pending_video_id');
+        if (saved) {
+            const { videoId, startedAt } = JSON.parse(saved);
+            const age = (Date.now() - startedAt) / 1000;
+            if (age < 600) { // still within 10 min window
+                setActiveVideoId(videoId);
+                setStatus('processing');
+                setElapsedSeconds(Math.floor(age));
+                pollStatus(videoId);
+            } else {
+                localStorage.removeItem('heygen_pending_video_id');
+            }
+        }
+    }, []);
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -242,6 +263,9 @@ const VideoGeneratorView: React.FC = () => {
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
+            setActiveVideoId(data.video_id);
+            setPollError('');
+            localStorage.setItem('heygen_pending_video_id', JSON.stringify({ videoId: data.video_id, startedAt: Date.now() }));
             pollStatus(data.video_id);
         } catch (err: any) {
             setError(err.message);
@@ -251,27 +275,61 @@ const VideoGeneratorView: React.FC = () => {
     };
 
     const pollStatus = (videoId: string) => {
-        const interval = setInterval(async () => {
+        if (pollRef.current) clearInterval(pollRef.current);
+        pollCountRef.current = 0;
+
+        const MAX_POLLS = 120; // 10 minutes at 5s interval
+
+        const tick = async () => {
+            pollCountRef.current += 1;
+
+            // Timeout guard
+            if (pollCountRef.current > MAX_POLLS) {
+                clearInterval(pollRef.current!);
+                setPollError(`Timed out after 10 minutes. Video ID: ${videoId} — check HeyGen dashboard directly.`);
+                setStatus('idle');
+                setLoading(false);
+                localStorage.removeItem('heygen_pending_video_id');
+                return;
+            }
+
             try {
                 const res = await fetch(`/api/video-gen/heygen-status/${videoId}`);
                 const data = await res.json();
                 if (data.status) setRenderingStatus(data.status);
+
                 if (data.status === 'completed') {
-                    clearInterval(interval);
+                    clearInterval(pollRef.current!);
                     setSuccessVideoUrl(data.video_url);
                     setStatus('completed');
                     setLoading(false);
+                    localStorage.removeItem('heygen_pending_video_id');
                 } else if (data.status === 'failed') {
-                    clearInterval(interval);
+                    clearInterval(pollRef.current!);
                     setError(data.error || 'HeyGen render failed');
+                    setPollError(`Failed. Video ID: ${videoId}`);
                     setStatus('idle');
                     setLoading(false);
+                    localStorage.removeItem('heygen_pending_video_id');
+                } else if (data.error) {
+                    // Status endpoint itself returned an error — keep polling but show it
+                    setPollError(`Poll error: ${data.error}`);
                 }
-            } catch (err) {
-                clearInterval(interval);
-                setLoading(false);
+            } catch (err: any) {
+                // Network error — keep polling, don't stop
+                setPollError(`Network error during poll (retrying…): ${err.message}`);
             }
-        }, 5000);
+        };
+
+        pollRef.current = setInterval(tick, 5000);
+        tick(); // immediate first check
+    };
+
+    const handleManualCheck = () => {
+        if (activeVideoId) {
+            setPollError('');
+            pollStatus(activeVideoId);
+        }
     };
 
     // ── Render Steps ──────────────────────────────────────────────────────────

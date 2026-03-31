@@ -7,7 +7,8 @@ import TemplateAuditorView from './views/TemplateAuditorView';
 import VideoGeneratorView from './views/VideoGeneratorView';
 import AnimationGeneratorView from './views/AnimationGeneratorView';
 import TemplateLibraryView from './views/TemplateLibraryView';
-import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import LoginPage from './components/LoginPage';
+import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Button } from '@mui/material';
 import {
     FolderSpecial as ProjectIcon,
     GraphicEq as AudioIcon,
@@ -15,16 +16,42 @@ import {
     BugReport as AuditIcon,
     AutoFixHigh as AutoFixIcon,
     LibraryBooks as LibraryIcon,
+    ExitToApp as LogoutIcon,
 } from '@mui/icons-material';
 
 type Mode = 'project-director' | 'audio' | 'auditor' | 'settings' | 'video-generator' | 'animation-generator' | 'template-library';
 
 const App: React.FC = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => 
+        localStorage.getItem('isAuthorized') === 'true'
+    );
     const [mode, setMode] = useState<Mode>(() =>
         (localStorage.getItem('directorMode') as Mode) || 'project-director'
     );
 
     useEffect(() => { localStorage.setItem('directorMode', mode); }, [mode]);
+
+    const handleLogin = (password: string) => {
+        // Since there is no database, you can set your password here.
+        // Or better yet, use a value from your .env file via import.meta.env
+        const SECURE_KEY = 'admin'; // You can change this to any password you want
+        
+        if (password === SECURE_KEY) {
+            setIsAuthenticated(true);
+            localStorage.setItem('isAuthorized', 'true');
+            return true;
+        }
+        return false;
+    };
+
+    const handleLogout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('isAuthorized');
+    };
+
+    if (!isAuthenticated) {
+        return <LoginPage onLogin={handleLogin} />;
+    }
 
     const nav = [
         { id: 'project-director',    label: 'Project Director',    icon: <ProjectIcon />,   desc: 'Chapter-based Projects' },
@@ -73,6 +100,27 @@ const App: React.FC = () => {
                         </ListItem>
                     ))}
                 </List>
+
+                <Box sx={{ p: 2 }}>
+                    <Button
+                        fullWidth
+                        onClick={handleLogout}
+                        startIcon={<LogoutIcon />}
+                        sx={{
+                            color: 'var(--text-secondary)',
+                            justifyContent: 'flex-start',
+                            px: 2,
+                            py: 1,
+                            borderRadius: '8px',
+                            '&:hover': { bgcolor: 'rgba(255,59,48,0.1)', color: '#ff3b30' },
+                            textTransform: 'none',
+                            fontSize: '0.8rem',
+                            letterSpacing: '1px'
+                        }}
+                    >
+                        SIGN OUT
+                    </Button>
+                </Box>
 
                 <Box sx={{ p: 3, textAlign: 'center' }}>
                     <Typography variant="caption" sx={{ color: 'var(--border-color)', fontSize: '0.6rem' }}>
