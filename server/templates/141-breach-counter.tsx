@@ -92,7 +92,7 @@ export const AnimationComponent = () => {
             <div style={{ 
               fontSize: 120, fontWeight: 900, color: '#ffffff', 
               fontFamily: 'monospace', letterSpacing: '-0.03em', lineHeight: 1,
-              textShadow: '0 0 30px rgba(0,0,0,0.80)'
+              textShadow: '0 0 30px rgba(0,0,0,0.92)'
             }}>
               {currentNum.toLocaleString()}
             </div>

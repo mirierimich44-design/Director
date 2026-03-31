@@ -46,7 +46,7 @@ export const AnimationComponent = () => {
       <div style={{
         width: 1000, height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.95)',
         borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)',
-        display: 'flex', flexDirection: 'column', opacity: entryOp, boxShadow: '0 0 100px rgba(0,0,0,0.80)'
+        display: 'flex', flexDirection: 'column', opacity: entryOp, boxShadow: '0 0 100px rgba(0,0,0,0.92)'
       }}>
         
         {/* Header Bar */}
@@ -115,7 +115,7 @@ export const AnimationComponent = () => {
                     <div style={{
                     backgroundColor: bubbleBg, padding: '24px 32px',
                     borderRadius: isMe ? '32px 32px 4px 32px' : '32px 32px 32px 4px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.32)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.51)',
                     fontSize: 26, fontWeight: 500, lineHeight: 1.4, color: textColor
                     }}>
                     {msg.text}

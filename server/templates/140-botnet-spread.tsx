@@ -27,7 +27,7 @@ export const AnimationComponent = () => {
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255, 255, 255, 0.1)',
     borderRadius: '20px',
-    boxShadow: '0 20px 50px rgba(0,0,0,0.80)',
+    boxShadow: '0 20px 50px rgba(0,0,0,0.92)',
   }
 
   return (
@@ -45,7 +45,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 60, left: 80, opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <div style={{ width: 10, height: 40, backgroundColor: 'ACCENT_COLOR', borderRadius: 4, boxShadow: '0 0 15px ACCENT_COLOR' }} />
-          <div style={{ fontSize: 42, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.80)' }}>{title}</div>
+          <div style={{ fontSize: 42, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.92)' }}>{title}</div>
         </div>
         <div style={{ fontSize: 14, color: 'ACCENT_COLOR', fontWeight: 800, letterSpacing: '0.4em', textTransform: 'uppercase', marginTop: 10, marginLeft: 30 }}>BOTNET_PROPAGATION_PROTOCOL_v4</div>
       </div>

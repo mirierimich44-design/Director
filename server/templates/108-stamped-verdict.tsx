@@ -84,8 +84,8 @@ export const AnimationComponent = () => {
                 textTransform: 'uppercase',
                 letterSpacing: '0.15em',
                 lineHeight: 1,
-                boxShadow: '0 0 50px rgba(0,0,0,0.80), inset 0 0 30px PRIMARY_COLOR33',
-                textShadow: '4px 8px 24px rgba(0,0,0,0.64)',
+                boxShadow: '0 0 50px rgba(0,0,0,0.92), inset 0 0 30px PRIMARY_COLOR33',
+                textShadow: '4px 11px 38px rgba(0,0,0,0.92)',
                 backgroundColor: 'rgba(0,0,0,0.1)',
                 backdropFilter: 'blur(4px)'
             }}>

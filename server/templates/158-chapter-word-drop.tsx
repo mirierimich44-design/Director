@@ -122,7 +122,7 @@ export const AnimationComponent = () => {
             color: 'PRIMARY_COLOR',
             letterSpacing: 8,
             textTransform: 'uppercase',
-            textShadow: '0 0 20px rgba(0,0,0,0.80)'
+            textShadow: '0 0 20px rgba(0,0,0,0.92)'
             }}>
             {chapterWord}
             </span>

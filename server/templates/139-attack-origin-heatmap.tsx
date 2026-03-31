@@ -99,7 +99,7 @@ export const AnimationComponent = () => {
         </div>
         <div style={{ 
           fontSize: 24, color: 'SUPPORT_COLOR', marginLeft: 36, marginTop: 4, 
-          fontWeight: 600, textShadow: '0 2px 10px rgba(0,0,0,0.64)' 
+          fontWeight: 600, textShadow: '0 2px 10px rgba(0,0,0,0.92)' 
         }}>GLOBAL_THREAT_MONITORING</div>
       </div>
 
@@ -130,7 +130,7 @@ export const AnimationComponent = () => {
 
       {/* UI Elements */}
       <div style={{ position: 'absolute', top: 60, right: 80, zIndex: 10, opacity: 0.7, textAlign: 'right' }}>
-        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14, textShadow: '0 2px 4px rgba(0,0,0,0.80)' }}>
+        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14, textShadow: '0 2px 4px rgba(0,0,0,0.92)' }}>
           SIGNAL_LOCK: TRUE<br />
           COORDINATES: {centerLat.toFixed(2)}N / {centerLon.toFixed(2)}E<br />
           DENSITY_ALGORITHM: v2.4

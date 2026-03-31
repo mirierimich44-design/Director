@@ -59,7 +59,7 @@ export const AnimationComponent = () => {
         backdropFilter: 'blur(24px)',
         borderRadius: 32,
         border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.64), inset 0 1px 0 rgba(255,255,255,0.15)',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.92), inset 0 1px 0 rgba(255,255,255,0.22)',
         padding: '64px 80px', 
         boxSizing: 'border-box', 
         opacity: cardOpacity, 
@@ -126,8 +126,8 @@ export const AnimationComponent = () => {
           letterSpacing: '0.15em',
           textTransform: 'uppercase',
           lineHeight: 1,
-          boxShadow: '0 0 60px rgba(0,0,0,0.80), inset 0 0 40px rgba(0,0,0,0.32)',
-          textShadow: '2px 6px 16px rgba(0,0,0,0.48)',
+          boxShadow: '0 0 60px rgba(0,0,0,0.92), inset 0 0 40px rgba(0,0,0,0.51)',
+          textShadow: '2px 8px 26px rgba(0,0,0,0.77)',
           backgroundColor: 'rgba(0,0,0,0.2)', // Slight tint behind the thick stamp text
           backdropFilter: 'blur(4px)'
         }}>

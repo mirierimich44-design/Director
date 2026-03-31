@@ -91,7 +91,7 @@ export const AnimationComponent = () => {
                   <div style={{
                       position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
                       width: 600, backgroundColor: 'rgba(10, 15, 25, 0.98)', borderRadius: 20,
-                      border: '2px solid #e63946', padding: '40px', boxShadow: '0 0 50px rgba(230,57,70,0.45)',
+                      border: '2px solid #e63946', padding: '40px', boxShadow: '0 0 50px rgba(230,57,70,0.68)',
                       zIndex: 20
                   }}>
                       <div style={{ color: '#e63946', fontSize: 24, fontWeight: 900, marginBottom: 20, letterSpacing: '0.1em' }}>{statusText}</div>

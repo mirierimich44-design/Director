@@ -173,7 +173,7 @@ export const AnimationComponent = () => {
         backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.15)',
         borderLeft: '8px solid PRIMARY_COLOR', borderRadius: 12,
         display: 'flex', alignItems: 'center', padding: '0 40px',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.80)', opacity: statusOp, zIndex: 10
+        boxShadow: '0 32px 64px rgba(0,0,0,0.92)', opacity: statusOp, zIndex: 10
       }}>
         <div style={{ color: 'PRIMARY_COLOR', fontSize: 24, fontWeight: 900, marginRight: 24 }}>&gt;_</div>
         <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 24, fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.02em', flex: 1 }}>

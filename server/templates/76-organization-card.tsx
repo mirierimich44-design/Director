@@ -89,7 +89,7 @@ export const AnimationComponent = () => {
                width: 180, height: 180, backgroundColor: 'PRIMARY_COLOR', borderRadius: 24,
                display: 'flex', alignItems: 'center', justifyContent: 'center',
                fontSize: 80, fontWeight: 900, color: '#0A0A14',
-               boxShadow: '0 20px 50px rgba(0,0,0,0.64)'
+               boxShadow: '0 20px 50px rgba(0,0,0,0.92)'
            }}>
              {label1.charAt(0)}
            </div>

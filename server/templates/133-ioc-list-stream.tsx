@@ -90,7 +90,7 @@ export const AnimationComponent = () => {
               borderLeft: `8px solid ${color}`,
               display: 'flex', alignItems: 'center', padding: '0 40px',
               opacity: op, transform: `translateX(${tx}px) scale(${scale})`,
-              boxShadow: `0 12px 32px rgba(0,0,0,0.77), 0 0 15px ${color}11`
+              boxShadow: `0 12px 32px rgba(0,0,0,0.92), 0 0 15px ${color}11`
             }}>
               {/* Classification Badge */}
               <div style={{

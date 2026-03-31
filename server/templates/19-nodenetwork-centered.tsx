@@ -99,7 +99,7 @@ export const AnimationComponent = () => {
         width: 180, height: 180, backgroundColor: 'rgba(15, 23, 42, 0.95)',
         backdropFilter: 'blur(20px)', borderRadius: 24, border: '2px solid PRIMARY_COLOR',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 0 40px rgba(0,0,0,0.80), 0 0 20px PRIMARY_COLOR44', zIndex: 2, opacity: entryOp
+        boxShadow: '0 0 40px rgba(0,0,0,0.92), 0 0 20px PRIMARY_COLOR44', zIndex: 2, opacity: entryOp
       }}>
         <div style={{ width: 40, height: 40, backgroundColor: 'PRIMARY_COLOR', borderRadius: 8, marginBottom: 16, boxShadow: '0 0 15px PRIMARY_COLOR' }} />
         <div style={{ color: 'rgba(255,255,255,0.95)', fontSize: 20, fontWeight: 800, textAlign: 'center', letterSpacing: '0.05em', padding: '0 10px' }}>
@@ -122,7 +122,7 @@ export const AnimationComponent = () => {
             opacity: op, width: 220, padding: '20px',
             backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(16px)',
             borderRadius: 16, border: '1px solid rgba(255,255,255,0.15)',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.64)', zIndex: 2,
+            boxShadow: '0 12px 32px rgba(0,0,0,0.92)', zIndex: 2,
             display: 'flex', alignItems: 'center', gap: 16
           }}>
             <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'ACCENT_COLOR', boxShadow: '0 0 10px ACCENT_COLOR' }} />

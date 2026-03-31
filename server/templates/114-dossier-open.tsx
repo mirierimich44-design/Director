@@ -121,7 +121,7 @@ export const AnimationComponent = () => {
                backdropFilter: 'blur(12px)', borderRadius: 20, border: '2px solid #e63946',
                display: 'flex', flexDirection: 'column', alignItems: 'center',
                opacity: badgeOp,
-               boxShadow: '0 0 30px rgba(230,57,70,0.30)'
+               boxShadow: '0 0 30px rgba(230,57,70,0.45)'
            }}>
               <div style={{ color: '#e63946', fontSize: 14, fontWeight: 900, letterSpacing: '0.1em', marginBottom: 4 }}>THREAT_LEVEL</div>
               <div style={{ color: '#fff', fontSize: 32, fontWeight: 900 }}>{threatLevel}</div>

@@ -35,7 +35,7 @@ export const AnimationComponent = () => {
     <div style={{
         width: 900, height: 1200, backgroundColor: '#f4f1ea', border: '1px solid #d1cec7',
         padding: '60px', display: 'flex', flexDirection: 'column', color: '#1a1a1a',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.48)', marginBottom: 200,
+        boxShadow: '0 20px 50px rgba(0,0,0,0.77)', marginBottom: 200,
         transform: `perspective(1000px) rotateY(${isTarget ? cardRotate : -15}deg) scale(${isTarget ? cardScale : 1})`,
         zIndex: isTarget ? 10 : 1
     }}>

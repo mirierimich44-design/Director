@@ -74,7 +74,7 @@ export const AnimationComponent = () => {
 
       {/* Header UI */}
       <div style={{ position: 'absolute', top: 80, width: '100%', textAlign: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
-        <div style={{ fontSize: 16, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: '0.6em', textTransform: 'uppercase', textShadow: '0 2px 10px rgba(0,0,0,0.80)' }}>DIFFERENTIAL_ANALYSIS_v9.2</div>
+        <div style={{ fontSize: 16, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: '0.6em', textTransform: 'uppercase', textShadow: '0 2px 10px rgba(0,0,0,0.92)' }}>DIFFERENTIAL_ANALYSIS_v9.2</div>
         <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', textShadow: '0 2px 20px rgba(0,0,0,0.92)' }}>{title}</div>
         <div style={{ width: 120, height: 4, backgroundColor: 'PRIMARY_COLOR', margin: '20px auto', borderRadius: 2, boxShadow: '0 0 20px PRIMARY_COLOR' }} />
       </div>
@@ -109,7 +109,7 @@ export const AnimationComponent = () => {
             width: 100, height: 100, borderRadius: '50%', backgroundColor: 'rgba(15, 23, 42, 0.95)',
             border: '2px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: vsOp, transform: `scale(${vsScale})`, zIndex: 10, backdropFilter: 'blur(10px)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.80)'
+            boxShadow: '0 10px 30px rgba(0,0,0,0.92)'
         }}>
             <div style={{ fontSize: 28, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: '0.1em' }}>VS</div>
         </div>
@@ -147,7 +147,7 @@ export const AnimationComponent = () => {
 
       {/* Decorative Side Elements */}
       <div style={{ position: 'absolute', bottom: 60, left: 80, opacity: 0.3 }}>
-        <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace', textShadow: '0 1px 4px rgba(0,0,0,0.80)' }}>
+        <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace', textShadow: '0 1px 4px rgba(0,0,0,0.92)' }}>
             COORD_SYNC: STABLE // MODE: CROSS_REF<br />
             ID: 0x{Math.floor(frame * 77).toString(16).toUpperCase()}
         </div>
