@@ -35,7 +35,7 @@ export const AnimationComponent = () => {
 
   const resolvedImageUrl = useMemo(() => {
     if (!imageUrl || imageUrl.startsWith('IMAGE_')) return null;
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl;
+    if (/^https?:\/\//.test(imageUrl) && !/example\.com|placeholder|test\.com|localhost|\.invalid|sampleurl/i.test(imageUrl)) return imageUrl;
     if (/.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(imageUrl)) return staticFile(imageUrl);
     return null;
   }, [imageUrl]);
