@@ -4,3 +4,5 @@ public/
 .env
 *.log
 .temp
+server/projects/
+server/settings.json
