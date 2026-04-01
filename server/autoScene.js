@@ -51,23 +51,32 @@ SCENE TYPES:
 
 ROUTING ENGINE — run on every sentence, stop at first YES:
 Q1: Physical space/object/infrastructure/environment? → [3D RENDER]
-Q2: Chapter opener/structural beat? → [TEMPLATE SCENE] → chapter or transition templates
-Q3: Named hacker/threat actor? → [TEMPLATE SCENE] → person-profile / threat-actor-card
-Q4: Named organization/victim? → [TEMPLATE SCENE] → organization-card
-Q5: Statistic/number/financial figure? → [TEMPLATE SCENE] → stat/chart templates
-Q6: Sequence of dated events? → [TEMPLATE SCENE] → timeline templates
-Q7: Attack method/kill chain/flow? → [TEMPLATE SCENE] → flowdiagram/phase templates
-Q8: Network of connections? → [TEMPLATE SCENE] → nodenetwork/expanding templates
-Q9: Country/geography? → [TEMPLATE SCENE] → map templates
-Q10: Code/malware/exploit/terminal? → [TEMPLATE SCENE] → code/terminal templates
-Q11: Scale of spread/infection? → [TEMPLATE SCENE] → map-spread/particle templates
-Q12: Two contrasting states/before vs after? → [TEMPLATE SCENE] → split/comparison templates
-Q13: Attack techniques, code, or technical lists? → [TEMPLATE SCENE] → icongrid/split/wireshark/ioc-list/hex-dump
-Q14: Evidence, documents, or archive records? → [TEMPLATE SCENE] → evidence-item / 157-archive-newspaper-reel
-Q15: Web discovery, search, or knowledge profiles? → [TEMPLATE SCENE] → 152-search-engine-reveal / 151-knowledge-card
-Q16: Social media, chat, or biometric identity? → [TEMPLATE SCENE] → 153-social-media-impact / 150-mobile-chat-ui / 156-biometric-access-scan
-Q17: Specific dates, calendars, or step-by-step phases? → [TEMPLATE SCENE] → 155-calendar-date-highlight / 119-kill-chain-steps
-Q18: Direct quote or single punchy claim? → [3D RENDER] + lower-third
+Q2: Chapter opener/structural beat/transition? → [TEMPLATE SCENE] → 42-chapter-word-drop / 43-chapter-typewriter / 44-chapter-countup / 45-chapter-wipe / 46-chapter-glitch / 158-chapter-word-drop / 81-transition-fade-title / 82-transition-wipe-chapter / 83-transition-zoom-reveal / 84-transition-glitch-cut
+Q3: Named hacker/threat actor/person? → [TEMPLATE SCENE] → 75-person-profile / 80-threat-actor-card / 85-person-profile
+Q4: Named organization/company/victim? → [TEMPLATE SCENE] → 76-organization-card / 114-dossier-open / 117-breach-report-card
+Q5: Single big number/stat/key figure? → [TEMPLATE SCENE] → 01-statcluster-3box / 02-statcluster-2box / 72-countup-hero / 109-number-odometer / 06-percentagefill-single / 96-bulletchart-kpi
+Q6: Bar chart data/ranked comparison? → [TEMPLATE SCENE] → 03-barchart-vertical / 47-barchart-horizontal / 98-barchart-race / 113-bracket-tournament
+Q7: Trend over time/line data? → [TEMPLATE SCENE] → 04-linechart-draw / 97-slopechart-change / 146-compound-interest-curve
+Q8: Percentage/share/pie breakdown? → [TEMPLATE SCENE] → 05-donutchart-fill / 143-portfolio-allocation / 50-treemap / 148-market-cap-treemap / 94-marimekko-mosaic
+Q9: Two+ items compared side-by-side? → [TEMPLATE SCENE] → 07-comparisonchart-dual / 112-comparison-table / 99-before-after-split / 09-split-2panel / 64-split-quadrant / 152-asset-comparison-slope
+Q10: Financial waterfall/profit-loss/revenue? → [TEMPLATE SCENE] → 08-waterfall-chart / 144-profit-loss-waterfall / 154-earnings-reveal / 145-kpi-financial-dashboard / 103-dashboard-summary
+Q11: Sequence of dated events/timeline? → [TEMPLATE SCENE] → 14-timeline-horizontal / 15-timeline-vertical / 16-timeline-escalation / 59-timeline-comparison / 60-timeline-gantt / 79-timeline-incident / 135-threat-actor-timeline / 153-debt-payoff-timeline
+Q12: Attack method/kill chain/exploit flow? → [TEMPLATE SCENE] → 57-flowdiagram-linear / 58-flowdiagram-branching / 119-kill-chain-steps / 121-exploit-chain / 120-lateral-movement / 17-phase-horizontal / 63-phase-numbered
+Q13: Network of connections/relationships? → [TEMPLATE SCENE] → 19-nodenetwork-centered / 20-nodenetwork-flow / 21-nodenetwork-attack / 24-nodenetwork-hierarchy / 53-nodenetwork-bipartite / 55-nodenetwork-cluster / 136-attribution-web
+Q14: Country/geography/trade routes? → [TEMPLATE SCENE] → 34-map-dotplot / 34b-map-country-zoom / 35-map-region-highlight / 35b-map-country-compare / 36-map-arc-connection / 37-map-spread / 139-attack-origin-heatmap / 140-botnet-spread
+Q15: Code/malware/exploit/terminal output? → [TEMPLATE SCENE] → 38-codesnippet-reveal / 39-terminal-typewriter / 40-logstream-highlight / 41-registrykey-reveal / 122-port-scan-reveal / 125-hex-dump-scroll / 126-memory-map / 127-wireshark-row-stream / 128-sql-injection-demo / 129-log-anomaly-detect
+Q16: Scale of spread/infection/particle? → [TEMPLATE SCENE] → 25-particle-burst / 26-particle-stream / 27-particle-scatter / 29-particle-infection / 124-packet-flood-ddos / 56-expanding-pulse
+Q17: List of icons/techniques/grid? → [TEMPLATE SCENE] → 30-icongrid-3x3 / 31-icongrid-4x4 / 32-icongrid-scatter / 33-icongrid-spotlight / 133-ioc-list-stream
+Q18: Evidence/documents/archive records? → [TEMPLATE SCENE] → 78-evidence-item / 157-archive-newspaper-reel / 107-redacted-reveal / 108-stamped-verdict / 118-classified-stamp / 130-news-article-highlight / 111-magazine-cover
+Q19: Web discovery/search/knowledge? → [TEMPLATE SCENE] → 152-search-engine-reveal / 151-knowledge-card / 100-zoom-to-detail / 102-annotation-callout
+Q20: Social media/chat/biometric? → [TEMPLATE SCENE] → 153-social-media-impact / 150-mobile-chat-ui / 156-biometric-access-scan / 138-dark-web-chatter / 116-dark-web-listing
+Q21: Specific date/calendar/countdown? → [TEMPLATE SCENE] → 155-calendar-date-highlight / 131-countdown-breach / 141-breach-counter
+Q22: Gauge/meter/score/rating? → [TEMPLATE SCENE] → 52-gaugechart / 134-cvss-score-reveal / 149-interest-rate-gauge / 86-radarchart-spider
+Q23: Flow/sankey/money movement? → [TEMPLATE SCENE] → 93-sankey-flow / 150-cash-flow-sankey / 51-funnelchart
+Q24: Stock/ticker/market data? → [TEMPLATE SCENE] → 142-stock-ticker-strip / 95-candlestick-ohlc / 73-ticker-scroll / 156-crypto-price-candles
+Q25: Heatmap/correlation/grid data? → [TEMPLATE SCENE] → 49-heatmap-grid / 48-scatterplot / 155-risk-return-scatter / 90-bubblemap-sized
+Q26: Glitch/corruption/ransom/dramatic reveal? → [TEMPLATE SCENE] → 130-glitch-corrupt / 132-ransom-note-reveal / 110-scramble-decode / 70-glitchreveal-full / 163-error-cascade
+Q27: Direct quote or single punchy claim? → [3D RENDER] + lower-third OR 77-quote-fullscreen
 DEFAULT: [3D RENDER] with lower-third
 
 STRICT VARIETY RULE: 
