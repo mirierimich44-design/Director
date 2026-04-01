@@ -236,11 +236,12 @@ export const MODEL_OPTIONS = {
     { id: 'claude-haiku-4-0', name: 'Claude 4.0 Haiku', provider: 'anthropic' },
   ],
   image: [
+    { id: 'imagen-3.0-generate-001', name: 'Imagen 3.0 (Stable)', provider: 'google' },
+    { id: 'imagen-4.0-generate-001', name: 'Imagen 4.0', provider: 'google' },
+    { id: 'imagen-4.0-fast-generate-001', name: 'Imagen 4.0 Fast', provider: 'google' },
     { id: 'gemini-3.1-flash-image-preview', name: 'Nano Banana 2', provider: 'google' },
     { id: 'gemini-3-pro-image-preview', name: 'Nano Banana Pro', provider: 'google' },
     { id: 'gemini-2.5-flash-image', name: 'Nano Banana', provider: 'google' },
-    { id: 'imagen-4.0-generate-001', name: 'Imagen 4.0', provider: 'google' },
-    { id: 'imagen-4.0-fast-generate-001', name: 'Imagen 4.0 Fast', provider: 'google' },
   ],
   video: [
     { id: 'veo-3.0-generate-preview', name: 'Veo 3.0', provider: 'google' },
