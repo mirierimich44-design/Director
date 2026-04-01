@@ -177,6 +177,7 @@ async function generateFallbackImage(prompt, environment = 'standard') {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(60_000),
     });
 
     if (!response.ok) {
@@ -550,6 +551,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
+            signal: AbortSignal.timeout(60_000),
         });
 
         if (!response.ok) {
