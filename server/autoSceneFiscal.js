@@ -60,16 +60,35 @@ COLOR PALETTE (Use visual descriptions ONLY. NEVER use these literal names in yo
 - Newsprint Gray -> Use "muted halftone gray", "newsprint texture"
 - Courtroom Ochre -> Use "warm earthy yellow", "ochre-toned skin"
 
-ROUTING ENGINE — run on every sentence:
+ROUTING ENGINE — run on every sentence, stop at first YES:
 Q1: Human activity/power dynamics/historical moment/symbolic financial scene? → [ILLUSTRATION]
-Q2: Chapter opener/structural beat? → [TEMPLATE SCENE] → chapter or transition templates
-Q3: Statistic/number/financial figure? → [TEMPLATE SCENE] → stat/chart templates
-Q4: Sequence of dated events/fiscal years? → [TEMPLATE SCENE] → timeline templates
-Q5: Corporate structure/ownership network? → [TEMPLATE SCENE] → nodenetwork/expanding templates
-Q6: Market geography/trade flows? → [TEMPLATE SCENE] → map templates
-Q7: Financial process/regulatory path/flow? → [TEMPLATE SCENE] → flowdiagram/phase templates
-Q8: Direct quote or single punchy claim? → [ILLUSTRATION] with lower-third
+Q2: Chapter opener/structural beat/transition? → [TEMPLATE SCENE] → 42-chapter-word-drop / 43-chapter-typewriter / 44-chapter-countup / 45-chapter-wipe / 158-chapter-word-drop / 81-transition-fade-title / 82-transition-wipe-chapter
+Q3: Stock price/market ticker/trading data? → [TEMPLATE SCENE] → 142-stock-ticker-strip / 95-candlestick-ohlc / 156-crypto-price-candles / 98-barchart-race
+Q4: Portfolio/allocation/breakdown by percent? → [TEMPLATE SCENE] → 143-portfolio-allocation / 05-donutchart-fill / 06-percentagefill-single / 50-treemap / 148-market-cap-treemap
+Q5: Profit/loss/revenue/earnings figure? → [TEMPLATE SCENE] → 144-profit-loss-waterfall / 08-waterfall-chart / 154-earnings-reveal / 109-number-odometer / 72-countup-hero
+Q6: KPI/dashboard/multiple financial metrics? → [TEMPLATE SCENE] → 145-kpi-financial-dashboard / 103-dashboard-summary / 01-statcluster-3box / 02-statcluster-2box / 96-bulletchart-kpi
+Q7: Interest rate/inflation/compound growth? → [TEMPLATE SCENE] → 146-compound-interest-curve / 147-inflation-erosion / 149-interest-rate-gauge / 52-gaugechart / 04-linechart-draw
+Q8: Cash flow/money flow/fund movement? → [TEMPLATE SCENE] → 150-cash-flow-sankey / 93-sankey-flow / 57-flowdiagram-linear
+Q9: Debt/payoff/loan timeline? → [TEMPLATE SCENE] → 153-debt-payoff-timeline / 14-timeline-horizontal / 15-timeline-vertical / 16-timeline-escalation
+Q10: Risk vs return/comparison of assets? → [TEMPLATE SCENE] → 155-risk-return-scatter / 48-scatterplot / 152-asset-comparison-slope / 97-slopechart-change / 07-comparisonchart-dual
+Q11: Break-even/threshold/target figure? → [TEMPLATE SCENE] → 151-break-even-chart / 04-linechart-draw / 03-barchart-vertical
+Q12: Before vs after/two contrasting states? → [TEMPLATE SCENE] → 99-before-after-split / 09-split-2panel / 64-split-quadrant / 112-comparison-table
+Q13: Ranked list/funnel/top-to-bottom? → [TEMPLATE SCENE] → 51-funnelchart / 47-barchart-horizontal / 113-bracket-tournament
+Q14: Named company/institution/organization? → [TEMPLATE SCENE] → 76-organization-card / 75-person-profile / 80-threat-actor-card
+Q15: Sequence of dated events/fiscal years? → [TEMPLATE SCENE] → 14-timeline-horizontal / 15-timeline-vertical / 135-threat-actor-timeline / 60-timeline-gantt
+Q16: Geographic/country/trade flow/region? → [TEMPLATE SCENE] → 34-map-dotplot / 34b-map-country-zoom / 35-map-region-highlight / 36-map-arc-connection / 139-attack-origin-heatmap
+Q17: Network of connections/corporate structure? → [TEMPLATE SCENE] → 19-nodenetwork-centered / 24-nodenetwork-hierarchy / 20-nodenetwork-flow / 136-attribution-web
+Q18: Process/regulatory path/step-by-step? → [TEMPLATE SCENE] → 57-flowdiagram-linear / 58-flowdiagram-branching / 17-phase-horizontal / 63-phase-numbered / 119-kill-chain-steps
+Q19: News headline/magazine cover/article? → [TEMPLATE SCENE] → 130-news-article-highlight / 111-magazine-cover / 157-archive-newspaper-reel
+Q20: Direct quote or single punchy claim? → [TEMPLATE SCENE] → 77-quote-fullscreen OR [ILLUSTRATION] with lower-third
+Q21: Heatmap/grid data/correlation matrix? → [TEMPLATE SCENE] → 49-heatmap-grid / 30-icongrid-3x3 / 31-icongrid-4x4
 DEFAULT: [ILLUSTRATION] with lower-third
+
+TEMPLATE DIVERSITY RULE:
+- You have 170+ templates. USE THEM. Do NOT repeat the same template within a chapter.
+- If you used 01-statcluster-3box for one stat, use 02-statcluster-2box, 109-number-odometer, or 72-countup-hero for the next.
+- Rotate between chart types: bar → line → donut → waterfall → gauge.
+- For financial data, STRONGLY prefer the finance-specific templates (142-156 range) over generic ones.
 
 SENTENCE COMBINING RULES:
 - SHORT sentences (under 10 words) that flow together as a sequence or describe the same thematic beat MUST be combined into a single scene.
