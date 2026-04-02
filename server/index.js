@@ -633,14 +633,21 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         console.log(`   📡 Calling Imagen API: ${imageModel}`);
         console.log(`   📋 Prompt: ${prompt.substring(0, 100)}...`);
 
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-            signal: AbortSignal.timeout(60_000),
-        });
+        let response;
+        try {
+            response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                signal: AbortSignal.timeout(90_000), // Increased to 90s for slower generation
+            });
+        } catch (fetchErr) {
+            console.error('❌ Imagen API Fetch Error (Network/Timeout):', fetchErr.message);
+            return res.status(504).json({ success: false, error: `API Gateway Timeout or Network Error: ${fetchErr.message}` });
+        }
 
         if (!response.ok) {
+
             const errText = await response.text();
             console.error('❌ Imagen API error:', errText.substring(0, 500));
             // Check if error is HTML (common for API issues)
