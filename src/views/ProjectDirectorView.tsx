@@ -1,37 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
     Box, Typography, TextField, Button, Card, CardContent, Chip, LinearProgress, CircularProgress,
-    IconButton, Tooltip, Accordion, AccordionSummary, AccordionDetails, Alert, Divider,
+    IconButton, Tooltip, Alert, Divider,
     List, ListItem, ListItemText, ListItemButton, Paper, Grid, Slider, FormControl,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    MenuItem, Menu, Select, InputLabel, Collapse
+    MenuItem, Select, InputLabel, Collapse
 } from '@mui/material';
 import {
-    ExpandMore as ExpandIcon,
     PlayArrow as RenderIcon,
     Download as DownloadIcon,
-    Refresh as RefreshIcon,
-    Movie as VideoIcon,
-    Code as CodeIcon,
-    Image as ImageIcon,
-    Build as BuildIcon,
-    History as HistoryIcon,
     FolderOpen as LoadIcon,
     Add as AddIcon,
-    Flag as FlagIcon,
-    CheckCircle as CheckIcon,
     Lock as LockIcon,
-    Warning as WarningIcon,
     Delete as DeleteIcon,
     Autorenew as RegenerateIcon,
-    AutoFixHigh as GenerateTemplateIcon,
-    Tune as TuneIcon,
     Settings as SettingsIcon,
     Palette as PaletteIcon,
-    Edit as EditIcon,
-    CloudUpload as UploadIcon,
 } from '@mui/icons-material';
-import AdjustDialog from '../components/AdjustDialog';
 
 interface Scene {
     index: number;
@@ -191,25 +176,8 @@ const ProjectDirectorView: React.FC = () => {
     const [dialogCancelText, setDialogCancelText] = useState('Cancel');
     const [dialogConfirmText, setDialogConfirmText] = useState('Confirm');
 
-    // Adjust dialog: { filename, chapterId, sceneIdx } or null when closed
-    const [adjustTarget, setAdjustTarget] = useState<{ filename: string; chapterId: string; sceneIdx: number } | null>(null);
-
-    const [quickTestOpen, setQuickTestOpen] = useState(false);
-    const [quickTestScript, setQuickTestScript] = useState('');
-    const [quickTestResult, setQuickTestResult] = useState<any>(null);
-    const [quickTestRendering, setQuickTestRendering] = useState(false);
-
-    const [templateCreatorOpen, setTemplateCreatorOpen] = useState(false);
-    const [templateDescription, setTemplateDescription] = useState('');
-    const [templateName, setTemplateName] = useState('');
-    const [templateCategory, setTemplateCategory] = useState('generated');
-    const [templateTheme, setTemplateTheme] = useState('CLEAN');
-    const [templateGenerating, setTemplateGenerating] = useState(false);
-    const [templateResult, setTemplateResult] = useState<any>(null);
-
     // Generation settings panel
     const [settingsOpen, setSettingsOpen] = useState(false);
-    const [expandedContent, setExpandedContent] = useState<Record<string, boolean>>({});
     const [genSettings, setGenSettings] = useState({
         templateRatio: 60,
         colorScheme: 'auto',
@@ -241,72 +209,6 @@ const ProjectDirectorView: React.FC = () => {
                 console.error('Action execution failed:', err);
                 setError(`Action failed: ${err.message}`);
             }
-        }
-    };
-
-    const handleQuickTestRender = async () => {
-        if (!quickTestScript.trim()) {
-            setError('Please enter a script segment');
-            return;
-        }
-
-        setQuickTestRendering(true);
-        setQuickTestResult(null);
-        setError('');
-
-        try {
-            const res = await fetch('/api/quick-test-render', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ scriptSegment: quickTestScript.trim() })
-            });
-            const data = await res.json();
-
-            if (data.success && data.scene) {
-                setQuickTestResult(data.scene);
-                setQuickTestOpen(false);
-            } else {
-                setError(data.error || 'Failed to analyze script segment');
-            }
-        } catch (err: any) {
-            setError(`Quick test failed: ${err.message}`);
-        } finally {
-            setQuickTestRendering(false);
-        }
-    };
-
-    const handleCreateTemplate = async () => {
-        if (!templateDescription.trim()) {
-            setError('Please enter a template description');
-            return;
-        }
-
-        setTemplateGenerating(true);
-        setTemplateResult(null);
-        setError('');
-
-        try {
-            const res = await fetch('/api/templates/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    description: templateDescription.trim(),
-                    suggestedName: templateName.trim() || undefined,
-                    category: templateCategory,
-                    theme: templateTheme
-                })
-            });
-            const data = await res.json();
-
-            if (data.success) {
-                setTemplateResult(data);
-            } else {
-                setError(data.error || 'Failed to generate template');
-            }
-        } catch (err: any) {
-            setError(`Template generation failed: ${err.message}`);
-        } finally {
-            setTemplateGenerating(false);
         }
     };
 
@@ -963,29 +865,6 @@ const ProjectDirectorView: React.FC = () => {
 
             {!selectedProject ? (
                 <Grid container spacing={4}>
-                    <Grid size={{ xs: 12 }}>
-                        <Paper sx={{ p: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 2, border: '1px solid var(--accent-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Button
-                                variant="contained"
-                                onClick={() => setTemplateCreatorOpen(true)}
-                                sx={{ bgcolor: 'var(--accent-gold)', color: '#000', py: 1.5, px: 3 }}
-                            >
-                                🎨 Create Template
-                            </Button>
-                        </Paper>
-                    </Grid>
-
-                    <Grid size={{ xs: 12 }}>
-                        <Paper sx={{ p: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 2, border: '1px solid var(--accent-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Button
-                                variant="contained"
-                                onClick={() => setQuickTestOpen(true)}
-                                sx={{ bgcolor: 'var(--accent-gold)', color: '#000', '&:hover': { bgcolor: '#fff' }, py: 1.5, px: 3 }}
-                            >
-                                🧪 Quick Test Render
-                            </Button>
-                        </Paper>
-                    </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
                         <Paper sx={{ p: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 2, border: '1px solid var(--border-color)' }}>
                             <Typography variant="h6" sx={{ color: 'var(--accent-gold)', mb: 2 }}>Create New Project</Typography>
@@ -1513,9 +1392,6 @@ const ProjectDirectorView: React.FC = () => {
                                             return (
                                                 <Card key={idx} sx={{ mb: 2, bgcolor: 'var(--bg-secondary)', border: isRendering ? '1px solid var(--accent-gold)' : '1px solid var(--border-color)', position: 'relative', transition: 'border-color 0.3s' }}>
                                                     <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', bgcolor:
-                                                        scene.flag === 'needs-fix' ? '#ff3b30' :
-                                                        scene.flag === 'needs-review' ? '#ffcc00' :
-                                                        scene.flag === 'approved' ? '#34c759' :
                                                         (scene.status === 'rendered' ? 'var(--accent-gold)' : 'transparent')
                                                     }} />
 
@@ -1565,143 +1441,6 @@ const ProjectDirectorView: React.FC = () => {
                                                                         >
                                                                             {scene.renderStatus === 'rendering' ? 'Rendering...' : (scene.status === 'rendered' ? 'Re-Render' : 'Render')}
                                                                         </Button>
-
-                                                                        <Tooltip title="Mark as Needs Fix">
-                                                                            <IconButton size="small" onClick={() => handleFlagScene(chapter.id, idx, 'needs-fix')} color={scene.flag === 'needs-fix' ? 'error' : 'default'}>
-                                                                                <WarningIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                        <Tooltip title="Mark as Needs Review">
-                                                                            <IconButton size="small" onClick={() => handleFlagScene(chapter.id, idx, 'needs-review')} color={scene.flag === 'needs-review' ? 'warning' : 'default'}>
-                                                                                <FlagIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                        <Tooltip title="Mark as Approved">
-                                                                            <IconButton size="small" onClick={() => handleFlagScene(chapter.id, idx, 'approved')} color={scene.flag === 'approved' ? 'success' : 'default'}>
-                                                                                <CheckIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                        <Tooltip title="Clear Status Flag">
-                                                                            <IconButton size="small" onClick={() => handleFlagScene(chapter.id, idx, null)}>
-                                                                                <RefreshIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-
-                                                                        {/* Adjust template — only for TEMPLATE scenes with an assigned template */}
-                                                                        {scene.type === 'TEMPLATE' && scene.template && (
-                                                                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                                                                                <Tooltip title="Edit content fields">
-                                                                                    <Button
-                                                                                        size="small"
-                                                                                        variant="outlined"
-                                                                                        startIcon={<EditIcon sx={{ fontSize: '13px !important' }} />}
-                                                                                        onClick={() => setExpandedContent(prev => ({ ...prev, [sceneKey]: !prev[sceneKey] }))}
-                                                                                        sx={{
-                                                                                            fontSize: '0.7rem', py: 0.4, px: 1,
-                                                                                            borderColor: 'var(--accent-gold)', color: 'var(--accent-gold)',
-                                                                                            '&:hover': { bgcolor: 'rgba(201,169,97,0.08)', borderColor: 'var(--accent-gold)' },
-                                                                                        }}
-                                                                                    >
-                                                                                        {expandedContent[sceneKey] ? 'Hide Content' : 'Edit Content'}
-                                                                                    </Button>
-                                                                                </Tooltip>
-                                                                                <Tooltip title="Adjust template with presets">
-                                                                                    <Button
-                                                                                        size="small"
-                                                                                        variant="outlined"
-                                                                                        startIcon={<TuneIcon sx={{ fontSize: '13px !important' }} />}
-                                                                                        onClick={() => setAdjustTarget({
-                                                                                            filename: scene.template + '.tsx',
-                                                                                            chapterId: chapter.id,
-                                                                                            sceneIdx: idx,
-                                                                                        })}
-                                                                                        sx={{
-                                                                                            fontSize: '0.7rem', py: 0.4, px: 1,
-                                                                                            borderColor: '#4fc3f744', color: '#4fc3f7',
-                                                                                            '&:hover': { bgcolor: 'rgba(79,195,247,0.08)', borderColor: '#4fc3f7' },
-                                                                                        }}
-                                                                                    >
-                                                                                        Adjust
-                                                                                    </Button>
-                                                                                </Tooltip>
-                                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 1, p: '2px 8px' }}>
-                                                                                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', fontSize: '0.65rem' }}>BG:</Typography>
-                                                                                    <input
-                                                                                        type="color"
-                                                                                        value={scene.content?.BACKGROUND_OVERRIDE || '#000000'}
-                                                                                        onChange={(e) => handleUpdateSceneContent(chapter.id, idx, 'BACKGROUND_OVERRIDE', e.target.value)}
-                                                                                        style={{ width: '20px', height: '20px', padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
-                                                                                    />
-                                                                                </Box>
-                                                                            </Box>
-                                                                        )}
-                                                                    </Box>
-                                                                )}
-
-                                                                {/* Content Editor Panel */}
-                                                                <Collapse in={expandedContent[sceneKey]}>
-                                                                    <Paper sx={{ mt: 2, p: 2, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                                                        <Typography variant="caption" sx={{ color: 'var(--accent-gold)', fontWeight: 800, mb: 2, display: 'block', letterSpacing: 1 }}>CONTENT FIELDS</Typography>
-                                                                        <Grid container spacing={2}>
-                                                                            {Object.entries(scene.content || {}).map(([field, value]) => {
-                                                                                if (field === 'BACKGROUND_OVERRIDE') return null;
-                                                                                const isImage = ['IMAGE_URL', 'PROFILE_IMAGE', 'SUBJECT_IMAGE_URL', 'AVATAR_URL'].includes(field.toUpperCase()) || field.toUpperCase().endsWith('_IMAGE');
-                                                                                
-                                                                                return (
-                                                                                    <Grid size={{ xs: 12, sm: 6 }} key={field}>
-                                                                                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
-                                                                                            <TextField
-                                                                                                fullWidth
-                                                                                                size="small"
-                                                                                                label={field.replace(/_/g, ' ')}
-                                                                                                value={value}
-                                                                                                onChange={(e) => handleUpdateSceneContent(chapter.id, idx, field, e.target.value)}
-                                                                                                InputProps={{ sx: { fontSize: '0.8rem', color: '#fff' } }}
-                                                                                                InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
-                                                                                            />
-                                                                                            {isImage && (
-                                                                                                <Box>
-                                                                                                    <input
-                                                                                                        type="file"
-                                                                                                        accept="image/*"
-                                                                                                        id={`upload-${sceneKey}-${field}`}
-                                                                                                        style={{ display: 'none' }}
-                                                                                                        onChange={(e) => {
-                                                                                                            const file = e.target.files?.[0];
-                                                                                                            if (file) handleImageUpload(chapter.id, idx, field, file);
-                                                                                                        }}
-                                                                                                    />
-                                                                                                    <label htmlFor={`upload-${sceneKey}-${field}`}>
-                                                                                                        <IconButton component="span" size="small" sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: 'var(--accent-gold)' }}>
-                                                                                                            <UploadIcon fontSize="small" />
-                                                                                                        </IconButton>
-                                                                                                    </label>
-                                                                                                </Box>
-                                                                                            )}
-                                                                                        </Box>
-                                                                                    </Grid>
-                                                                                );
-                                                                            })}
-                                                                        </Grid>
-                                                                    </Paper>
-                                                                </Collapse>
-
-                                                                {/* Generate Template button — shown when TEMPLATE scene has no code or has an error */}
-                                                                {!isLocked && scene.type === 'TEMPLATE' && (!scene.code || scene.renderStatus === 'error') && (
-                                                                    <Box sx={{ mt: 1 }}>
-                                                                        <Button
-                                                                            size="small"
-                                                                            variant="outlined"
-                                                                            startIcon={<GenerateTemplateIcon />}
-                                                                            onClick={() => handleGenerateTemplate(chapter.id, idx)}
-                                                                            disabled={scene.renderStatus === 'rendering'}
-                                                                            sx={{ borderColor: '#7b5ea7', color: '#b39ddb', '&:hover': { borderColor: '#b39ddb', bgcolor: 'rgba(123,94,167,0.1)' } }}
-                                                                        >
-                                                                            {scene.renderStatus === 'rendering' ? 'Generating...' : 'Generate Template'}
-                                                                        </Button>
-                                                                        <Typography variant="caption" sx={{ display: 'block', color: 'var(--text-secondary)', mt: 0.5 }}>
-                                                                            {scene.template ? `Template "${scene.template}" not found — click to create it` : 'No template assigned — click to generate one'}
-                                                                        </Typography>
                                                                     </Box>
                                                                 )}
 
@@ -1782,252 +1521,6 @@ const ProjectDirectorView: React.FC = () => {
                     </Grid>
                 </Box>
             )}
-
-            {/* Adjust Template Dialog */}
-            {adjustTarget && (
-                <AdjustDialog
-                    filename={adjustTarget.filename}
-                    open={!!adjustTarget}
-                    onClose={() => setAdjustTarget(null)}
-                    onApplied={async (_filename) => {
-                        // After saving the adjusted template, re-generate scene code from the
-                        // updated .tsx file, then re-render so the change is visible immediately.
-                        const { chapterId, sceneIdx } = adjustTarget;
-                        setAdjustTarget(null);
-                        if (!selectedProject) return;
-                        try {
-                            await fetch(
-                                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIdx}/generate-template`,
-                                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) }
-                            );
-                            await loadProjectDetails(selectedProject.id);
-                            renderScene(chapterId, sceneIdx);
-                        } catch {
-                            // Silently ignore — user can manually re-render if the auto trigger fails
-                        }
-                    }}
-                />
-            )}
-
-            {/* Template Creator Dialog */}
-            <Dialog
-                open={templateCreatorOpen}
-                onClose={() => setTemplateCreatorOpen(false)}
-                PaperProps={{ sx: { bgcolor: 'var(--bg-secondary)', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 2 } }}
-                maxWidth="md"
-            >
-                <DialogTitle sx={{ color: 'var(--accent-gold)' }}>
-                    🎨 Create New Template
-                </DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={4}
-                        label="Describe the template you want to create..."
-                        value={templateDescription}
-                        onChange={(e) => setTemplateDescription(e.target.value)}
-                        sx={{ mb: 2, '& .MuiInputBase-input': { color: '#fff' } }}
-                        disabled={templateGenerating}
-                        helperText="E.g., 'Animated stat cluster with 3 boxes that reveals each stat with a scale animation from 0 to 1'"
-                    />
-
-                    <TextField
-                        fullWidth
-                        label="Template name (optional)"
-                        value={templateName}
-                        onChange={(e) => setTemplateName(e.target.value)}
-                        sx={{ mb: 2, '& .MuiInputBase-input': { color: '#fff' } }}
-                        disabled={templateGenerating}
-                        placeholder="Leave blank for auto-generated name"
-                    />
-
-                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                        <TextField
-                            select
-                            label="Category"
-                            value={templateCategory}
-                            onChange={(e) => setTemplateCategory(e.target.value)}
-                            sx={{ flex: 1, '& .MuiInputBase-input': { color: '#fff' } }}
-                            disabled={templateGenerating}
-                        >
-                            <MenuItem value="generated">Generated</MenuItem>
-                            <MenuItem value="stats">Stats</MenuItem>
-                            <MenuItem value="timeline">Timeline</MenuItem>
-                            <MenuItem value="network">Network</MenuItem>
-                            <MenuItem value="map">Map</MenuItem>
-                            <MenuItem value="chart">Chart</MenuItem>
-                            <MenuItem value="chapter">Chapter</MenuItem>
-                            <MenuItem value="transition">Transition</MenuItem>
-                        </TextField>
-
-                        <TextField
-                            select
-                            label="Theme"
-                            value={templateTheme}
-                            onChange={(e) => setTemplateTheme(e.target.value)}
-                            sx={{ flex: 1, '& .MuiInputBase-input': { color: '#fff' } }}
-                            disabled={templateGenerating}
-                        >
-                            <MenuItem value="CLEAN">Clean</MenuItem>
-                            <MenuItem value="CREAM">Cream</MenuItem>
-                            <MenuItem value="DARK">Dark</MenuItem>
-                            <MenuItem value="TECHNICAL">Technical</MenuItem>
-                            <MenuItem value="THREAT">Threat</MenuItem>
-                            <MenuItem value="INTEL">Intel</MenuItem>
-                            <MenuItem value="COLD">Cold</MenuItem>
-                        </TextField>
-                    </Box>
-
-                    {templateGenerating && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 2 }}>
-                            <CircularProgress size={24} sx={{ color: 'var(--accent-gold)', mr: 2 }} />
-                            <Typography sx={{ color: 'var(--text-secondary)' }}>Generating template...</Typography>
-                        </Box>
-                    )}
-
-                    {templateResult && !templateGenerating && (
-                        <Box>
-                            <Typography variant="h6" sx={{ color: 'var(--accent-gold)', mb: 2 }}>
-                                ✅ Template Created: {templateResult.template}
-                            </Typography>
-
-                            <Paper sx={{ p: 2, mt: 2, bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-                                <Typography variant="caption" sx={{ color: 'var(--text-muted)', mb: 1 }}>
-                                    <strong>Category:</strong> {templateResult.category}
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: 'var(--text-muted)', mb: 1 }}>
-                                    <strong>Theme:</strong> {templateResult.theme}
-                                </Typography>
-                                {templateResult.description && (
-                                    <Typography variant="caption" sx={{ color: 'var(--text-muted)', mb: 1 }}>
-                                        <strong>Description:</strong> {templateResult.description}
-                                    </Typography>
-                                )}
-                                <Typography variant="caption" sx={{ color: 'var(--text-muted)', mb: 1 }}>
-                                    <strong>Fields:</strong> {Object.keys(templateResult.fields || {}).join(', ')}
-                                </Typography>
-                            </Paper>
-
-                            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => setTemplateCreatorOpen(false)}
-                                    sx={{ flex: 1, color: '#fff', borderColor: 'var(--border-color)' }}
-                                >
-                                    Close
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => {
-                                        if (templateResult && templateResult.schema) {
-                                            // Copy schema to clipboard for easy reference
-                                            const schemaJson = JSON.stringify(templateResult.schema, null, 2);
-                                            navigator.clipboard.writeText(schemaJson);
-                                        }
-                                    }}
-                                    sx={{ flex: 2, bgcolor: 'var(--accent-gold)', color: '#000' }}
-                                    disabled={!templateResult}
-                                >
-                                    📋 Copy Schema
-                                </Button>
-                            </Box>
-                        </Box>
-                    )}
-                </DialogContent>
-            </Dialog>
-
-            {/* Quick Test Render Dialog */}
-            <Dialog
-                open={quickTestOpen}
-                onClose={() => setQuickTestOpen(false)}
-                PaperProps={{ sx: { bgcolor: 'var(--bg-secondary)', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 2 } }}
-                maxWidth="md"
-            >
-                <DialogTitle sx={{ color: 'var(--accent-gold)' }}>
-                    🧪 Quick Test Render
-                </DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={6}
-                        label="Paste script segment to test..."
-                        value={quickTestScript}
-                        onChange={(e) => setQuickTestScript(e.target.value)}
-                        sx={{ mb: 2, '& .MuiInputBase-input': { color: '#fff' } }}
-                        disabled={quickTestRendering}
-                    />
-
-                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                        <Button
-                            variant="contained"
-                            onClick={handleQuickTestRender}
-                            disabled={!quickTestScript.trim() || quickTestRendering}
-                            sx={{ flex: 1, bgcolor: 'var(--accent-gold)', color: '#000' }}
-                        >
-                            🧪 Analyze
-                        </Button>
-                    </Box>
-
-                    {quickTestRendering && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', py: 2 }}>
-                            <CircularProgress size={24} sx={{ color: 'var(--accent-gold)', mr: 2 }} />
-                            <Typography sx={{ color: 'var(--text-secondary)' }}>Analyzing...</Typography>
-                        </Box>
-                    )}
-
-                    {quickTestResult && !quickTestRendering && (
-                        <Box>
-                            <Typography variant="h6" sx={{ color: 'var(--accent-gold)', mb: 2 }}>
-                                ✅ Best Template: {quickTestResult.template}
-                            </Typography>
-                            <Typography variant="subtitle1" sx={{ color: 'var(--text-secondary)', mb: 2 }}>
-                                Scene: {quickTestResult.script.substring(0, 100)}
-                            </Typography>
-
-                            <Paper sx={{ p: 2, mt: 2, bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-                                <Typography variant="caption" sx={{ color: 'var(--text-muted)', mb: 1 }}>
-                                    <strong>Theme:</strong> {quickTestResult.theme}
-                                </Typography>
-                                {quickTestResult.reasoning && (
-                                    <Typography variant="caption" sx={{ color: 'var(--text-muted)', mb: 1 }}>
-                                        <strong>Reasoning:</strong> {quickTestResult.reasoning}
-                                    </Typography>
-                                )}
-                            </Paper>
-
-                            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => setQuickTestOpen(false)}
-                                    sx={{ flex: 1, color: '#fff', borderColor: 'var(--border-color)' }}
-                                >
-                                    Close
-                                </Button>
-                                {quickTestResult.template && (
-                                    <Button
-                                        variant="contained"
-                                        onClick={() => {
-                                            if (selectedProject) {
-                                                const chapter = selectedProject.chapters[0];
-                                                const sceneIdx = chapter.scenes.length;
-                                                renderScene(chapter.id, sceneIdx);
-                                                setQuickTestOpen(false);
-                                            } else {
-                                                setError('Please create or select a project first');
-                                            }
-                                        }}
-                                        sx={{ flex: 2, bgcolor: 'var(--accent-gold)', color: '#000' }}
-                                    >
-                                        🎬 Render This Template
-                                    </Button>
-                                )}
-                            </Box>
-                        </Box>
-                    )}
-                </DialogContent>
-            </Dialog>
 
             {/* Global Action Confirmation Dialog */}
             <Dialog

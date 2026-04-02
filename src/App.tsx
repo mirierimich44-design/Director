@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import './App.css';
-import ProjectDirectorView from './views/ProjectDirectorView';
-import AudioProcessorView from './views/AudioProcessorView';
-import SettingsView from './views/SettingsView';
-import TemplateAuditorView from './views/TemplateAuditorView';
-import VideoGeneratorView from './views/VideoGeneratorView';
-import AnimationGeneratorView from './views/AnimationGeneratorView';
-import TemplateLibraryView from './views/TemplateLibraryView';
-import SceneStudioView from './views/SceneStudioView';
 import LoginPage from './components/LoginPage';
-import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Button } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Button, CircularProgress } from '@mui/material';
 import {
     FolderSpecial as ProjectIcon,
     GraphicEq as AudioIcon,
     Settings as SettingsIcon,
-    BugReport as AuditIcon,
     AutoFixHigh as AutoFixIcon,
-    LibraryBooks as LibraryIcon,
     ExitToApp as LogoutIcon,
     Movie as MovieIcon,
 } from '@mui/icons-material';
 
-type Mode = 'project-director' | 'audio' | 'auditor' | 'settings' | 'video-generator' | 'animation-generator' | 'template-library' | 'scene-studio';
+// Lazy load views for better initial speed
+const ProjectDirectorView = lazy(() => import('./views/ProjectDirectorView'));
+const AudioProcessorView = lazy(() => import('./views/AudioProcessorView'));
+const SettingsView = lazy(() => import('./views/SettingsView'));
+const VideoGeneratorView = lazy(() => import('./views/VideoGeneratorView'));
+const SceneStudioView = lazy(() => import('./views/SceneStudioView'));
+
+const ViewFallback = () => (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <CircularProgress sx={{ color: 'var(--accent-gold)' }} />
+    </Box>
+);
+
+type Mode = 'project-director' | 'audio' | 'settings' | 'video-generator' | 'scene-studio';
 
 const App: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => 
@@ -59,10 +62,7 @@ const App: React.FC = () => {
         { id: 'project-director',    label: 'Project Director',    icon: <ProjectIcon />,   desc: 'Chapter-based Projects' },
         { id: 'video-generator',     label: 'B-Roll Avatar',       icon: <AutoFixIcon />,   desc: 'Gemini + Pexels + HeyGen' },
         { id: 'scene-studio',        label: 'Scene Studio',        icon: <MovieIcon />,     desc: 'Custom Standalone Scenes' },
-        { id: 'animation-generator', label: 'Animation Generator', icon: <AutoFixIcon />,   desc: 'AI Template Builder' },
-        { id: 'template-library',    label: 'Template Library',    icon: <LibraryIcon />,   desc: 'View All Definitions' },
         { id: 'audio',               label: 'Audio Studio',        icon: <AudioIcon />,     desc: 'Voiceover Processor' },
-        { id: 'auditor',             label: 'Template Auditor',    icon: <AuditIcon />,     desc: 'Gemini Vision QA' },
         { id: 'settings',            label: 'LLM Settings',        icon: <SettingsIcon />,  desc: 'API Keys & Models' },
     ];
 
@@ -133,14 +133,13 @@ const App: React.FC = () => {
             </Box>
 
             <Box sx={{ flexGrow: 1, overflow: 'auto', bgcolor: 'var(--bg-primary)' }}>
-                {mode === 'project-director'    && <ProjectDirectorView />}
-                {mode === 'video-generator'     && <VideoGeneratorView />}
-                {mode === 'scene-studio'        && <SceneStudioView />}
-                {mode === 'animation-generator' && <AnimationGeneratorView />}
-                {mode === 'template-library'    && <TemplateLibraryView />}
-                {mode === 'audio'               && <AudioProcessorView />}
-                {mode === 'auditor'             && <TemplateAuditorView />}
-                {mode === 'settings'            && <SettingsView />}
+                <Suspense fallback={<ViewFallback />}>
+                    {mode === 'project-director'    && <ProjectDirectorView />}
+                    {mode === 'video-generator'     && <VideoGeneratorView />}
+                    {mode === 'scene-studio'        && <SceneStudioView />}
+                    {mode === 'audio'               && <AudioProcessorView />}
+                    {mode === 'settings'            && <SettingsView />}
+                </Suspense>
             </Box>
         </Box>
     );

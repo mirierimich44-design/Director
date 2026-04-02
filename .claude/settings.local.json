@@ -26,7 +26,9 @@
       "Bash(grep -n \"scale.*interpolate\\\\|zoom.*interpolate\" *.tsx)",
       "Bash(/tmp/summary.md:*)",
       "Bash(cd /c/Users/MICH/\"Desktop/Code Files\"/director)",
-      "Bash(grep -n \"resolvedImageUrl\\\\|imageUrl.*startsWith\\\\|staticFile\" server/templates/*.tsx)"
+      "Bash(grep -n \"resolvedImageUrl\\\\|imageUrl.*startsWith\\\\|staticFile\" server/templates/*.tsx)",
+      "Bash(node -e \":*)",
+      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director' -name *.config.js -o -name pm2.json -o -name package-lock.json)"
     ]
   }
 }

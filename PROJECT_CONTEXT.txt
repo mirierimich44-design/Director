@@ -1,0 +1,13 @@
+PROJECT CONTEXT: ARXXIS DIRECTOR STUDIO
+Stack: React 18, Vite, Material UI (MUI), Express, Remotion.
+Architecture: 
+- Two-Pass AI Generation (Pass 1: Semantic Routing, Pass 2: Field Filling).
+- Server handles video rendering via Remotion Lambda/CLI.
+- Scene data is persisted in JSON project files.
+Best Practices:
+- Prefer Vanilla CSS or MUI styled components.
+- Use async/await for all server-side file operations.
+- Avoid unnecessary external libraries; stick to native React hooks.
+- "Original" Director: 3D Renders, No Humans.
+- "Fiscal Pal" Director: Editorial Watercolor, Human Power Dynamics.
+- UI must remain clean, minimal, and focused on rendering efficiency.
