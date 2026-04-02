@@ -1,18 +1,13 @@
 import React from 'react'
-import { useCurrentFrame, interpolate } from 'remotion'
+import { useCurrentFrame, interpolate, Easing } from 'remotion'
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
 
+  // Base Animations
   const bgOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const titleOp = interpolate(frame, [15, 35], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const titleTy = interpolate(frame, [15, 35], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const subOp = interpolate(frame, [30, 48], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const subTy = interpolate(frame, [30, 48], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const divW = interpolate(frame, [25, 50], [0, 300], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const barOp = interpolate(frame, [10, 30], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const barW = interpolate(frame, [10, 40], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const tagOp = interpolate(frame, [45, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const contentOp = interpolate(frame, [15, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const barW = interpolate(frame, [10, 50], [0, 1000], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) })
 
   const titleText = "TITLE_TEXT"
   const chapterWord = "CHAPTER_WORD"
@@ -20,25 +15,66 @@ export const AnimationComponent = () => {
   const tag1 = "TAG_1"
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR', opacity: 1 - bgOp }} />
-      <div style={{ position: 'absolute', top: 1074, left: 0, width: barW, height: 6, overflow: 'hidden', backgroundColor: 'ACCENT_COLOR', opacity: barOp }} />
-      <div style={{ position: 'absolute', top: 5, left: 0, width: 1920, height: 5, overflow: 'hidden', backgroundColor: 'ACCENT_COLOR', opacity: barOp }} />
-      <div style={{ position: 'absolute', top: 380, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: subOp, transform: `translateY(${subTy}px)` }}>
-        <span style={{ fontSize: 22, fontWeight: 600, color: 'ACCENT_COLOR', fontFamily: 'sans-serif', letterSpacing: 6, textTransform: 'uppercase' }}>{chapterWord}</span>
-      </div>
-      <div style={{ position: 'absolute', top: 452, left: (1920 - 300) / 2, width: divW, height: 3, overflow: 'hidden', backgroundColor: 'ACCENT_COLOR' }} />
-      <div style={{ position: 'absolute', top: 468, left: 0, width: 1920, height: 180, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
-        <span style={{ fontSize: 120, fontWeight: 900, color: 'TEXT_ON_PRIMARY', fontFamily: 'sans-serif', letterSpacing: -2, textTransform: 'uppercase', lineHeight: 1 }}>{titleText}</span>
-      </div>
-      <div style={{ position: 'absolute', top: 660, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: subOp }}>
-        <span style={{ fontSize: 26, fontWeight: 400, color: 'TEXT_ON_PRIMARY', fontFamily: 'sans-serif', opacity: 0.7 }}>{chapterSub}</span>
-      </div>
-      <div style={{ position: 'absolute', top: 740, left: 0, width: 1920, height: 50, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: tagOp }}>
-        <span style={{ fontSize: 18, fontWeight: 600, color: 'ACCENT_COLOR', fontFamily: 'sans-serif', letterSpacing: 4, textTransform: 'uppercase' }}>{tag1}</span>
+    <div style={{
+      position: 'absolute', inset: 0, overflow: 'hidden',
+      backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
+      
+      {/* Background Scrim - Forces visibility */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        opacity: bgOp
+      }} />
+
+      {/* 16:9 Safe Container */}
+      <div style={{ 
+          width: 1600, height: 900, position: 'relative',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          opacity: contentOp
+      }}>
+        
+        {/* Top Category Label */}
+        <div style={{ marginBottom: 24 }}>
+          <span style={{ fontSize: 18, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: 8, textTransform: 'uppercase', opacity: 0.8 }}>
+            {chapterWord}
+          </span>
+        </div>
+
+        {/* Center Title - High Contrast White */}
+        <div style={{ textAlign: 'center', maxWidth: 1200, marginBottom: 40 }}>
+          <h1 style={{ 
+              fontSize: 100, fontWeight: 900, color: '#fff', 
+              textTransform: 'uppercase', letterSpacing: '-0.02em', margin: 0, lineHeight: 1.1
+          }}>
+            {titleText}
+          </h1>
+        </div>
+
+        {/* Modern Accent Bar */}
+        <div style={{ width: barW, height: 4, backgroundColor: 'ACCENT_COLOR', marginBottom: 40, boxShadow: '0 0 15px ACCENT_COLOR' }} />
+
+        {/* Subtitle */}
+        <div style={{ textAlign: 'center', maxWidth: 1000, marginBottom: 48 }}>
+          <span style={{ fontSize: 28, fontWeight: 500, color: 'rgba(255,255,255,0.7)', lineHeight: 1.4 }}>
+            {chapterSub}
+          </span>
+        </div>
+
+        {/* Bottom Tag */}
+        <div style={{ 
+            padding: '8px 24px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 100, 
+            border: '1px solid rgba(255,255,255,0.1)' 
+        }}>
+          <span style={{ fontSize: 14, fontWeight: 800, color: 'PRIMARY_COLOR', letterSpacing: 4, textTransform: 'uppercase' }}>
+            {tag1}
+          </span>
+        </div>
+
       </div>
     </div>
   )
 }
 
-export default AnimationComponent
+export default AnimationComponent;
