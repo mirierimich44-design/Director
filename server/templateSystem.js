@@ -197,6 +197,10 @@ export const FIELD_MAPPINGS = {
   'LOCATION_2': 'MAP_LABEL_2',
   'MAP_LABEL': 'MAP_LABEL_1',
 
+  // Quote variations
+  'WORD_1': 'QUOTE_LINE_1',
+  'WORD_2': 'QUOTE_LINE_2',
+
   // Title variations
   'HEADING': 'TITLE_TEXT',
   'HEADER': 'TITLE_TEXT',
