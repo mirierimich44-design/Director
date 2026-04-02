@@ -13,18 +13,18 @@ export const AnimationComponent = () => {
   const label2 = 'LABEL_2';
 
   // Animations
-  const bgScale = interpolate(frame, [0, 150], [1.1, 1], { extrapolateRight: 'clamp' });
+  const bgScale = interpolate(frame, [0, 150], [1.05, 1], { extrapolateRight: 'clamp' });
   const opTitle = interpolate(frame, [10, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyTitle = interpolate(frame, [10, 40], [60, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const tyTitle = interpolate(frame, [10, 40], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   
   const opSub = interpolate(frame, [35, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tySub = interpolate(frame, [35, 60], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const tySub = interpolate(frame, [35, 60], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const opStat1 = interpolate(frame, [60, 85], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const txStat1 = interpolate(frame, [60, 85], [-40, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const tyStat1 = interpolate(frame, [60, 85], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
   
   const opStat2 = interpolate(frame, [75, 100], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const txStat2 = interpolate(frame, [75, 100], [40, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const tyStat2 = interpolate(frame, [75, 100], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   return (
     <div style={{
@@ -41,7 +41,7 @@ export const AnimationComponent = () => {
 
       {/* Magazine Masthead Style Title */}
       <div style={{
-        position: 'absolute', top: 120, left: 0, width: '100%', textAlign: 'center',
+        position: 'absolute', top: 100, left: 0, width: '100%', textAlign: 'center',
         padding: '0 100px', boxSizing: 'border-box', opacity: opTitle, transform: `translateY(${tyTitle}px)`
       }}>
         <div style={{ 
@@ -51,7 +51,7 @@ export const AnimationComponent = () => {
           SPECIAL EDITION // VOL. 44
         </div>
         <h1 style={{
-          fontSize: 180, fontWeight: 900, color: '#fff', margin: 0, lineHeight: 0.9,
+          fontSize: 160, fontWeight: 900, color: '#fff', margin: 0, lineHeight: 0.9,
           letterSpacing: '-0.04em', textTransform: 'uppercase',
           filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
         }}>
@@ -61,12 +61,12 @@ export const AnimationComponent = () => {
 
       {/* Subtitle/Lead Story */}
       <div style={{
-        position: 'absolute', top: 480, left: '50%', transform: 'translateX(-50%)',
-        width: 1000, textAlign: 'center', opacity: opSub, translateY: tySub
+        position: 'absolute', top: 440, left: '50%', transform: `translateX(-50%) translateY(${tySub}px)`,
+        width: 1100, textAlign: 'center', opacity: opSub
       }}>
         <div style={{ height: 2, width: 80, backgroundColor: 'PRIMARY_COLOR', margin: '0 auto 32px' }} />
         <p style={{
-          fontSize: 36, color: 'rgba(255,255,255,0.8)', fontWeight: 500,
+          fontSize: 34, color: 'rgba(255,255,255,0.8)', fontWeight: 500,
           margin: 0, lineHeight: 1.4, fontStyle: 'italic'
         }}>
           {subtitle}
@@ -75,25 +75,25 @@ export const AnimationComponent = () => {
 
       {/* Bottom Features (Glassmorphism Cards) */}
       <div style={{
-        position: 'absolute', bottom: 120, left: 120, width: 480,
-        opacity: opStat1, transform: `translateX(${txStat1}px)`,
+        position: 'absolute', bottom: 100, left: 160, width: 460,
+        opacity: opStat1, transform: `translateY(${tyStat1}px)`,
         backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(30px)',
-        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 48,
-        boxShadow: '0 40px 100px rgba(0,0,0,0.5)'
+        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 40,
+        boxShadow: '0 40px 100px rgba(0,0,0,0.5)', overflow: 'hidden'
       }}>
-        <div style={{ fontSize: 80, fontWeight: 900, color: 'PRIMARY_COLOR', lineHeight: 1 }}>{stat1}</div>
-        <div style={{ fontSize: 20, color: '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 16, opacity: 0.6 }}>{label1}</div>
+        <div style={{ fontSize: 72, fontWeight: 900, color: 'PRIMARY_COLOR', lineHeight: 1 }}>{stat1}</div>
+        <div style={{ fontSize: 18, color: '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, opacity: 0.6 }}>{label1}</div>
       </div>
 
       <div style={{
-        position: 'absolute', bottom: 120, right: 120, width: 480,
-        opacity: opStat2, transform: `translateX(${txStat2}px)`,
+        position: 'absolute', bottom: 100, right: 160, width: 460,
+        opacity: opStat2, transform: `translateY(${tyStat2}px)`,
         backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(30px)',
-        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 48,
-        boxShadow: '0 40px 100px rgba(0,0,0,0.5)', textAlign: 'right'
+        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 40,
+        boxShadow: '0 40px 100px rgba(0,0,0,0.5)', textAlign: 'right', overflow: 'hidden'
       }}>
-        <div style={{ fontSize: 80, fontWeight: 900, color: 'ACCENT_COLOR', lineHeight: 1 }}>{stat2}</div>
-        <div style={{ fontSize: 20, color: '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 16, opacity: 0.6 }}>{label2}</div>
+        <div style={{ fontSize: 72, fontWeight: 900, color: 'ACCENT_COLOR', lineHeight: 1 }}>{stat2}</div>
+        <div style={{ fontSize: 18, color: '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, opacity: 0.6 }}>{label2}</div>
       </div>
 
       {/* Sidebar Details */}

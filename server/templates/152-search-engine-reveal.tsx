@@ -91,30 +91,31 @@ export const AnimationComponent = () => {
         <div style={{ 
             flex: 1, opacity: knowledgeOp, transform: `scale(${knowledgeScale})`,
             backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)',
-            padding: '48px', height: 'fit-content', backdropFilter: 'blur(30px)',
-            boxShadow: '0 40px 100px rgba(0,0,0,0.5)', overflow: 'hidden'
+            padding: '48px', maxHeight: 800, backdropFilter: 'blur(30px)',
+            boxShadow: '0 40px 100px rgba(0,0,0,0.5)', overflow: 'hidden',
+            display: 'flex', flexDirection: 'column'
         }}>
            <div style={{ 
                position: 'absolute', top: 0, left: 0, width: '100%', height: 4, 
                backgroundColor: 'PRIMARY_COLOR', boxShadow: '0 0 20px PRIMARY_COLOR' 
            }} />
 
-           <div style={{ width: '100%', height: 200, backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 16, marginBottom: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ width: 100, height: 100, borderRadius: '50%', border: '4px dashed rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: 50, height: 50, borderRadius: '50%', backgroundColor: 'PRIMARY_COLOR', opacity: 0.3 }} />
+           <div style={{ width: '100%', height: 180, backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 16, marginBottom: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)', flexShrink: 0 }}>
+              <div style={{ width: 80, height: 80, borderRadius: '50%', border: '4px dashed rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: 'PRIMARY_COLOR', opacity: 0.3 }} />
               </div>
            </div>
            
-           <div style={{ fontSize: 36, fontWeight: 900, color: '#fff', marginBottom: 12, letterSpacing: '-0.02em' }}>{kTitle}</div>
-           <div style={{ fontSize: 16, color: 'PRIMARY_COLOR', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 32 }}>KNOWLEDGE_ENTRY_FILE</div>
+           <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', marginBottom: 12, letterSpacing: '-0.02em', flexShrink: 0 }}>{kTitle}</div>
+           <div style={{ fontSize: 14, color: 'PRIMARY_COLOR', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 24, flexShrink: 0 }}>KNOWLEDGE_ENTRY_FILE</div>
            
-           <div style={{ fontSize: 22, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, fontWeight: 500, marginBottom: 40 }}>
+           <div style={{ fontSize: 20, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, fontWeight: 500, marginBottom: 32, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
              {kDesc}
            </div>
 
-           <div style={{ padding: '24px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 800, letterSpacing: '0.1em', marginBottom: 8 }}>SOURCE_AUTHENTICATED</div>
-              <div style={{ color: '#4caf50', fontSize: 18, fontWeight: 700, fontFamily: 'monospace' }}>SECURE_CORE_082</div>
+           <div style={{ marginTop: 'auto', padding: '20px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)', flexShrink: 0 }}>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', marginBottom: 6 }}>SOURCE_AUTHENTICATED</div>
+              <div style={{ color: '#4caf50', fontSize: 16, fontWeight: 700, fontFamily: 'monospace' }}>SECURE_CORE_082</div>
            </div>
         </div>
 

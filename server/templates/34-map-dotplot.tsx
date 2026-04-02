@@ -33,7 +33,7 @@ export const AnimationComponent = () => {
   const mapX = 260
   const mapY = 180
   const mapW = 1400
-  const mapH = 700
+  const mapH = 680
 
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', backgroundColor: '#050505', fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -61,12 +61,14 @@ export const AnimationComponent = () => {
             const dotOp = interpolate(frame, [delay, delay + 20], [0, 1], { extrapolateLeft: 'clamp' });
             const dotScale = interpolate(frame, [delay, delay + 20], [0, 1], { extrapolateLeft: 'clamp', easing: Easing.back(1.5) });
             
-            // Pulsing effect
-            const pulse = interpolate(frame % 60, [0, 60], [1, 2], { extrapolateLeft: 'clamp' });
+            // Pulsing effect - reduced scale to ensure no clipping
+            const pulse = interpolate(frame % 60, [0, 60], [1, 1.5], { extrapolateLeft: 'clamp' });
             const pulseOp = interpolate(frame % 60, [0, 60], [0.4, 0], { extrapolateLeft: 'clamp' });
 
-            const cx = item.pos.nx * mapW;
-            const cy = item.pos.ny * mapH;
+            // Clamp coordinates to stay within map bounds with padding
+            const padding = 50;
+            const cx = Math.max(padding, Math.min(mapW - padding, item.pos.nx * mapW));
+            const cy = Math.max(padding, Math.min(mapH - padding, item.pos.ny * mapH));
 
             return (
               <g key={i} opacity={dotOp}>

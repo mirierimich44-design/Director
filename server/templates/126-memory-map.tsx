@@ -14,7 +14,7 @@ export const AnimationComponent = () => {
     { label: 'CODE_SECTION', color: 'PRIMARY_COLOR', size: 120, addr: '0x00000000' },
   ];
 
-  const totalHeight = segments.length * (120 + 16);
+  const totalHeight = segments.length * (100 + 16);
   const startY = (height - totalHeight) / 2;
 
   return (
@@ -36,7 +36,7 @@ export const AnimationComponent = () => {
 
       {/* Memory Stack */}
       <div style={{
-        position: 'absolute', top: startY, left: 400, width: 800
+        position: 'absolute', top: startY, left: 400, width: 800, overflow: 'hidden'
       }}>
         {segments.map((seg, i) => {
           const delay = i * 10;
@@ -46,7 +46,7 @@ export const AnimationComponent = () => {
 
           return (
             <div key={i} style={{
-              height: 120, width: '100%', marginBottom: 16,
+              height: 100, width: '100%', marginBottom: 16,
               backgroundColor: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)',
               border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 12,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
