@@ -31,9 +31,6 @@ interface Scene {
     code?: string;
     duration?: number;
     prompt?: string;
-    subject?: string;
-    setting?: string;
-    style?: string;
     environment?: string;
     camera?: string;
     lower_third?: { text: string; attribution: string };
@@ -404,11 +401,6 @@ const ProjectDirectorView: React.FC = () => {
         } catch (err) {
             console.error('Failed to update scene:', err);
         }
-    };
-
-    const handleShuffleStyle = (chapterId: string, sceneIndex: number) => {
-        const randomStyle = WHISK_STYLES[Math.floor(Math.random() * WHISK_STYLES.length)];
-        handleUpdateScene(chapterId, sceneIndex, { style: randomStyle });
     };
 
     const renderScene = (
