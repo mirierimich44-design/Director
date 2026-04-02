@@ -20,12 +20,10 @@ export const AnimationComponent = () => {
   // 2. Search Trigger
   const resultsStart = typingStart + typingDuration + 10;
   const resultsOp = interpolate(frame, [resultsStart, resultsStart + 15], [0, 1], { extrapolateLeft: 'clamp' });
-  const resultsTy = interpolate(frame, [resultsStart, resultsStart + 15], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   // 3. Knowledge Panel
   const knowledgeStart = resultsStart + 8;
   const knowledgeOp = interpolate(frame, [knowledgeStart, knowledgeStart + 15], [0, 1], { extrapolateLeft: 'clamp' });
-  const knowledgeTy = interpolate(frame, [knowledgeStart, knowledgeStart + 15], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   return (
     <div style={{
@@ -59,7 +57,7 @@ export const AnimationComponent = () => {
         <div style={{ position: 'absolute', top: 130, left: 0, right: 0, bottom: 0, display: 'flex', gap: 40 }}>
           
           {/* Results List */}
-          <div style={{ flex: 1.6, opacity: resultsOp, transform: `translateY(${resultsTy}px)` }}>
+          <div style={{ flex: 1.6, opacity: resultsOp }}>
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, marginBottom: 24, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
                TOP_MATCHES // INDEXED
              </div>
@@ -85,7 +83,7 @@ export const AnimationComponent = () => {
 
           {/* Knowledge Panel */}
           <div style={{ 
-              flex: 1, opacity: knowledgeOp, transform: `translateY(${knowledgeTy}px)`,
+              flex: 1, opacity: knowledgeOp,
               backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 24, border: '1px solid rgba(255,255,255,0.08)',
               padding: '40px', maxHeight: 720, backdropFilter: 'blur(20px)',
               display: 'flex', flexDirection: 'column', overflow: 'hidden'

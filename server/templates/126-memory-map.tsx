@@ -20,7 +20,7 @@ export const AnimationComponent = () => {
   const startY = (height - totalHeight) / 2;
 
   // Base Animations
-  const contentTy = interpolate(frame, [0, 40], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const contentTy = 0;
 
   return (
     <div style={{
@@ -29,7 +29,7 @@ export const AnimationComponent = () => {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       {/* 16:9 Safe Container */}
-      <div style={{ width: 1600, height: 900, position: 'relative', transform: `translateY(${contentTy}px)` }}>
+      <div style={{ width: 1600, height: 900, position: 'relative' }}>
         
         <div style={{ position: 'absolute', top: 40, left: 40, opacity: 0.8 }}>
           <div style={{ color: 'PRIMARY_COLOR', fontSize: 16, fontWeight: 800, letterSpacing: 6, marginBottom: 8 }}>VIRTUAL_MEMORY_MAP</div>

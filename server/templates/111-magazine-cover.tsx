@@ -13,18 +13,10 @@ export const AnimationComponent = () => {
   const label2 = 'LABEL_2';
 
   // Base Animations
-  const contentTy = interpolate(frame, [0, 40], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const opTitle = interpolate(frame, [10, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyTitle = interpolate(frame, [10, 40], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  
   const opSub = interpolate(frame, [35, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tySub = interpolate(frame, [35, 60], [15, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-
   const opStat1 = interpolate(frame, [60, 85], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyStat1 = interpolate(frame, [60, 85], [15, 0], { extrapolateLeft: 'clamp' });
-  
   const opStat2 = interpolate(frame, [75, 100], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyStat2 = interpolate(frame, [75, 100], [15, 0], { extrapolateLeft: 'clamp' });
 
   return (
     <div style={{
@@ -34,15 +26,12 @@ export const AnimationComponent = () => {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       {/* 16:9 Safe Container (80% width/height) */}
-      <div style={{
-        width: 1536, height: 864, position: 'relative',
-        transform: `translateY(${contentTy}px)`
-      }}>
+      <div style={{ width: 1536, height: 864, position: 'relative' }}>
         
         {/* Magazine Masthead Style Title */}
         <div style={{
           position: 'absolute', top: 60, left: 0, width: '100%', textAlign: 'center',
-          opacity: opTitle, transform: `translateY(${tyTitle}px)`
+          opacity: opTitle
         }}>
           <div style={{ 
               fontSize: 16, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.4em', 
@@ -60,7 +49,7 @@ export const AnimationComponent = () => {
 
         {/* Subtitle/Lead Story */}
         <div style={{
-          position: 'absolute', top: 340, left: '50%', transform: `translateX(-50%) translateY(${tySub}px)`,
+          position: 'absolute', top: 340, left: '50%', transform: `translateX(-50%)`,
           width: 900, textAlign: 'center', opacity: opSub
         }}>
           <div style={{ height: 2, width: 60, backgroundColor: 'ACCENT_COLOR', margin: '0 auto 24px' }} />
@@ -75,7 +64,7 @@ export const AnimationComponent = () => {
         {/* Bottom Features (Glassmorphism Cards) */}
         <div style={{
           position: 'absolute', bottom: 60, left: 0, width: 420,
-          opacity: opStat1, transform: `translateY(${tyStat1}px)`,
+          opacity: opStat1,
           backgroundColor: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 32,
           boxShadow: '0 20px 50px rgba(0,0,0,0.2)'
@@ -86,7 +75,7 @@ export const AnimationComponent = () => {
 
         <div style={{
           position: 'absolute', bottom: 60, right: 0, width: 420,
-          opacity: opStat2, transform: `translateY(${tyStat2}px)`,
+          opacity: opStat2,
           backgroundColor: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 32,
           boxShadow: '0 20px 50px rgba(0,0,0,0.2)', textAlign: 'right'

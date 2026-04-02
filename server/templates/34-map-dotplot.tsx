@@ -20,10 +20,8 @@ export const AnimationComponent = () => {
   }, [])
 
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const titleTy = interpolate(frame, [0, 20], [15, 0], { extrapolateLeft: 'clamp' })
   const mapOp = interpolate(frame, [10, 30], [0, 1], { extrapolateLeft: 'clamp' })
   const labelOp = interpolate(frame, [60, 80], [0, 1], { extrapolateLeft: 'clamp' })
-  const contentTy = interpolate(frame, [0, 40], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
 
   const stadiaKey = "STADIA_API_KEY"
   const stadiaUrl = stadiaKey
@@ -37,9 +35,9 @@ export const AnimationComponent = () => {
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       
       {/* 16:9 Safe Container */}
-      <div style={{ width: 1600, height: 900, position: 'relative', transform: `translateY(${contentTy}px)` }}>
+      <div style={{ width: 1600, height: 900, position: 'relative' }}>
         
-        <div style={{ position: 'absolute', top: 40, left: 0, width: '100%', textAlign: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
+        <div style={{ position: 'absolute', top: 40, left: 0, width: '100%', textAlign: 'center', opacity: titleOp }}>
           <span style={{ fontSize: 24, fontWeight: 800, color: 'PRIMARY_COLOR', letterSpacing: 8, textTransform: 'uppercase' }}>{title}</span>
         </div>
 

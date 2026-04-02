@@ -5,17 +5,14 @@ export const AnimationComponent = () => {
   const frame = useCurrentFrame()
 
   // Base Animations
-  const contentTy = interpolate(frame, [0, 40], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const bgOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   
   const prefixOp = interpolate(frame, [12, 35], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const prefixTy = interpolate(frame, [12, 35], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) })
 
   const countProgress = interpolate(frame, [20, 90], [0, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.cubic) })
   const finalOp = interpolate(frame, [85, 100], [0, 1], { extrapolateLeft: 'clamp' })
 
   const subOp = interpolate(frame, [75, 95], [0, 1], { extrapolateLeft: 'clamp' })
-  const subTy = interpolate(frame, [75, 95], [15, 0], { extrapolateLeft: 'clamp' })
 
   const title = "TITLE_TEXT"
   const countValue = "COUNT_VALUE"
@@ -36,7 +33,7 @@ export const AnimationComponent = () => {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       {/* 16:9 Safe Container */}
-      <div style={{ width: 1600, height: 900, position: 'relative', transform: `translateY(${contentTy}px)` }}>
+      <div style={{ width: 1600, height: 900, position: 'relative' }}>
         
         <div style={{ position: 'absolute', top: 40, left: 0, width: '100%', textAlign: 'center', opacity: bgOp }}>
           <div style={{ 
@@ -51,7 +48,7 @@ export const AnimationComponent = () => {
         {/* Content */}
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', textAlign: 'center' }}>
           
-          <div style={{ opacity: prefixOp, transform: `translateY(${prefixTy}px)`, marginBottom: 32 }}>
+          <div style={{ opacity: prefixOp, marginBottom: 32 }}>
              <span style={{ fontSize: 24, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: 4, textTransform: 'uppercase', opacity: 0.8 }}>
                {countLabel}
              </span>
@@ -68,7 +65,7 @@ export const AnimationComponent = () => {
              </div>
           </div>
 
-          <div style={{ opacity: subOp, transform: `translateY(${subTy}px)`, marginTop: 32 }}>
+          <div style={{ opacity: subOp, marginTop: 32 }}>
              <span style={{ fontSize: 36, fontWeight: 800, color: 'PRIMARY_COLOR', letterSpacing: 1, textTransform: 'uppercase' }}>
                {subLabel}
              </span>

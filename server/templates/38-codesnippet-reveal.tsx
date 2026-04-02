@@ -25,10 +25,7 @@ export const AnimationComponent = () => {
   const highlightLineIndex = 4
 
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const titleTy = interpolate(frame, [0, 20], [15, 0], { extrapolateLeft: 'clamp' })
-
   const windowOp = interpolate(frame, [10, 30], [0, 1], { extrapolateLeft: 'clamp' })
-  const windowTy = interpolate(frame, [10, 35], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) })
 
   const lineOpacities = codeLines.map((_, i) => interpolate(frame, [30 + i * 4, 45 + i * 4], [0, 1], { extrapolateLeft: 'clamp' }))
   
@@ -49,7 +46,7 @@ export const AnimationComponent = () => {
         {/* Title */}
         <div style={{
           position: 'absolute', top: 40, left: 0, width: '100%', textAlign: 'center',
-          opacity: titleOp, transform: `translateY(${titleTy}px)`
+          opacity: titleOp
         }}>
           <span style={{ fontSize: 22, fontWeight: 800, color: 'PRIMARY_COLOR', letterSpacing: 8, textTransform: 'uppercase' }}>
             {title}
@@ -59,7 +56,7 @@ export const AnimationComponent = () => {
         {/* IDE Window Container */}
         <div style={{
           position: 'absolute', top: 140, left: (1600 - windowWidth) / 2, width: windowWidth,
-          opacity: windowOp, transform: `translateY(${windowTy}px)`
+          opacity: windowOp
         }}>
           
           {/* Title Bar */}
