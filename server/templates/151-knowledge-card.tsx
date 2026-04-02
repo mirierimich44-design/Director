@@ -20,15 +20,6 @@ export const AnimationComponent = () => {
   const cardTy = interpolate(frame, [0, 25], [50, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const contentOp = interpolate(frame, [20, 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const imageScale = interpolate(frame, [25, 50], [1.25, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
-
-  const resolvedImageUrl = useMemo(() => {
-      if (!imageUrl || imageUrl.startsWith('IMAGE_')) return null;
-      if (/^https?:\/\//.test(imageUrl) && !/example\.com|placeholder|test\.com|localhost|\.invalid|sampleurl/i.test(imageUrl)) return imageUrl;
-      // Only use staticFile for actual image file extensions — reject placeholder strings
-      if (/\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(imageUrl)) return staticFile(imageUrl);
-      return null;
-  }, [imageUrl]);
 
   return (
     <div style={{
@@ -54,25 +45,10 @@ export const AnimationComponent = () => {
         opacity: cardOp, transform: `scale(${cardScale}) translateY(${cardTy}px)`
       }}>
         
-        {/* Left Side: Image & Facts */}
+        {/* Left Side: Facts */}
         <div style={{ width: 400, borderRight: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column' }}>
-          {/* Image Placeholder or Actual Image */}
-          <div style={{ width: 400, height: 400, backgroundColor: 'rgba(255,255,255,0.02)', overflow: 'hidden', position: 'relative' }}>
-             {resolvedImageUrl ? (
-                 <Img src={resolvedImageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${imageScale})` }} />
-             ) : (
-                 <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 20 }}>
-                    <div style={{ width: 120, height: 120, borderRadius: '50%', border: '4px dashed rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ width: 60, height: 60, borderRadius: '50%', backgroundColor: 'PRIMARY_COLOR', opacity: 0.2 }} />
-                    </div>
-                    <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: 14, fontWeight: 800, letterSpacing: '0.1em' }}>NO_IMAGE_SOURCE</div>
-                 </div>
-             )}
-             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 4, backgroundColor: 'PRIMARY_COLOR', boxShadow: '0 0 15px PRIMARY_COLOR' }} />
-          </div>
-
           {/* Quick Facts List */}
-          <div style={{ padding: '40px', flex: 1, display: 'flex', flexDirection: 'column', gap: 32, opacity: contentOp }}>
+          <div style={{ padding: '80px 40px', flex: 1, display: 'flex', flexDirection: 'column', gap: 48, opacity: contentOp }}>
              <div>
                 <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{fact1Label}</div>
                 <div style={{ color: '#fff', fontSize: 24, fontWeight: 700 }}>{fact1Value}</div>
@@ -81,6 +57,9 @@ export const AnimationComponent = () => {
                 <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{fact2Label}</div>
                 <div style={{ color: '#fff', fontSize: 24, fontWeight: 700 }}>{fact2Value}</div>
              </div>
+          </div>
+          <div style={{ padding: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', opacity: contentOp * 0.5 }}>
+             <div style={{ color: 'PRIMARY_COLOR', fontSize: 12, fontWeight: 900, letterSpacing: '0.2em' }}>SYSTEM_VERIFIED</div>
           </div>
         </div>
 

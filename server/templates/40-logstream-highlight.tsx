@@ -42,10 +42,10 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 60, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <span style={{ fontSize: 26, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
       </div>
-      <div style={{ position: 'absolute', top: 148, left: 240, width: 1440, height: 44, overflow: 'hidden', backgroundColor: 'PANEL_LEFT_BG', borderRadius: '6px 6px 0 0', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 24px', opacity: panelOp }}>
+      <div style={{ position: 'absolute', top: 148, left: 240, width: 1440, height: 44, overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px 16px 0 0', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 24px', opacity: panelOp }}>
         <span style={{ fontSize: 18, fontWeight: 500, color: 'ACCENT_COLOR', fontFamily: 'monospace', letterSpacing: 1 }}>{keyPath}</span>
       </div>
-      <div style={{ position: 'absolute', top: 192, left: 240, width: 1440, height: lineH * lineCount + 48, overflow: 'hidden', backgroundColor: 'CHART_BG', borderRadius: '0 0 6px 6px', opacity: panelOp, transform: `translateY(${panelTy}px)` }}>
+      <div style={{ position: 'absolute', top: 192, left: 240, width: 1440, height: lineH * lineCount + 48, overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0 0 16px 16px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', opacity: panelOp, transform: `translateY(${panelTy}px)` }}>
         {highlightIndex < lineCount && (
           <div style={{ position: 'absolute', top: 24 + highlightIndex * lineH, left: 0, width: 1440, height: lineH, overflow: 'hidden', backgroundColor: 'SECONDARY_COLOR', opacity: highlightOp * 0.15 }} />
         )}

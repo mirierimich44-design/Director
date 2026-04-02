@@ -4,7 +4,29 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:docs.heygen.com)",
-      "WebFetch(domain:help.heygen.com)"
+      "WebFetch(domain:help.heygen.com)",
+      "Bash(find '/c/Users/MICH/Desktop/Code Files/director' -name 151* -o -name *knowledge-card*)",
+      "Bash(grep -rn \"CREAM\\\\|cream\" '/c/Users/MICH/Desktop/Code Files/director/server/' --include=*.js -l)",
+      "Bash(grep -rh \"scale.*interpolate\\\\|interpolate.*\\\\[.*1\\\\.\" /c/Users/MICH/Desktop/Code Files/director/server/templates/*.tsx)",
+      "Bash(grep -rh \"boxShadow\\\\|textShadow\\\\|filter.*blur\\\\|drop-shadow\" /c/Users/MICH/Desktop/Code Files/director/server/templates/*.tsx)",
+      "Bash(grep -v \"//\")",
+      "Bash(node scripts/boost-animations.js)",
+      "WebFetch(domain:ai.google.dev)",
+      "WebFetch(domain:discuss.ai.google.dev)",
+      "Bash(grep -E \"\\\\.\\(js|ts\\)$\")",
+      "Bash(ls /c/Users/MICH/Desktop/\"Code Files\"/director/server/templates/*.tsx)",
+      "Bash(grep -l \"scale\\\\|zoom\" /c/Users/MICH/Desktop/Code Files/director/server/templates/*.tsx)",
+      "Bash(grep -l \"scale\\\\|zoom\" *.tsx)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/MICH/Desktop/Code Files/director/**)",
+      "Bash(done)",
+      "Bash(grep -l \"interpolate\" *.tsx)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -n \"scale.*interpolate\\\\|zoom.*interpolate\" *.tsx)",
+      "Bash(/tmp/summary.md:*)",
+      "Bash(cd /c/Users/MICH/\"Desktop/Code Files\"/director)",
+      "Bash(grep -n \"resolvedImageUrl\\\\|imageUrl.*startsWith\\\\|staticFile\" server/templates/*.tsx)"
     ]
   }
 }

@@ -38,12 +38,15 @@ export const AnimationComponent = () => {
             bottom: 240, 
             width: w, 
             height: h * scaleY, 
-            backgroundColor: 'PRIMARY_COLOR', 
+            backgroundColor: 'rgba(15, 23, 42, 0.8)',
             opacity: reveal,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '2px solid rgba(255,255,255,0.1)'
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: 16,
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
           }}>
             <span style={{ color: 'TEXT_ON_PRIMARY', fontSize: 20, fontWeight: 'bold', transform: `scale(${reveal})` }}>{item.label}</span>
           </div>

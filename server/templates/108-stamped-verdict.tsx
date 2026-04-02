@@ -13,11 +13,11 @@ export const AnimationComponent = () => {
   // --- Stamp Impact Logic ---
   const impactFrame = 40;
   
-  // Bounce/Slam animation (scale 4x down to 1x)
+  // Bounce/Slam animation — from 1.6x down to 1x with slight overshoot
   const stampScale = interpolate(
-    frame, 
-    [impactFrame, impactFrame + 6, impactFrame + 12], 
-    [4, 0.9, 1], 
+    frame,
+    [impactFrame, impactFrame + 8, impactFrame + 14],
+    [1.6, 0.95, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
   

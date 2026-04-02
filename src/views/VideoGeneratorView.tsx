@@ -30,6 +30,9 @@ import {
     VideoLibrary as StockIcon,
     Face as FaceIcon,
     AccessTime as TimerIcon,
+    Favorite as FavIcon,
+    FavoriteBorder as FavBorderIcon,
+    AspectRatio as AspectRatioIcon,
 } from '@mui/icons-material';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -59,6 +62,7 @@ const FALLBACK_VOICES: VoiceOption[] = [
 
 const STEPS = ['Write Script', 'Select Avatar', 'Choose Voice', 'Background & Render'];
 const HISTORY_KEY = 'heygen_generation_history';
+const FAVOURITES_KEY = 'heygen_favourite_avatars';
 const MAX_HISTORY = 50;
 
 interface HistoryEntry {
@@ -156,6 +160,22 @@ const VideoGeneratorView: React.FC = () => {
     const [generatedAvatarUrl, setGeneratedAvatarUrl] = useState('');
     const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
     const [talkingPhotoId, setTalkingPhotoId] = useState('');
+    const [aspectRatio, setAspectRatio] = useState<'16:9' | '9:16'>('16:9');
+
+    // Favourites
+    const [favouriteAvatars, setFavouriteAvatars] = useState<string[]>(() => {
+        try { return JSON.parse(localStorage.getItem(FAVOURITES_KEY) || '[]'); }
+        catch { return []; }
+    });
+    const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
+
+    const toggleFavourite = (avatarId: string) => {
+        setFavouriteAvatars(prev => {
+            const next = prev.includes(avatarId) ? prev.filter(id => id !== avatarId) : [...prev, avatarId];
+            localStorage.setItem(FAVOURITES_KEY, JSON.stringify(next));
+            return next;
+        });
+    };
 
     // Pagination & search
     const [avatarPage, setAvatarPage] = useState(1);
@@ -187,6 +207,7 @@ const VideoGeneratorView: React.FC = () => {
 
     const filteredAvatars = stockAvatars.filter(av =>
         av.id && (!avatarSearch || av.name.toLowerCase().includes(avatarSearch.toLowerCase()))
+        && (!showFavouritesOnly || favouriteAvatars.includes(av.id))
     );
     const pagedAvatars = filteredAvatars.slice((avatarPage - 1) * AVATARS_PER_PAGE, avatarPage * AVATARS_PER_PAGE);
     const totalAvatarPages = Math.ceil(filteredAvatars.length / AVATARS_PER_PAGE);
@@ -335,7 +356,8 @@ const VideoGeneratorView: React.FC = () => {
                     avatarId: avatarMode === 'stock' ? selectedAvatar : talkingPhotoId,
                     avatarType: avatarMode === 'stock' ? 'avatar' : 'talking_photo',
                     voiceId: selectedVoice,
-                    layout: 'lower_third'
+                    layout: 'lower_third',
+                    aspectRatio,
                 }),
             });
             const data = await res.json();
@@ -484,7 +506,7 @@ const VideoGeneratorView: React.FC = () => {
 
                         {avatarMode === 'stock' ? (
                             <>
-                                {/* Search + count */}
+                                {/* Search + count + favourites filter */}
                                 <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
                                     <TextField
                                         size="small"
@@ -496,6 +518,15 @@ const VideoGeneratorView: React.FC = () => {
                                         }}
                                         sx={{ flex: 1, '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }}
                                     />
+                                    <Tooltip title={showFavouritesOnly ? 'Show all avatars' : 'Show favourites only'}>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => setShowFavouritesOnly(prev => !prev)}
+                                            sx={{ color: showFavouritesOnly ? '#f44336' : 'var(--text-secondary)', border: '1px solid', borderColor: showFavouritesOnly ? 'rgba(244,67,54,0.4)' : 'var(--border-color)', borderRadius: 1 }}
+                                        >
+                                            {showFavouritesOnly ? <FavIcon sx={{ fontSize: 18 }} /> : <FavBorderIcon sx={{ fontSize: 18 }} />}
+                                        </IconButton>
+                                    </Tooltip>
                                     {!avatarsLoading && (
                                         <Typography variant="caption" sx={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                                             {filteredAvatars.length} avatar{filteredAvatars.length !== 1 ? 's' : ''}
@@ -529,6 +560,15 @@ const VideoGeneratorView: React.FC = () => {
                                                 <CardActionArea onClick={() => setSelectedAvatar(av.id)}>
                                                     <Box sx={{ position: 'relative', pt: '125%', overflow: 'hidden' }}>
                                                         <img src={av.thumbnail} alt={av.name} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={(e) => { e.stopPropagation(); toggleFavourite(av.id); }}
+                                                            sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'rgba(0,0,0,0.5)', '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' } }}
+                                                        >
+                                                            {favouriteAvatars.includes(av.id)
+                                                                ? <FavIcon sx={{ fontSize: 16, color: '#f44336' }} />
+                                                                : <FavBorderIcon sx={{ fontSize: 16, color: 'rgba(255,255,255,0.6)' }} />}
+                                                        </IconButton>
                                                     </Box>
                                                     <CardContent sx={{ p: 1.5, textAlign: 'center' }}>
                                                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: selectedAvatar === av.id ? 'var(--accent-gold)' : '#fff' }}>{av.name}</Typography>
@@ -698,6 +738,25 @@ const VideoGeneratorView: React.FC = () => {
             case 3: // Background & Render
                 return (
                     <Box sx={{ mt: 2 }}>
+                        {/* Aspect Ratio Selector */}
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+                            <AspectRatioIcon sx={{ color: 'var(--accent-gold)', fontSize: 20 }} />
+                            <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)' }}>Aspect Ratio</Typography>
+                            <ToggleButtonGroup
+                                value={aspectRatio}
+                                exclusive
+                                onChange={(_, v) => v && setAspectRatio(v)}
+                                size="small"
+                            >
+                                <ToggleButton value="16:9" sx={{ color: 'var(--text-secondary)', '&.Mui-selected': { bgcolor: 'rgba(201,169,97,0.2)', color: 'var(--accent-gold)' } }}>
+                                    <Box sx={{ width: 32, height: 18, border: '2px solid currentColor', borderRadius: 0.5, mr: 1 }} /> 16:9
+                                </ToggleButton>
+                                <ToggleButton value="9:16" sx={{ color: 'var(--text-secondary)', '&.Mui-selected': { bgcolor: 'rgba(201,169,97,0.2)', color: 'var(--accent-gold)' } }}>
+                                    <Box sx={{ width: 18, height: 32, border: '2px solid currentColor', borderRadius: 0.5, mr: 1 }} /> 9:16
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Stack>
+                        <Divider sx={{ mb: 3, borderColor: 'var(--border-color)' }} />
                         <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 2 }}>Choose Background Style</Typography>
                         <Grid container spacing={3}>
                             <Grid size={{ xs: 12, md: 4 }}>

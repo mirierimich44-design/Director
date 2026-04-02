@@ -78,7 +78,14 @@ export const AnimationComponent = () => {
         left: 192,
         width: 600,
         height: 200,
-        opacity: opStat1
+        opacity: opStat1,
+        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 16,
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        padding: 32,
+        boxSizing: 'border-box'
       }}>
         <div style={{ fontSize: 80, fontWeight: 'bold', color: 'ACCENT_COLOR', fontFamily: 'monospace' }}>{stat1}</div>
         <div style={{ fontSize: 24, color: 'TEXT_ON_PRIMARY', opacity: 0.6, marginTop: 16 }}>{label1}</div>
@@ -90,7 +97,14 @@ export const AnimationComponent = () => {
         left: 850,
         width: 600,
         height: 200,
-        opacity: opStat2
+        opacity: opStat2,
+        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 16,
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        padding: 32,
+        boxSizing: 'border-box'
       }}>
         <div style={{ fontSize: 80, fontWeight: 'bold', color: 'SECONDARY_COLOR', fontFamily: 'monospace' }}>{stat2}</div>
         <div style={{ fontSize: 24, color: 'TEXT_ON_PRIMARY', opacity: 0.6, marginTop: 16 }}>{label2}</div>

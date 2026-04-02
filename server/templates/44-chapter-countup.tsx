@@ -134,6 +134,7 @@ export const AnimationComponent = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        opacity: 1 - accentOp,
       }}>
         <span style={{
           fontSize: 280,

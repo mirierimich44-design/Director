@@ -36,12 +36,12 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 60, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <span style={{ fontSize: 26, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
       </div>
-      <div style={{ position: 'absolute', top: 160, left: 240, width: 1440, height: 52, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR', borderRadius: '6px 6px 0 0', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 28px', opacity: panelOp }}>
+      <div style={{ position: 'absolute', top: 160, left: 240, width: 1440, height: 52, overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px 16px 0 0', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 28px', opacity: panelOp }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: 'TEXT_ON_PRIMARY', fontFamily: 'monospace', letterSpacing: 1, opacity: 0.6, marginRight: 16 }}>HKEY</span>
         <span style={{ fontSize: 18, fontWeight: 600, color: 'ACCENT_COLOR', fontFamily: 'monospace', letterSpacing: 1 }}>{keyPath}</span>
       </div>
-      <div style={{ position: 'absolute', top: 212, left: 240, width: 1440, height: Math.max(lineH * logLines.length + 60, 60), overflow: 'hidden', backgroundColor: '#0d1117', borderRadius: '0 0 6px 6px', opacity: panelOp }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, width: 1440, height: 44, overflow: 'hidden', backgroundColor: '#161b22', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 24px' }}>
+      <div style={{ position: 'absolute', top: 212, left: 240, width: 1440, height: Math.max(lineH * logLines.length + 60, 60), overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0 0 16px 16px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', opacity: panelOp }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: 1440, height: 44, overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.9)', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 24px' }}>
           <span style={{ fontSize: 14, color: '#8b949e', fontFamily: 'monospace', width: 300 }}>Name</span>
           <span style={{ fontSize: 14, color: '#8b949e', fontFamily: 'monospace', width: 200 }}>Type</span>
           <span style={{ fontSize: 14, color: '#8b949e', fontFamily: 'monospace' }}>Data</span>

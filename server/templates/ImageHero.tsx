@@ -17,44 +17,44 @@ export const AnimationComponent: React.FC = () => {
     const transform = useMemo(() => {
         const m = motionType.toLowerCase();
         
-        // Zoom In (Dolly Forward)
+        // Zoom In (Dolly Forward) — gentle
         if (m.includes('zoom-in') || m.includes('dolly-forward') || m.includes('forward')) {
-            const scale = interpolate(frame, [0, durationInFrames], [1, 1.4], {
+            const scale = interpolate(frame, [0, durationInFrames], [1, 1.15], {
                 extrapolateRight: 'clamp',
                 easing: Easing.out(Easing.quad),
             });
             return `scale(${scale})`;
-        }
-        
-        // Zoom Out (Dolly Back)
-        if (m.includes('zoom-out') || m.includes('dolly-back') || m.includes('back')) {
-            const scale = interpolate(frame, [0, durationInFrames], [1.4, 1], {
-                extrapolateRight: 'clamp',
-                easing: Easing.out(Easing.quad),
-            });
-            return `scale(${scale})`;
-        }
-        
-        // Pan Left
-        if (m.includes('pan-left') || m.includes('left')) {
-            const x = interpolate(frame, [0, durationInFrames], [0, -250], {
-                extrapolateRight: 'clamp',
-                easing: Easing.out(Easing.quad),
-            });
-            return `scale(1.2) translateX(${x}px)`;
-        }
-        
-        // Pan Right
-        if (m.includes('pan-right') || m.includes('right')) {
-            const x = interpolate(frame, [0, durationInFrames], [0, 250], {
-                extrapolateRight: 'clamp',
-                easing: Easing.out(Easing.quad),
-            });
-            return `scale(1.2) translateX(${x}px)`;
         }
 
-        // Default: Dramatic drift
-        const scale = interpolate(frame, [0, durationInFrames], [1, 1.35], {
+        // Zoom Out (Dolly Back) — starts normal, gently widens
+        if (m.includes('zoom-out') || m.includes('dolly-back') || m.includes('back')) {
+            const scale = interpolate(frame, [0, durationInFrames], [1.15, 1], {
+                extrapolateRight: 'clamp',
+                easing: Easing.out(Easing.quad),
+            });
+            return `scale(${scale})`;
+        }
+
+        // Pan Left
+        if (m.includes('pan-left') || m.includes('left')) {
+            const x = interpolate(frame, [0, durationInFrames], [0, -120], {
+                extrapolateRight: 'clamp',
+                easing: Easing.out(Easing.quad),
+            });
+            return `scale(1.08) translateX(${x}px)`;
+        }
+
+        // Pan Right
+        if (m.includes('pan-right') || m.includes('right')) {
+            const x = interpolate(frame, [0, durationInFrames], [0, 120], {
+                extrapolateRight: 'clamp',
+                easing: Easing.out(Easing.quad),
+            });
+            return `scale(1.08) translateX(${x}px)`;
+        }
+
+        // Default: Subtle drift
+        const scale = interpolate(frame, [0, durationInFrames], [1, 1.1], {
             extrapolateRight: 'clamp',
             easing: Easing.out(Easing.quad),
         });
@@ -62,19 +62,18 @@ export const AnimationComponent: React.FC = () => {
     }, [frame, durationInFrames, motionType]);
 
     // ── Sunlight/Shadow Logic ──────────────────────────────────────────────
-    // Moving shadow filter to simulate sun passing - AGGRESSIVE
-    const shadowOpacity = interpolate(frame, [0, durationInFrames], [0.2, 0.65], {
+    const shadowOpacity = interpolate(frame, [0, durationInFrames], [0.1, 0.3], {
         extrapolateRight: 'clamp',
     });
-    const shadowX = interpolate(frame, [0, durationInFrames], [-40, 80], {
+    const shadowX = interpolate(frame, [0, durationInFrames], [-10, 20], {
         extrapolateRight: 'clamp',
     });
-    const shadowY = interpolate(frame, [0, durationInFrames], [20, 60], {
+    const shadowY = interpolate(frame, [0, durationInFrames], [5, 15], {
         extrapolateRight: 'clamp',
     });
 
-    // Cloud/Branch shadow overlay (Moving SVG mask)
-    const cloudX = interpolate(frame, [0, durationInFrames], [-400, 400], {
+    // Cloud/Branch shadow overlay (Moving SVG mask) — subtle
+    const cloudX = interpolate(frame, [0, durationInFrames], [-200, 200], {
         extrapolateRight: 'clamp',
     });
 

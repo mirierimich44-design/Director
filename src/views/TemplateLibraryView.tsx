@@ -299,7 +299,7 @@ const TemplateLibraryView: React.FC = () => {
                                     <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.05)' }} />
 
                                     <Box>
-                                        <Typography variant="caption" sx={{ color: '#555', display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
+                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 0.5, textTransform: 'uppercase' }}>
                                             Fields ({template.fields.length})
                                         </Typography>
                                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>

@@ -173,7 +173,7 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
             '&.Mui-focused fieldset': { borderColor: catColor },
         },
         '& .MuiInputBase-input': { color: 'var(--text-primary)' },
-        '& .MuiInputLabel-root': { color: '#666', fontSize: '0.7rem' },
+        '& .MuiInputLabel-root': { color: 'var(--text-secondary)', fontSize: '0.7rem' },
         '& .MuiInputLabel-root.Mui-focused': { color: catColor },
     };
 
@@ -215,7 +215,7 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                             startIcon={renderStatus === 'rendering' ? <CircularProgress size={12} sx={{ color: 'inherit' }} /> : <VideoIcon sx={{ fontSize: '14px !important' }} />}
                             disabled={renderStatus === 'rendering'}
                             onClick={handleRender}
-                            sx={{ bgcolor: catColor, color: '#000', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', whiteSpace: 'nowrap', '&:hover': { bgcolor: catColor + 'dd' }, '&.Mui-disabled': { bgcolor: '#333', color: '#666' } }}
+                            sx={{ bgcolor: catColor, color: '#000', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px', whiteSpace: 'nowrap', '&:hover': { bgcolor: catColor + 'dd' }, '&.Mui-disabled': { bgcolor: '#333', color: 'var(--text-secondary)' } }}
                         >
                             {renderStatus === 'rendering' ? 'RENDERING…' : 'RENDER VIDEO'}
                         </Button>
@@ -229,12 +229,12 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
             <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'row', overflow: 'hidden', height: 560 }}>
                 {/* Left: fields one per row */}
                 <Box sx={{ width: 280, flexShrink: 0, borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                    <Typography sx={{ fontSize: '0.6rem', color: '#555', letterSpacing: '2px', textTransform: 'uppercase', px: 2, pt: 1.5, pb: 1, borderBottom: '1px solid #111' }}>
+                    <Typography sx={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '2px', textTransform: 'uppercase', px: 2, pt: 1.5, pb: 1, borderBottom: '1px solid #111' }}>
                         Content Fields
                     </Typography>
                     <Box sx={{ overflow: 'auto', flexGrow: 1, px: 1.5, py: 1.5 }}>
                         {contentFields.length === 0 ? (
-                            <Typography sx={{ color: '#555', fontSize: '0.72rem', px: 0.5 }}>
+                            <Typography sx={{ color: 'var(--text-secondary)', fontSize: '0.72rem', px: 0.5 }}>
                                 No content fields.
                             </Typography>
                         ) : (
@@ -293,8 +293,8 @@ const EditFieldsDialog: React.FC<EditDialogProps> = ({ open, onClose, generated,
                         <img src={generated.screenshotUrl} alt={generated.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                     ) : (
                         <Box sx={{ textAlign: 'center', px: 4 }}>
-                            <VideoIcon sx={{ color: '#333', fontSize: 56, mb: 1.5 }} />
-                            <Typography sx={{ color: '#555', fontSize: '0.75rem' }}>
+                            <VideoIcon sx={{ color: 'var(--text-secondary)', fontSize: 56, mb: 1.5 }} />
+                            <Typography sx={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
                                 Click Render Video to preview
                             </Typography>
                         </Box>
@@ -650,10 +650,10 @@ const AnimationGeneratorView: React.FC = () => {
                                     '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' },
                                 },
                                 '& .MuiInputBase-input': { color: 'var(--text-primary)' },
-                                '& .MuiInputBase-input::placeholder': { color: '#555' },
+                                '& .MuiInputBase-input::placeholder': { color: 'var(--text-secondary)' },
                             }}
                         />
-                        <Typography sx={{ fontSize: '0.6rem', color: '#555', mt: 0.3 }}>
+                        <Typography sx={{ fontSize: '0.6rem', color: 'var(--text-secondary)', mt: 0.3 }}>
                             e.g. "dark red and white color scheme" or "use grid lines"
                         </Typography>
                     </Box>
@@ -742,7 +742,7 @@ const AnimationGeneratorView: React.FC = () => {
                                         fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px',
                                         color: catColor, borderColor: catColor + '88',
                                         '&:hover': { bgcolor: catColor + '18', borderColor: catColor },
-                                        '&.Mui-disabled': { color: '#444', borderColor: '#333' },
+                                        '&.Mui-disabled': { color: 'var(--text-secondary)', borderColor: '#333' },
                                     }}
                                 >
                                     {generatingAll

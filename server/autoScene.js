@@ -47,10 +47,10 @@ const SYSTEM_PROMPT = `You are the ARXXIS scene director. You analyze documentar
 
 SCENE TYPES:
 - [TEMPLATE SCENE]: Remotion animated template (stats, timelines, networks, maps, code, profiles, chapters, transitions)
-- [3D RENDER]: AI-generated photorealistic environment (physical spaces, objects — NO humans)
+- [3D RENDER]: AI-generated photorealistic environment (physical spaces, infrastructure, technology, objects — STRICTLY NO HUMANS, NO PEOPLE, NO FACES, NO BODY PARTS).
 
 ROUTING ENGINE — run on every sentence, stop at first YES:
-Q1: Physical space/object/infrastructure/environment? → [3D RENDER]
+Q1: Physical space/object/infrastructure/environment/hardware? → [3D RENDER] (Focus on objects only, NEVER include humans)
 Q2: Chapter opener/structural beat/transition? → [TEMPLATE SCENE] → 42-chapter-word-drop / 43-chapter-typewriter / 44-chapter-countup / 45-chapter-wipe / 46-chapter-glitch / 158-chapter-word-drop / 81-transition-fade-title / 82-transition-wipe-chapter / 83-transition-zoom-reveal / 84-transition-glitch-cut
 Q3: Named hacker/threat actor/person? → [TEMPLATE SCENE] → 75-person-profile / 80-threat-actor-card / 85-person-profile
 Q4: Named organization/company/victim? → [TEMPLATE SCENE] → 76-organization-card / 114-dossier-open / 117-breach-report-card

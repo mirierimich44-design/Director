@@ -36,13 +36,16 @@ export const AnimationComponent = () => {
         left: 360,
         width: 1200,
         height: 720,
-        backgroundColor: 'rgba(20, 20, 20, 0.95)',
-        border: '2px solid #e63946',
+        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        border: '1px solid rgba(255,255,255,0.1)',
         padding: '64px',
         boxSizing: 'border-box',
         opacity: op,
         transform: `scale(${scale})`,
-        zIndex: 1
+        zIndex: 1,
+        backdropFilter: 'blur(20px)',
+        borderRadius: 24,
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
       }}>
         <div style={{ color: '#e63946', fontSize: 24, fontWeight: 'bold', letterSpacing: '0.2em', marginBottom: 24, opacity: reveal1 }}>{source}</div>
         <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 64, fontWeight: 'bold', marginBottom: 40, opacity: reveal1 }}>{title}</div>

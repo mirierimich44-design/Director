@@ -83,7 +83,7 @@ function TemplateCard({ result, onFix, fixing, onAdjust }: {
                     height: 180, bgcolor: '#111', display: 'flex',
                     alignItems: 'center', justifyContent: 'center',
                 }}>
-                    <ImageIcon sx={{ color: '#333', fontSize: 36 }} />
+                    <ImageIcon sx={{ color: 'var(--text-secondary)', fontSize: 36 }} />
                 </Box>
             )}
 

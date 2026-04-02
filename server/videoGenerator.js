@@ -130,7 +130,7 @@ router.get('/heygen-voices', async (req, res) => {
 
 // ── HeyGen Generate ─────────────────────────────────────────────────────────
 router.post('/heygen-generate', async (req, res) => {
-    let { script, backgroundVideoUrl, bgMode, bgColor, avatarId, avatarType, voiceId, layout } = req.body;
+    let { script, backgroundVideoUrl, bgMode, bgColor, avatarId, avatarType, voiceId, layout, aspectRatio } = req.body;
     const settings = getRawSettings();
     const apiKey = settings.keys.heygen;
     const publicUrl = settings.publicUrl || '';
@@ -165,24 +165,29 @@ router.post('/heygen-generate', async (req, res) => {
                 avatar_style: "normal"
               };
 
-        let background = {
-            type: "video",
-            video_asset_url: backgroundVideoUrl,
-            play_style: "fit"
-        };
+        // Determine background — default to green screen if no valid URL
+        let background;
 
-        if (bgMode === 'color') {
+        if (bgMode === 'color' || !backgroundVideoUrl) {
             background = { type: "color", value: bgColor || "#00FF00" };
         } else if (bgMode === 'upload' && backgroundVideoUrl) {
             const isVideo = backgroundVideoUrl.toLowerCase().endsWith('.mp4') || backgroundVideoUrl.toLowerCase().endsWith('.webm');
-            background = isVideo 
+            background = isVideo
                 ? { type: "video", video_asset_url: backgroundVideoUrl, play_style: "fit" }
                 : { type: "image", url: backgroundVideoUrl, play_style: "fit" };
+        } else if (bgMode === 'pexels' && backgroundVideoUrl) {
+            background = { type: "video", video_asset_url: backgroundVideoUrl, play_style: "fit" };
+        } else {
+            background = { type: "color", value: bgColor || "#00FF00" };
         }
+
+        // Aspect ratio: default 16:9, support 9:16
+        const isPortrait = aspectRatio === '9:16';
+        const dimension = isPortrait ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 };
 
         const body = {
             video_inputs: [{ character, voice: { type: "text", input_text: script, voice_id: voiceId }, background }],
-            dimension: { width: 1920, height: 1080 }
+            dimension
         };
 
         const response = await fetch('https://api.heygen.com/v2/video/generate', {

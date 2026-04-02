@@ -19,9 +19,9 @@ export const AnimationComponent = () => {
   const titleOp = interpolate(frame, [0, 20, zoomStart, zoomStart + 20], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
 
-  const zoom = interpolate(frame, [zoomStart, zoomEnd], [1, 1.8], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
-  const panX = interpolate(frame, [zoomStart, zoomEnd], [0, -400], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
-  const panY = interpolate(frame, [zoomStart, zoomEnd], [0, -50], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
+  const zoom = interpolate(frame, [zoomStart, zoomEnd], [1, 1.4], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
+  const panX = interpolate(frame, [zoomStart, zoomEnd], [0, -200], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
+  const panY = interpolate(frame, [zoomStart, zoomEnd], [0, -30], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
   
   const detailOp = interpolate(frame, [zoomEnd - 20, zoomEnd + 10], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const detailTx = interpolate(frame, [zoomEnd - 20, zoomEnd + 10], [40, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });

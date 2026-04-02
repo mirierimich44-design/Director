@@ -20,7 +20,7 @@ export const AnimationComponent = () => {
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
       {/* Left Side */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: splitX, height: 1080, backgroundColor: 'PRIMARY_COLOR', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 300, left: 100, width: 700, opacity: contentOp, color: 'TEXT_ON_PRIMARY' }}>
+        <div style={{ position: 'absolute', top: 300, left: 100, width: 700, opacity: contentOp, color: 'TEXT_ON_PRIMARY', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.5)', padding: 40, boxSizing: 'border-box' }}>
           <div style={{ fontSize: 64, fontWeight: 'bold', marginBottom: 24 }}>{title1}</div>
           <div style={{ fontSize: 80, fontWeight: 'bold', fontFamily: 'monospace', marginBottom: 24 }}>{stat1}</div>
           <div style={{ fontSize: 24, lineHeight: 1.5 }}>{desc1}</div>
@@ -29,7 +29,7 @@ export const AnimationComponent = () => {
 
       {/* Right Side */}
       <div style={{ position: 'absolute', top: 0, left: splitX, width: width - splitX, height: 1080, backgroundColor: 'SECONDARY_COLOR', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 300, left: 100, width: 700, opacity: contentOp, color: 'TEXT_ON_SECONDARY' }}>
+        <div style={{ position: 'absolute', top: 300, left: 100, width: 700, opacity: contentOp, color: 'TEXT_ON_SECONDARY', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.5)', padding: 40, boxSizing: 'border-box' }}>
           <div style={{ fontSize: 64, fontWeight: 'bold', marginBottom: 24 }}>{title2}</div>
           <div style={{ fontSize: 80, fontWeight: 'bold', fontFamily: 'monospace', marginBottom: 24 }}>{stat2}</div>
           <div style={{ fontSize: 24, lineHeight: 1.5 }}>{desc2}</div>

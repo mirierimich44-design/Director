@@ -63,7 +63,7 @@ export const AnimationComponent = () => {
         <span style={{ fontSize: 22, fontWeight: 500, color: 'SUPPORT_COLOR', fontFamily: 'sans-serif', textTransform: 'uppercase', letterSpacing: 2, alignSelf: 'flex-end', paddingBottom: 8 }}>{countLabel}</span>
       </div>
 
-      <div style={{ position: 'absolute', top: 840, left: 1400, width: 360, height: 56, overflow: 'hidden', opacity: labelOp, backgroundColor: 'SECONDARY_COLOR', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ position: 'absolute', top: 840, left: 1400, width: 360, height: 56, overflow: 'hidden', opacity: labelOp, backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, boxShadow: '0 20px 50px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{ fontSize: 20, fontWeight: 700, color: 'TEXT_ON_SECONDARY', fontFamily: 'sans-serif', letterSpacing: 2, textTransform: 'uppercase' }}>{alertText}</span>
       </div>
     </div>

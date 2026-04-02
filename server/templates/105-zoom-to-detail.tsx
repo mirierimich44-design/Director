@@ -10,9 +10,9 @@ export const AnimationComponent = () => {
   const detailLabel = 'DETAIL_LABEL';
   const detailBody = 'DETAIL_BODY';
 
-  const zoom = interpolate(frame, [60, 150], [1, 2.5], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const panX = interpolate(frame, [60, 150], [0, -400], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const panY = interpolate(frame, [60, 150], [0, -100], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const zoom = interpolate(frame, [60, 150], [1, 1.5], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const panX = interpolate(frame, [60, 150], [0, -200], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const panY = interpolate(frame, [60, 150], [0, -50], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   
   const overviewOp = interpolate(frame, [120, 160], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const detailOp = interpolate(frame, [160, 200], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
@@ -35,12 +35,16 @@ export const AnimationComponent = () => {
         position: 'absolute', 
         top: 200, 
         right: 200, 
-        width: 600, 
-        height: 600, 
-        backgroundColor: 'SECONDARY_COLOR', 
+        width: 600,
+        height: 600,
+        backgroundColor: 'rgba(15, 23, 42, 0.8)',
         opacity: detailOp,
         padding: 40,
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 24,
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
       }}>
         <div style={{ fontSize: 40, fontWeight: 'bold', color: 'TEXT_ON_SECONDARY', marginBottom: 24 }}>{detailLabel}</div>
         <div style={{ fontSize: 24, color: 'TEXT_ON_SECONDARY', lineHeight: 1.6 }}>{detailBody}</div>

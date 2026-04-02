@@ -45,19 +45,48 @@ export const AnimationComponent = () => {
 
   // Zone colors — background segments
   const zones = [
-    { start: 0, end: 0.33, color: '#22c55e' },
-    { start: 0.33, end: 0.66, color: '#f59e0b' },
-    { start: 0.66, end: 1.0, color: '#ef4444' },
+    { start: 0, end: 0.5, color: 'PRIMARY_COLOR' },
+    { start: 0.5, end: 1.0, color: 'ACCENT_COLOR' },
   ].filter(zone => zone.color !== '' && zone.color !== 'Placeholder')
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
+    <div style={{ 
+      position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', 
+      backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif' 
+    }}>
+      {/* Background Decor */}
+      <div style={{ 
+        position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%', 
+        border: '1px solid rgba(255,255,255,0.03)', borderRadius: '50%', opacity: 0.5 
+      }} />
+
       <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 5, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR', opacity: titleOp }} />
       <div style={{ position: 'absolute', top: 1074, left: 0, width: barW, height: 6, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR' }} />
-      <div style={{ position: 'absolute', top: 60, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
-        <span style={{ fontSize: 28, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
+      
+      <div style={{ 
+        position: 'absolute', top: 80, left: 0, width: 1920, height: 60, 
+        overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+        opacity: titleOp, transform: `translateY(${titleTy}px)` 
+      }}>
+        <span style={{ fontSize: 24, fontWeight: 800, color: 'PRIMARY_COLOR', letterSpacing: 8, textTransform: 'uppercase' }}>{title}</span>
       </div>
+
+      {/* Main Gauge Container (Glassy) */}
+      <div style={{
+        position: 'absolute', top: cy - 450, left: cx - 500, width: 1000, height: 600,
+        backgroundColor: 'rgba(255,255,255,0.01)', backdropFilter: 'blur(10px)',
+        borderRadius: '40px 40px 0 0', border: '1px solid rgba(255,255,255,0.05)',
+        borderBottom: 'none', opacity: titleOp
+      }} />
+
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
+        <defs>
+          <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="PRIMARY_COLOR" />
+            <stop offset="100%" stopColor="ACCENT_COLOR" />
+          </linearGradient>
+        </defs>
+
         {/* Zone arcs background */}
         {zones.map((zone, i) => {
           const sa = Math.PI + zone.start * Math.PI
@@ -67,25 +96,33 @@ export const AnimationComponent = () => {
           const zx2 = cx + arcR * Math.cos(ea)
           const zy2 = cy + arcR * Math.sin(ea)
           const la = (zone.end - zone.start) > 0.5 ? 1 : 0
-          return <path key={i} d={`M ${zx1} ${zy1} A ${arcR} ${arcR} 0 ${la} 1 ${zx2} ${zy2}`} fill="none" stroke={zone.color} strokeWidth={strokeW} opacity={0.2} />
+          return <path key={i} d={`M ${zx1} ${zy1} A ${arcR} ${arcR} 0 ${la} 1 ${zx2} ${zy2}`} fill="none" stroke={zone.color} strokeWidth={strokeW} opacity={0.05} />
         })}
         {/* Active arc */}
-        {arcPath && <path d={arcPath} fill="none" stroke="PRIMARY_COLOR" strokeWidth={strokeW} strokeLinecap="round" />}
+        {arcPath && <path d={arcPath} fill="none" stroke="url(#gaugeGradient)" strokeWidth={strokeW} strokeLinecap="round" filter="drop-shadow(0 0 10px rgba(0,0,0,0.5))" />}
+        
         {/* Needle */}
-        <line x1={cx} y1={cy} x2={needleX} y2={needleY} stroke="ACCENT_COLOR" strokeWidth={4} strokeLinecap="round" opacity={gaugeProgress} />
-        <circle cx={cx} cy={cy} r={18} fill="PRIMARY_COLOR" opacity={gaugeProgress} />
+        <line x1={cx} y1={cy} x2={needleX} y2={needleY} stroke="#fff" strokeWidth={6} strokeLinecap="round" opacity={gaugeProgress} />
+        <circle cx={cx} cy={cy} r={22} fill="BACKGROUND_COLOR" stroke="PRIMARY_COLOR" strokeWidth={4} opacity={gaugeProgress} />
+        
         {/* Min/Max labels */}
-        <text x={cx - arcR - 10} y={cy + 40} fill="SUPPORT_COLOR" fontSize={20} fontFamily="sans-serif" textAnchor="middle" opacity={labelOp}>0</text>
-        <text x={cx + arcR + 10} y={cy + 40} fill="SUPPORT_COLOR" fontSize={20} fontFamily="sans-serif" textAnchor="middle" opacity={100}>100</text>
+        <text x={cx - arcR} y={cy + 50} fill="SUPPORT_COLOR" fontSize={18} fontWeight={700} textAnchor="middle" opacity={labelOp}>MIN</text>
+        <text x={cx + arcR} y={cy + 50} fill="SUPPORT_COLOR" fontSize={18} fontWeight={700} textAnchor="middle" opacity={labelOp}>MAX</text>
       </svg>
-      <div style={{ position: 'absolute', top: cy - 80, left: cx - 160, width: 320, height: 100, overflow: 'hidden', opacity: valueOp, transform: `translateY(${valueTy}px)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: 88, fontWeight: 900, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', lineHeight: 1, letterSpacing: -2 }}>{percentValue}</span>
+
+      <div style={{ 
+        position: 'absolute', top: cy - 120, left: cx - 200, width: 400, height: 140, 
+        overflow: 'hidden', opacity: valueOp, transform: `translateY(${valueTy}px)`, 
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' 
+      }}>
+        <span style={{ fontSize: 120, fontWeight: 900, color: '#fff', lineHeight: 1, letterSpacing: -4 }}>{percentValue}</span>
+        <span style={{ fontSize: 22, fontWeight: 700, color: 'PRIMARY_COLOR', textTransform: 'uppercase', letterSpacing: 4, marginTop: 10 }}>{percentLabel}</span>
       </div>
-      <div style={{ position: 'absolute', top: cy + 30, left: cx - 200, width: 400, height: 50, overflow: 'hidden', opacity: valueOp, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: 24, fontWeight: 600, color: 'SUPPORT_COLOR', fontFamily: 'sans-serif', textTransform: 'uppercase', letterSpacing: 2 }}>{percentLabel}</span>
-      </div>
-      <div style={{ position: 'absolute', top: cy + 100, left: 0, width: 1920, height: 50, overflow: 'hidden', opacity: labelOp, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: 22, fontWeight: 400, color: 'SUPPORT_COLOR', fontFamily: 'sans-serif' }}>{contextText}</span>
+
+      <div style={{ position: 'absolute', top: cy + 120, left: 0, width: 1920, height: 50, overflow: 'hidden', opacity: labelOp, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ padding: '8px 24px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 100, border: '1px solid rgba(255,255,255,0.05)' }}>
+          <span style={{ fontSize: 20, fontWeight: 500, color: 'SUPPORT_COLOR', letterSpacing: 1 }}>{contextText}</span>
+        </div>
       </div>
     </div>
   )

@@ -21,7 +21,7 @@ export const AnimationComponent = () => {
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'sans-serif' }}>
       <div style={{ position: 'absolute', top: 60, left: 192, fontSize: 40, fontWeight: 'bold', color: 'PRIMARY_COLOR', opacity: titleOp }}>{title}</div>
       
-      <div style={{ position: 'absolute', top: 180, left: 192, width: 1536, opacity: tableOp }}>
+      <div style={{ position: 'absolute', top: 180, left: 192, width: 1536, opacity: tableOp, backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.5)', padding: 40, boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', borderBottom: '3px solid PRIMARY_COLOR', paddingBottom: 24, marginBottom: 24 }}>
           <div style={{ width: 400, color: 'SUPPORT_COLOR', fontSize: 22, fontWeight: 600 }}>FEATURE</div>
           {headers.map((h, i) => (

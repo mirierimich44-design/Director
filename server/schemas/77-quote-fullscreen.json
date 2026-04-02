@@ -10,8 +10,8 @@
                  "statement"
              ],
     "fields":  {
-                   "WORD_1":  "The main quote text, e.g. \u0027We had no idea they had been inside our network for nine months.\u0027",
-                   "WORD_2":  "Optional second line or continuation of the quote, or leave as empty context",
+                   "QUOTE_LINE_1":  "The main quote sentence or paragraph, e.g. \u0027We had no idea they had been inside our network for nine months.\u0027",
+                   "QUOTE_LINE_2":  "Optional second line or continuation of the quote, e.g. \u0027The damage was already done by the time we noticed.\u0027",
                    "LABEL_1":  "Name of the person being quoted, e.g. \u0027MGM RESORTS CEO\u0027",
                    "LABEL_2":  "Their role or context, e.g. \u0027Testimony to Senate Committee, 2024\u0027",
                    "SUB_LABEL":  "Date or tag shown top right, e.g. \u0027SEPT 2023\u0027"

@@ -43,7 +43,7 @@ export const AnimationComponent = () => {
             <div key={i} style={{
               width: 160,
               height: 200,
-              backgroundColor: 'NODE_FILL',
+              backgroundColor: 'rgba(15, 23, 42, 0.8)',
               borderRadius: 16,
               display: 'flex',
               alignItems: 'center',
@@ -54,7 +54,9 @@ export const AnimationComponent = () => {
               color: 'PRIMARY_COLOR',
               overflow: 'hidden',
               position: 'relative',
-              border: '4px solid rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
             }}>
               <div style={{
                 position: 'absolute',

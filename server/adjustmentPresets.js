@@ -128,8 +128,8 @@ export const ADJUSTMENT_PRESETS = {
     presets: [
       {
         id: 'aggressive-ken-burns',
-        label: 'Aggressive Ken Burns',
-        prompt: 'Make the image motion (zoom/pan) significantly more dramatic. Increase interpolate output ranges for scale from [1, 1.2] to [1, 1.45] and for translateX/Y from [0, 100] to [0, 300]. Use Easing.out(Easing.quad) for smoother, faster deceleration.',
+        label: 'Dynamic Ken Burns',
+        prompt: 'Make the image motion (zoom/pan) more noticeable but keep content within the 16:9 frame. Increase interpolate output ranges for scale from [1, 1.05] to [1, 1.2] and for translateX/Y from [0, 50] to [0, 150]. Use Easing.out(Easing.quad) for smoother deceleration. Never exceed scale 1.25 to avoid cropping.',
       },
       {
         id: 'dramatic-shadows',
@@ -139,7 +139,7 @@ export const ADJUSTMENT_PRESETS = {
       {
         id: 'high-velocity',
         label: 'High Velocity',
-        prompt: 'Reduce entrance animation durations by 50% but increase the distance traveled (translateX/Y). Make elements "slam" into place with significant overshoot (1.15 scale or 20px past destination) then settle.',
+        prompt: 'Reduce entrance animation durations by 30% and slightly increase travel distance. Add a subtle overshoot (1.05 scale or 8px past destination) then settle. Keep all content within the 1920x1080 frame.',
       },
     ],
   },

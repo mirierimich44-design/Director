@@ -39,9 +39,9 @@ export const AnimationComponent = () => {
         <span style={{ fontSize: 26, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
       </div>
       {/* Terminal window */}
-      <div style={{ position: 'absolute', top: 160, left: 240, width: 1440, height: lineH * logLines.length + 100, overflow: 'hidden', backgroundColor: '#0d1117', borderRadius: 8, opacity: panelOp, transform: `translateY(${panelTy}px)`, boxSizing: 'border-box' }}>
+      <div style={{ position: 'absolute', top: 160, left: 240, width: 1440, height: lineH * logLines.length + 100, overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, boxShadow: '0 20px 50px rgba(0,0,0,0.5)', opacity: panelOp, transform: `translateY(${panelTy}px)`, boxSizing: 'border-box' }}>
         {/* Title bar */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: 1440, height: 44, overflow: 'hidden', backgroundColor: '#161b22', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 20px' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: 1440, height: 44, overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderRadius: '16px 16px 0 0', display: 'flex', alignItems: 'center', boxSizing: 'border-box', padding: '0 20px' }}>
           <div style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: '#ff5f57', marginRight: 8 }} />
           <div style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: '#febc2e', marginRight: 8 }} />
           <div style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: '#28c840', marginRight: 20 }} />

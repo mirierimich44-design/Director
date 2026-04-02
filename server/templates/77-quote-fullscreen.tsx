@@ -15,8 +15,8 @@ export const AnimationComponent = () => {
   const subOp = interpolate(frame, [62, 76], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const barW = interpolate(frame, [15, 50], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
-  const word1 = "WORD_1"
-  const word2 = "WORD_2"
+  const word1 = "QUOTE_LINE_1"
+  const word2 = "QUOTE_LINE_2"
   const label1 = "LABEL_1"
   const label2 = "LABEL_2"
   const subLabel = "SUB_LABEL"

@@ -16,51 +16,64 @@ export const AnimationComponent = () => {
       backgroundColor: 'BACKGROUND_COLOR',
       padding: '108px 192px',
       boxSizing: 'border-box',
+      fontFamily: 'Inter, system-ui, sans-serif',
     }}>
+      {/* Glassmorphism container */}
       <div style={{
-        fontSize: 40,
-        fontWeight: 'bold',
-        color: 'PRIMARY_COLOR',
-        marginBottom: 64,
-        letterSpacing: '2px',
-        textTransform: 'uppercase',
+        backgroundColor: 'rgba(15, 23, 42, 0.85)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 24,
+        padding: '60px 80px',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.92)',
       }}>
-        CLASSIFIED_TITLE
-      </div>
-      {filtered.map((text, i) => {
-        const start = 30 + (i * 40);
-        const end = start + 30;
-        const reveal = interpolate(frame, [start, end], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-        const barWidth = interpolate(frame, [start, end], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+        <div style={{
+          fontSize: 40,
+          fontWeight: 'bold',
+          color: 'PRIMARY_COLOR',
+          marginBottom: 48,
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+        }}>
+          CLASSIFIED_TITLE
+        </div>
+        {filtered.map((text, i) => {
+          const start = 20 + (i * 25);
+          const barEnd = start + 20;
+          // Text appears immediately as bar starts sliding, stays at full opacity
+          const textOp = interpolate(frame, [start, start + 10], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+          // Bar slides off from left to right
+          const barLeft = interpolate(frame, [start, barEnd], [0, 100], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
-        return (
-          <div key={i} style={{
-            position: 'relative',
-            height: 60,
-            marginBottom: 24,
-            display: 'flex',
-            alignItems: 'center',
-          }}>
-            <div style={{
-              fontSize: 32,
-              color: 'TEXT_ON_PRIMARY',
-              opacity: reveal,
-              fontFamily: 'monospace',
+          return (
+            <div key={i} style={{
+              position: 'relative',
+              height: 60,
+              marginBottom: 20,
+              display: 'flex',
+              alignItems: 'center',
             }}>
-              {text}
+              <div style={{
+                fontSize: 32,
+                color: 'TEXT_ON_PRIMARY',
+                opacity: textOp,
+                fontFamily: 'monospace',
+              }}>
+                {text}
+              </div>
+              <div style={{
+                position: 'absolute',
+                left: `${barLeft}%`,
+                top: 0,
+                height: '100%',
+                width: '100%',
+                backgroundColor: 'SECONDARY_COLOR',
+                zIndex: 2,
+              }} />
             </div>
-            <div style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              height: '100%',
-              width: `${barWidth}%`,
-              backgroundColor: 'SECONDARY_COLOR',
-              zIndex: 2,
-            }} />
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
