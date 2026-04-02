@@ -127,6 +127,31 @@ const TEMPLATE_CATEGORIES = {
 }
 
 // ─────────────────────────────────────────────
+// Helper: Robust JSON Parse
+// ─────────────────────────────────────────────
+function robustParseJSON(text) {
+  try {
+    return JSON.parse(text)
+  } catch (err) {
+    const firstBracket = text.indexOf('[')
+    const lastBracket = text.lastIndexOf(']')
+    const firstBrace = text.indexOf('{')
+    const lastBrace = text.lastIndexOf('}')
+    let start = -1, end = -1
+    if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+      start = firstBracket; end = lastBracket
+    } else if (firstBrace !== -1) {
+      start = firstBrace; end = lastBrace
+    }
+    if (start !== -1 && end !== -1 && end > start) {
+      const cleaned = text.substring(start, end + 1)
+      try { return JSON.parse(cleaned) } catch (innerErr) { throw new Error(`JSON Syntax Error: ${innerErr.message}`) }
+    }
+    throw err
+  }
+}
+
+// ─────────────────────────────────────────────
 // Helper: Load JSON Schema
 // ─────────────────────────────────────────────
 function loadSchema(templateName) {
@@ -194,7 +219,7 @@ OUTPUT FORMAT (JSON array only):
 
   const result = await model.generateContent(`Analyze this script:\n\n${scriptText}`)
   const raw = result.response.text()
-  return JSON.parse(raw)
+  return robustParseJSON(raw)
 }
 
 // ─────────────────────────────────────────────
@@ -229,7 +254,7 @@ OUTPUT FORMAT (JSON object only):
 
   const result = await model.generateContent(`SCRIPT: "${scene.script}"`)
   const raw = result.response.text()
-  return JSON.parse(raw)
+  return robustParseJSON(raw)
 }
 
 // ─────────────────────────────────────────────
