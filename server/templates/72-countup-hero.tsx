@@ -5,7 +5,7 @@ export const AnimationComponent = () => {
   const frame = useCurrentFrame()
 
   // Base Animations
-  const contentScale = interpolate(frame, [0, 40], [0.98, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const contentTy = interpolate(frame, [0, 40], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const bgOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   
   const prefixOp = interpolate(frame, [12, 35], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
@@ -36,7 +36,7 @@ export const AnimationComponent = () => {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       {/* 16:9 Safe Container */}
-      <div style={{ width: 1600, height: 900, position: 'relative', transform: `scale(${contentScale})` }}>
+      <div style={{ width: 1600, height: 900, position: 'relative', transform: `translateY(${contentTy}px)` }}>
         
         <div style={{ position: 'absolute', top: 40, left: 0, width: '100%', textAlign: 'center', opacity: bgOp }}>
           <div style={{ 

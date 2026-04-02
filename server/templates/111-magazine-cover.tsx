@@ -12,8 +12,8 @@ export const AnimationComponent = () => {
   const label1 = 'LABEL_1';
   const label2 = 'LABEL_2';
 
-  // Base Animations (Strictly 0.95 -> 1.0 scale, no overshoot)
-  const contentScale = interpolate(frame, [0, 40], [0.97, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  // Base Animations
+  const contentTy = interpolate(frame, [0, 40], [20, 0], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const opTitle = interpolate(frame, [10, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const tyTitle = interpolate(frame, [10, 40], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   
@@ -36,7 +36,7 @@ export const AnimationComponent = () => {
       {/* 16:9 Safe Container (80% width/height) */}
       <div style={{
         width: 1536, height: 864, position: 'relative',
-        transform: `scale(${contentScale})`
+        transform: `translateY(${contentTy}px)`
       }}>
         
         {/* Magazine Masthead Style Title */}

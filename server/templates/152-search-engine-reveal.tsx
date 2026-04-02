@@ -25,7 +25,7 @@ export const AnimationComponent = () => {
   // 3. Knowledge Panel
   const knowledgeStart = resultsStart + 8;
   const knowledgeOp = interpolate(frame, [knowledgeStart, knowledgeStart + 15], [0, 1], { extrapolateLeft: 'clamp' });
-  const knowledgeScale = interpolate(frame, [knowledgeStart, knowledgeStart + 15], [0.97, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const knowledgeTy = interpolate(frame, [knowledgeStart, knowledgeStart + 15], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
 
   return (
     <div style={{
@@ -85,7 +85,7 @@ export const AnimationComponent = () => {
 
           {/* Knowledge Panel */}
           <div style={{ 
-              flex: 1, opacity: knowledgeOp, transform: `scale(${knowledgeScale})`,
+              flex: 1, opacity: knowledgeOp, transform: `translateY(${knowledgeTy}px)`,
               backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 24, border: '1px solid rgba(255,255,255,0.08)',
               padding: '40px', maxHeight: 720, backdropFilter: 'blur(20px)',
               display: 'flex', flexDirection: 'column', overflow: 'hidden'
