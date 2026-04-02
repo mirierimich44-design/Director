@@ -14,6 +14,7 @@ import {
     PlayArrow as PlayIcon,
     Search as SearchIcon,
     Person as PersonIcon,
+    CheckCircle as CheckIcon,
 } from '@mui/icons-material';
 
 // ── Static voice data (Kokoro & Orpheus) ──────────────────────────────────────
@@ -324,20 +325,28 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                             )}
                             {!heygenLoading && pagedHeygenVoices.length > 0 && (
                                 <Box sx={{ border: '1px solid var(--border-color)', borderRadius: 1, overflow: 'hidden' }}>
-                                    {pagedHeygenVoices.map((v, i) => (
+                                    {pagedHeygenVoices.map((v, i) => {
+                                        const isSelected = voice === v.id;
+                                        return (
                                         <Box
                                             key={v.id}
                                             onClick={() => setVoice(v.id)}
                                             sx={{
                                                 display: 'flex', alignItems: 'center', px: 1.5, py: 0.75,
-                                                bgcolor: voice === v.id ? 'rgba(201,169,97,0.15)' : (i % 2 === 0 ? 'var(--bg-primary)' : 'rgba(255,255,255,0.02)'),
+                                                bgcolor: isSelected ? 'rgba(201,169,97,0.18)' : (i % 2 === 0 ? 'var(--bg-primary)' : 'rgba(255,255,255,0.02)'),
                                                 borderBottom: i < pagedHeygenVoices.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                                                borderLeft: isSelected ? '3px solid var(--accent-gold)' : '3px solid transparent',
                                                 cursor: 'pointer',
-                                                '&:hover': { bgcolor: 'rgba(255,255,255,0.06)' },
+                                                '&:hover': {
+                                                    bgcolor: isSelected ? 'rgba(201,169,97,0.25)' : 'rgba(255,255,255,0.06)',
+                                                },
                                             }}
                                         >
-                                            <PersonIcon sx={{ fontSize: 14, color: 'var(--text-secondary)', mr: 1, flexShrink: 0 }} />
-                                            <Typography sx={{ flex: 1, fontSize: '0.82rem', color: voice === v.id ? 'var(--accent-gold)' : 'var(--text-primary)', fontWeight: voice === v.id ? 700 : 400 }}>
+                                            {isSelected
+                                                ? <CheckIcon sx={{ fontSize: 14, color: 'var(--accent-gold)', mr: 1, flexShrink: 0 }} />
+                                                : <PersonIcon sx={{ fontSize: 14, color: 'var(--text-secondary)', mr: 1, flexShrink: 0 }} />
+                                            }
+                                            <Typography sx={{ flex: 1, fontSize: '0.82rem', color: isSelected ? 'var(--accent-gold)' : 'var(--text-primary)', fontWeight: isSelected ? 700 : 400 }}>
                                                 {v.label}
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mr: 1, fontSize: '0.65rem', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -350,7 +359,8 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                                                 </IconButton>
                                             )}
                                         </Box>
-                                    ))}
+                                        );
+                                    })}
                                 </Box>
                             )}
                             {totalHeygenPages > 1 && (
