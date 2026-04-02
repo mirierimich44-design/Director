@@ -1389,21 +1389,6 @@ const ProjectDirectorView: React.FC = () => {
                                                                     "{scene.script}"
                                                                 </Typography>
 
-                                                                {(scene.type === '3D_RENDER' || scene.type === 'ILLUSTRATION') && (
-                                                                    <Box sx={{ mt: 2, mb: 1 }}>
-                                                                        <TextField
-                                                                            fullWidth
-                                                                            multiline
-                                                                            size="small"
-                                                                            label="Image Prompt"
-                                                                            value={scene.prompt || ''}
-                                                                            onChange={(e) => handleUpdateScene(chapter.id, idx, { prompt: e.target.value })}
-                                                                            InputProps={{ sx: { fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', bgcolor: 'rgba(0,0,0,0.2)' } }}
-                                                                            InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
-                                                                        />
-                                                                    </Box>
-                                                                )}
-
                                                                 {!isLocked && (
                                                                     <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
                                                                         <Button
