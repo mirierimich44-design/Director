@@ -16,7 +16,6 @@ import {
     Autorenew as RegenerateIcon,
     Settings as SettingsIcon,
     Palette as PaletteIcon,
-    Casino as DiceIcon,
     Edit as EditIcon,
 } from '@mui/icons-material';
 
@@ -106,18 +105,6 @@ const PHASE_LABELS: Record<string, string> = {
     generating: 'GENERATING',
 };
 
-const WHISK_STYLES = [
-    'cinematic 3D render, brushed metal, glowing fiber optics',
-    'editorial watercolor illustration, courtroom sketch aesthetic, loose ink linework, soft washes',
-    'holographic blueprint, neon grid, translucent layers',
-    'claymation style, soft studio lighting, tilt-shift',
-    'retro terminal scanlines, amber glow, ASCII art hints',
-    'isometric pixel art, vibrant colors, clean edges',
-    'charcoal sketch, high contrast, textured paper',
-    'origami paper art, folded shadows, minimalist',
-    'vaporwave aesthetic, pink and teal, lo-fi grit',
-];
-
 const CLITerminal: React.FC<{ progress: number; phase: string; message?: string }> = ({ progress, phase }) => {
     return (
         <Box sx={{ 
@@ -180,10 +167,6 @@ const ProjectDirectorView: React.FC = () => {
     const [batchState, setBatchState] = useState<BatchState | null>(null);
     const [sceneProgress, setSceneProgress] = useState<Record<string, SceneProgress>>({});
     const renderAbortedRef = useRef<boolean>(false);
-
-    // Whisk Remix slots
-    const [editingSlot, setEditingSlot] = useState<{ chapterId: string; sceneIdx: number; field: 'subject' | 'setting' | 'style' } | null>(null);
-    const [slotValue, setSlotValue] = useState('');
 
     const handleStopRendering = () => {
         renderAbortedRef.current = true;
@@ -441,14 +424,9 @@ const ProjectDirectorView: React.FC = () => {
         const scene = chapter.scenes[sceneIndex];
 
         const isTemplate = scene.type === 'TEMPLATE' && scene.code;
-        const isImage = (scene.type === '3D_RENDER' || scene.type === 'ILLUSTRATION');
-        
-        // Composed prompt (Google Whisk style)
-        const composedPrompt = scene.subject 
-            ? `${scene.subject} in ${scene.setting || 'a cinematic space'} with ${scene.style || 'cinematic 3D render'}`
-            : scene.prompt;
+        const isImage = (scene.type === '3D_RENDER' || scene.type === 'ILLUSTRATION') && (scene as any).prompt;
 
-        if (!isTemplate && !composedPrompt) return Promise.resolve();
+        if (!isTemplate && !isImage) return Promise.resolve();
 
         const sceneKey = `${chapterId}-${sceneIndex}`;
         setSceneRenderStatus(chapterId, sceneIndex, 'rendering');
@@ -473,9 +451,9 @@ const ProjectDirectorView: React.FC = () => {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            prompt: composedPrompt,
-                            environment: scene.environment || scene.setting || 'infrastructure',
-                            camera: scene.camera || 'cinematic',
+                            prompt: (scene as any).prompt,
+                            environment: (scene as any).environment || 'infrastructure',
+                            camera: (scene as any).camera || 'cinematic',
                         })
                     });
                     
@@ -1420,41 +1398,17 @@ const ProjectDirectorView: React.FC = () => {
                                                                 </Typography>
 
                                                                 {(scene.type === '3D_RENDER' || scene.type === 'ILLUSTRATION') && (
-                                                                    <Box sx={{ mt: 2, mb: 3, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-                                                                        <Chip 
-                                                                            label={scene.subject || 'Subject'} 
-                                                                            onClick={() => {
-                                                                                setEditingSlot({ chapterId: chapter.id, sceneIdx: idx, field: 'subject' });
-                                                                                setSlotValue(scene.subject || '');
-                                                                            }}
-                                                                            variant="outlined" 
-                                                                            sx={{ borderColor: 'rgba(255,255,255,0.2)', color: '#fff', cursor: 'pointer', '&:hover': { borderColor: 'var(--accent-gold)' } }} 
+                                                                    <Box sx={{ mt: 2, mb: 1 }}>
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            multiline
+                                                                            size="small"
+                                                                            label="Image Prompt"
+                                                                            value={scene.prompt || ''}
+                                                                            onChange={(e) => handleUpdateScene(chapter.id, idx, { prompt: e.target.value })}
+                                                                            InputProps={{ sx: { fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', bgcolor: 'rgba(0,0,0,0.2)' } }}
+                                                                            InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
                                                                         />
-                                                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>in</Typography>
-                                                                        <Chip 
-                                                                            label={scene.setting || 'Setting'} 
-                                                                            onClick={() => {
-                                                                                setEditingSlot({ chapterId: chapter.id, sceneIdx: idx, field: 'setting' });
-                                                                                setSlotValue(scene.setting || '');
-                                                                            }}
-                                                                            variant="outlined" 
-                                                                            sx={{ borderColor: 'rgba(255,255,255,0.2)', color: '#fff', cursor: 'pointer', '&:hover': { borderColor: 'var(--accent-gold)' } }} 
-                                                                        />
-                                                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>with</Typography>
-                                                                        <Chip 
-                                                                            label={scene.style || 'Style'} 
-                                                                            onClick={() => {
-                                                                                setEditingSlot({ chapterId: chapter.id, sceneIdx: idx, field: 'style' });
-                                                                                setSlotValue(scene.style || '');
-                                                                            }}
-                                                                            variant="outlined" 
-                                                                            sx={{ borderColor: 'rgba(255,255,255,0.2)', color: '#fff', cursor: 'pointer', '&:hover': { borderColor: 'var(--accent-gold)' } }} 
-                                                                        />
-                                                                        <Tooltip title="Shuffle Styles">
-                                                                            <IconButton size="small" onClick={() => handleShuffleStyle(chapter.id, idx)} sx={{ color: 'var(--accent-gold)' }}>
-                                                                                <DiceIcon fontSize="small" />
-                                                                            </IconButton>
-                                                                        </Tooltip>
                                                                     </Box>
                                                                 )}
 
@@ -1570,63 +1524,6 @@ const ProjectDirectorView: React.FC = () => {
                     )}
                     <Button onClick={handleDialogConfirm} variant="contained" sx={{ bgcolor: 'var(--accent-gold)', color: '#000', '&:hover': { bgcolor: '#fff' } }}>
                         {dialogConfirmText}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Whisk Slot Editor Dialog */}
-            <Dialog 
-                open={!!editingSlot} 
-                onClose={() => setEditingSlot(null)}
-                PaperProps={{ sx: { bgcolor: 'var(--bg-secondary)', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 2 } }}
-                maxWidth="sm"
-                fullWidth
-            >
-                <DialogTitle sx={{ color: 'var(--accent-gold)' }}>Edit {(editingSlot?.field || '').toUpperCase()}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        multiline={editingSlot?.field !== 'style'}
-                        rows={editingSlot?.field === 'style' ? 1 : 3}
-                        value={slotValue}
-                        onChange={(e) => setSlotValue(e.target.value)}
-                        placeholder={`Enter ${editingSlot?.field}...`}
-                        sx={{ mt: 1, '& .MuiInputBase-input': { color: '#fff' } }}
-                    />
-                    {editingSlot?.field === 'style' && (
-                        <Box sx={{ mt: 3 }}>
-                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mb: 1, display: 'block' }}>QUICK STYLES</Typography>
-                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                {WHISK_STYLES.map(s => (
-                                    <Chip 
-                                        key={s} 
-                                        label={s.split(',')[0]} 
-                                        onClick={() => setSlotValue(s)} 
-                                        size="small" 
-                                        sx={{ 
-                                            bgcolor: slotValue === s ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)', 
-                                            color: slotValue === s ? '#000' : '#fff',
-                                            '&:hover': { bgcolor: slotValue === s ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)' }
-                                        }} 
-                                    />
-                                ))}
-                            </Box>
-                        </Box>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ p: 2 }}>
-                    <Button onClick={() => setEditingSlot(null)} sx={{ color: '#fff' }}>Cancel</Button>
-                    <Button 
-                        onClick={() => {
-                            if (editingSlot) {
-                                handleUpdateScene(editingSlot.chapterId, editingSlot.sceneIdx, { [editingSlot.field]: slotValue });
-                                setEditingSlot(null);
-                            }
-                        }} 
-                        variant="contained" 
-                        sx={{ bgcolor: 'var(--accent-gold)', color: '#000' }}
-                    >
-                        Apply Remix
                     </Button>
                 </DialogActions>
             </Dialog>

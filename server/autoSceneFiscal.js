@@ -190,15 +190,14 @@ export async function generateScenes(scriptText, generationSettings = null) {
         scene.code = fillTemplate(templateName, scene.theme, scene.content)
       } catch (err) { scene.error = err.message }
     } else {
-      console.log(`   🎨 Scene ${scene.index}: Finalizing Illustration slots...`)
+      console.log(`   🎨 Scene ${scene.index}: Generating Editorial Illustration prompt...`)
       
-      // Ensure we have the slots from Pass 1
-      if (!scene.subject) scene.subject = 'main character';
-      if (!scene.setting) scene.setting = 'cinematic background';
-      if (!scene.style)   scene.style   = 'editorial watercolor illustration, courtroom sketch aesthetic, loose ink linework, soft washes';
-
-      // Pass 2: Refine the prompt logic but keep slots for the UI
-      scene.prompt = `${scene.subject} in ${scene.setting} with ${scene.style}`;
+      const imgModel = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() })
+      const imgPrompt = `Create a 60-word editorial watercolor illustration prompt based on this scene: "${scene.script}". 
+      Style: courtroom sketch aesthetic, loose ink linework, soft washes, warm muted palette.`
+      
+      const promptRes = await imgModel.generateContent(imgPrompt)
+      scene.prompt = promptRes.response.text().trim()
       
       scene.environment = 'editorial-illustration'
       scene.lower_third = { text: scene.script.substring(0, 50) + '...', attribution: '' }

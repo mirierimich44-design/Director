@@ -299,20 +299,18 @@ export async function generateScenes(scriptText, generationSettings = null) {
         scene.error = err.message
       }
     } else {
-      // 3D Render Remix Generation (Google Whisk Style)
-      console.log(`   🖼️ Scene ${scene.index}: Finalizing 3D Render slots...`)
+      // 3D Render Prompt Generation
+      console.log(`   🖼️ Scene ${scene.index}: Generating 3D Render prompt...`)
+      const model = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() })
       
-      // Ensure we have the slots from Pass 1
-      if (!scene.subject) scene.subject = 'main object';
-      if (!scene.setting) scene.setting = 'cinematic environment';
-      if (!scene.style)   scene.style   = 'dark moody cinematic 3D render, brushed metal, glowing fiber optics';
+      const imgPrompt = `Create a 60-80 word photorealistic 3D render prompt based on this scene: "${scene.script}".
+      Visual style: Dark, moody, cinematic 3D render focusing on objects/infrastructure. NO HUMANS.`
 
-      // Pass 2: Refine the prompt logic but keep slots for the UI
-      scene.prompt = `${scene.subject} in ${scene.setting} with ${scene.style}`;
+      const promptRes = await model.generateContent(imgPrompt)
+      scene.prompt = promptRes.response.text().trim()
       
-      scene.environment = scene.setting;
-      scene.camera = 'cinematic';
-      scene.motion = 'slow dolly forward';
+      scene.environment = 'infrastructure'
+      scene.camera = 'cinematic'
       scene.lower_third = { text: scene.script.substring(0, 50) + '...', attribution: '', tone: '#FFAA00' }
     }
 
