@@ -99,7 +99,10 @@ export function loadSettings() {
  */
 export function saveSettings() {
   try {
-    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'utf8')
+    // Atomic write: crash mid-write won't corrupt settings.json
+    const tmp = SETTINGS_FILE + '.tmp'
+    fs.writeFileSync(tmp, JSON.stringify(settings, null, 2), 'utf8')
+    fs.renameSync(tmp, SETTINGS_FILE)
     console.log('⚙️  Settings saved to settings.json')
   } catch (e) {
     console.error('❌ Failed to save settings:', e.message)

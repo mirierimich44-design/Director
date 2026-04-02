@@ -64,23 +64,41 @@ function createChapterData(title, scriptText, sceneOffset) {
 }
 
 // ─────────────────────────────────────────────
-// File I/O
+// File I/O  — atomic writes + per-project mutex
 // ─────────────────────────────────────────────
 function projectPath(id) {
   return path.join(PROJECTS_DIR, `${id}.json`)
 }
 
+// Per-project write locks: prevent concurrent renders from racing on the same JSON
+const _writeLocks = new Map()
+function acquireProjectLock(id) {
+  const current = _writeLocks.get(id) || Promise.resolve()
+  let release
+  const next = new Promise(resolve => { release = resolve })
+  _writeLocks.set(id, current.then(() => next))
+  return current.then(() => release)
+}
+
 function loadProject(id) {
   const p = projectPath(id)
   if (!fs.existsSync(p)) return null
-  return JSON.parse(fs.readFileSync(p, 'utf8'))
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'))
+  } catch (e) {
+    console.error(`❌ Failed to parse project ${id}:`, e.message)
+    return null
+  }
 }
 
 function saveProject(project) {
   project.updatedAt = new Date().toISOString()
-  // Recalculate total scenes
   project.totalScenes = project.chapters.reduce((sum, ch) => sum + ch.scenes.length, 0)
-  fs.writeFileSync(projectPath(project.id), JSON.stringify(project, null, 2))
+  // Atomic write: write to .tmp then rename so a crash mid-write never corrupts the file
+  const dest = projectPath(project.id)
+  const tmp = dest + '.tmp'
+  fs.writeFileSync(tmp, JSON.stringify(project, null, 2))
+  fs.renameSync(tmp, dest)
   return project
 }
 
@@ -267,47 +285,51 @@ export function deleteChapter(projectId, chapterId) {
 // ─────────────────────────────────────────────
 // Scene management within chapters
 // ─────────────────────────────────────────────
-export function updateScene(projectId, chapterId, sceneIndex, updates) {
-  const project = loadProject(projectId)
-  if (!project) throw new Error('Project not found')
+export async function updateScene(projectId, chapterId, sceneIndex, updates) {
+  const release = await acquireProjectLock(projectId)
+  try {
+    const project = loadProject(projectId)
+    if (!project) throw new Error('Project not found')
 
-  const chapter = project.chapters.find(c => c.id === chapterId)
-  if (!chapter) throw new Error('Chapter not found')
+    const chapter = project.chapters.find(c => c.id === chapterId)
+    if (!chapter) throw new Error('Chapter not found')
 
-  const scene = chapter.scenes[sceneIndex]
-  if (!scene) throw new Error('Scene not found')
+    const scene = chapter.scenes[sceneIndex]
+    if (!scene) throw new Error('Scene not found')
 
-  // Apply updates
-  if (updates.content !== undefined) scene.content = updates.content
-  if (updates.code !== undefined) scene.code = updates.code
-  if (updates.videoUrl !== undefined) {
-    scene.videoUrl = updates.videoUrl
-    scene.renderedAt = new Date().toISOString()
-    scene.status = 'rendered'
+    if (updates.content !== undefined) scene.content = updates.content
+    if (updates.code !== undefined) scene.code = updates.code
+    if (updates.videoUrl !== undefined) {
+      scene.videoUrl = updates.videoUrl
+      scene.renderedAt = new Date().toISOString()
+      scene.status = 'rendered'
+    }
+    if (updates.imageUrl !== undefined) {
+      scene.imageUrl = updates.imageUrl
+      scene.renderedAt = new Date().toISOString()
+      scene.status = 'rendered'
+    }
+    if (updates.status !== undefined) scene.status = updates.status
+    if (updates.flag !== undefined) scene.flag = updates.flag
+    if (updates.notes !== undefined) scene.notes = updates.notes
+    if (updates.prompt !== undefined) scene.prompt = updates.prompt
+    if (updates.environment !== undefined) scene.environment = updates.environment
+    if (updates.camera !== undefined) scene.camera = updates.camera
+    if (updates.error !== undefined) scene.error = updates.error
+    if (updates.template !== undefined) scene.template = updates.template
+    if (updates.lower_third !== undefined) scene.lower_third = updates.lower_third
+    if (updates.duration !== undefined) scene.duration = updates.duration
+    if (updates.editInstruction) {
+      if (!scene.editHistory) scene.editHistory = []
+      scene.editHistory.push(updates.editInstruction)
+    }
+
+    chapter.updatedAt = new Date().toISOString()
+    saveProject(project)
+    return { project, chapter, scene }
+  } finally {
+    release()
   }
-  if (updates.imageUrl !== undefined) {
-    scene.imageUrl = updates.imageUrl
-    scene.renderedAt = new Date().toISOString()
-    scene.status = 'rendered'
-  }
-  if (updates.status !== undefined) scene.status = updates.status
-  if (updates.flag !== undefined) scene.flag = updates.flag
-  if (updates.notes !== undefined) scene.notes = updates.notes
-  if (updates.prompt !== undefined) scene.prompt = updates.prompt
-  if (updates.environment !== undefined) scene.environment = updates.environment
-  if (updates.camera !== undefined) scene.camera = updates.camera
-  if (updates.error !== undefined) scene.error = updates.error
-  if (updates.template !== undefined) scene.template = updates.template
-  if (updates.lower_third !== undefined) scene.lower_third = updates.lower_third
-  if (updates.duration !== undefined) scene.duration = updates.duration
-  if (updates.editInstruction) {
-    if (!scene.editHistory) scene.editHistory = []
-    scene.editHistory.push(updates.editInstruction)
-  }
-
-  chapter.updatedAt = new Date().toISOString()
-  saveProject(project)
-  return { project, chapter, scene }
 }
 
 export function flagScene(projectId, chapterId, sceneIndex, flag) {

@@ -106,6 +106,18 @@ const voiceoverUpload = multer({
 
 // ── Render job tracking ───────────────────────────────────────────────────────
 const renderJobs = new Map();
+const MAX_JOB_RETENTION_MS = 60 * 60 * 1000; // 1 hour (down from 4)
+const MAX_JOBS_IN_MAP = 200;
+
+function pruneRenderJobs() {
+    if (renderJobs.size <= MAX_JOBS_IN_MAP) return;
+    // Evict oldest completed/errored jobs first
+    const entries = [...renderJobs.entries()]
+        .filter(([, j]) => j.status === 'completed' || j.status === 'error' || j.status === 'fallback')
+        .sort((a, b) => a[1].startTime - b[1].startTime);
+    const toDelete = entries.slice(0, renderJobs.size - MAX_JOBS_IN_MAP);
+    toDelete.forEach(([id]) => renderJobs.delete(id));
+}
 
 // Helper: generate a 3D image prompt from template scene data
 async function generateFallback3DPrompt(script, template, theme, content) {
@@ -363,7 +375,8 @@ function createRenderJob(data = {}) {
     const jobId = uuidv4();
     const job = { id: jobId, status: 'pending', phase: 'idle', progress: 0, message: 'Initializing...', startTime: Date.now(), ...data };
     renderJobs.set(jobId, job);
-    setTimeout(() => renderJobs.delete(jobId), 4 * 60 * 60 * 1000);
+    setTimeout(() => renderJobs.delete(jobId), MAX_JOB_RETENTION_MS);
+    pruneRenderJobs();
     return job;
 }
 
@@ -1256,18 +1269,33 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', app: 'director-studio', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`\n🎬 ARXXIS Director Studio`);
     console.log(`   Server: http://localhost:${PORT}`);
     console.log(`   Frontend (dev): http://localhost:5174`);
     console.log(`   Render slots: ${MAX_CONCURRENT_RENDERS} max concurrent\n`);
 
-    // Pre-warm the Remotion bundler so first render is fast
     warmupBundler().catch(err => console.warn('⚠️ Warmup error (non-critical):', err.message));
 
-    // Purge stale .temp dirs every 30 minutes
     const tempRoot = new URL('../.temp', import.meta.url).pathname;
     setInterval(() => {
         purgeOldTempDirs(tempRoot).catch(() => {});
-    }, 30 * 60 * 1000);
+    }, 15 * 60 * 1000); // every 15 min instead of 30
 });
+
+// ── Graceful shutdown ─────────────────────────────────────────────────────────
+function shutdown(signal) {
+    console.log(`\n⚙️  ${signal} received — shutting down gracefully`);
+    server.close(() => {
+        console.log('✅ HTTP server closed');
+        process.exit(0);
+    });
+    // Force exit after 10s if connections are stuck
+    setTimeout(() => {
+        console.error('⚠️  Forced exit after 10s timeout');
+        process.exit(1);
+    }, 10_000).unref();
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT',  () => shutdown('SIGINT'));
