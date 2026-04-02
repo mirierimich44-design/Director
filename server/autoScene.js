@@ -103,14 +103,33 @@ If the standard themes don't perfectly match the mood, you MUST provide a specif
 TEMPLATE CATALOG (name [description]: fields):
 ${TEMPLATE_CATALOG}
 
-SENTENCE SPLITTING & COMBINING RULES (STRICT ENFORCEMENT):
-- REDUCE SCENE COUNT: Do not generate a high number of tiny scenes. Combine content aggressively.
-- LONG SENTENCES (25+ words) that contain multiple distinct facts, stats, or ideas MUST be SPLIT into two or more scenes. Split at natural clause boundaries.
-- SHORT & MEDIUM sentences (under 15 words) MUST be combined into a single scene with up to 3 or 4 other consecutive sentences.
-- You MUST combine up to 5 consecutive short sentences into one scene if they share the same cinematic beat or mood.
-- Never give a single short sentence (e.g. "He waited.") its own scene unless it is a major structural transition.
-- Target an average of 20-25 words per scene where possible by combining fragments.
-- The "script" field MUST contain the exact text for that scene (either the full sentence, the combined sentences, or the split portion).
+SCENE LENGTH & PACING RULES (STRICT ENFORCEMENT):
+The goal is viewer rhythm. Scenes that are too long cause fatigue; scenes that are too short feel rushed.
+Target sweet spot: 25–40 words per scene (~10–16 seconds of narration at 150 wpm).
+
+COMBINING (scenes that are too short):
+- SHORT sentences (under 15 words) MUST be combined with up to 3–4 consecutive sentences that share the same cinematic beat or mood.
+- Never give a single short sentence its own scene unless it is a major structural beat (chapter transition, dramatic reveal, or punch line — e.g. "Then the botnet was rebuilt." is a valid standalone beat).
+- Combine up to 5 consecutive short sentences into one scene if they form a single idea.
+
+SPLITTING (scenes that are too long):
+- Any script block over 50 words MUST be split at a natural clause boundary.
+- Split so each half lands at 25–40 words, not unevenly (e.g. 10/40).
+
+TEMPLATE-SPECIFIC WORD COUNT TARGETS:
+- Data/stat templates (statcluster, comparisonchart, icongrid, gaugechart, countup): 15–30 words. The visual carries the weight — keep narration tight.
+- Person/event/date templates (person-profile, organization-card, calendar-date-highlight, dossier): 25–35 words. Introduce and name, don't explain at length.
+- Process/network/movement templates (lateral-movement, kill-chain, nodenetwork, flowdiagram): 35–45 words. Name the action clearly; stop before explaining every step.
+- Transition/chapter templates (chapter-wipe, transition-fade-title, transition-wipe-chapter): 30–45 words. These are interstitial; slightly longer is acceptable.
+- 3D Render scenes: 25–40 words. The image is the scene; narration sets atmosphere only.
+
+VARIETY ACROSS A CHAPTER:
+- After two consecutive long scenes (35+ words), the next should be short (15–25 words) to reset pace.
+- After two consecutive 3D Renders, insert a TEMPLATE scene.
+- Punchy one-beat sentences (10–18 words) are valuable as rhythmic breaks — use them deliberately, not as overflow.
+
+EXACT TEXT RULE:
+- The "script" field MUST contain the exact text for that scene (full sentence, combined sentences, or split portion).
 - Every word from the input must appear in exactly one scene's "script" field. Do NOT drop any content.
 
 CONTENT RULES:

@@ -90,9 +90,32 @@ TEMPLATE DIVERSITY RULE:
 - Rotate between chart types: bar → line → donut → waterfall → gauge.
 - For financial data, STRONGLY prefer the finance-specific templates (142-156 range) over generic ones.
 
-SENTENCE COMBINING RULES:
-- SHORT sentences (under 10 words) that flow together as a sequence or describe the same thematic beat MUST be combined into a single scene.
-- You MAY combine up to 3 consecutive short sentences into one scene if they share the same financial context or cinematic moment.
+SCENE LENGTH & PACING RULES (STRICT ENFORCEMENT):
+The goal is viewer rhythm. Scenes that are too long cause fatigue; scenes that are too short feel rushed.
+Target sweet spot: 25–40 words per scene (~10–16 seconds of narration at 150 wpm).
+
+COMBINING (scenes that are too short):
+- SHORT sentences (under 15 words) MUST be combined with 2–4 consecutive sentences that share the same financial beat or mood.
+- Never give a single short sentence its own scene unless it is a major structural beat (chapter transition, dramatic reveal, or punch line).
+- Combine up to 5 consecutive short sentences into one scene if they form a single idea.
+
+SPLITTING (scenes that are too long):
+- Any script block over 50 words MUST be split at a natural clause boundary.
+- Split so each half lands at 25–40 words, not unevenly.
+
+TEMPLATE-SPECIFIC WORD COUNT TARGETS:
+- Data/stat templates (statcluster, comparisonchart, icongrid, gaugechart, countup, waterfall): 15–30 words. The visual carries the weight — keep narration tight.
+- Person/event/date templates (person-profile, organization-card, calendar-date-highlight, dossier): 25–35 words. Introduce and name, don't explain at length.
+- Process/flow templates (flowdiagram, sankey, lateral-movement): 35–45 words. Name the action; stop before explaining every step.
+- Transition/chapter templates (chapter-wipe, transition-fade-title): 30–45 words. Slightly longer is acceptable.
+- Illustration scenes: 25–40 words. The image sets atmosphere; narration should not over-explain.
+
+VARIETY ACROSS A CHAPTER:
+- After two consecutive long scenes (35+ words), the next should be short (15–25 words) to reset pace.
+- After two consecutive Illustrations, insert a TEMPLATE scene.
+- Punchy one-beat sentences (10–18 words) are valuable as rhythmic breaks — use them deliberately, not as overflow.
+
+EXACT TEXT RULE:
 - The "script" field for a combined scene MUST contain the exact full text of all sentences it covers.
 - Every word from the input script must appear in the "script" field of exactly one scene. Do NOT drop any content.
 
