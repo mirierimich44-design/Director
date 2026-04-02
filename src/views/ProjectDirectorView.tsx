@@ -437,6 +437,15 @@ const ProjectDirectorView: React.FC = () => {
                     if (!data.success) throw new Error(data.error || 'Image generation failed');
 
                     const imageUrl = data.url; 
+                    
+                    // NEW: Update scene with imageUrl immediately so user sees it
+                    await fetch(`/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imageUrl: imageUrl })
+                    });
+                    await loadProjectDetails(selectedProject.id);
+
                     const prog: SceneProgress = { phase: 'processing', progress: 95, message: 'Image ready, creating motion...' };
                     setSceneProgress(p => ({ ...p, [sceneKey]: prog }));
                     if (onProgress) onProgress(prog);
@@ -1439,8 +1448,23 @@ const ProjectDirectorView: React.FC = () => {
                                                                             disabled={scene.renderStatus === 'rendering'}
                                                                             sx={{ bgcolor: 'var(--accent-gold)', color: '#000' }}
                                                                         >
-                                                                            {scene.renderStatus === 'rendering' ? 'Rendering...' : (scene.status === 'rendered' ? 'Re-Render' : 'Render')}
+                                                                            {scene.renderStatus === 'rendering' ? 
+                                                                                (scene.type === 'TEMPLATE' ? 'Rendering...' : 'Generating...') : 
+                                                                                (scene.status === 'rendered' ? 'Re-Render' : (scene.type === 'TEMPLATE' ? 'Render' : 'Generate'))
+                                                                            }
                                                                         </Button>
+
+                                                                        {(scene.videoUrl || scene.imageUrl) && (
+                                                                            <Button
+                                                                                size="small"
+                                                                                variant="outlined"
+                                                                                startIcon={<DownloadIcon />}
+                                                                                onClick={() => window.open(scene.videoUrl || scene.imageUrl, '_blank')}
+                                                                                sx={{ color: '#fff', borderColor: 'var(--border-color)' }}
+                                                                            >
+                                                                                Download {scene.videoUrl ? 'Video' : 'Image'}
+                                                                            </Button>
+                                                                        )}
                                                                     </Box>
                                                                 )}
 
