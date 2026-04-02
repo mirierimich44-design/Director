@@ -161,6 +161,8 @@ CATEGORIES:
 ${catalogSummary}
 
 DIRECTIVE:
+- YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
+- EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
 - Target approximately ${ratio}% TEMPLATE and ${100 - ratio}% 3D_RENDER.
 - Combine short sentences into single scenes (25-40 words each).
 - Assign a THEME based on mood: THREAT (urgent/red), COLD (analytical/blue), INTEL (mysterious/purple), DARK (dramatic/black), CLEAN (neutral/white).
@@ -239,6 +241,23 @@ export async function generateScenes(scriptText, generationSettings = null) {
   // --- PASS 1: ROUTING ---
   let rawScenes = await routeScenes(scriptText, generationSettings)
   console.log(`   ✅ Pass 1 complete: ${rawScenes.length} scenes identified`)
+
+  // --- COVERAGE CHECK ---
+  const sentences = scriptText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 5)
+  const llmContent = rawScenes.map(s => s.script).join(' ')
+  const missingSentences = sentences.filter(s => !llmContent.toLowerCase().includes(s.toLowerCase().substring(0, 20)))
+
+  if (missingSentences.length > 0) {
+    console.warn(`   ⚠️ LLM skipped ${missingSentences.length} sentences. Appending as fallback scenes.`)
+    missingSentences.forEach(s => {
+      rawScenes.push({
+        type: '3D_RENDER',
+        theme: generationSettings?.colorScheme || 'THREAT',
+        script: s,
+        reasoning: 'Fallback: Sentence skipped by LLM during analysis'
+      })
+    })
+  }
 
   const processed = []
   const usedTemplates = new Set()

@@ -66,6 +66,8 @@ CATEGORIES (for TEMPLATE only):
 ${Object.keys(TEMPLATE_CATEGORIES).join(', ')}
 
 DIRECTIVE:
+- YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
+- EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
 - Maintain exactly a 50/50 split between TEMPLATE and ILLUSTRATION.
 - Combine short sentences into single scenes (25-40 words each).
 
@@ -82,7 +84,8 @@ OUTPUT FORMAT (JSON array only):
     "script": "exact sentence(s)",
     "reasoning": "why this illustration fits"
   }
-]`
+]
+`
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
@@ -140,6 +143,22 @@ export async function generateScenes(scriptText, generationSettings = null) {
 
   let rawScenes = await routeScenes(scriptText, generationSettings)
   console.log(`   ✅ Pass 1 complete: ${rawScenes.length} scenes identified`)
+
+  // --- COVERAGE CHECK ---
+  const sentences = scriptText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 5)
+  const llmContent = rawScenes.map(s => s.script).join(' ')
+  const missingSentences = sentences.filter(s => !llmContent.toLowerCase().includes(s.toLowerCase().substring(0, 20)))
+
+  if (missingSentences.length > 0) {
+    console.warn(`   ⚠️ Fiscal LLM skipped ${missingSentences.length} sentences. Appending as illustrations.`)
+    missingSentences.forEach(s => {
+      rawScenes.push({
+        type: 'ILLUSTRATION',
+        script: s,
+        reasoning: 'Fallback: Sentence skipped by LLM during analysis'
+      })
+    })
+  }
 
   const processed = []
   const usedTemplates = new Set()
