@@ -12,88 +12,89 @@ export const AnimationComponent = () => {
   const label1 = 'LABEL_1';
   const label2 = 'LABEL_2';
 
-  // Animations
-  const bgScale = interpolate(frame, [0, 150], [1.05, 1], { extrapolateRight: 'clamp' });
+  // Base Animations (Strictly 0.95 -> 1.0 scale, no overshoot)
+  const contentScale = interpolate(frame, [0, 40], [0.97, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const opTitle = interpolate(frame, [10, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyTitle = interpolate(frame, [10, 40], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const tyTitle = interpolate(frame, [10, 40], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   
   const opSub = interpolate(frame, [35, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tySub = interpolate(frame, [35, 60], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const tySub = interpolate(frame, [35, 60], [15, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const opStat1 = interpolate(frame, [60, 85], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyStat1 = interpolate(frame, [60, 85], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const tyStat1 = interpolate(frame, [60, 85], [15, 0], { extrapolateLeft: 'clamp' });
   
   const opStat2 = interpolate(frame, [75, 100], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const tyStat2 = interpolate(frame, [75, 100], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+  const tyStat2 = interpolate(frame, [75, 100], [15, 0], { extrapolateLeft: 'clamp' });
 
   return (
     <div style={{
-      position: 'absolute', top: 0, left: 0, width: 1920, height: 1080,
+      position: 'absolute', inset: 0,
       backgroundColor: 'BACKGROUND_COLOR', overflow: 'hidden',
-      fontFamily: 'Inter, system-ui, sans-serif'
+      fontFamily: 'Inter, system-ui, sans-serif',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
-      {/* Background Texture/Gradient Overlay */}
+      {/* 16:9 Safe Container (80% width/height) */}
       <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 80%)',
-        opacity: 0.5, transform: `scale(${bgScale})`
-      }} />
-
-      {/* Magazine Masthead Style Title */}
-      <div style={{
-        position: 'absolute', top: 100, left: 0, width: '100%', textAlign: 'center',
-        padding: '0 100px', boxSizing: 'border-box', opacity: opTitle, transform: `translateY(${tyTitle}px)`
+        width: 1536, height: 864, position: 'relative',
+        transform: `scale(${contentScale})`
       }}>
-        <div style={{ 
-            fontSize: 18, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.5em', 
-            marginBottom: 20, textTransform: 'uppercase', opacity: 0.6 
+        
+        {/* Magazine Masthead Style Title */}
+        <div style={{
+          position: 'absolute', top: 60, left: 0, width: '100%', textAlign: 'center',
+          opacity: opTitle, transform: `translateY(${tyTitle}px)`
         }}>
-          SPECIAL EDITION // VOL. 44
+          <div style={{ 
+              fontSize: 16, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.4em', 
+              marginBottom: 16, textTransform: 'uppercase', opacity: 0.8
+          }}>
+            SPECIAL EDITION // DIRECTOR STUDIO
+          </div>
+          <h1 style={{
+            fontSize: 110, fontWeight: 900, color: 'PRIMARY_COLOR', margin: 0, lineHeight: 0.95,
+            letterSpacing: '-0.03em', textTransform: 'uppercase'
+          }}>
+            {title}
+          </h1>
         </div>
-        <h1 style={{
-          fontSize: 160, fontWeight: 900, color: '#fff', margin: 0, lineHeight: 0.9,
-          letterSpacing: '-0.04em', textTransform: 'uppercase',
-          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
+
+        {/* Subtitle/Lead Story */}
+        <div style={{
+          position: 'absolute', top: 340, left: '50%', transform: `translateX(-50%) translateY(${tySub}px)`,
+          width: 900, textAlign: 'center', opacity: opSub
         }}>
-          {title}
-        </h1>
-      </div>
+          <div style={{ height: 2, width: 60, backgroundColor: 'ACCENT_COLOR', margin: '0 auto 24px' }} />
+          <p style={{
+            fontSize: 28, color: 'SUPPORT_COLOR', fontWeight: 500,
+            margin: 0, lineHeight: 1.4
+          }}>
+            {subtitle}
+          </p>
+        </div>
 
-      {/* Subtitle/Lead Story */}
-      <div style={{
-        position: 'absolute', top: 440, left: '50%', transform: `translateX(-50%) translateY(${tySub}px)`,
-        width: 1100, textAlign: 'center', opacity: opSub
-      }}>
-        <div style={{ height: 2, width: 80, backgroundColor: 'PRIMARY_COLOR', margin: '0 auto 32px' }} />
-        <p style={{
-          fontSize: 34, color: 'rgba(255,255,255,0.8)', fontWeight: 500,
-          margin: 0, lineHeight: 1.4, fontStyle: 'italic'
+        {/* Bottom Features (Glassmorphism Cards) */}
+        <div style={{
+          position: 'absolute', bottom: 60, left: 0, width: 420,
+          opacity: opStat1, transform: `translateY(${tyStat1}px)`,
+          backgroundColor: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 32,
+          boxShadow: '0 20px 50px rgba(0,0,0,0.2)'
         }}>
-          {subtitle}
-        </p>
-      </div>
+          <div style={{ fontSize: 64, fontWeight: 900, color: 'PRIMARY_COLOR', lineHeight: 1 }}>{stat1}</div>
+          <div style={{ fontSize: 16, color: 'SUPPORT_COLOR', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 8 }}>{label1}</div>
+        </div>
 
-      {/* Bottom Features (Glassmorphism Cards) */}
-      <div style={{
-        position: 'absolute', bottom: 100, left: 160, width: 460,
-        opacity: opStat1, transform: `translateY(${tyStat1}px)`,
-        backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(30px)',
-        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 40,
-        boxShadow: '0 40px 100px rgba(0,0,0,0.5)', overflow: 'hidden'
-      }}>
-        <div style={{ fontSize: 72, fontWeight: 900, color: 'PRIMARY_COLOR', lineHeight: 1 }}>{stat1}</div>
-        <div style={{ fontSize: 18, color: '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, opacity: 0.6 }}>{label1}</div>
-      </div>
+        <div style={{
+          position: 'absolute', bottom: 60, right: 0, width: 420,
+          opacity: opStat2, transform: `translateY(${tyStat2}px)`,
+          backgroundColor: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 32,
+          boxShadow: '0 20px 50px rgba(0,0,0,0.2)', textAlign: 'right'
+        }}>
+          <div style={{ fontSize: 64, fontWeight: 900, color: 'ACCENT_COLOR', lineHeight: 1 }}>{stat2}</div>
+          <div style={{ fontSize: 16, color: 'SUPPORT_COLOR', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 8 }}>{label2}</div>
+        </div>
 
-      <div style={{
-        position: 'absolute', bottom: 100, right: 160, width: 460,
-        opacity: opStat2, transform: `translateY(${tyStat2}px)`,
-        backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(30px)',
-        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 40,
-        boxShadow: '0 40px 100px rgba(0,0,0,0.5)', textAlign: 'right', overflow: 'hidden'
-      }}>
-        <div style={{ fontSize: 72, fontWeight: 900, color: 'ACCENT_COLOR', lineHeight: 1 }}>{stat2}</div>
-        <div style={{ fontSize: 18, color: '#fff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, opacity: 0.6 }}>{label2}</div>
       </div>
 
       {/* Sidebar Details */}
