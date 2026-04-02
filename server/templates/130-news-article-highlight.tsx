@@ -110,27 +110,6 @@ export const AnimationComponent = () => {
           </div>
         </div>
 
-        {/* Featured Image Placeholder */}
-        <div style={{
-          opacity: imageOp,
-          transform: `scale(${imageScale})`,
-          width: '100%',
-          height: 300,
-          borderRadius: 16,
-          backgroundColor: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.05)',
-          marginBottom: 48,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          position: 'relative'
-        }}>
-          {/* Wireframe image placeholder graphics */}
-          <div style={{ position: 'absolute', width: '100%', height: '100%', backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.02) 75%, transparent 75%, transparent)', backgroundSize: '40px 40px' }} />
-          <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: 24, fontWeight: 600, letterSpacing: '0.1em' }}>FEATURED_IMAGE_ASSET</div>
-        </div>
-
         {/* Article Body */}
         <div style={{
           opacity: bodyOp,

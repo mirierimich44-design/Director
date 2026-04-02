@@ -46,8 +46,8 @@ export const AnimationComponent = () => {
 
   // Normalized points (relative to chart area)
   const points = useMemo(() => {
-    // Upward trending curve shape
-    const yRatios = [0.2, 0.35, 0.5, 0.7, 0.9]
+    // Upward trending curve shape (0.1 is bottom, 0.9 is top)
+    const yRatios = [0.1, 0.3, 0.5, 0.75, 0.9]
     return Array.from({ length: itemCount }).map((_, i) => ({
       x: chartLeft + (itemCount > 1 ? (chartW / (itemCount - 1)) * i : 0),
       y: chartBottom - (yRatios[i % yRatios.length] * chartH)
