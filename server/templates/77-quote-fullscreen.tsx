@@ -1,19 +1,14 @@
 import React from 'react'
-import { useCurrentFrame, interpolate } from 'remotion'
+import { useCurrentFrame, interpolate, Easing } from 'remotion'
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
 
+  // Base Animations
   const bgOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const markOp = interpolate(frame, [10, 28], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const markScale = interpolate(frame, [10, 28], [0.5, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const quoteOp = interpolate(frame, [22, 42], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const quoteTy = interpolate(frame, [22, 42], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const divW = interpolate(frame, [38, 58], [0, 200], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const sourceOp = interpolate(frame, [52, 68], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const sourceTy = interpolate(frame, [52, 68], [16, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const subOp = interpolate(frame, [62, 76], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const barW = interpolate(frame, [15, 50], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const contentOp = interpolate(frame, [15, 35], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const contentScale = interpolate(frame, [15, 45], [0.98, 1], { extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+  const markOp = interpolate(frame, [10, 30], [0, 0.15], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
   const word1 = "QUOTE_LINE_1"
   const word2 = "QUOTE_LINE_2"
@@ -23,199 +18,89 @@ export const AnimationComponent = () => {
 
   return (
     <div style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: 1920,
-      height: 1080,
-      overflow: 'hidden',
-      backgroundColor: 'BACKGROUND_COLOR',
+      position: 'absolute', inset: 0, overflow: 'hidden',
+      backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
 
+      {/* Background Scrim - Ensures 100% visibility regardless of theme or video */}
       <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: 1920,
-        height: 1080,
-        overflow: 'hidden',
-        backgroundColor: 'PANEL_LEFT_BG',
-        opacity: bgOp * 0.06,
+        position: 'absolute', inset: 0,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        opacity: bgOp
       }} />
 
-      <div style={{
-        position: 'absolute',
-        top: 1074,
-        left: 0,
-        width: barW,
-        height: 6,
-        overflow: 'hidden',
-        backgroundColor: 'PRIMARY_COLOR',
-      }} />
-
-      <div style={{
-        position: 'absolute',
-        top: 200,
-        left: 160,
-        width: 6,
-        height: 680,
-        overflow: 'hidden',
-        backgroundColor: 'PRIMARY_COLOR',
-        opacity: bgOp,
-      }} />
-
-      {/* Opening quote mark — using HTML entity to avoid backtick conflict */}
-      <div style={{
-        position: 'absolute',
-        top: 100,
-        left: 180,
-        width: 220,
-        height: 220,
-        overflow: 'hidden',
-        opacity: markOp * 0.25,
-        transform: `scale(${markScale})`,
+      {/* 16:9 Safe Container */}
+      <div style={{ 
+          width: 1600, height: 900, position: 'relative', 
+          opacity: contentOp, transform: `scale(${contentScale})`
       }}>
-        <span style={{
-          fontSize: 280,
-          fontWeight: 900,
-          color: 'ACCENT_COLOR',
-          fontFamily: 'serif',
-          lineHeight: 1,
-          display: 'block',
+
+        {/* Background Decorative Large Quote Mark */}
+        <div style={{
+          position: 'absolute', top: -50, left: -40, opacity: markOp
         }}>
-          &ldquo;
-        </span>
-      </div>
+          <span style={{ fontSize: 600, fontWeight: 900, color: 'PRIMARY_COLOR', fontFamily: 'serif', lineHeight: 1 }}>&ldquo;</span>
+        </div>
 
-      {/* Main quote text */}
-      <div style={{
-        position: 'absolute',
-        top: 260,
-        left: 220,
-        width: 1480,
-        height: 380,
-        overflow: 'hidden',
-        opacity: quoteOp,
-        transform: `translateY(${quoteTy}px)`,
-      }}>
-        <span style={{
-          fontSize: 68,
-          fontWeight: 700,
-          color: 'PRIMARY_COLOR',
-          fontFamily: 'sans-serif',
-          lineHeight: 1.25,
-          letterSpacing: -1,
+        {/* Center Content Block */}
+        <div style={{ 
+            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: 1200, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center'
         }}>
-          {word1}
-        </span>
-      </div>
 
-      {/* Second quote line */}
-      <div style={{
-        position: 'absolute',
-        top: 580,
-        left: 220,
-        width: 1480,
-        height: 120,
-        overflow: 'hidden',
-        opacity: quoteOp,
-        transform: `translateY(${quoteTy}px)`,
-      }}>
-        <span style={{
-          fontSize: 48,
-          fontWeight: 400,
-          color: 'SUPPORT_COLOR',
-          fontFamily: 'sans-serif',
-          lineHeight: 1.4,
-          fontStyle: 'italic',
+          {/* Accent Line Top */}
+          <div style={{ width: 80, height: 4, backgroundColor: 'ACCENT_COLOR', marginBottom: 60 }} />
+
+          {/* Main Quote Text */}
+          <div style={{ width: '100%', marginBottom: 40 }}>
+            <span style={{
+              fontSize: 64, fontWeight: 800, color: '#fff',
+              lineHeight: 1.2, letterSpacing: '-0.02em',
+              display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden'
+            }}>
+              {word1}
+            </span>
+          </div>
+
+          {/* Second Quote Line (Context) */}
+          <div style={{ width: '100%', marginBottom: 60 }}>
+            <span style={{
+              fontSize: 32, fontWeight: 500, color: 'rgba(255,255,255,0.7)',
+              lineHeight: 1.4, fontStyle: 'italic',
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
+            }}>
+              {word2}
+            </span>
+          </div>
+
+          {/* Source Attribution Block */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+             <div style={{ fontSize: 24, fontWeight: 900, color: 'ACCENT_COLOR', letterSpacing: 4, textTransform: 'uppercase' }}>
+               {label1}
+             </div>
+             <div style={{ fontSize: 18, fontWeight: 600, color: 'SUPPORT_COLOR', opacity: 0.8 }}>
+               {label2}
+             </div>
+          </div>
+
+          {/* Accent Line Bottom */}
+          <div style={{ width: 80, height: 4, backgroundColor: 'ACCENT_COLOR', marginTop: 60 }} />
+
+        </div>
+
+        {/* Top Edge Sub Label */}
+        <div style={{
+          position: 'absolute', top: 40, right: 0, opacity: 0.6
         }}>
-          {word2}
-        </span>
+          <span style={{ fontSize: 16, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: 6, textTransform: 'uppercase' }}>
+            {subLabel}
+          </span>
+        </div>
+
       </div>
-
-      {/* Divider */}
-      <div style={{
-        position: 'absolute',
-        top: 730,
-        left: 220,
-        width: divW,
-        height: 3,
-        overflow: 'hidden',
-        backgroundColor: 'ACCENT_COLOR',
-      }} />
-
-      {/* Source name */}
-      <div style={{
-        position: 'absolute',
-        top: 752,
-        left: 220,
-        width: 900,
-        height: 60,
-        overflow: 'hidden',
-        opacity: sourceOp,
-        transform: `translateY(${sourceTy}px)`,
-      }}>
-        <span style={{
-          fontSize: 32,
-          fontWeight: 700,
-          color: 'ACCENT_COLOR',
-          fontFamily: 'sans-serif',
-          letterSpacing: 2,
-          textTransform: 'uppercase',
-        }}>
-          {label1}
-        </span>
-      </div>
-
-      {/* Source role */}
-      <div style={{
-        position: 'absolute',
-        top: 818,
-        left: 220,
-        width: 900,
-        height: 50,
-        overflow: 'hidden',
-        opacity: sourceOp,
-        transform: `translateY(${sourceTy}px)`,
-      }}>
-        <span style={{
-          fontSize: 24,
-          fontWeight: 400,
-          color: 'SUPPORT_COLOR',
-          fontFamily: 'sans-serif',
-          letterSpacing: 1,
-        }}>
-          {label2}
-        </span>
-      </div>
-
-      {/* Sub label */}
-      <div style={{
-        position: 'absolute',
-        top: 752,
-        left: 1400,
-        width: 320,
-        height: 50,
-        overflow: 'hidden',
-        opacity: subOp,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-      }}>
-        <span style={{
-          fontSize: 20,
-          fontWeight: 500,
-          color: 'SECONDARY_COLOR',
-          fontFamily: 'sans-serif',
-          letterSpacing: 3,
-          textTransform: 'uppercase',
-        }}>
-          {subLabel}
-        </span>
-      </div>
-
     </div>
   )
 }
 
-export default AnimationComponent
+export default AnimationComponent;
