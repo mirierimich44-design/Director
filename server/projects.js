@@ -332,7 +332,7 @@ export async function updateScene(projectId, chapterId, sceneIndex, updates) {
   }
 }
 
-export function flagScene(projectId, chapterId, sceneIndex, flag) {
+export async function flagScene(projectId, chapterId, sceneIndex, flag) {
   return updateScene(projectId, chapterId, sceneIndex, { flag })
 }
 

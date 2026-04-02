@@ -307,7 +307,7 @@ function startVideoRenderJob(filledCode, opts = {}) {
             if (hasPersistence) {
                 try {
                     const { updateScene } = await import('./projects.js');
-                    updateScene(projectId, chapterId, sceneIndex, { videoUrl: job.url, status: 'rendered', error: null });
+                    await updateScene(projectId, chapterId, sceneIndex, { videoUrl: job.url, status: 'rendered', error: null });
                     console.log(`   💾 Project state persisted: Scene ${sceneIndex} rendered`);
                 } catch (persistErr) {
                     console.error('   ⚠️ Failed to persist project state:', persistErr.message);
@@ -337,11 +337,11 @@ function startVideoRenderJob(filledCode, opts = {}) {
                     // Auto-persist fallback to project file
                     if (hasPersistence) {
                         const { updateScene } = await import('./projects.js');
-                        updateScene(projectId, chapterId, sceneIndex, { 
-                            imageUrl: fallbackImageUrl, 
-                            status: 'rendered', 
+                        await updateScene(projectId, chapterId, sceneIndex, {
+                            imageUrl: fallbackImageUrl,
+                            status: 'rendered',
                             error: null,
-                            fallbackPrompt 
+                            fallbackPrompt
                         });
                     }
                     return;
@@ -360,7 +360,7 @@ function startVideoRenderJob(filledCode, opts = {}) {
             if (hasPersistence) {
                 try {
                     const { updateScene } = await import('./projects.js');
-                    updateScene(projectId, chapterId, sceneIndex, { error: err.message, status: 'pending' });
+                    await updateScene(projectId, chapterId, sceneIndex, { error: err.message, status: 'pending' });
                 } catch (pErr) {}
             }
         } finally {
@@ -553,6 +553,41 @@ app.delete('/api/projects/:pid/chapters/:cid', (req, res) => {
     try {
         const project = deleteChapter(req.params.pid, req.params.cid);
         res.json({ success: true, project });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ── SCENES ────────────────────────────────────────────────────────────────────
+app.put('/api/projects/:pid/chapters/:cid/scenes/:idx', async (req, res) => {
+    try {
+        const result = await updateScene(req.params.pid, req.params.cid, parseInt(req.params.idx), req.body);
+        res.json({ success: true, ...result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.put('/api/projects/:pid/chapters/:cid/scenes/:idx/flag', async (req, res) => {
+    try {
+        const result = await flagScene(req.params.pid, req.params.cid, parseInt(req.params.idx), req.body.flag);
+        res.json({ success: true, ...result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/projects/:pid/chapters/:cid/reanalyze', async (req, res) => {
+    try {
+        const project = getProject(req.params.pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        const chapter = project.chapters.find(c => c.id === req.params.cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        const directorType = project?.settings?.director || 'standard';
+        const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
+        const scenes = await generateScenes(chapter.scriptText, project.generationSettings);
+        const result = updateChapterScenes(req.params.pid, req.params.cid, scenes);
+        res.json({ success: true, ...result });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
