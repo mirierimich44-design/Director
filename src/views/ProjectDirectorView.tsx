@@ -1479,17 +1479,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                     const progress = sceneProgress[sceneKey];
                                                                     const isRendering = progress && (progress.phase === 'generating' || progress.phase === 'bundling' || progress.phase === 'rendering' || progress.phase === 'processing');
                                                                     
-                                                                    if (isRendering) {
-                                                                        return (
-                                                                            <Box sx={{ width: '100%', height: 150, bgcolor: '#000', borderRadius: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-                                                                                <CircularProgress size={24} sx={{ color: 'var(--accent-gold)', mb: 2 }} />
-                                                                                <Typography variant="caption" sx={{ color: '#fff', textAlign: 'center', fontSize: '0.7rem' }}>{progress.message || 'Processing...'}</Typography>
-                                                                                <LinearProgress variant="determinate" value={progress.progress} sx={{ width: '80%', mt: 1.5, height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }} />
-                                                                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mt: 0.5, fontSize: '0.6rem' }}>{Math.round(progress.progress)}%</Typography>
-                                                                            </Box>
-                                                                        );
-                                                                    }
-
+                                                                    // Show actual media if we have it (prefer video, then image)
                                                                     if (scene.videoUrl) {
                                                                         return (
                                                                             <Box sx={{ position: 'relative' }}>
@@ -1502,22 +1492,22 @@ const ProjectDirectorView: React.FC = () => {
                                                                         return (
                                                                             <Box sx={{ position: 'relative' }}>
                                                                                 <img src={scene.imageUrl} alt="Scene preview" style={{ width: '100%', borderRadius: '8px', maxHeight: '150px', objectFit: 'contain', background: '#000' }} />
-                                                                                {scene.fallbackPrompt && (
-                                                                                    <Chip
-                                                                                        label="FALLBACK"
-                                                                                        size="small"
-                                                                                        sx={{
-                                                                                            position: 'absolute',
-                                                                                            top: 4,
-                                                                                            right: 4,
-                                                                                            bgcolor: 'rgba(255, 107, 107, 0.9)',
-                                                                                            color: '#fff',
-                                                                                            fontSize: '0.65rem',
-                                                                                            fontWeight: 'bold',
-                                                                                            height: 20,
-                                                                                        }}
-                                                                                    />
+                                                                                {isRendering && (
+                                                                                    <Box sx={{ position: 'absolute', bottom: 8, right: 8, bgcolor: 'rgba(0,0,0,0.7)', borderRadius: 1, p: '2px 8px', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                                        <CircularProgress size={10} sx={{ color: 'var(--accent-gold)' }} />
+                                                                                        <Typography variant="caption" sx={{ color: '#fff', fontSize: '0.6rem' }}>{progress.message || 'Creating motion...'}</Typography>
+                                                                                    </Box>
                                                                                 )}
+                                                                            </Box>
+                                                                        );
+                                                                    }
+
+                                                                    if (isRendering) {
+                                                                        return (
+                                                                            <Box sx={{ width: '100%', height: 150, bgcolor: '#000', borderRadius: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+                                                                                <CircularProgress size={24} sx={{ color: 'var(--accent-gold)', mb: 2 }} />
+                                                                                <Typography variant="caption" sx={{ color: '#fff', textAlign: 'center', fontSize: '0.7rem' }}>{progress.message || 'Processing...'}</Typography>
+                                                                                <LinearProgress variant="determinate" value={progress.progress} sx={{ width: '80%', mt: 1.5, height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }} />
                                                                             </Box>
                                                                         );
                                                                     }
