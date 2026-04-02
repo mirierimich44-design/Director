@@ -23,12 +23,16 @@ export const AnimationComponent = () => {
   const strokeW = 60
   const arcR = outerR - strokeW / 2
 
-  // Gauge is a half circle (180 degrees) from left to right
-  const targetPct = 0.75
-  const currentPct = gaugeProgress * targetPct
-  const startAngle = Math.PI
-  const sweepAngle = currentPct * Math.PI
-  const endAngle = startAngle + sweepAngle
+  // Parse target percentage from string (e.g., "74" -> 0.74)
+  const targetPct = useMemo(() => {
+    const val = parseFloat(percentValue.replace(/[^0-9.]/g, '')) || 0;
+    return Math.min(1, val / 100);
+  }, [percentValue]);
+
+  const currentPct = gaugeProgress * targetPct;
+  const startAngle = Math.PI;
+  const sweepAngle = currentPct * Math.PI;
+  const endAngle = startAngle + sweepAngle;
 
   const x1 = cx + arcR * Math.cos(startAngle)
   const y1 = cy + arcR * Math.sin(startAngle)
@@ -39,7 +43,7 @@ export const AnimationComponent = () => {
   const arcPath = currentPct > 0.001 ? `M ${x1} ${y1} A ${arcR} ${arcR} 0 ${largeArc} 1 ${x2} ${y2}` : ''
 
   // Needle angle
-  const needleAngle = Math.PI + currentPct * Math.PI
+  const needleAngle = Math.PI + currentPct * Math.PI;
   const needleX = cx + (arcR - 20) * Math.cos(needleAngle)
   const needleY = cy + (arcR - 20) * Math.sin(needleAngle)
 
