@@ -545,7 +545,10 @@ const ProjectDirectorView: React.FC = () => {
                         body: JSON.stringify({
                             imageUrl: imageUrl,
                             motion: motion,
-                            duration: scene.duration || 15
+                            duration: scene.duration || 15,
+                            projectId: proj.id,
+                            chapterId: chapterId,
+                            sceneIndex: sceneIndex
                         })
                     });
                     const renderData = await renderRes.json();
@@ -573,17 +576,9 @@ const ProjectDirectorView: React.FC = () => {
                                 return { ...prev, [sceneKey]: prog };
                             });
 
-                            if (job.status === 'completed') {
+                            if (job.status === 'completed' || job.status === 'fallback') {
                                 evtSrc.close();
-                                await fetch(`/api/projects/${proj.id}/chapters/${chapterId}/scenes/${sceneIndex}`, {
-                                    method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ 
-                                        imageUrl: imageUrl, // keep original image too
-                                        videoUrl: job.url, 
-                                        status: 'rendered' 
-                                    })
-                                });
+                                // Backend now persists the result automatically.
                                 setSceneProgress(p => { const n = { ...p }; delete n[sceneKey]; return n; });
                                 loadProjectDetails(proj.id);
                                 resolveSSE();
@@ -595,7 +590,17 @@ const ProjectDirectorView: React.FC = () => {
 
                         evtSrc.onerror = () => {
                             evtSrc.close();
-                            resolveSSE();
+                            // If SSE fails, polling fallback
+                            setTimeout(async () => {
+                                try {
+                                    const checkRes = await fetch(`/api/job-status/${renderData.jobId}`);
+                                    const job = await checkRes.json();
+                                    if (job.status === 'completed' || job.status === 'fallback') {
+                                        loadProjectDetails(proj.id);
+                                    }
+                                    resolveSSE();
+                                } catch (e) { resolveSSE(); }
+                            }, 5000);
                         };
                     });
                     resolve();
@@ -628,6 +633,9 @@ const ProjectDirectorView: React.FC = () => {
                             fps: 30,
                             width: 1920,
                             height: 1080,
+                            projectId: proj.id,
+                            chapterId: chapterId,
+                            sceneIndex: sceneIndex,
                             sceneData: {
                                 type: scene.type,
                                 script: scene.script,
