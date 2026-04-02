@@ -178,9 +178,11 @@ OUTPUT FORMAT (JSON array only):
   },
   {
     "type": "3D_RENDER",
-    "theme": "DARK",
+    "subject": "main character or object (e.g., a server rack)",
+    "setting": "background setting (e.g., a data center in a snowy forest)",
+    "style": "artistic medium or aesthetic (e.g., cinematic 3D render, holographic, brushed metal)",
     "script": "exact sentence(s)",
-    "reasoning": "why this fits"
+    "reasoning": "why this remix fits"
   }
 ]`
 
@@ -297,25 +299,20 @@ export async function generateScenes(scriptText, generationSettings = null) {
         scene.error = err.message
       }
     } else {
-      // 3D Render Prompt Generation
-      console.log(`   🖼️ Scene ${scene.index}: Generating 3D Render prompt...`)
-      const model = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() })
+      // 3D Render Remix Generation (Google Whisk Style)
+      console.log(`   🖼️ Scene ${scene.index}: Finalizing 3D Render slots...`)
       
-      const imgPrompt = `Create a 60-80 word photorealistic 3D render prompt based on this scene: "${scene.script}".
+      // Ensure we have the slots from Pass 1
+      if (!scene.subject) scene.subject = 'main object';
+      if (!scene.setting) scene.setting = 'cinematic environment';
+      if (!scene.style)   scene.style   = 'dark moody cinematic 3D render, brushed metal, glowing fiber optics';
 
-CRITICAL AESTHETIC RULE: You are designing for the "Original" director. The visual style must be a dark, moody, cinematic 3D render focusing entirely on physical spaces, infrastructure, technology, servers, or symbolic physical objects.
-
-STRICT BAN ON HUMANS: STRICTLY NO HUMANS, NO PEOPLE, NO FACES, NO BODY PARTS. 
-If the script mentions a person or hacker, you MUST visualize their environment (e.g., an empty glowing server room), their tools (e.g., a glowing terminal on a desk), or the data itself.
-
-Include terms like 'cinematic lighting', 'volumetric fog', 'depth of field', and describe the materials (e.g., 'brushed metal', 'glowing fiber optics').`
-
-      const promptRes = await model.generateContent(imgPrompt)
-      scene.prompt = promptRes.response.text().trim()
+      // Pass 2: Refine the prompt logic but keep slots for the UI
+      scene.prompt = `${scene.subject} in ${scene.setting} with ${scene.style}`;
       
-      scene.environment = scene.category || 'infrastructure'
-      scene.camera = 'cinematic'
-      scene.motion = 'slow dolly forward'
+      scene.environment = scene.setting;
+      scene.camera = 'cinematic';
+      scene.motion = 'slow dolly forward';
       scene.lower_third = { text: scene.script.substring(0, 50) + '...', attribution: '', tone: '#FFAA00' }
     }
 

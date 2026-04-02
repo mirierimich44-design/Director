@@ -81,6 +81,9 @@ OUTPUT FORMAT (JSON array only):
   },
   {
     "type": "ILLUSTRATION",
+    "subject": "main character or object (e.g., a stressed banker at a desk)",
+    "setting": "background setting (e.g., a busy stock exchange, a quiet library)",
+    "style": "editorial watercolor illustration, courtroom sketch aesthetic, loose ink linework",
     "script": "exact sentence(s)",
     "reasoning": "why this illustration fits"
   }
@@ -187,17 +190,15 @@ export async function generateScenes(scriptText, generationSettings = null) {
         scene.code = fillTemplate(templateName, scene.theme, scene.content)
       } catch (err) { scene.error = err.message }
     } else {
-      console.log(`   🎨 Scene ${scene.index}: Generating Editorial Illustration prompt...`)
+      console.log(`   🎨 Scene ${scene.index}: Finalizing Illustration slots...`)
       
-      const imgModel = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() })
-      const imgPrompt = `Create a 60-word editorial watercolor illustration prompt for a financial newspaper based on this scene: "${scene.script}". 
-      
-      CRITICAL INSTRUCTION: You MUST include this exact style anchor verbatim at the start of your response: "editorial watercolor illustration, courtroom sketch aesthetic, loose ink linework, soft layered watercolor washes, visible brush texture, warm muted palette, slightly exaggerated realistic proportions, painterly blending, news-media journalistic composition". 
-      
-      Do NOT use 3D renders or photorealism. Describe the colors visually (e.g. 'deep navy blues', 'burnished gold accents').`
-      
-      const promptRes = await imgModel.generateContent(imgPrompt)
-      scene.prompt = promptRes.response.text().trim()
+      // Ensure we have the slots from Pass 1
+      if (!scene.subject) scene.subject = 'main character';
+      if (!scene.setting) scene.setting = 'cinematic background';
+      if (!scene.style)   scene.style   = 'editorial watercolor illustration, courtroom sketch aesthetic, loose ink linework, soft washes';
+
+      // Pass 2: Refine the prompt logic but keep slots for the UI
+      scene.prompt = `${scene.subject} in ${scene.setting} with ${scene.style}`;
       
       scene.environment = 'editorial-illustration'
       scene.lower_third = { text: scene.script.substring(0, 50) + '...', attribution: '' }
