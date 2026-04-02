@@ -483,6 +483,24 @@ const VideoGeneratorView: React.FC = () => {
                             onChange={(e) => setScript(e.target.value)}
                             sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'rgba(0,0,0,0.2)', color: '#fff' } }}
                         />
+                        {/* Aspect Ratio — set here as it affects the whole video */}
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 2 }}>
+                            <AspectRatioIcon sx={{ color: 'var(--accent-gold)', fontSize: 18 }} />
+                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>Aspect Ratio</Typography>
+                            <ToggleButtonGroup
+                                value={aspectRatio}
+                                exclusive
+                                onChange={(_, v) => v && setAspectRatio(v)}
+                                size="small"
+                            >
+                                <ToggleButton value="16:9" sx={{ color: 'var(--text-secondary)', fontSize: '0.75rem', px: 1.5, '&.Mui-selected': { bgcolor: 'rgba(201,169,97,0.2)', color: 'var(--accent-gold)' } }}>
+                                    <Box sx={{ width: 24, height: 14, border: '2px solid currentColor', borderRadius: 0.5, mr: 0.75 }} /> 16:9
+                                </ToggleButton>
+                                <ToggleButton value="9:16" sx={{ color: 'var(--text-secondary)', fontSize: '0.75rem', px: 1.5, '&.Mui-selected': { bgcolor: 'rgba(201,169,97,0.2)', color: 'var(--accent-gold)' } }}>
+                                    <Box sx={{ width: 14, height: 24, border: '2px solid currentColor', borderRadius: 0.5, mr: 0.75 }} /> 9:16
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Stack>
                     </Box>
                 );
             case 1: // Avatar

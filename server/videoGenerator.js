@@ -148,9 +148,12 @@ router.post('/heygen-generate', async (req, res) => {
 
     console.log(`📡 HeyGen Request: Avatar=${avatarId}, Voice=${voiceId}, BG=${bgMode}`);
 
-    // Prepend publicUrl to local paths
-    if (backgroundVideoUrl && backgroundVideoUrl.startsWith('/') && publicUrl) {
-        backgroundVideoUrl = `${publicUrl.replace(/\/$/, '')}${backgroundVideoUrl}`;
+    // Convert relative paths to absolute URLs (HeyGen requires a public URL)
+    if (backgroundVideoUrl && backgroundVideoUrl.startsWith('/')) {
+        const base = publicUrl
+            ? publicUrl.replace(/\/$/, '')
+            : `${req.protocol}://${req.get('host')}`;
+        backgroundVideoUrl = `${base}${backgroundVideoUrl}`;
     }
 
     try {

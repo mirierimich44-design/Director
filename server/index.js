@@ -63,23 +63,29 @@ app.use('/audio',  express.static(audioDir));
 app.use('/images', express.static(imagesDir));
 app.use(express.static(join(__dirname, '../dist')));
 
-// ── Multer — image uploads ──────────────────────────────────────────────────
+// ── Multer — image/video uploads ─────────────────────────────────────────────
 const imageStorage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, imagesDir),
-    filename:    (req, file, cb) => cb(null, `upload_${uuidv4()}.${file.originalname.split('.').pop()}`)
+    destination: (req, file, cb) => {
+        const ext = file.originalname.split('.').pop().toLowerCase();
+        const isVideo = /mp4|mov|webm|avi/.test(ext);
+        cb(null, isVideo ? videosDir : imagesDir);
+    },
+    filename: (req, file, cb) => cb(null, `upload_${uuidv4()}.${file.originalname.split('.').pop()}`)
 });
 const imageUpload = multer({
     storage: imageStorage,
     fileFilter: (req, file, cb) => {
-        const allowed = /jpg|jpeg|png|webp|gif/;
+        const allowed = /jpg|jpeg|png|webp|gif|mp4|mov|webm|avi/;
         const ext = file.originalname.split('.').pop().toLowerCase();
         cb(null, allowed.test(ext));
     }
 });
 
 app.post('/api/upload-image', imageUpload.single('image'), (req, res) => {
-    if (!req.file) return res.status(400).json({ error: 'No image provided or invalid format' });
-    const url = `/images/${req.file.filename}`;
+    if (!req.file) return res.status(400).json({ error: 'No file provided or invalid format' });
+    const ext = req.file.originalname.split('.').pop().toLowerCase();
+    const isVideo = /mp4|mov|webm|avi/.test(ext);
+    const url = isVideo ? `/videos/${req.file.filename}` : `/images/${req.file.filename}`;
     res.json({ success: true, url });
 });
 
