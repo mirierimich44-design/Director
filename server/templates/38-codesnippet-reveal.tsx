@@ -28,7 +28,7 @@ export const AnimationComponent = () => {
   const titleTy = interpolate(frame, [0, 20], [15, 0], { extrapolateLeft: 'clamp' })
 
   const windowOp = interpolate(frame, [10, 30], [0, 1], { extrapolateLeft: 'clamp' })
-  const windowScale = interpolate(frame, [10, 40], [0.98, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) })
+  const windowTy = interpolate(frame, [10, 35], [20, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) })
 
   const lineOpacities = codeLines.map((_, i) => interpolate(frame, [30 + i * 4, 45 + i * 4], [0, 1], { extrapolateLeft: 'clamp' }))
   
@@ -44,7 +44,7 @@ export const AnimationComponent = () => {
       display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       {/* 16:9 Safe Container */}
-      <div style={{ width: 1600, height: 900, position: 'relative', transform: `scale(${windowScale})` }}>
+      <div style={{ width: 1600, height: 900, position: 'relative' }}>
         
         {/* Title */}
         <div style={{
@@ -59,7 +59,7 @@ export const AnimationComponent = () => {
         {/* IDE Window Container */}
         <div style={{
           position: 'absolute', top: 140, left: (1600 - windowWidth) / 2, width: windowWidth,
-          opacity: windowOp
+          opacity: windowOp, transform: `translateY(${windowTy}px)`
         }}>
           
           {/* Title Bar */}
