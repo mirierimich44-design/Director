@@ -438,87 +438,21 @@ const ProjectDirectorView: React.FC = () => {
 
                     const imageUrl = data.url; 
                     
-                    // NEW: Update scene with imageUrl immediately so user sees it
+                    // Update scene with imageUrl and mark as rendered
                     await fetch(`/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ imageUrl: imageUrl })
-                    });
-                    await loadProjectDetails(selectedProject.id);
-
-                    const prog: SceneProgress = { phase: 'processing', progress: 95, message: 'Image ready, creating motion...' };
-                    setSceneProgress(p => ({ ...p, [sceneKey]: prog }));
-                    if (onProgress) onProgress(prog);
-
-                    // 2. Trigger a Video Render Job using the ImageHero template
-                    const motion = (scene as any).motion || 'slow zoom in';
-                    
-                    const renderRes = await fetch(`/api/auto-scene/render-image-video`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
+                        body: JSON.stringify({ 
                             imageUrl: imageUrl,
-                            motion: motion,
-                            duration: scene.duration || 15,
-                            projectId: proj.id,
-                            chapterId: chapterId,
-                            sceneIndex: sceneIndex
+                            status: 'rendered',
+                            renderStatus: 'completed'
                         })
                     });
-                    const renderData = await renderRes.json();
-                    if (!renderData.success) throw new Error(renderData.error || 'Video rendering failed');
-
-                    // 3. Use SSE for live progress of the video render
-                    await new Promise<void>((resolveSSE) => {
-                        const evtSrc = new EventSource(`/api/render-progress/${renderData.jobId}`);
-
-                        evtSrc.onmessage = async (e) => {
-                            const job = JSON.parse(e.data);
-                            setSceneProgress(prev => {
-                                const current = prev[sceneKey] || { phase: '', progress: 0, message: '', logs: [] };
-                                const newLogs = [...(current.logs || [])];
-                                if (job.message && job.message !== current.message) {
-                                    newLogs.push(`[${new Date().toLocaleTimeString()}] ${job.message}`);
-                                }
-                                const prog: SceneProgress = {
-                                    phase: job.phase || job.status || 'processing',
-                                    progress: job.progress || 0,
-                                    message: job.message || '',
-                                    logs: newLogs.slice(-20) // keep last 20 logs
-                                };
-                                if (onProgress) onProgress(prog);
-                                return { ...prev, [sceneKey]: prog };
-                            });
-
-                            if (job.status === 'completed' || job.status === 'fallback') {
-                                evtSrc.close();
-                                // Backend now persists the result automatically.
-                                setSceneProgress(p => { const n = { ...p }; delete n[sceneKey]; return n; });
-                                loadProjectDetails(proj.id);
-                                resolveSSE();
-                            } else if (job.status === 'error') {
-                                evtSrc.close();
-                                throw new Error(job.error || 'Render failed');
-                            }
-                        };
-
-                        evtSrc.onerror = () => {
-                            evtSrc.close();
-                            // If SSE fails, polling fallback
-                            setTimeout(async () => {
-                                try {
-                                    const checkRes = await fetch(`/api/job-status/${renderData.jobId}`);
-                                    const job = await checkRes.json();
-                                    if (job.status === 'completed' || job.status === 'fallback') {
-                                        loadProjectDetails(proj.id);
-                                    }
-                                    resolveSSE();
-                                } catch (e) { resolveSSE(); }
-                            }, 5000);
-                        };
-                    });
+                    
+                    setSceneProgress(p => { const n = { ...p }; delete n[sceneKey]; return n; });
+                    setSceneRenderStatus(chapterId, sceneIndex, 'idle');
+                    await loadProjectDetails(selectedProject.id);
                     resolve();
-
                 } else if (isTemplate) {
                     let finalCode = scene.code;
                     // Auto-refresh code if a template is assigned to grab the latest local file edits
@@ -1490,14 +1424,8 @@ const ProjectDirectorView: React.FC = () => {
 
                                                                     if (scene.imageUrl) {
                                                                         return (
-                                                                            <Box sx={{ position: 'relative' }}>
-                                                                                <img src={scene.imageUrl} alt="Scene preview" style={{ width: '100%', borderRadius: '8px', maxHeight: '150px', objectFit: 'contain', background: '#000' }} />
-                                                                                {isRendering && (
-                                                                                    <Box sx={{ position: 'absolute', bottom: 8, right: 8, bgcolor: 'rgba(0,0,0,0.7)', borderRadius: 1, p: '2px 8px', display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                                        <CircularProgress size={10} sx={{ color: 'var(--accent-gold)' }} />
-                                                                                        <Typography variant="caption" sx={{ color: '#fff', fontSize: '0.6rem' }}>{progress.message || 'Creating motion...'}</Typography>
-                                                                                    </Box>
-                                                                                )}
+                                                                            <Box>
+                                                                                <img src={scene.imageUrl} alt="Scene preview" style={{ width: '100%', borderRadius: '4px', objectFit: 'contain' }} />
                                                                             </Box>
                                                                         );
                                                                     }
