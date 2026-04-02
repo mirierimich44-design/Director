@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
     plugins: [react()],
+    // Express already serves /videos, /images, /audio directly from disk.
+    // Setting publicDir:false prevents Vite from copying those files into dist/
+    // during production builds (which would exhaust disk space on large projects).
+    publicDir: false,
     server: {
         port: 5174,
         proxy: {
@@ -14,6 +18,6 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
-        sourcemap: true,
+        sourcemap: false,
     },
 });
