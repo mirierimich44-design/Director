@@ -31,20 +31,20 @@ const DEFAULTS = {
   // Language models
   models: {
     language: {
-      primary: 'gemini-1.5-flash',            // Main generation (TSX, scene routing, template gen)
-      fast: 'gemini-1.5-flash',               // Fast/cheap JSON tasks (routing, extraction)
-      claude: 'claude-3-5-sonnet-latest',     // Claude primary
-      claudeFast: 'claude-3-5-haiku-latest',  // Claude fast
+      primary: 'gemini-3.1-flash-lite-preview',            // Main generation (TSX, scene routing, template gen)
+      fast: 'gemini-3.1-flash-lite-preview',               // Fast/cheap JSON tasks (routing, extraction)
+      claude: 'claude-sonnet-4-5',                         // Claude primary
+      claudeFast: 'claude-haiku-4-0',                      // Claude fast
     },
     tts: {
       engine: 'kokoro',                        // 'kokoro', 'orpheus', or 'heygen'
     },
     image: {
-      primary: 'imagen-3.0-generate-001',      // Image generation
-      fallback: 'imagen-3.0-fast-generate-001',    // Fallback image model
+      primary: 'imagen-4.0-generate-001',      // Image generation
+      fallback: 'imagen-4.0-fast-generate-001',    // Fallback image model
     },
     video: {
-      primary: 'veo-2.0-generate-001',      // Video generation
+      primary: 'veo-3.0-generate-preview',      // Video generation (Veo 3)
     },
   },
 
