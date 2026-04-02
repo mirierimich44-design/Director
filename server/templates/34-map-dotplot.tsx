@@ -26,7 +26,7 @@ export const AnimationComponent = () => {
   const mapW = 1400
   const mapH = 700
 
-  // Stylized low-poly world map SVG path (simplified for performance and tech-aesthetic)
+  // Flat 2D World Map Path
   const worldMapPath = "M 150 180 Q 250 120 400 150 Q 450 250 350 350 Q 200 300 150 180 Z M 350 350 Q 400 450 450 550 Q 550 500 500 350 Q 450 300 350 350 Z M 650 150 Q 750 100 850 150 Q 900 250 800 300 Q 700 250 650 150 Z M 750 350 Q 800 450 900 550 Q 1000 500 950 350 Q 850 300 750 350 Z M 1050 150 Q 1150 100 1250 150 Q 1300 250 1200 300 Q 1100 250 1050 150 Z M 1150 350 Q 1200 450 1300 550 Q 1400 500 1350 350 Q 1250 300 1150 350 Z";
 
   return (
@@ -41,99 +41,68 @@ export const AnimationComponent = () => {
           <div style={{ color: '#fff', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{title}</div>
         </div>
 
-        {/* 3D Holographic Map Container */}
+        {/* 2D Flat Map Container */}
         <div style={{ 
             position: 'absolute', top: 150, left: 100, width: mapW, height: mapH, 
-            opacity: mapOp, perspective: 1200
+            opacity: mapOp
         }}>
-          
-          <div style={{
-            width: '100%', height: '100%', position: 'relative',
-            transform: 'rotateX(45deg) rotateZ(-5deg)', transformStyle: 'preserve-3d'
-          }}>
-             {/* Map Grid Base */}
-             <div style={{
-                position: 'absolute', inset: -200,
-                backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,0.05) 2px, transparent 2px)',
-                backgroundSize: '100px 100px', transform: 'translateZ(-50px)'
-             }} />
+           {/* Map Grid Base */}
+           <div style={{
+              position: 'absolute', inset: 0,
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+              backgroundSize: '80px 80px', borderRadius: 24, border: '1px solid rgba(255,255,255,0.05)',
+              backgroundColor: 'rgba(255,255,255,0.01)'
+           }} />
 
-             {/* Vector World Map */}
-             <svg width={mapW} height={mapH} style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible' }}>
-                <path d={worldMapPath} fill="rgba(255,255,255,0.02)" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={0.3} />
+           {/* Vector World Map */}
+           <svg width={mapW} height={mapH} style={{ position: 'absolute', top: 0, left: 0 }}>
+              <path d={worldMapPath} fill="rgba(255,255,255,0.02)" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={0.4} />
+
+              {/* Simple 2D Glowing Nodes */}
+              {activeItems.map((item, i) => {
+                const delay = 20 + i * 15;
+                const dotOp = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateLeft: 'clamp' });
+                const dotScale = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
                 
-                {/* Data Arcs (Connections between dots) */}
-                {activeItems.length > 1 && activeItems.slice(0, -1).map((item, i) => {
-                  const nextItem = activeItems[i + 1];
-                  const cx1 = item.pos.nx * mapW;
-                  const cy1 = item.pos.ny * mapH;
-                  const cx2 = nextItem.pos.nx * mapW;
-                  const cy2 = nextItem.pos.ny * mapH;
-                  
-                  // Arc animation
-                  const drawStart = 40 + i * 15;
-                  const drawLength = interpolate(frame, [drawStart, drawStart + 30], [0, 1000], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
+                const pulse = interpolate(frame % 60, [0, 60], [1, 2], { extrapolateLeft: 'clamp' });
+                const pulseOp = interpolate(frame % 60, [0, 60], [0.5, 0], { extrapolateLeft: 'clamp' });
 
-                  return (
-                    <path key={`arc-${i}`} 
-                      d={`M ${cx1} ${cy1} Q ${(cx1+cx2)/2} ${(cy1+cy2)/2 - 200} ${cx2} ${cy2}`} 
-                      fill="none" stroke="ACCENT_COLOR" strokeWidth={3} 
-                      strokeDasharray="1000" strokeDashoffset={1000 - drawLength}
-                      style={{ filter: 'drop-shadow(0 0 15px ACCENT_COLOR)' }}
-                    />
-                  )
-                })}
+                const cx = item.pos.nx * mapW;
+                const cy = item.pos.ny * mapH;
 
-                {/* Glowing Nodes */}
-                {activeItems.map((item, i) => {
-                  const delay = 20 + i * 15;
-                  const dotOp = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateLeft: 'clamp' });
-                  const dotScale = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
-                  
-                  const pulse = interpolate(frame % 60, [0, 60], [1, 2.5], { extrapolateLeft: 'clamp' });
-                  const pulseOp = interpolate(frame % 60, [0, 60], [0.5, 0], { extrapolateLeft: 'clamp' });
-
-                  const cx = item.pos.nx * mapW;
-                  const cy = item.pos.ny * mapH;
-
-                  return (
-                    <g key={i} opacity={dotOp} transform={`translate(${cx}, ${cy})`}>
-                      {/* Vertical Locator Line (Fake 3D) */}
-                      <line x1={0} y1={0} x2={0} y2={-80} stroke="PRIMARY_COLOR" strokeWidth={2} opacity={0.5} strokeDasharray="4 4" />
-                      
-                      {/* Ground Pulse */}
-                      <circle cx={0} cy={0} r={item.pos.size * pulse} fill="none" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={pulseOp} transform="rotateX(60deg)" />
-                      
-                      {/* Floating Node */}
-                      <g transform={`translate(0, -80) scale(${dotScale})`}>
-                        <circle cx={0} cy={0} r={item.pos.size} fill="PRIMARY_COLOR" style={{ filter: 'drop-shadow(0 0 20px PRIMARY_COLOR)' }} />
-                        <circle cx={0} cy={0} r={item.pos.size * 0.4} fill="#fff" opacity={0.8} />
-                      </g>
+                return (
+                  <g key={i} opacity={dotOp} transform={`translate(${cx}, ${cy})`}>
+                    {/* Flat Pulse */}
+                    <circle cx={0} cy={0} r={item.pos.size * pulse} fill="none" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={pulseOp} />
+                    
+                    {/* Solid Node */}
+                    <g transform={`scale(${dotScale})`}>
+                      <circle cx={0} cy={0} r={item.pos.size} fill="PRIMARY_COLOR" style={{ filter: 'drop-shadow(0 0 10px PRIMARY_COLOR)' }} />
+                      <circle cx={0} cy={0} r={item.pos.size * 0.4} fill="#fff" opacity={0.8} />
                     </g>
-                  );
-                })}
-             </svg>
-          </div>
+                  </g>
+                );
+              })}
+           </svg>
         </div>
 
-        {/* 2D Targeting Labels (Overlayed on top of 3D container) */}
+        {/* Labels */}
         {activeItems.map((item, i) => {
-          // Manually project 3D coordinates roughly back to 2D screen space for labels
           const cx = 100 + (item.pos.nx * mapW);
-          const cy = 150 + (item.pos.ny * mapH * 0.7) - 80; // approximate Y compression + floating height
+          const cy = 150 + (item.pos.ny * mapH);
 
           return (
             <div key={i} style={{ 
-                position: 'absolute', top: cy - 40, left: cx + 30, width: 240, 
-                opacity: labelOp 
+                position: 'absolute', top: cy + item.pos.size + 12, left: cx - 120, width: 240, 
+                opacity: labelOp, display: 'flex', justifyContent: 'center'
             }}>
               <div style={{ 
-                  padding: '8px 16px', backgroundColor: 'rgba(0,0,0,0.8)', 
-                  backdropFilter: 'blur(10px)', borderLeft: '4px solid PRIMARY_COLOR',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+                  padding: '6px 12px', backgroundColor: 'rgba(0,0,0,0.7)', 
+                  backdropFilter: 'blur(5px)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 8, boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+                  textAlign: 'center'
               }}>
-                <div style={{ color: 'SUPPORT_COLOR', fontSize: 10, fontWeight: 900, letterSpacing: 2, marginBottom: 4 }}>LOC_ID: {Math.floor(Math.random() * 900) + 100}</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: 1 }}>{item.label}</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: 1 }}>{item.label}</div>
               </div>
             </div>
           );
