@@ -441,6 +441,9 @@ const ProjectDirectorView: React.FC = () => {
             if (data.success) {
                 setNewChapterTitle('');
                 setNewChapterScript('');
+                if (data.chapter && data.chapter.id) {
+                    setActiveChapterId(data.chapter.id);
+                }
                 loadProjectDetails(selectedProject.id);
             } else {
                 setError(data.error || 'Failed to add chapter');
