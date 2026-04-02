@@ -10,31 +10,27 @@ export const AnimationComponent = () => {
     "ICON_LABEL_4", "ICON_LABEL_5", "ICON_LABEL_6",
     "ICON_LABEL_7", "ICON_LABEL_8", "ICON_LABEL_9",
   ]
+  
+  // High-tech modern icon symbols
   const iconSymbols = ['⬡', '◈', '⬢', '◉', '⬣', '◎', '⬟', '◍', '⬠']
 
   const activeItems = useMemo(() => {
     return rawIconLabels
       .map((label, i) => ({ label, symbol: iconSymbols[i] }))
-      .filter(item => item.label !== '' && item.label !== 'Placeholder')
+      .filter(item => item.label !== '' && item.label !== 'Placeholder' && item.label !== ' ')
   }, [])
 
   const count = activeItems.length
 
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const barW = interpolate(frame, [15, 45], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp' })
 
   const cellOpacities = activeItems.map((_, i) => 
-    interpolate(frame, [18 + i * 6, 32 + i * 6], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  )
-  const cellScales = activeItems.map((_, i) => 
-    interpolate(frame, [18 + i * 6, 32 + i * 6], [0.6, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    interpolate(frame, [15 + i * 5, 30 + i * 5], [0, 1], { extrapolateLeft: 'clamp' })
   )
 
-  const labelOp = interpolate(frame, [75, 90], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-
-  const cellW = 320
-  const cellH = 260
+  const cellW = 280
+  const cellH = 220
   const colGap = 40
   const rowGap = 40
   const cols = 3
@@ -42,8 +38,8 @@ export const AnimationComponent = () => {
   
   const totalW = Math.min(count, cols) * cellW + (Math.min(count, cols) - 1) * colGap
   const totalH = rows * cellH + (rows - 1) * rowGap
-  const startX = (1920 - totalW) / 2
-  const startY = (1080 - totalH) / 2 + 40
+  const startX = (1600 - totalW) / 2
+  const startY = (900 - totalH) / 2 + 30
 
   const cells = activeItems.map((item, i) => {
     const col = i % cols
@@ -56,131 +52,62 @@ export const AnimationComponent = () => {
     }
   })
 
-  const isHighlight = (i: number) => i === 4
+  // Highlight the center item if there are enough, otherwise the first one
+  const highlightIndex = count >= 5 ? 4 : 0
 
   return (
     <div style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: 1920,
-      height: 1080,
-      overflow: 'hidden',
-      backgroundColor: 'BACKGROUND_COLOR',
+      position: 'absolute', inset: 0, overflow: 'hidden',
+      backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
 
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: 1920,
-        height: 5,
-        overflow: 'hidden',
-        backgroundColor: 'PRIMARY_COLOR',
-        opacity: titleOp,
-      }} />
+      {/* 16:9 Safe Container */}
+      <div style={{ width: 1600, height: 900, position: 'relative' }}>
 
-      <div style={{
-        position: 'absolute',
-        top: 1074,
-        left: 0,
-        width: barW,
-        height: 6,
-        overflow: 'hidden',
-        backgroundColor: 'PRIMARY_COLOR',
-      }} />
-
-      <div style={{
-        position: 'absolute',
-        top: 40,
-        left: 0,
-        width: 1920,
-        height: 60,
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: titleOp,
-        transform: `translateY(${titleTy}px)`,
-      }}>
-        <span style={{
-          fontSize: 26,
-          fontWeight: 700,
-          color: 'PRIMARY_COLOR',
-          letterSpacing: 5,
-          textTransform: 'uppercase',
-          fontFamily: 'sans-serif',
+        <div style={{
+          position: 'absolute', top: 40, left: 0, width: '100%', textAlign: 'center',
+          opacity: titleOp, transform: `translateY(${titleTy}px)`
         }}>
-          {title}
-        </span>
-      </div>
-
-      {cells.map((cell, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            top: cell.y,
-            left: cell.x,
-            width: cellW,
-            height: cellH,
-            overflow: 'hidden',
-            backgroundColor: isHighlight(i) ? 'PRIMARY_COLOR' : 'CHART_BG',
-            borderRadius: 8,
-            boxSizing: 'border-box',
-            border: isHighlight(i) ? 'none' : '1px solid',
-            borderColor: 'CHART_BORDER',
-            opacity: cellOpacities[i],
-            transform: `scale(${cellScales[i]})`,
-          }}
-        >
-          <div style={{
-            position: 'absolute',
-            top: 30,
-            left: 0,
-            width: cellW,
-            height: 110,
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <span style={{
-              fontSize: 90,
-              color: isHighlight(i) ? 'TEXT_ON_PRIMARY' : 'PRIMARY_COLOR',
-              fontFamily: 'sans-serif',
-              lineHeight: 1,
-            }}>
-              {cell.symbol}
-            </span>
-          </div>
-
-          <div style={{
-            position: 'absolute',
-            top: 158,
-            left: 12,
-            width: cellW - 24,
-            height: 70,
-            overflow: 'hidden',
-            opacity: labelOp,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <span style={{
-              fontSize: 21,
-              fontWeight: isHighlight(i) ? 700 : 500,
-              color: isHighlight(i) ? 'TEXT_ON_PRIMARY' : 'TEXT_ON_SECONDARY',
-              fontFamily: 'sans-serif',
-              textAlign: 'center',
-              lineHeight: 1.3,
-            }}>
-              {cell.label}
-            </span>
-          </div>
+          <span style={{ fontSize: 24, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: 8, textTransform: 'uppercase' }}>
+            {title}
+          </span>
         </div>
-      ))}
 
+        {cells.map((cell, i) => {
+          const isHighlight = i === highlightIndex;
+          return (
+            <div key={i} style={{
+              position: 'absolute', top: cell.y, left: cell.x, width: cellW, height: cellH,
+              backgroundColor: isHighlight ? 'PRIMARY_COLOR' : 'rgba(255,255,255,0.03)',
+              borderRadius: 16, border: isHighlight ? 'none' : '1px solid rgba(255,255,255,0.08)',
+              opacity: cellOpacities[i], display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              boxShadow: isHighlight ? '0 20px 50px rgba(0,0,0,0.5)' : 'none'
+            }}>
+              
+              {/* Icon Symbol */}
+              <div style={{
+                fontSize: 80, color: isHighlight ? 'BACKGROUND_COLOR' : 'PRIMARY_COLOR',
+                lineHeight: 1, marginBottom: 24
+              }}>
+                {cell.symbol}
+              </div>
+
+              {/* Explicit Text Label */}
+              <div style={{
+                fontSize: 18, fontWeight: isHighlight ? 800 : 600,
+                color: isHighlight ? 'BACKGROUND_COLOR' : '#fff',
+                textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1,
+                padding: '0 20px'
+              }}>
+                {cell.label}
+              </div>
+
+            </div>
+          )
+        })}
+
+      </div>
     </div>
   )
 }

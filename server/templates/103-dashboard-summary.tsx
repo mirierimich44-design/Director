@@ -3,7 +3,7 @@ import { useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame();
-  const { width, height, durationInFrames } = useVideoConfig();
+  const { width, height } = useVideoConfig();
 
   const title = "TITLE_TEXT";
   const kpi1Label = "KPI_LABEL_1";
@@ -12,101 +12,74 @@ export const AnimationComponent = () => {
   const kpi2Value = "KPI_VALUE_2";
   const summary = "SUMMARY_TEXT";
 
-  // Entrance Timings
-  const entryStart = 10;
-  const headerOp = interpolate(frame, [entryStart, entryStart + 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const headerTy = interpolate(frame, [entryStart, entryStart + 40], [30, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
-
-  const kpi1Start = entryStart + 20;
-  const kpi1Op = interpolate(frame, [kpi1Start, kpi1Start + 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const kpi1Scale = interpolate(frame, [kpi1Start, kpi1Start + 50], [0.82, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
-
-  const kpi2Start = entryStart + 35;
-  const kpi2Op = interpolate(frame, [kpi2Start, kpi2Start + 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const kpi2Scale = interpolate(frame, [kpi2Start, kpi2Start + 50], [0.82, 1], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
-
-  const summaryStart = entryStart + 60;
-  const summaryOp = interpolate(frame, [summaryStart, summaryStart + 40], [0, 1], { extrapolateLeft: 'clamp' });
-  const summaryTy = interpolate(frame, [summaryStart, summaryStart + 50], [40, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
-
-  // Background Grid Pulse
-  const gridOp = interpolate(Math.sin(frame / 30), [-1, 1], [0.2, 0.4]);
+  // Entrance Timings (Fades only, no movement)
+  const headerOp = interpolate(frame, [10, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const kpi1Op = interpolate(frame, [30, 60], [0, 1], { extrapolateLeft: 'clamp' });
+  const kpi2Op = interpolate(frame, [45, 75], [0, 1], { extrapolateLeft: 'clamp' });
+  const summaryOp = interpolate(frame, [60, 90], [0, 1], { extrapolateLeft: 'clamp' });
 
   return (
     <div style={{
-      position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden',
+      position: 'absolute', inset: 0, overflow: 'hidden',
       backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'Inter, system-ui, sans-serif',
-      display: 'flex', flexDirection: 'column', padding: '80px 120px'
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
-      {/* Background Decor */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-        backgroundSize: '100px 100px',
-        opacity: gridOp,
-        zIndex: 0
-      }} />
+      
+      {/* 16:9 Safe Container */}
+      <div style={{ width: 1600, height: 900, position: 'relative', display: 'flex', flexDirection: 'column' }}>
 
-      {/* Header Area */}
-      <div style={{ opacity: headerOp, transform: `translateY(${headerTy}px)`, zIndex: 10, marginBottom: 60 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 12 }}>
-           <div style={{ width: 12, height: 48, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, boxShadow: '0 0 20px PRIMARY_COLOR' }} />
-           <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{title}</div>
+        {/* Header Area */}
+        <div style={{ opacity: headerOp, marginBottom: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 8 }}>
+             <div style={{ width: 8, height: 40, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4 }} />
+             <div style={{ fontSize: 44, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{title}</div>
+          </div>
+          <div style={{ color: 'SUPPORT_COLOR', fontSize: 18, fontWeight: 700, letterSpacing: '0.1em', marginLeft: 28, opacity: 0.5 }}>EXECUTIVE_SUMMARY_DASHBOARD</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginLeft: 36 }}>
-           <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#2a9d5c', boxShadow: '0 0 10px #2a9d5c' }} />
-           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 24, fontWeight: 600, letterSpacing: '0.1em' }}>EXECUTIVE_INTEL_SUMMARY_v9.2</div>
-        </div>
-      </div>
 
-      {/* KPI Modules Row */}
-      <div style={{ display: 'flex', gap: 40, zIndex: 5, marginBottom: 40 }}>
-        {/* KPI 1 */}
+        {/* KPI Modules Row */}
+        <div style={{ display: 'flex', gap: 32, marginBottom: 32 }}>
+          {/* KPI 1 */}
+          <div style={{
+            flex: 1, height: 220, backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(20px)',
+            borderRadius: 24, border: '1px solid rgba(255,255,255,0.08)', borderTop: '4px solid PRIMARY_COLOR',
+            padding: '32px 40px', opacity: kpi1Op, display: 'flex', flexDirection: 'column', justifyContent: 'center'
+          }}>
+             <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 8, opacity: 0.6 }}>{kpi1Label}</div>
+             <div style={{ color: 'PRIMARY_COLOR', fontSize: 72, fontWeight: 900, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{kpi1Value}</div>
+          </div>
+
+          {/* KPI 2 */}
+          <div style={{
+            flex: 1, height: 220, backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(20px)',
+            borderRadius: 24, border: '1px solid rgba(255,255,255,0.08)', borderTop: '4px solid ACCENT_COLOR',
+            padding: '32px 40px', opacity: kpi2Op, display: 'flex', flexDirection: 'column', justifyContent: 'center'
+          }}>
+             <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 8, opacity: 0.6 }}>{kpi2Label}</div>
+             <div style={{ color: 'ACCENT_COLOR', fontSize: 72, fontWeight: 900, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{kpi2Value}</div>
+          </div>
+        </div>
+
+        {/* Summary Content Block */}
         <div style={{
-          flex: 1, minHeight: 280, backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(32px)',
-          borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)', borderTop: '6px solid PRIMARY_COLOR',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.92)', padding: '40px 50px',
-          opacity: kpi1Op, transform: `scale(${kpi1Scale})`,
-          display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden'
+          backgroundColor: 'rgba(255, 255, 255, 0.02)', backdropFilter: 'blur(20px)',
+          borderRadius: 24, border: '1px solid rgba(255,255,255,0.05)', borderLeft: '8px solid PRIMARY_COLOR',
+          padding: '48px', opacity: summaryOp, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'
         }}>
-           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 18, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 12 }}>{kpi1Label}</div>
-           <div style={{ color: 'PRIMARY_COLOR', fontSize: kpi1Value.length > 8 ? 70 : 100, fontWeight: 900, fontFamily: 'monospace', lineHeight: 1, letterSpacing: '-0.05em' }}>{kpi1Value}</div>
+           <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20, opacity: 0.8 }}>SYSTEM_ANALYSIS_DEBRIEF</div>
+           <div style={{ color: '#fff', fontSize: 26, fontWeight: 500, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
+              {summary}
+           </div>
         </div>
 
-        {/* KPI 2 */}
-        <div style={{
-          flex: 1, minHeight: 280, backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(32px)',
-          borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)', borderTop: '6px solid ACCENT_COLOR',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.92)', padding: '40px 50px',
-          opacity: kpi2Op, transform: `scale(${kpi2Scale})`,
-          display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden'
-        }}>
-           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 18, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 12 }}>{kpi2Label}</div>
-           <div style={{ color: 'ACCENT_COLOR', fontSize: kpi2Value.length > 8 ? 70 : 100, fontWeight: 900, fontFamily: 'monospace', lineHeight: 1, letterSpacing: '-0.05em' }}>{kpi2Value}</div>
+        {/* Footer */}
+        <div style={{ position: 'absolute', bottom: 20, right: 0, opacity: 0.3 }}>
+          <div style={{ color: 'SUPPORT_COLOR', fontFamily: 'monospace', fontSize: 10, textAlign: 'right' }}>
+            NODE_ID: DASH_AUTO_09<br />
+            STATUS: DATA_SYNC_COMPLETE
+          </div>
         </div>
-      </div>
 
-      {/* Summary Content Block */}
-      <div style={{
-        backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(32px)',
-        borderRadius: 32, border: '1px solid rgba(255,255,255,0.1)', borderLeft: '12px solid PRIMARY_COLOR',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.92)', padding: '50px 60px',
-        opacity: summaryOp, transform: `translateY(${summaryTy}px)`,
-        zIndex: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        flex: 1 // Take remaining space
-      }}>
-         <div style={{ color: 'PRIMARY_COLOR', fontSize: 18, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20 }}>ANALYTIC_DEBRIEF</div>
-         <div style={{ color: 'rgba(255,255,255,0.95)', fontSize: summary.length > 250 ? 24 : 32, fontWeight: 500, lineHeight: 1.5 }}>
-            {summary}
-         </div>
-      </div>
-
-      {/* Footer Technical Detail */}
-      <div style={{ position: 'absolute', bottom: 30, right: 120, textAlign: 'right', opacity: 0.15 }}>
-        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 12 }}>
-          SYSTEM_ACCESS: GRANTED // NODE_STATUS: STABLE<br />
-          REF: DA-772-SUMMARY-AUTO_FLOW
-        </div>
       </div>
     </div>
   );

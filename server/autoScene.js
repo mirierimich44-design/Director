@@ -103,12 +103,13 @@ If the standard themes don't perfectly match the mood, you MUST provide a specif
 TEMPLATE CATALOG (name [description]: fields):
 ${TEMPLATE_CATALOG}
 
-SENTENCE SPLITTING & COMBINING RULES:
-- LONG SENTENCES (25+ words) that contain multiple distinct facts, stats, or ideas MUST be SPLIT into two or more scenes. Each sub-part gets its own scene with the most fitting template. Split at natural clause boundaries (commas, "and", "while", "but", dashes, semicolons). The "script" field for each split scene contains only its portion of the original sentence.
-- MEDIUM sentences (10-24 words) with a single idea → one scene each.
-- SHORT sentences (under 10 words) that flow together as a sequence, build the same mood, or describe the same moment MUST be combined into a single scene. Do not give each tiny fragment its own scene.
-- You MAY combine up to 4 consecutive short sentences into one scene if they share the same cinematic beat (e.g. "The phone: silent." + "Not crashed." + "Not frozen." → one 3D_RENDER scene).
-- Never combine sentences that would need fundamentally different templates (e.g. a map template and a terminal template).
+SENTENCE SPLITTING & COMBINING RULES (STRICT ENFORCEMENT):
+- REDUCE SCENE COUNT: Do not generate a high number of tiny scenes. Combine content aggressively.
+- LONG SENTENCES (25+ words) that contain multiple distinct facts, stats, or ideas MUST be SPLIT into two or more scenes. Split at natural clause boundaries.
+- SHORT & MEDIUM sentences (under 15 words) MUST be combined into a single scene with up to 3 or 4 other consecutive sentences.
+- You MUST combine up to 5 consecutive short sentences into one scene if they share the same cinematic beat or mood.
+- Never give a single short sentence (e.g. "He waited.") its own scene unless it is a major structural transition.
+- Target an average of 20-25 words per scene where possible by combining fragments.
 - The "script" field MUST contain the exact text for that scene (either the full sentence, the combined sentences, or the split portion).
 - Every word from the input must appear in exactly one scene's "script" field. Do NOT drop any content.
 
@@ -354,14 +355,16 @@ export async function generateScenes(scriptText, generationSettings = null) {
   const userPrompt = `Analyze this script and generate the complete scene breakdown. Use EXACT field names from the template catalog.
 
 CRITICAL RULES:
-- You MUST generate exactly one scene for every sentence provided in the list below.
-- Do NOT combine sentences. Do NOT skip any sentences.
+- REDUCE SCENE COUNT: Aggressively combine multiple sentences into single scenes.
+- You MUST combine short and medium sentences into groups of 3 or 4 per scene.
+- DO NOT generate one scene per sentence if they are short.
+- Target a higher word-count per scene (20-30 words) to maintain cinematic pacing.
 - Every word from the input must appear in exactly one scene's "script" field. Do NOT drop any content.
 
 SCRIPT:
 ${scriptText}
 
-SENTENCES (Generate one scene for each):
+SENTENCES (Combine these into fewer scenes):
 ${sentences.map((s, i) => `${i + 1}. ${s}`).join('\n')}`
 
   let rawResponse
