@@ -929,17 +929,21 @@ function fixTypography(code, fixes, settings = {}, warnings = []) {
     const font = settings.font || 'Inter';
 
     // Ensure no font-size is too small (< 18px is unreadable in video)
-    let smallFontFixes = 0;
-    fixed = fixed.replace(/fontSize:\s*['"]?(\d+)(?:px)?['"]?/g, (match, size) => {
-        const px = parseInt(size);
-        if (px < 18 && px > 0) {
-            smallFontFixes++;
-            return `fontSize: 24`;  // Bump to 24px for video readability
-        }
-        return match;
+    fixed = safeStyleReplace(fixed, '*', (styles) => {
+        let changed = false;
+        const newStyles = styles.replace(/fontSize:\s*['"]?(\d+(?:\.\d+)?)(?:px)?['"]?/g, (match, size) => {
+            const px = parseFloat(size);
+            if (px < 18 && px > 0) {
+                changed = true;
+                return `fontSize: 24`;
+            }
+            return match;
+        });
+        if (changed) smallFontFixes++;
+        return newStyles;
     });
     if (smallFontFixes > 0) {
-        fixes.push(`Increased ${smallFontFixes} font size(s) below 18px to 24px for video readability`);
+        fixes.push(`Increased font size(s) below 18px to 24px for video readability`);
     }
 
     // Ensure text has enough contrast — white text on dark bg or vice versa
