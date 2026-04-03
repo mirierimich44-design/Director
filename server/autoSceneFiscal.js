@@ -40,24 +40,70 @@ const TEMPLATE_CATEGORIES = {
 // Helper: Robust JSON Parse
 // ─────────────────────────────────────────────
 function robustParseJSON(text) {
-  try {
-    return JSON.parse(text)
-  } catch (err) {
-    const firstBracket = text.indexOf('[')
-    const lastBracket = text.lastIndexOf(']')
-    const firstBrace = text.indexOf('{')
-    const lastBrace = text.lastIndexOf('}')
-    let start = -1, end = -1
+  if (!text) return text
+  
+  // 1. Initial cleanup
+  let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim()
+
+  // 2. Depth-tracking extraction (non-greedy)
+  const extractValidJson = (str) => {
+    const firstBracket = str.indexOf('[')
+    const firstBrace = str.indexOf('{')
+    let startIdx = -1, openChar = '', closeChar = ''
+
     if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
-      start = firstBracket; end = lastBracket
+      startIdx = firstBracket; openChar = '['; closeChar = ']'
     } else if (firstBrace !== -1) {
-      start = firstBrace; end = lastBrace
+      startIdx = firstBrace; openChar = '{'; closeChar = '}'
     }
-    if (start !== -1 && end !== -1 && end > start) {
-      const cleaned = text.substring(start, end + 1)
-      try { return JSON.parse(cleaned) } catch (innerErr) { throw new Error(`JSON Syntax Error: ${innerErr.message}`) }
+
+    if (startIdx === -1) return null
+
+    let depth = 0
+    let inString = false
+    let escaped = false
+
+    for (let i = startIdx; i < str.length; i++) {
+      const char = str[i]
+      
+      if (char === '"' && !escaped) inString = !inString
+      if (inString) {
+        escaped = (char === '\\' && !escaped)
+        continue
+      }
+
+      if (char === openChar) depth++
+      else if (char === closeChar) depth--
+
+      if (depth === 0) return str.substring(startIdx, i + 1)
     }
-    throw err
+    return null
+  }
+
+  const jsonBlock = extractValidJson(cleaned)
+  if (!jsonBlock) throw new Error("No valid JSON structure found in response")
+
+  try {
+    return JSON.parse(jsonBlock)
+  } catch (err) {
+    // 3. Recursive Repair Mode
+    try {
+      let repaired = jsonBlock
+        .replace(/,\s*([\]}])/g, '$1') // remove trailing commas
+        .replace(/(\r\n|\n|\r)/gm, " ") // remove newlines inside strings
+        .trim()
+      
+      if (repaired.endsWith('}') && jsonBlock.includes('}}')) {
+          repaired = repaired.replace(/\}+$/, '}')
+      }
+
+      return JSON.parse(repaired)
+    } catch (repairErr) {
+      console.error('--- JSON REPAIR FAILED ---')
+      console.error('Error:', repairErr.message)
+      console.error('Snippet:', jsonBlock.slice(-50))
+      throw new Error(`JSON Parse Failure: ${repairErr.message}`)
+    }
   }
 }
 

@@ -132,41 +132,69 @@ const TEMPLATE_CATEGORIES = {
 function robustParseJSON(text) {
   if (!text) return text
   
-  // 1. Strip markdown code blocks if present
+  // 1. Initial cleanup
   let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim()
 
-  try {
-    return JSON.parse(cleaned)
-  } catch (err) {
-    // 2. Try to extract the first valid JSON array or object
-    const match = cleaned.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
-    if (match) {
-      try {
-        return JSON.parse(match[0])
-      } catch (innerErr) {
-        // 3. Last ditch: try to fix trailing/leading junk manually
-        const firstBracket = cleaned.indexOf('[')
-        const lastBracket = cleaned.lastIndexOf(']')
-        const firstBrace = cleaned.indexOf('{')
-        const lastBrace = cleaned.lastIndexOf('}')
+  // 2. Depth-tracking extraction (non-greedy)
+  const extractValidJson = (str) => {
+    const firstBracket = str.indexOf('[')
+    const firstBrace = str.indexOf('{')
+    let startIdx = -1, openChar = '', closeChar = ''
 
-        let start = -1, end = -1
-        if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
-          start = firstBracket; end = lastBracket
-        } else if (firstBrace !== -1) {
-          start = firstBrace; end = lastBrace
-        }
-
-        if (start !== -1 && end !== -1 && end > start) {
-          try {
-            return JSON.parse(cleaned.substring(start, end + 1))
-          } catch (lastErr) {
-            console.error('JSON Extraction failed:', lastErr.message)
-          }
-        }
-      }
+    if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+      startIdx = firstBracket; openChar = '['; closeChar = ']'
+    } else if (firstBrace !== -1) {
+      startIdx = firstBrace; openChar = '{'; closeChar = '}'
     }
-    throw new Error(`JSON Syntax Error: ${err.message}. Raw text length: ${text.length}`)
+
+    if (startIdx === -1) return null
+
+    let depth = 0
+    let inString = false
+    let escaped = false
+
+    for (let i = startIdx; i < str.length; i++) {
+      const char = str[i]
+      
+      if (char === '"' && !escaped) inString = !inString
+      if (inString) {
+        escaped = (char === '\\' && !escaped)
+        continue
+      }
+
+      if (char === openChar) depth++
+      else if (char === closeChar) depth--
+
+      if (depth === 0) return str.substring(startIdx, i + 1)
+    }
+    return null
+  }
+
+  const jsonBlock = extractValidJson(cleaned)
+  if (!jsonBlock) throw new Error("No valid JSON structure found in response")
+
+  try {
+    return JSON.parse(jsonBlock)
+  } catch (err) {
+    // 3. Recursive Repair Mode
+    try {
+      let repaired = jsonBlock
+        .replace(/,\s*([\]}])/g, '$1') // remove trailing commas
+        .replace(/(\r\n|\n|\r)/gm, " ") // remove newlines inside strings (sometimes happens)
+        .trim()
+      
+      // If it ends with extra chars, try stripping them
+      if (repaired.endsWith('}') && jsonBlock.includes('}}')) {
+          repaired = repaired.replace(/\}+$/, '}')
+      }
+
+      return JSON.parse(repaired)
+    } catch (repairErr) {
+      console.error('--- JSON REPAIR FAILED ---')
+      console.error('Error:', repairErr.message)
+      console.error('Snippet:', jsonBlock.slice(-50))
+      throw new Error(`JSON Parse Failure: ${repairErr.message}`)
+    }
   }
 }
 
