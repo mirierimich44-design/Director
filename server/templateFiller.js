@@ -21,31 +21,7 @@ const themes = JSON.parse(
   )
 )
 
-// Helper: Safe replace that only replaces whole word matches or quoted placeholders
-function safeReplace(code, placeholder, value) {
-  const escaped = escapeRegex(placeholder)
-  // Match the placeholder as a whole word, or inside quotes: "PLACEHOLDER" or 'PLACEHOLDER'
-  const regex = new RegExp(`(['"])${escaped}\\1|\\b${escaped}\\b`, 'g')
-  
-  return code.replace(regex, (match, quote) => {
-    // If it was quoted, return the quoted value (escaped for JS string safety)
-    if (quote) {
-      const safeVal = String(value).replace(/['"\\\n\r]/g, s => ({
-        "'": "\\'", '"': '\\"', '\\': '\\\\', '\n': '\\n', '\r': '\\r'
-      }[s]))
-      return `${quote}${safeVal}${quote}`
-    }
-    
-    // NEW: If NOT quoted, sanitize the value to be a valid JS identifier (e.g. 10.0 -> _10_0)
-    let sanitizedVal = String(value).replace(/[^a-zA-Z0-9_]/g, '_');
-    if (/^[0-9]/.test(sanitizedVal)) {
-        sanitizedVal = '_' + sanitizedVal;
-    }
-    return sanitizedVal;
-  })
-}
-
-// Escape special regex characters in placeholder string
+// Escape special regex characters in a string for use inside a RegExp pattern
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -67,16 +43,39 @@ export function fillTemplate(templateName, themeName, contentJson) {
   Object.entries(theme).forEach(([k, v]) => { if (k !== 'name') code = code.split(k).join(v) });
   code = code.split('STADIA_API_KEY').join(getStadiaKey());
 
-  // Inject Content with Identifier Protection
-  // Ensure every injected value is quoted to prevent raw numbers from breaking the TS/JS syntax
+  // Inject Content — ONLY replace quoted placeholders, never bare identifiers.
+  //
+  // The previous approach used `(['"]?)\bKEY\b\1` which also matched bare variable
+  // names like `const percentValue = ...`, replacing the identifier itself with a
+  // quoted string → `const "10.0" = ...` → esbuild syntax error.
+  //
+  // Safe rules:
+  //   "KEY"  → "value"   (double-quoted string literal)
+  //   'KEY'  → 'value'   (single-quoted string literal)
+  //   {KEY}  → {"value"} (JSX expression — uppercase-only keys to avoid false positives)
+  //
+  // Bare identifiers (variable names, property keys in declarations) are NEVER touched.
   Object.entries(contentJson).forEach(([key, val]) => {
     if (val === null || val === undefined) return;
-    const safeVal = String(val).replace(/['"]/g, ''); 
-    
-    // Replace the placeholder (optionally surrounded by existing quotes) with a forced quoted string
-    // This turns "10.0" or 10.0 into "10.0"
-    const regex = new RegExp(`(['"]?)\\b${key}\\b\\1`, 'g');
-    code = code.replace(regex, `"${safeVal}"`);
+    const escaped = escapeRegex(key);
+    const raw = String(val);
+
+    // Escape value for each quote style
+    const forDouble = raw.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+    const forSingle = raw.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+
+    // 1. Double-quoted placeholders: "KEY" → "value"
+    code = code.replace(new RegExp(`"${escaped}"`, 'g'), `"${forDouble}"`);
+
+    // 2. Single-quoted placeholders: 'KEY' → 'value'
+    code = code.replace(new RegExp(`'${escaped}'`, 'g'), `'${forSingle}'`);
+
+    // 3. JSX expression placeholders: {KEY} → {"value"}
+    //    Only for UPPERCASE_UNDERSCORE keys (genuine template placeholders).
+    //    camelCase / lowercase keys are skipped here to avoid matching JS expressions like {frame}.
+    if (/^[A-Z][A-Z0-9_]*$/.test(key)) {
+      code = code.replace(new RegExp(`\\{${escaped}\\}`, 'g'), `{"${forDouble}"}`);
+    }
   });
 
   return code;
