@@ -257,6 +257,34 @@ function normalizeSceneWordCounts(scenes, min = 15, max = 25) {
 }
 
 // ─────────────────────────────────────────────
+// Helper: Robust Gemini Call with Retry
+// ─────────────────────────────────────────────
+async function callGemini(model, prompt, maxRetries = 3) {
+  let lastErr = null
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      // Use a custom signal to force a timeout if fetch hangs
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 60_000) // 60s timeout
+      
+      const result = await model.generateContent(prompt, { signal: controller.signal })
+      clearTimeout(timeout)
+      return result
+    } catch (err) {
+      lastErr = err
+      const msg = err.message.toLowerCase()
+      if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('503') || msg.includes('429')) {
+        console.log(`   ⚠️ Gemini retry ${i + 1}/${maxRetries} due to: ${err.message}`)
+        await new Promise(r => setTimeout(r, 2000 * (i + 1))) // Exponential backoff
+        continue
+      }
+      throw err // Persistent or critical error
+    }
+  }
+  throw lastErr
+}
+
+// ─────────────────────────────────────────────
 // Pass 1: The Structural Director (Router)
 // ─────────────────────────────────────────────
 async function routeScenes(scriptText, settings) {
@@ -313,7 +341,7 @@ OUTPUT FORMAT (JSON array only):
     generationConfig: { temperature: 0.1, responseMimeType: 'application/json' }
   })
 
-  const result = await model.generateContent(`Analyze this script:\n\n${scriptText}`)
+  const result = await callGemini(model, `Analyze this script:\n\n${scriptText}`)
   const raw = result.response.text()
   return robustParseJSON(raw)
 }
@@ -348,7 +376,7 @@ OUTPUT FORMAT (JSON object only):
     generationConfig: { temperature: 0.1, responseMimeType: 'application/json' }
   })
 
-  const result = await model.generateContent(`SCRIPT: "${scene.script}"`)
+  const result = await callGemini(model, `SCRIPT: "${scene.script}"`)
   const raw = result.response.text()
   return robustParseJSON(raw)
 }
@@ -432,7 +460,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
       const imgPrompt = `Create a 60-80 word photorealistic 3D render prompt based on this scene: "${scene.script}".
       Visual style: Dark, moody, cinematic 3D render focusing on objects/infrastructure. NO HUMANS.`
 
-      const promptRes = await model.generateContent(imgPrompt)
+      const promptRes = await callGemini(model, imgPrompt)
       scene.prompt = promptRes.response.text().trim()
       
       scene.environment = 'infrastructure'

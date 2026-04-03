@@ -62,6 +62,32 @@ function robustParseJSON(text) {
 }
 
 // ─────────────────────────────────────────────
+// Helper: Robust Gemini Call with Retry
+// ─────────────────────────────────────────────
+async function callGemini(model, prompt, maxRetries = 3) {
+  let lastErr = null
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 60_000)
+      const result = await model.generateContent(prompt, { signal: controller.signal })
+      clearTimeout(timeout)
+      return result
+    } catch (err) {
+      lastErr = err
+      const msg = err.message.toLowerCase()
+      if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('503') || msg.includes('429')) {
+        console.log(`   ⚠️ Fiscal Gemini retry ${i + 1}/${maxRetries} due to: ${err.message}`)
+        await new Promise(r => setTimeout(r, 2000 * (i + 1)))
+        continue
+      }
+      throw err
+    }
+  }
+  throw lastErr
+}
+
+// ─────────────────────────────────────────────
 // Helper: Load JSON Schema
 // ─────────────────────────────────────────────
 function loadSchema(templateName) {
@@ -226,7 +252,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
       const imgPrompt = `Create a 60-word editorial watercolor illustration prompt based on this scene: "${scene.script}". 
       Style: courtroom sketch aesthetic, loose ink linework, soft washes, warm muted palette.`
       
-      const promptRes = await imgModel.generateContent(imgPrompt)
+      const promptRes = await callGemini(imgModel, imgPrompt)
       scene.prompt = promptRes.response.text().trim()
       
       scene.environment = 'editorial-illustration'
