@@ -654,29 +654,44 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         console.log(`   📋 Prompt: ${prompt.substring(0, 100)}...`);
 
         let response;
-        try {
-            response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-                signal: AbortSignal.timeout(90_000), // Increased to 90s for slower generation
-            });
-        } catch (fetchErr) {
-            console.error('❌ Imagen API Fetch Error (Network/Timeout):', fetchErr.message);
-            return res.status(504).json({ success: false, error: `API Gateway Timeout or Network Error: ${fetchErr.message}` });
+        let lastError;
+        const maxAttempts = 3;
+        
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                if (attempt > 1) {
+                    console.log(`   🔄 Imagen retry ${attempt}/${maxAttempts} (waiting 3s)...`);
+                    await new Promise(r => setTimeout(r, 3000));
+                }
+
+                response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                    signal: AbortSignal.timeout(90_000), 
+                });
+
+                if (response.ok) break;
+
+                const errText = await response.text();
+                lastError = `Imagen API ${response.status}: ${errText.substring(0, 200)}`;
+                console.error(`❌ Imagen Attempt ${attempt} failed:`, lastError);
+
+                // If it's a 429 (Too Many Requests), definitely retry
+                if (response.status !== 429 && response.status !== 503 && response.status !== 504) {
+                    break; // Don't retry on 400/401/403/404
+                }
+            } catch (fetchErr) {
+                lastError = fetchErr.message;
+                console.error(`❌ Imagen Attempt ${attempt} fetch error:`, lastError);
+                if (attempt === maxAttempts) {
+                    return res.status(504).json({ success: false, error: `API Gateway Timeout or Network Error after ${maxAttempts} attempts: ${lastError}` });
+                }
+            }
         }
 
-        if (!response.ok) {
-
-            const errText = await response.text();
-            console.error('❌ Imagen API error:', errText.substring(0, 500));
-            // Check if error is HTML (common for API issues)
-            if (errText.trim().startsWith('<')) {
-                console.error('   ⚠️ API returned HTML error page instead of JSON');
-                console.error('   📋 First 300 chars:', errText.substring(0, 300));
-                throw new Error(`Imagen API returned HTML error page. Status: ${response.status}. This may indicate: invalid API key, API quota exceeded, or service unavailable.`);
-            }
-            throw new Error(`Imagen API ${response.status}: ${errText.substring(0, 200)}`);
+        if (!response || !response.ok) {
+            return res.status(response?.status || 500).json({ success: false, error: lastError });
         }
 
         const responseText = await response.text();
