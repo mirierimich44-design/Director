@@ -185,6 +185,78 @@ function loadSchema(templateName) {
 }
 
 // ─────────────────────────────────────────────
+// Scene Word-Count Normalizer (15–25 word band)
+// ─────────────────────────────────────────────
+function countWords(text) {
+  return text.trim().split(/\s+/).length
+}
+
+function splitScriptNearMiddle(script) {
+  const mid = Math.floor(script.length / 2)
+  // Search outward from the midpoint for a punctuation boundary
+  for (let r = 0; r < mid; r++) {
+    for (const offset of [mid - r, mid + r]) {
+      if (offset < 1 || offset >= script.length - 1) continue
+      if (/[,;.!?—–]/.test(script[offset]) && script[offset + 1] === ' ') {
+        return [script.slice(0, offset + 1).trim(), script.slice(offset + 1).trim()]
+      }
+    }
+  }
+  // No punctuation found — split at the nearest word boundary to the middle
+  const words = script.trim().split(/\s+/)
+  const midWord = Math.floor(words.length / 2)
+  return [words.slice(0, midWord).join(' '), words.slice(midWord).join(' ')]
+}
+
+function normalizeSceneWordCounts(scenes, min = 15, max = 25) {
+  // Step 1: Split scenes over max words
+  let result = []
+  for (const scene of scenes) {
+    if (countWords(scene.script) > max) {
+      const [a, b] = splitScriptNearMiddle(scene.script)
+      result.push({ ...scene, script: a })
+      result.push({ ...scene, script: b })
+    } else {
+      result.push(scene)
+    }
+  }
+
+  // Step 2: Merge scenes under min words (repeat until stable)
+  let changed = true
+  while (changed) {
+    changed = false
+    const merged = []
+    let i = 0
+    while (i < result.length) {
+      const scene = result[i]
+      if (countWords(scene.script) < min) {
+        if (i < result.length - 1) {
+          // Merge forward into next scene — keep first scene's type/category/theme
+          const next = result[i + 1]
+          merged.push({ ...scene, script: scene.script.trim() + ' ' + next.script.trim() })
+          i += 2
+        } else if (merged.length > 0) {
+          // Last scene is short — merge backward into previous
+          const prev = merged.pop()
+          merged.push({ ...prev, script: prev.script.trim() + ' ' + scene.script.trim() })
+          i++
+        } else {
+          merged.push(scene)
+          i++
+        }
+        changed = true
+      } else {
+        merged.push(scene)
+        i++
+      }
+    }
+    result = merged
+  }
+
+  return result
+}
+
+// ─────────────────────────────────────────────
 // Pass 1: The Structural Director (Router)
 // ─────────────────────────────────────────────
 async function routeScenes(scriptText, settings) {
@@ -304,6 +376,11 @@ export async function generateScenes(scriptText, generationSettings = null) {
       })
     })
   }
+
+  // Enforce 15–25 word band per scene
+  const beforeCount = rawScenes.length
+  rawScenes = normalizeSceneWordCounts(rawScenes, 15, 25)
+  console.log(`   ✂️ Word-count normalization: ${beforeCount} → ${rawScenes.length} scenes`)
 
   const processed = []
   const usedTemplates = new Set()
