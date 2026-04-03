@@ -10,7 +10,12 @@ export default defineConfig({
     server: {
         port: 5174,
         proxy: {
-            '/api':    { target: 'http://127.0.0.1:3002', changeOrigin: true },
+            '/api':    { 
+                target: 'http://127.0.0.1:3002', 
+                changeOrigin: true,
+                timeout: 300000,
+                proxyTimeout: 300000
+            },
             '/audio':  { target: 'http://127.0.0.1:3002', changeOrigin: true },
             '/videos': { target: 'http://127.0.0.1:3002', changeOrigin: true },
             '/images': { target: 'http://127.0.0.1:3002', changeOrigin: true },

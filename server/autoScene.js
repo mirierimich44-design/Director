@@ -174,25 +174,28 @@ function robustParseJSON(text) {
   if (!jsonBlock) throw new Error("No valid JSON structure found in response")
 
   try {
-    return JSON.parse(jsonBlock)
+    // Aggressive trim: ensures no hidden characters after the final bracket/brace
+    return JSON.parse(jsonBlock.trim())
   } catch (err) {
-    // 3. Recursive Repair Mode
+    // 3. Recursive Repair Mode for common LLM syntax errors
     try {
-      let repaired = jsonBlock
+      let repaired = jsonBlock.trim()
         .replace(/,\s*([\]}])/g, '$1') // remove trailing commas
-        .replace(/(\r\n|\n|\r)/gm, " ") // remove newlines inside strings (sometimes happens)
-        .trim()
+        .replace(/(\r\n|\n|\r)/gm, " ") // remove newlines inside strings
       
-      // If it ends with extra chars, try stripping them
-      if (repaired.endsWith('}') && jsonBlock.includes('}}')) {
+      // Handle the "double brace" issue: [...] } or {...} }
+      if (repaired.endsWith('}') && (repaired.match(/\}/g) || []).length > (repaired.match(/\{/g) || []).length) {
           repaired = repaired.replace(/\}+$/, '}')
+      }
+      if (repaired.endsWith(']') && (repaired.match(/\]/g) || []).length > (repaired.match(/\[/g) || []).length) {
+          repaired = repaired.replace(/\]+$/, ']')
       }
 
       return JSON.parse(repaired)
     } catch (repairErr) {
       console.error('--- JSON REPAIR FAILED ---')
-      console.error('Error:', repairErr.message)
-      console.error('Snippet:', jsonBlock.slice(-50))
+      console.error('Original Error:', err.message)
+      console.error('Repair Error:', repairErr.message)
       throw new Error(`JSON Parse Failure: ${repairErr.message}`)
     }
   }
