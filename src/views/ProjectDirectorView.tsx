@@ -1388,7 +1388,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                             }
                                                                         </Button>
 
-                                                                        {(scene.videoUrl || scene.imageUrl) && (
+                                                                        {(scene.type === 'TEMPLATE' ? scene.videoUrl : (scene.videoUrl || scene.imageUrl)) && (
                                                                             <Button
                                                                                 size="small"
                                                                                 variant="outlined"
