@@ -81,7 +81,9 @@ export function fillTemplate(templateName, themeName, contentJson) {
   // Step 2: Apply content values (with word boundary safety)
   Object.entries(contentJson).forEach(([key, val]) => {
     if (val !== null && val !== undefined) {
-      code = safeReplace(code, key, String(val))
+      // Force conversion to string and ensure it's safe for JS injection
+      const safeVal = String(val);
+      code = safeReplace(code, key, safeVal);
     }
   })
 
