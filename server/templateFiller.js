@@ -78,14 +78,31 @@ export function fillTemplate(templateName, themeName, contentJson) {
   const stadiaKey = getStadiaKey()
   code = safeReplace(code, 'STADIA_API_KEY', stadiaKey)
 
-  // Step 2: Apply content values (with word boundary safety)
+  // Step 2: Apply content values
   Object.entries(contentJson).forEach(([key, val]) => {
     if (val !== null && val !== undefined) {
-      // Force conversion to a safe string. 
-      // If the content is intended as an identifier, the AI should provide a safe string.
-      // We wrap in quotes to ensure it remains a valid string literal, avoiding syntax crashes.
-      const safeVal = JSON.stringify(String(val));
-      code = safeReplace(code, key, safeVal);
+      const valStr = String(val);
+      
+      // We use a multi-stage replacement:
+      // 1. Quoted usage: "PLACEHOLDER" -> "value"
+      // 2. Identifier usage: const name = PLACEHOLDER -> const name = "value"
+      // This covers both string and identifier positions safely.
+      
+      const escaped = escapeRegex(key);
+      
+      // Pattern 1: Placeholder inside quotes
+      const quotedRegex = new RegExp(`(['"])${escaped}\\1`, 'g');
+      code = code.replace(quotedRegex, (match, quote) => {
+          const safeVal = valStr.replace(/['"\\\n\r]/g, s => ({
+            "'": "\\'", '"': '\\"', '\\': '\\\\', '\n': '\\n', '\r': '\\r'
+          }[s]));
+          return `${quote}${safeVal}${quote}`;
+      });
+
+      // Pattern 2: Placeholder as identifier (e.g., const x = PLACEHOLDER)
+      // We wrap it in quotes to force it to be a string value, not an identifier
+      const identRegex = new RegExp(`\\b${escaped}\\b`, 'g');
+      code = code.replace(identRegex, JSON.stringify(valStr));
     }
   })
 

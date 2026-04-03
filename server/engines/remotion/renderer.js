@@ -27,24 +27,30 @@ async function cleanupTempDir(dirPath) {
 }
 
 // Purge all temp dirs older than maxAgeMs (default 1 hour)
-export async function purgeOldTempDirs(tempRoot, maxAgeMs = 60 * 60 * 1000) {
+export async function purgeOldTempDirs(tempRoot, maxAgeMs = 30 * 60 * 1000) { // 30 mins
     try {
-        const entries = await fs.readdir(tempRoot, { withFileTypes: true });
+        // Specifically look for the remotion bundles folder
+        const bundlesRoot = join(tempRoot, 'remotion');
+        if (!existsSync(bundlesRoot)) return;
+
+        const entries = await fs.readdir(bundlesRoot, { withFileTypes: true });
         const now = Date.now();
         let cleaned = 0;
         for (const entry of entries) {
-            if (!entry.isDirectory() || entry.name === '_warmup') continue;
-            const fullPath = join(tempRoot, entry.name);
+            // Target the bundle folders specifically
+            if (!entry.isDirectory() || !entry.name.startsWith('bundle-')) continue;
+            
+            const fullPath = join(bundlesRoot, entry.name);
             try {
                 const stat = await fs.stat(fullPath);
                 if (now - stat.mtimeMs > maxAgeMs) {
                     await fs.rm(fullPath, { recursive: true, force: true });
                     cleaned++;
                 }
-            } catch (e) { /* skip entries we can't stat */ }
+            } catch (e) { /* skip */ }
         }
-        if (cleaned > 0) console.log(`🧹 Purged ${cleaned} stale temp directories`);
-    } catch (e) { /* temp root doesn't exist yet, that's fine */ }
+        if (cleaned > 0) console.log(`🧹 Purged ${cleaned} stale remotion bundles`);
+    } catch (e) { console.warn('⚠️ Purge failed:', e.message); }
 }
 
 // Concurrency: use env var, or default to half CPU cores
