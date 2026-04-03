@@ -71,6 +71,8 @@ const __dirname = dirname(__filename);
 const LOCAL_REMOTION_TMP = join(__dirname, '../../../.temp/remotion');
 process.env.REMOTION_TMPDIR = LOCAL_REMOTION_TMP;
 
+let browserExecutablePath = null;
+
 /**
  * Ensures the Remotion browser (Chrome Headless Shell) is available.
  * Caches the path to avoid repeated downloads.
