@@ -77,29 +77,29 @@ export const AnimationComponent = () => {
       </div>
 
       {/* UI Overlay: Initial Title (Top Left) */}
-      <div style={{ position: 'absolute', top: 80, left: 100, opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
+      <div style={{ position: 'absolute', top: 80, left: 100, right: 100, opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <div style={{ width: 8, height: 48, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4 }} />
-            <div style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{title}</div>
+            <div style={{ width: 8, height: 48, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, flexShrink: 0 }} />
+            <div style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', wordBreak: 'break-word' }}>{title}</div>
         </div>
-        <div style={{ fontSize: 22, color: 'SUPPORT_COLOR', marginLeft: 28, marginTop: 4, fontWeight: 500 }}>{subtitle}</div>
+        <div style={{ fontSize: 22, color: 'SUPPORT_COLOR', marginLeft: 28, marginTop: 4, fontWeight: 500, wordBreak: 'break-word' }}>{subtitle}</div>
       </div>
 
       {/* UI Overlay: Detail Panel (Revealed after zoom) */}
       <div style={{ 
-          position: 'absolute', top: '50%', right: 150, width: 550, 
+          position: 'absolute', top: '50%', right: 150, width: 650, 
           transform: `translateY(-50%) translateX(${detailTx}px)`, 
           opacity: detailOp, zIndex: 10,
           ...glassStyle, padding: '60px'
       }}>
         <div style={{ position: 'absolute', top: 30, right: 30, color: 'rgba(255,255,255,0.1)', fontFamily: 'monospace', fontSize: 14 }}>DET_REF: 0x{Math.floor(frame * 123).toString(16).toUpperCase()}</div>
         
-        <div style={{ fontSize: 14, color: 'ACCENT_COLOR', fontWeight: 900, letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 12 }}>{detailLabel}</div>
-        <div style={{ fontSize: 72, fontWeight: 900, color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: 1, marginBottom: 30 }}>{detailValue}</div>
+        <div style={{ fontSize: 14, color: 'ACCENT_COLOR', fontWeight: 900, letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 12, wordBreak: 'break-word' }}>{detailLabel}</div>
+        <div style={{ fontSize: 60, fontWeight: 900, color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.05em', lineHeight: 1.1, marginBottom: 30, wordBreak: 'break-word' }}>{detailValue}</div>
         
         <div style={{ height: 2, width: 80, backgroundColor: 'PRIMARY_COLOR', marginBottom: 30 }} />
         
-        <div style={{ fontSize: 22, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)', fontWeight: 400 }}>
+        <div style={{ fontSize: 22, lineHeight: 1.5, color: 'rgba(255,255,255,0.8)', fontWeight: 400, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
           {bodyText}
         </div>
 

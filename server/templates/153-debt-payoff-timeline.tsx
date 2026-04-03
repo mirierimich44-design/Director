@@ -25,7 +25,7 @@ export const AnimationComponent = () => {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
-      <div style={{ position: 'absolute', top: 60, left: 192, fontSize: 40, fontWeight: 'bold', color: 'TEXT_ON_PRIMARY', opacity: titleOp }}>{title}</div>
+      <div style={{ position: 'absolute', top: 60, left: 192, right: 192, fontSize: 40, fontWeight: 'bold', color: 'TEXT_ON_PRIMARY', opacity: titleOp, wordBreak: 'break-word' }}>{title}</div>
       
       <div style={{ position: 'absolute', top: 200, left: 200, width: chartWidth, height: chartHeight }}>
         {data.map((val, i) => {
@@ -42,14 +42,14 @@ export const AnimationComponent = () => {
         })}
       </div>
 
-      <div style={{ position: 'absolute', top: 800, left: 200, display: 'flex', gap: 64 }}>
+      <div style={{ position: 'absolute', top: 800, left: 200, right: 200, display: 'flex', gap: 64, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 24, height: 24, backgroundColor: 'PRIMARY_COLOR' }} />
-          <span style={{ color: 'TEXT_ON_PRIMARY', fontSize: 24 }}>{label1}</span>
+          <div style={{ width: 24, height: 24, backgroundColor: 'PRIMARY_COLOR', flexShrink: 0 }} />
+          <span style={{ color: 'TEXT_ON_PRIMARY', fontSize: 24, wordBreak: 'break-word' }}>{label1}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 24, height: 24, backgroundColor: 'ACCENT_COLOR' }} />
-          <span style={{ color: 'TEXT_ON_PRIMARY', fontSize: 24 }}>{label2}</span>
+          <div style={{ width: 24, height: 24, backgroundColor: 'ACCENT_COLOR', flexShrink: 0 }} />
+          <span style={{ color: 'TEXT_ON_PRIMARY', fontSize: 24, wordBreak: 'break-word' }}>{label2}</span>
         </div>
       </div>
     </div>

@@ -160,13 +160,16 @@ CORE IDENTITY:
 Illustrations must feel painted by a senior editorial illustrator (WSJ, FT). NO 3D RENDERS.
 
 SCENE TYPES:
-- [TEMPLATE]: Financial charts, data, timelines, or structural beats.
-- [ILLUSTRATION]: Editorial watercolor illustrations of people, power dynamics, or symbolic scenes.
+- [TEMPLATE]: ONLY use for explicit financial charts, data, timelines, or structural beats.
+- [ILLUSTRATION]: DEFAULT for editorial watercolor illustrations of people, narrative action, story beats, or symbolic scenes.
 
 CATEGORIES (for TEMPLATE only):
 ${Object.keys(TEMPLATE_CATEGORIES).join(', ')}
 
 DIRECTIVE:
+- VISUAL-STORY MATCHING: The visual MUST match the literal event in the script.
+- If the script says "The agents arrived", it is [ILLUSTRATION] (editorial scene), NOT a chart.
+- If the script says "He was stressed", it is [ILLUSTRATION] (portrait), NOT a timeline.
 - YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
 - EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
 - Maintain exactly a 50/50 split between TEMPLATE and ILLUSTRATION.

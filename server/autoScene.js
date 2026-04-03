@@ -328,13 +328,16 @@ async function routeScenes(scriptText, settings) {
   const systemPrompt = `You are the ARXXIS structural director. Your job is to break a documentary script into scenes and assign them to a broad category.
 
 SCENE TYPES:
-- [TEMPLATE]: Data visualizations, charts, timelines, or structural beats.
-- [3D_RENDER]: Physical environments, objects, or infrastructure (NO HUMANS).
+- [TEMPLATE]: ONLY use for explicit data, charts, lists, timelines, or technical flows.
+- [3D_RENDER]: DEFAULT for narrative action, story beats, phone calls, people-centric events, and atmosphere.
 
 CATEGORIES:
 ${catalogSummary}
 
 DIRECTIVE:
+- VISUAL-STORY MATCHING: The visual MUST match the literal event in the script.
+- If the script says "The phone rang", it is [3D_RENDER] (office environment), NOT a technical flow.
+- If the script says "He didn't believe it", it is [3D_RENDER] (moody atmosphere), NOT a chart.
 - YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
 - EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
 - EXACTLY ${ratio}% of scenes MUST be TEMPLATE type. This is a hard requirement, not a suggestion. Count your scenes before outputting and adjust.
