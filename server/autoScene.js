@@ -137,17 +137,12 @@ function robustParseJSON(text) {
 
   // 2. Depth-tracking extraction (non-greedy)
   const extractValidJson = (str) => {
-    const firstBracket = str.indexOf('[')
-    const firstBrace = str.indexOf('{')
-    let startIdx = -1, openChar = '', closeChar = ''
-
-    if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
-      startIdx = firstBracket; openChar = '['; closeChar = ']'
-    } else if (firstBrace !== -1) {
-      startIdx = firstBrace; openChar = '{'; closeChar = '}'
-    }
-
+    // Find the first valid start of a JSON block
+    const startIdx = str.split('').findIndex(c => c === '[' || c === '{')
     if (startIdx === -1) return null
+    
+    const openChar = str[startIdx]
+    const closeChar = openChar === '[' ? ']' : '}'
 
     let depth = 0
     let inString = false
@@ -171,7 +166,11 @@ function robustParseJSON(text) {
   }
 
   const jsonBlock = extractValidJson(cleaned)
-  if (!jsonBlock) throw new Error("No valid JSON structure found in response")
+  if (!jsonBlock) {
+    console.error('--- JSON EXTRACTION FAILED ---')
+    console.error('Raw LLM Response:', cleaned)
+    throw new Error("No valid JSON structure found in response")
+  }
 
   try {
     // Aggressive trim: ensures no hidden characters after the final bracket/brace
