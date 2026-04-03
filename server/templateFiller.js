@@ -51,119 +51,35 @@ function escapeRegex(str) {
 }
 
 export function fillTemplate(templateName, themeName, contentJson) {
-  const resolvedName = resolveTemplateName(templateName)
-  if (!resolvedName) {
-    throw new Error(`Template not found: ${templateName}`)
-  }
+  const resolvedName = (name) => {
+      const templateDir = path.join(__dirname, 'templates');
+      if (fs.existsSync(path.join(templateDir, `${name}.tsx`))) return name;
+      const files = fs.readdirSync(templateDir).filter(f => f.endsWith('.tsx'));
+      return files.find(f => f.includes(name))?.replace('.tsx', '');
+  }(templateName);
 
-  const templatePath = path.join(
-    __dirname,
-    `templates/${resolvedName}.tsx`
-  )
+  if (!resolvedName) throw new Error(`Template not found: ${templateName}`);
 
-  let code = fs.readFileSync(templatePath, 'utf8')
+  let code = fs.readFileSync(path.join(__dirname, `templates/${resolvedName}.tsx`), 'utf8');
 
-  // Step 1: Apply theme colors (with word boundary safety)
-  const theme = themes[themeName] || themes['CLEAN']
-  Object.entries(theme).forEach(([key, val]) => {
-    if (key !== 'name' && key !== 'description') {
-      // Check for background override in content
-      if (key === 'BACKGROUND_COLOR' && contentJson.BACKGROUND_OVERRIDE) {
-        code = safeReplace(code, key, contentJson.BACKGROUND_OVERRIDE)
-      } else {
-        code = safeReplace(code, key, val)
-      }
-    }
-  })
+  // Inject Theme
+  const theme = themes[themeName] || themes['DARK'];
+  Object.entries(theme).forEach(([k, v]) => { if (k !== 'name') code = code.split(k).join(v) });
+  code = code.split('STADIA_API_KEY').join(getStadiaKey());
 
-  // Step 1b: Inject Stadia Maps API key (empty string if not configured)
-  const stadiaKey = getStadiaKey()
-  code = safeReplace(code, 'STADIA_API_KEY', stadiaKey)
-
-  // Step 2: Apply content values
+  // Inject Content with Identifier Protection
+  // Ensure every injected value is quoted to prevent raw numbers from breaking the TS/JS syntax
   Object.entries(contentJson).forEach(([key, val]) => {
-    if (val !== null && val !== undefined) {
-      const valStr = String(val);
-      
-      // We use a multi-stage replacement:
-      // 1. Quoted usage: "PLACEHOLDER" -> "value"
-      // 2. Identifier usage: const name = PLACEHOLDER -> const name = "value"
-      // This covers both string and identifier positions safely.
-      
-      const escaped = escapeRegex(key);
-      
-      // Pattern 1: Placeholder inside quotes
-      const quotedRegex = new RegExp(`(['"])${escaped}\\1`, 'g');
-      code = code.replace(quotedRegex, (match, quote) => {
-          const safeVal = valStr.replace(/['"\\\n\r]/g, s => ({
-            "'": "\\'", '"': '\\"', '\\': '\\\\', '\n': '\\n', '\r': '\\r'
-          }[s]));
-          return `${quote}${safeVal}${quote}`;
-      });
+    if (val === null || val === undefined) return;
+    const safeVal = String(val).replace(/['"]/g, ''); 
+    
+    // Replace the placeholder (optionally surrounded by existing quotes) with a forced quoted string
+    // This turns "10.0" or 10.0 into "10.0"
+    const regex = new RegExp(`(['"]?)\\b${key}\\b\\1`, 'g');
+    code = code.replace(regex, `"${safeVal}"`);
+  });
 
-      // Pattern 2: Placeholder as identifier (e.g., const x = PLACEHOLDER)
-      // We wrap it in quotes to force it to be a string value, not an identifier
-      const identRegex = new RegExp(`\\b${escaped}\\b`, 'g');
-      code = code.replace(identRegex, JSON.stringify(valStr));
-    }
-  })
-
-  // Step 3: Check for unfilled placeholders
-  // Build a list of expected placeholders from theme keys and content keys
-  const expectedPlaceholders = new Set([
-    ...Object.keys(theme).filter(k => k !== 'name' && k !== 'description'),
-    ...Object.keys(contentJson)
-  ])
-
-  // Check which expected placeholders are still in the code
-  const remaining = []
-  expectedPlaceholders.forEach(placeholder => {
-    if (code.includes(placeholder)) {
-      remaining.push(placeholder)
-    }
-  })
-
-  if (remaining.length > 0) {
-    console.warn('⚠️  Unfilled placeholders:', remaining)
-    // Safety Fallback: Replace remaining theme placeholders with sensible defaults 
-    // to prevent "blank" or invalid CSS colors in the final render.
-    remaining.forEach(placeholder => {
-      let fallback = '#FF00FF'; // High-visibility magenta for debugging
-      if (placeholder.includes('BACKGROUND')) fallback = theme.BACKGROUND_COLOR || '#000000';
-      if (placeholder.includes('PRIMARY'))    fallback = theme.PRIMARY_COLOR || '#FFFFFF';
-      if (placeholder.includes('SECONDARY'))  fallback = theme.SECONDARY_COLOR || '#FF3333';
-      if (placeholder.includes('TEXT'))       fallback = theme.PRIMARY_COLOR || '#FFFFFF';
-      
-      code = safeReplace(code, placeholder, fallback);
-    });
-  }
-
-  // Step 4: Light-background safety sweep
-  // If the theme background is light (luminance > 0.5), hardcoded white text colors
-  // would be invisible. Replace them with the theme's primary (dark) color.
-  const bgHex = (theme.BACKGROUND_COLOR || '#000000').replace(/['"]/g, '');
-  if (/^#[0-9a-f]{6}$/i.test(bgHex) && hexLuminance(bgHex) > 0.5) {
-      const darkText = theme.PRIMARY_COLOR || '#111111';
-      const dimText  = theme.SUPPORT_COLOR  || '#555555';
-      // Replace exact white color: values in style objects (text color only, not backgroundColor)
-      // Pattern: color: '#fff' | color: "#fff" | color: 'white' | color: '#ffffff' | color: '#FFF' etc.
-      code = code.replace(/(\bcolor:\s*)(['"])(?:#[Ff]{3,6}|white)\2/g, `$1'${darkText}'`);
-      // Replace rgba(255,255,255, alpha) used as text color where alpha >= 0.4 (visible-intent text)
-      // Only in a `color:` context, not `backgroundColor:` or `border:`
-      code = code.replace(
-          /(\bcolor:\s*['"]?)rgba\(\s*255\s*,\s*255\s*,\s*255\s*,\s*([\d.]+)\s*\)/g,
-          (match, prefix, alpha) => {
-              const a = parseFloat(alpha);
-              // Skip very transparent whites — decorative/overlay, not main text
-              if (a < 0.35) return match;
-              // For semi-transparent text, blend with dark: use dimText at reduced opacity
-              return `${prefix}rgba(26,43,68,${a})`;
-          }
-      );
-      console.log(`   🎨 Light-background sweep applied (bg luminance ${hexLuminance(bgHex).toFixed(2)})`);
-  }
-
-  return code
+  return code;
 }
 
 export function listTemplates() {
