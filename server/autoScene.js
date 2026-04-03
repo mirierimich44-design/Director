@@ -127,6 +127,88 @@ const TEMPLATE_CATEGORIES = {
 }
 
 // ─────────────────────────────────────────────
+// Helper: Infer best template category from script text
+// Used by ratio enforcer when upgrading 3D_RENDER → TEMPLATE
+// ─────────────────────────────────────────────
+function inferCategory(script) {
+  const s = script.toLowerCase()
+  if (/\$|million|billion|revenue|profit|loss|cost|fund|earn|paid/.test(s))        return 'FINANCIAL'
+  if (/country|countries|nation|region|world|global|continent|geographic/.test(s)) return 'MAP'
+  if (/timeline|history|since|before|after|when|year|date|decade/.test(s))         return 'TIMELINE'
+  if (/attack|exploit|malware|hack|breach|phish|inject|vulnerab|payload/.test(s))  return 'FLOW'
+  if (/network|connect|node|hub|link|relationship|attribution/.test(s))             return 'NETWORK'
+  if (/step|phase|stage|process|method|how it works|procedure/.test(s))            return 'FLOW'
+  if (/chat|message|post|social|dark web|forum/.test(s))                           return 'SOCIAL'
+  if (/document|file|record|report|classified|evidence/.test(s))                   return 'EVIDENCE'
+  if (/\d+\s*%|percent|rate|ratio|share|portion/.test(s))                          return 'STAT'
+  if (/\d/.test(s))                                                                return 'STAT'
+  return 'STAT'
+}
+
+// ─────────────────────────────────────────────
+// Helper: Hard ratio enforcement (post-LLM)
+// Upgrades 3D_RENDER scenes to TEMPLATE until targetRatio% is reached.
+// Prefers scenes with numbers/mechanisms; only touches pure narrative as last resort.
+// ─────────────────────────────────────────────
+function enforceRatio(scenes, targetRatio) {
+  const needed  = Math.ceil(scenes.length * targetRatio / 100)
+  const current = scenes.filter(s => s.type === 'TEMPLATE').length
+  if (current >= needed) return scenes
+
+  const toUpgrade = needed - current
+  let upgraded = 0
+
+  // Pure narrative guard — sentences where a named person is clearly the subject
+  const isPureNarrative = (script) =>
+    /^\s*(he|she|they|i|we)\s+(clicked|opened|called|walked|arrived|sat|felt|saw|said|wrote|sent|ran|fled|denied|paid|signed|met|waited|replied|threatened)\b/i.test(script)
+
+  // Pass 1: upgrade non-narrative scenes first
+  for (const scene of scenes) {
+    if (upgraded >= toUpgrade) break
+    if (scene.type !== '3D_RENDER' || isPureNarrative(scene.script)) continue
+    scene.type           = 'TEMPLATE'
+    scene.category       = inferCategory(scene.script)
+    scene.routing_reason = `[ratio-enforced] Upgraded to meet ${targetRatio}% TEMPLATE target`
+    upgraded++
+  }
+
+  // Pass 2: if still short, upgrade even pure narrative scenes (last resort)
+  for (const scene of scenes) {
+    if (upgraded >= toUpgrade) break
+    if (scene.type !== '3D_RENDER') continue
+    scene.type           = 'TEMPLATE'
+    scene.category       = 'STAT'
+    scene.routing_reason = `[ratio-enforced:forced] Force-upgraded to meet ${targetRatio}% target`
+    upgraded++
+  }
+
+  console.log(`   📊 Ratio enforcer: ${current} → ${current + upgraded} TEMPLATE scenes (target: ${needed}/${scenes.length})`)
+  return scenes
+}
+
+// ─────────────────────────────────────────────
+// Helper: Build story context for image prompts
+// Gives the cinematographer the who/where/when of the full chapter
+// ─────────────────────────────────────────────
+function buildStoryContext(scriptText) {
+  // Take the first 400 chars as the story lead — enough to establish setting/characters
+  const lead = scriptText.replace(/\s+/g, ' ').trim().substring(0, 400)
+
+  // Extract candidate proper nouns (capitalized words that aren't sentence starters)
+  const properNouns = [...new Set(
+    (scriptText.match(/(?<=[a-z,;]\s)[A-Z][a-zA-Z]+(?:\s[A-Z][a-zA-Z]+)*/g) || [])
+      .filter(w => w.length > 2)
+      .slice(0, 8)
+  )].join(', ')
+
+  return `STORY CONTEXT:
+"${lead}${scriptText.length > 400 ? '…' : ''}"
+KEY ENTITIES: ${properNouns || 'not identified'}
+
+Use this context to make the imagery feel specific to THIS story, not generic.`
+}
+
+// ─────────────────────────────────────────────
 // Helper: Robust JSON Parse
 // ─────────────────────────────────────────────
 function robustParseJSON(text) {
@@ -434,9 +516,16 @@ export async function generateScenes(scriptText, generationSettings = null) {
 
   console.log(`🎬 Auto-Scene: Two-Pass Generation Starting...`)
 
+  // Build story context once — used by all image prompt calls
+  const storyContext = buildStoryContext(scriptText)
+
   // --- PASS 1: ROUTING ---
   let rawScenes = await routeScenes(scriptText, generationSettings)
   console.log(`   ✅ Pass 1 complete: ${rawScenes.length} scenes identified`)
+
+  // --- HARD RATIO ENFORCEMENT (code-level, not LLM-level) ---
+  const targetRatio = generationSettings?.templateRatio ?? 60
+  rawScenes = enforceRatio(rawScenes, targetRatio)
 
   // --- COVERAGE CHECK ---
   const sentences = scriptText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 5)
@@ -502,19 +591,43 @@ export async function generateScenes(scriptText, generationSettings = null) {
       console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`)
       const model = googleAI.getGenerativeModel({
         model: getGEMINI_MODEL(),
-        systemInstruction: `You are the ARXXIS cinematographer. You write image prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
+        systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
 
-THREE-STEP METHOD:
-1. SET THE ATMOSPHERE: Begin with an emotional quality (tension, isolation, secrecy, digital coldness).
-2. CHOOSE THE SYMBOLIC OBJECT: Never draw the person. Find the ONE object from the scene that carries the meaning (e.g., a flashing phone, a glowing monitor in a dark room, a coffee cup at 3 AM).
-3. DESCRIBE THE ENVIRONMENT: Add the room type, single dramatic light source, and hyperrealistic textures (brushed metal, glass).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+THREE-STEP METHOD (follow in order)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — SET THE ATMOSPHERE
+Begin with one emotional quality that fits the scene:
+tension, isolation, dread, secrecy, discovery, betrayal, urgency, quiet menace, hollow bureaucracy, digital coldness
 
-STYLE RULES:
-- 60-80 words max. Dark, moody, shallow depth of field.
-- NO HUMANS, no faces, no hands. No text or UI on screens.`
+STEP 2 — CHOOSE THE SYMBOLIC OBJECT
+Never draw the person. Find the ONE object from the scene that carries the meaning:
+  "He clicked the link"       → glowing monitor in an empty dark room
+  "She didn't believe it"     → a single coffee cup, steam rising, on a desk scattered with papers at 3 AM
+  "The phone rang"            → a ringing desk phone, light flashing, in an otherwise silent office
+  "He was arrested"           → an empty chair, handcuffs on a metal table
+  "The company went bankrupt" → an empty lobby, single flickering light, abandoned reception desk
+Use the STORY CONTEXT provided to make the object specific to this story's setting, era, and characters.
+
+STEP 3 — DESCRIBE THE ENVIRONMENT
+Add the space around the object: room type, lighting quality, depth of field, color temperature, surface materials, time of day.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STYLE RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• 60–80 words maximum
+• Dark, moody, cinematic color grading
+• Deep shadows with single dramatic light source
+• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood)
+• No humans, no faces, no hands, no body parts
+• No text, no labels, no UI elements on screens (blur them)
+• Shallow depth of field — hero object sharp, background soft
+• 16:9 cinematic framing
+
+Output only the prompt text. No explanation.`
       })
-      
-      const promptRes = await callGemini(model, `Script: "${scene.script}"`)
+
+      const promptRes = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${scene.script}"`)
       scene.prompt = promptRes.response.text().trim()
       
       scene.environment = 'infrastructure'
