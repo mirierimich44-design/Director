@@ -513,11 +513,23 @@ const ProjectDirectorView: React.FC = () => {
                     const data = await res.json();
                     if (!data.success) throw new Error(data.error);
 
-                    // Use SSE for live progress
+                    // 3. Use SSE for live progress
                     await new Promise<void>((resolveSSE) => {
                         const evtSrc = new EventSource(`/api/render-progress/${data.jobId}`);
+                        let lastUpdate = Date.now();
+                        
+                        // Inactivity monitor: Skip if no signal for 90 seconds
+                        const heartbeatCheck = setInterval(() => {
+                            if (Date.now() - lastUpdate > 90_000) {
+                                console.warn(`🚨 Render heartbeat lost for job ${data.jobId}. Skipping...`);
+                                clearInterval(heartbeatCheck);
+                                evtSrc.close();
+                                resolveSSE();
+                            }
+                        }, 10_000);
 
                         evtSrc.onmessage = async (e) => {
+                            lastUpdate = Date.now(); // Reset heartbeat on every message
                             const job = JSON.parse(e.data);
                             setSceneProgress(prev => {
                                 const current = prev[sceneKey] || { phase: '', progress: 0, message: '', logs: [] };
@@ -529,13 +541,14 @@ const ProjectDirectorView: React.FC = () => {
                                     phase: job.phase || job.status || 'processing',
                                     progress: job.progress || 0,
                                     message: job.message || '',
-                                    logs: newLogs.slice(-20) // keep last 20 logs
+                                    logs: newLogs.slice(-20) 
                                 };
                                 if (onProgress) onProgress(prog);
                                 return { ...prev, [sceneKey]: prog };
                             });
 
                             if (job.status === 'completed') {
+                                clearInterval(heartbeatCheck);
                                 evtSrc.close();
                                 await fetch(`/api/projects/${proj.id}/chapters/${chapterId}/scenes/${sceneIndex}`, {
                                     method: 'PUT',
@@ -546,14 +559,16 @@ const ProjectDirectorView: React.FC = () => {
                                 loadProjectDetails(proj.id);
                                 resolveSSE();
                             } else if (job.status === 'error') {
+                                clearInterval(heartbeatCheck);
                                 evtSrc.close();
                                 throw new Error(job.error || 'Render failed');
                             }
                         };
 
                         evtSrc.onerror = () => {
+                            // Don't clear heartbeat here, let it attempt to reconnect or time out
                             evtSrc.close();
-                            resolveSSE(); // resolve anyway, check job status next poll
+                            resolveSSE();
                         };
                     });
                     resolve();

@@ -7,6 +7,7 @@ import fs from 'fs/promises';
 import { existsSync } from 'fs';
 import os from 'os';
 import { balanceBraces } from '../../services/balancer.js';
+import { validateAndFix } from '../../services/tsxValidator.js';
 import esbuild from 'esbuild';
 import cliProgress from 'cli-progress';
 
@@ -323,7 +324,20 @@ const calculateHash = (content) => {
 
 export async function renderVideo(tsxCode, outputPath, settings, onProgress = null) {
     const browserPath = await ensureRemotionBrowser();
-    let wrappedCode = wrapperTemplate(tsxCode, settings);
+
+    // 1. Production-grade TSX Validation and Fixing
+    let validatedCode = tsxCode;
+    try {
+        const result = await validateAndFix(tsxCode, settings);
+        validatedCode = result.code;
+        if (result.fixes.length > 0) {
+            console.log(`   🛠️  TSX Validator applied ${result.fixes.length} fixes: ${result.fixes.join(', ')}`);
+        }
+    } catch (valErr) {
+        console.warn(`   ⚠️  Validator warning: ${valErr.message}. Proceeding with original code.`);
+    }
+
+    let wrappedCode = wrapperTemplate(validatedCode, settings);
 
     // CRITICAL: Fast syntax pre-check before expensive bundling.
     // If esbuild can't parse it, the bundler will definitely fail.
@@ -573,7 +587,17 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
 
 export async function renderStill(tsxCode, outputPath, frame, settings) {
     const browserPath = await ensureRemotionBrowser();
-    const wrappedCode = wrapperTemplate(tsxCode, settings);
+
+    // Production-grade TSX Validation and Fixing
+    let validatedCode = tsxCode;
+    try {
+        const result = await validateAndFix(tsxCode, settings);
+        validatedCode = result.code;
+    } catch (valErr) {
+        console.warn(`   ⚠️  Validator warning (still): ${valErr.message}`);
+    }
+
+    const wrappedCode = wrapperTemplate(validatedCode, settings);
     const hash = calculateHash(wrappedCode);
     // Adjusted path to look for .temp in project root (same as renderVideo)
     const tempDir = join(__dirname, '../../../.temp', hash);
