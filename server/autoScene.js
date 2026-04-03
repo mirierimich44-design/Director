@@ -280,7 +280,7 @@ DIRECTIVE:
 - YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
 - EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
 - Target approximately ${ratio}% TEMPLATE and ${100 - ratio}% 3D_RENDER.
-- Combine short sentences into single scenes (25-40 words each).
+- Each scene script must be 15–25 words. Split long sentences at natural pauses. Combine short ones.
 - Assign a THEME based on mood: THREAT (urgent/red), COLD (analytical/blue), INTEL (mysterious/purple), DARK (dramatic/black), CLEAN (neutral/white).
 
 OUTPUT FORMAT (JSON array only):
