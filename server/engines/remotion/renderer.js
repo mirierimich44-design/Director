@@ -67,8 +67,9 @@ const withTimeout = (promise, ms, label) =>
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Shared browser executable path to avoid multiple downloads/race conditions
-let browserExecutablePath = null;
+// CRITICAL: Force Remotion to use a local temp directory to avoid system /tmp ENOSPC/permission issues
+const LOCAL_REMOTION_TMP = join(__dirname, '../../../.temp/remotion');
+process.env.REMOTION_TMPDIR = LOCAL_REMOTION_TMP;
 
 /**
  * Ensures the Remotion browser (Chrome Headless Shell) is available.
@@ -504,6 +505,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                 bundle({
                     entryPoint: entryPath,
                     publicDir: publicDir,
+                    outDir: join(LOCAL_REMOTION_TMP, `bundle-${hash.substring(0, 8)}`), // Explicit outDir
                     onProgress: (progress) => {
                         const pct = Math.round(progress * 100);
                         progressBar.update(pct, { phase: 'Bundling' });
