@@ -115,6 +115,134 @@ const isVideoUrl = (url) => {
 };
 
 
+// Wraps a raw TSX component in the full Remotion boilerplate (registerRoot, Composition, etc.)
+const wrapperTemplate = (componentCode, settings) => {
+    const reactHooks = ['useState', 'useEffect', 'useMemo', 'useCallback', 'useRef', 'useLayoutEffect', 'useContext', 'useReducer', 'Fragment', 'memo', 'forwardRef'];
+    let hooksToAdd = new Set();
+
+    // Move React hooks mistakenly imported from 'remotion' to React
+    componentCode = componentCode.replace(
+        /import\s*\{([^}]*)\}\s*from\s*['"]remotion['"]/g,
+        (match, imports) => {
+            const items = imports.split(',').map(s => s.trim()).filter(Boolean);
+            items.forEach(item => {
+                if (reactHooks.includes(item)) hooksToAdd.add(item);
+            });
+            const kept = items.filter(s => s !== 'interpolate' && !reactHooks.includes(s));
+            if (kept.length === 0) return '';
+            return `import { ${kept.join(', ')} } from 'remotion'`;
+        }
+    );
+
+    // Consolidate React imports
+    componentCode = componentCode.replace(
+        /import\s+React\s*,?\s*\{([^}]*)\}\s*from\s*['"]react['"]/g,
+        (match, imports) => {
+            imports.split(',').map(s => s.trim()).filter(Boolean).forEach(item => hooksToAdd.add(item));
+            return '';
+        }
+    );
+    componentCode = componentCode.replace(/import\s+React\s+from\s*['"]react['"];?/g, '');
+
+    const finalHooks = Array.from(hooksToAdd);
+    const reactImportStr = finalHooks.length > 0
+        ? `import React, { ${finalHooks.join(', ')} } from 'react';`
+        : `import React from 'react';`;
+
+    const hasBackground = !!settings.backgroundUrl;
+    const isVideo = isVideoUrl(settings.backgroundUrl);
+
+    let additionalImports = '';
+    if (hasBackground) {
+        additionalImports = isVideo
+            ? `\nimport { OffthreadVideo } from 'remotion';`
+            : `\nimport { Img } from 'remotion';`;
+    }
+
+    let backgroundCode = '';
+    if (hasBackground) {
+        if (isVideo) {
+            backgroundCode = `
+const BackgroundWrapper = ({children}) => (
+    <AbsoluteFill>
+        <AbsoluteFill style={{ zIndex: 0 }}>
+            <OffthreadVideo src="${settings.backgroundUrl}" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }} muted />
+        </AbsoluteFill>
+        <AbsoluteFill style={{ zIndex: 1 }}>{children}</AbsoluteFill>
+    </AbsoluteFill>
+);`;
+        } else {
+            backgroundCode = `
+const BackgroundWrapper = ({children}) => (
+    <AbsoluteFill>
+        <Img src="${settings.backgroundUrl}" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }} />
+        <AbsoluteFill style={{ zIndex: 1 }}>{children}</AbsoluteFill>
+    </AbsoluteFill>
+);`;
+        }
+    }
+
+    const componentWrapper = hasBackground
+        ? 'const WrappedAnimation = () => <BackgroundWrapper><AbsoluteFill><AnimationComponent /></AbsoluteFill></BackgroundWrapper>;'
+        : 'const WrappedAnimation = () => <AbsoluteFill><AnimationComponent /></AbsoluteFill>;';
+
+    const durationFrames = Math.round((settings.duration || 15) * (settings.fps || 30));
+    const fpsValue = settings.fps || 30;
+    const widthValue = settings.width || 1920;
+    const heightValue = settings.height || 1080;
+
+    // Strip any remaining duplicate React imports from component code
+    componentCode = componentCode.replace(/import\s+React\s*(?:,\s*\{[^}]*\})?\s*from\s*['"]react['"];?\s*\n?/g, '');
+
+    return `
+${reactImportStr}
+import { registerRoot, Composition, AbsoluteFill, staticFile, interpolate as _originalInterpolate } from 'remotion';${additionalImports}
+
+const fontFamily = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+// Runtime safety wrapper for LLM-generated interpolate calls
+const interpolate = (value, inputRange, outputRange, options) => {
+    if (!outputRange || !Array.isArray(outputRange)) {
+        outputRange = Array.isArray(inputRange) && inputRange.length >= 2
+            ? inputRange.map((_, i) => i / (inputRange.length - 1))
+            : [0, 1];
+    }
+    if (Array.isArray(inputRange) && inputRange.length !== outputRange.length) {
+        inputRange = [inputRange[0], inputRange[inputRange.length - 1]];
+        outputRange = [outputRange[0], outputRange[outputRange.length - 1]];
+    }
+    outputRange = outputRange.map(v => {
+        if (typeof v === 'number') return v;
+        const n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+        return isNaN(n) ? 0 : n;
+    });
+    try { return _originalInterpolate(value, inputRange, outputRange, options); }
+    catch (e) { return outputRange[0] || 0; }
+};
+
+${componentCode}
+
+${backgroundCode}
+
+${componentWrapper}
+
+const RemotionRoot = () => (
+    <>
+        <Composition
+            id="Animation"
+            component={WrappedAnimation}
+            durationInFrames={${durationFrames}}
+            fps={${fpsValue}}
+            width={${widthValue}}
+            height={${heightValue}}
+        />
+    </>
+);
+
+registerRoot(RemotionRoot);
+`;
+};
+
 /**
  * Fast syntax pre-check using esbuild's transform API.
  * Catches syntax errors in milliseconds instead of waiting for the full bundler.
