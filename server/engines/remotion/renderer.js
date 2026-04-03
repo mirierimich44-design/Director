@@ -194,6 +194,20 @@ const BackgroundWrapper = ({children}) => (
     // Strip any remaining duplicate React imports from component code
     componentCode = componentCode.replace(/import\s+React\s*(?:,\s*\{[^}]*\})?\s*from\s*['"]react['"];?\s*\n?/g, '');
 
+    // Safeguard: heal broken injection artifacts from old templateFiller bug.
+    // The old regex replaced variable NAMES (identifiers) with quoted strings, producing
+    // invalid syntax like: const "10.0" = "PLACEHOLDER"
+    // Fix: turn the quoted string back into a valid identifier so the file can compile.
+    // The variable won't be referenced (its uses were also replaced with string literals),
+    // so renaming it is safe — it just needs to be syntactically valid.
+    componentCode = componentCode.replace(
+        /\b(const|let|var)\s+"([^"]+)"\s*=/g,
+        (match, keyword, val) => {
+            const safeName = ('_' + val).replace(/[^a-zA-Z0-9_]/g, '_');
+            return `${keyword} ${safeName} =`;
+        }
+    );
+
     return `
 ${reactImportStr}
 import { registerRoot, Composition, AbsoluteFill, staticFile, interpolate as _originalInterpolate } from 'remotion';${additionalImports}
