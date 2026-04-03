@@ -130,24 +130,43 @@ const TEMPLATE_CATEGORIES = {
 // Helper: Robust JSON Parse
 // ─────────────────────────────────────────────
 function robustParseJSON(text) {
+  if (!text) return text
+  
+  // 1. Strip markdown code blocks if present
+  let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim()
+
   try {
-    return JSON.parse(text)
+    return JSON.parse(cleaned)
   } catch (err) {
-    const firstBracket = text.indexOf('[')
-    const lastBracket = text.lastIndexOf(']')
-    const firstBrace = text.indexOf('{')
-    const lastBrace = text.lastIndexOf('}')
-    let start = -1, end = -1
-    if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
-      start = firstBracket; end = lastBracket
-    } else if (firstBrace !== -1) {
-      start = firstBrace; end = lastBrace
+    // 2. Try to extract the first valid JSON array or object
+    const match = cleaned.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
+    if (match) {
+      try {
+        return JSON.parse(match[0])
+      } catch (innerErr) {
+        // 3. Last ditch: try to fix trailing/leading junk manually
+        const firstBracket = cleaned.indexOf('[')
+        const lastBracket = cleaned.lastIndexOf(']')
+        const firstBrace = cleaned.indexOf('{')
+        const lastBrace = cleaned.lastIndexOf('}')
+
+        let start = -1, end = -1
+        if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+          start = firstBracket; end = lastBracket
+        } else if (firstBrace !== -1) {
+          start = firstBrace; end = lastBrace
+        }
+
+        if (start !== -1 && end !== -1 && end > start) {
+          try {
+            return JSON.parse(cleaned.substring(start, end + 1))
+          } catch (lastErr) {
+            console.error('JSON Extraction failed:', lastErr.message)
+          }
+        }
+      }
     }
-    if (start !== -1 && end !== -1 && end > start) {
-      const cleaned = text.substring(start, end + 1)
-      try { return JSON.parse(cleaned) } catch (innerErr) { throw new Error(`JSON Syntax Error: ${innerErr.message}`) }
-    }
-    throw err
+    throw new Error(`JSON Syntax Error: ${err.message}. Raw text length: ${text.length}`)
   }
 }
 

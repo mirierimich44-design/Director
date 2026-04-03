@@ -591,6 +591,60 @@ app.post('/api/projects/:pid/chapters/:cid/reanalyze', async (req, res) => {
     }
 });
 
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/generate-template', async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        
+        const scene = chapter.scenes[parseInt(idx)];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+
+        if (!scene.template) return res.status(400).json({ error: 'No template assigned to scene' });
+
+        const { fillTemplate } = await import('./templateFiller.js');
+        const code = fillTemplate(scene.template, scene.theme || 'DARK', scene.content || {});
+        
+        const result = await updateScene(pid, cid, parseInt(idx), { code });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Utility: Clear temporary files
+app.post('/api/utils/clear-temp', async (req, res) => {
+    try {
+        const tempRoot = join(__dirname, '../.temp');
+        const tmpSystem = '/tmp';
+        
+        // Clear local .temp
+        const entries = await fs.readdir(tempRoot);
+        for (const entry of entries) {
+            await fs.rm(join(tempRoot, entry), { recursive: true, force: true });
+        }
+
+        // Try clearing /tmp remotion files
+        try {
+            const systemTmpEntries = await fs.readdir(tmpSystem);
+            for (const entry of systemTmpEntries) {
+                if (entry.startsWith('remotion-')) {
+                    await fs.rm(join(tmpSystem, entry), { recursive: true, force: true });
+                }
+            }
+        } catch (e) {
+            console.warn('⚠️ Could not clear system /tmp:', e.message);
+        }
+
+        res.json({ success: true, message: 'Temporary files cleared' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // ── 3D RENDER / IMAGE GENERATION ─────────────────────────────────────────────
 // Generate an AI image from a 3D render prompt using Google Imagen
 app.post('/api/auto-scene/render-3d', async (req, res) => {
