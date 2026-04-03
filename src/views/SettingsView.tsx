@@ -8,7 +8,8 @@ import {
     Visibility as ShowIcon,
     VisibilityOff as HideIcon,
     Check as CheckIcon,
-    Refresh as RefreshIcon
+    Refresh as RefreshIcon,
+    Delete as DeleteIcon
 } from '@mui/icons-material';
 
 interface ModelOption {
@@ -622,6 +623,38 @@ const SettingsView: React.FC = () => {
                             </Select>
                         </FormControl>
                     </Box>
+                </CardContent>
+            </Card>
+
+            {/* Maintenance */}
+            <Card sx={sectionSx}>
+                <CardContent>
+                    <Typography variant="h6" sx={{ color: '#FF4444', mb: 2, fontWeight: 'bold', letterSpacing: 1 }}>
+                        MAINTENANCE
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 3 }}>
+                        Clear temporary webpack bundles, cache, and old render files to free up VPS disk space.
+                    </Typography>
+
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={async () => {
+                            if (window.confirm('Clear all temporary server files? This will free up disk space but may slow down the next few renders.')) {
+                                try {
+                                    const res = await fetch('/api/utils/clear-temp', { method: 'POST' });
+                                    const data = await res.json();
+                                    if (data.success) alert('Server cache cleared successfully.');
+                                } catch (err) {
+                                    alert('Failed to clear cache.');
+                                }
+                            }
+                        }}
+                        startIcon={<DeleteIcon />}
+                        sx={{ borderColor: 'rgba(255,68,68,0.3)', '&:hover': { borderColor: '#FF4444', bgcolor: 'rgba(255,68,68,0.05)' } }}
+                    >
+                        Clear Server Cache
+                    </Button>
                 </CardContent>
             </Card>
 

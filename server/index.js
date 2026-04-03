@@ -54,6 +54,7 @@ await fs.mkdir(audioProcessedDir, { recursive: true });
 await fs.mkdir(audioTtsDir,       { recursive: true });
 await fs.mkdir(imagesDir,         { recursive: true });
 await fs.mkdir(join(__dirname, 'projects'), { recursive: true });
+await fs.mkdir(join(__dirname, '../.temp/remotion'), { recursive: true });
 
 // ── Static serving ────────────────────────────────────────────────────────────
 app.use('/videos', express.static(videosDir));

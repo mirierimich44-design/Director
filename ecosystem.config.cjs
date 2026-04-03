@@ -15,6 +15,7 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3002,
         RENDER_CONCURRENCY: '2', // hard-cap concurrent Remotion renders
+        REMOTION_TMPDIR: './.temp/remotion', // redirect temp files away from system /tmp
       },
       out_file: './logs/out.log',
       error_file: './logs/error.log',
