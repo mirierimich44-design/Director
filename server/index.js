@@ -611,7 +611,42 @@ app.post('/api/utils/clear-temp', async (req, res) => {
     }
 });
 
-// ── 3D RENDER / IMAGE GENERATION ─────────────────────────────────────────────
+// POST /api/projects/:pid/chapters/:cid/scenes/:idx/retry — targeted scene repair
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/retry', async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        
+        const sceneIndex = parseInt(idx);
+        const scene = chapter.scenes[sceneIndex];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+
+        console.log(`   🛠️  Retrying Scene ${sceneIndex} for Project ${pid}...`);
+
+        const { fillSceneFields } = await import('./autoScene.js');
+        const { fillTemplate } = await import('./templateFiller.js');
+        const { fuzzyMapFields } = await import('./templateSystem.js');
+        const { loadSchema } = await import('./templateSystem.js');
+
+        // Pass 2: Field Filling
+        const content = await fillSceneFields(scene, scene.template);
+        const schema = loadSchema(scene.template);
+        const processedContent = schema?.fields ? fuzzyMapFields(content, schema.fields) : content;
+        
+        // Final TSX generation
+        const code = fillTemplate(scene.template, scene.theme || 'DARK', processedContent);
+        
+        const result = await updateScene(pid, cid, sceneIndex, { code, content: processedContent, renderStatus: 'idle' });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('❌ Scene retry error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
 // Generate an AI image from a 3D render prompt using Google Imagen
 app.post('/api/auto-scene/render-3d', async (req, res) => {
     try {

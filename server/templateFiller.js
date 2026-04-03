@@ -36,10 +36,12 @@ function safeReplace(code, placeholder, value) {
       return `${quote}${safeVal}${quote}`
     }
     
-    // NEW: If NOT quoted but the value looks like a number that would break JS as an identifier
-    // (e.g., placeholder used in an object key or variable name context)
-    // We only sanitize if it's a known placeholder pattern
-    return String(value)
+    // NEW: If NOT quoted, sanitize the value to be a valid JS identifier (e.g. 10.0 -> _10_0)
+    let sanitizedVal = String(value).replace(/[^a-zA-Z0-9_]/g, '_');
+    if (/^[0-9]/.test(sanitizedVal)) {
+        sanitizedVal = '_' + sanitizedVal;
+    }
+    return sanitizedVal;
   })
 }
 
