@@ -26,13 +26,16 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+function resolveTemplatePath(name) {
+  const templateDir = path.join(__dirname, 'templates');
+  if (fs.existsSync(path.join(templateDir, `${name}.tsx`))) return name;
+  const files = fs.readdirSync(templateDir).filter(f => f.endsWith('.tsx'));
+  const match = files.find(f => f.includes(name));
+  return match ? match.replace('.tsx', '') : undefined;
+}
+
 export function fillTemplate(templateName, themeName, contentJson) {
-  const resolvedName = (name) => {
-      const templateDir = path.join(__dirname, 'templates');
-      if (fs.existsSync(path.join(templateDir, `${name}.tsx`))) return name;
-      const files = fs.readdirSync(templateDir).filter(f => f.endsWith('.tsx'));
-      return files.find(f => f.includes(name))?.replace('.tsx', '');
-  }(templateName);
+  const resolvedName = resolveTemplatePath(templateName);
 
   if (!resolvedName) throw new Error(`Template not found: ${templateName}`);
 
