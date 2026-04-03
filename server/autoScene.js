@@ -325,46 +325,58 @@ async function routeScenes(scriptText, settings) {
     .map(([cat, info]) => `${cat}: ${info.desc}`)
     .join('\n')
 
-  const systemPrompt = `You are the ARXXIS structural director. Your job is to break a documentary script into scenes and assign them to a broad category.
+  const systemPrompt = `You are the ARXXIS structural director. Your job is to read each sentence of a documentary script and assign it to exactly one scene type: [TEMPLATE] or [3D_RENDER].
 
-SCENE TYPES:
-- [TEMPLATE]: ONLY use for explicit data, charts, lists, timelines, or technical flows.
-- [3D_RENDER]: DEFAULT for narrative action, story beats, phone calls, people-centric events, and atmosphere.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE 1 — VERB-BASED ROUTING (primary signal)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Look at the MAIN VERB of the sentence first.
+
+→ NARRATIVE VERBS = [3D_RENDER]
+clicked, opened, called, walked, arrived, sat, felt, saw, said, wrote, sent, received, noticed, believed, suspected, realized, decided, logged in, downloaded, uploaded, ran, fled, denied, signed, printed, met, waited, replied, threatened, paid
+
+→ DATA / EXPLANATORY VERBS = [TEMPLATE]
+grew, increased, decreased, compared, ranked, scheduled, analyzed, totaled, reached, peaked, dropped, averaged, distributed, comprised, mapped, connected, tracked, flowed, spread, generated, processed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE 2 — SENTENCE STRUCTURE TEST (secondary signal)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ask: Is a PERSON doing something, OR is DATA being described?
+  "He clicked the link"         → PERSON doing → [3D_RENDER]
+  "The link exploited a buffer" → DATA/MECHANISM explained → [TEMPLATE]
+  "She opened the email"        → PERSON doing → [3D_RENDER]
+  "Revenue grew 50%"            → DATA metric → [TEMPLATE]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE 3 — KEYWORD CONTEXT TEST (disambiguation)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Technical keywords do NOT automatically trigger [TEMPLATE].
+  Is the keyword the SUBJECT of a person's action?  → [3D_RENDER]
+  Is the keyword being EXPLANED or QUANTIFIED?     → [TEMPLATE]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCENE TYPE DEFINITIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[TEMPLATE] — ONLY for explicit data, stats, lists, trends, process/mechanism explanations, geography, timelines, technical structures, or physical evidence (files/records).
+[3D_RENDER] — DEFAULT for human action, decision, emotion, dialogue, scene-setting, environments, phone calls, or moments in a narrative sequence.
 
 CATEGORIES:
 ${catalogSummary}
 
-DIRECTIVE:
-- VISUAL-STORY MATCHING: The visual MUST match the literal event in the script.
-- If the script says "The phone rang", it is [3D_RENDER] (office environment), NOT a technical flow.
-- If the script says "He didn't believe it", it is [3D_RENDER] (moody atmosphere), NOT a chart.
-- YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
-- EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
-- EXACTLY ${ratio}% of scenes MUST be TEMPLATE type. This is a hard requirement, not a suggestion. Count your scenes before outputting and adjust.
-- Each scene script must be 15–25 words. Split long sentences at natural pauses. Combine short ones.
-- Assign a THEME based on mood: THREAT (urgent/red), COLD (analytical/blue), INTEL (mysterious/purple), DARK (dramatic/black), CLEAN (neutral/white).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COVERAGE AND RATIO REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. YOU MUST COVER EVERY SENTENCE verbatim.
+2. Target ratio: ${ratio}% TEMPLATE, ${100 - ratio}% 3D_RENDER.
+3. POST-PROCESSING ENFORCER: After planning, count your totals. If TEMPLATE count is below ${ratio}%, scan [3D_RENDER] scenes that describe a mechanism or quantity and upgrade them to [TEMPLATE]. Never downgrade pure narrative action.
 
-POST-PROCESSING ENFORCER:
-1. Final check: Count your TEMPLATE vs 3D_RENDER scenes. If you have 10 scenes and the ratio is 60%, exactly 6 MUST be TEMPLATE.
-2. If short on TEMPLATES, force-convert 3D_RENDER scenes by finding ANY technical or data-driven angle in the text.
-3. Templates are the priority. 3D Renders are only for physical environments where no data exists.
-
-OUTPUT FORMAT (JSON array only):
+OUTPUT FORMAT (strict JSON array only):
 [
   {
-    "type": "TEMPLATE",
-    "category": "STATS",
-    "theme": "THREAT",
-    "script": "exact sentence(s)",
-    "reasoning": "why this category/theme fits"
-  },
-  {
-    "type": "3D_RENDER",
-    "subject": "main character or object (e.g., a server rack)",
-    "setting": "background setting (e.g., a data center in a snowy forest)",
-    "style": "artistic medium or aesthetic (e.g., cinematic 3D render, holographic, brushed metal)",
-    "script": "exact sentence(s)",
-    "reasoning": "why this remix fits"
+    "type": "TEMPLATE" | "3D_RENDER",
+    "category": "STAT" | "FLOW" | ... (TEMPLATE only),
+    "script": "original sentence verbatim",
+    "routing_reason": "One sentence: WHY this type was chosen"
   }
 ]`
 
@@ -486,14 +498,23 @@ export async function generateScenes(scriptText, generationSettings = null) {
         scene.error = err.message
       }
     } else {
-      // 3D Render Prompt Generation
-      console.log(`   🖼️ Scene ${scene.index}: Generating 3D Render prompt...`)
-      const model = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() })
-      
-      const imgPrompt = `Create a 60-80 word photorealistic 3D render prompt based on this scene: "${scene.script}".
-      Visual style: Dark, moody, cinematic 3D render focusing on objects/infrastructure. NO HUMANS.`
+      // 3D Render Prompt Generation — THREE-STEP CINEMATOGRAPHY METHOD
+      console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`)
+      const model = googleAI.getGenerativeModel({
+        model: getGEMINI_MODEL(),
+        systemInstruction: `You are the ARXXIS cinematographer. You write image prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
 
-      const promptRes = await callGemini(model, imgPrompt)
+THREE-STEP METHOD:
+1. SET THE ATMOSPHERE: Begin with an emotional quality (tension, isolation, secrecy, digital coldness).
+2. CHOOSE THE SYMBOLIC OBJECT: Never draw the person. Find the ONE object from the scene that carries the meaning (e.g., a flashing phone, a glowing monitor in a dark room, a coffee cup at 3 AM).
+3. DESCRIBE THE ENVIRONMENT: Add the room type, single dramatic light source, and hyperrealistic textures (brushed metal, glass).
+
+STYLE RULES:
+- 60-80 words max. Dark, moody, shallow depth of field.
+- NO HUMANS, no faces, no hands. No text or UI on screens.`
+      })
+      
+      const promptRes = await callGemini(model, `Script: "${scene.script}"`)
       scene.prompt = promptRes.response.text().trim()
       
       scene.environment = 'infrastructure'

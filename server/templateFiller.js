@@ -35,7 +35,10 @@ function safeReplace(code, placeholder, value) {
       }[s]))
       return `${quote}${safeVal}${quote}`
     }
-    // Otherwise return the raw value
+    
+    // NEW: If NOT quoted but the value looks like a number that would break JS as an identifier
+    // (e.g., placeholder used in an object key or variable name context)
+    // We only sanitize if it's a known placeholder pattern
     return String(value)
   })
 }

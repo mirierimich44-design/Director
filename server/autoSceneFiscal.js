@@ -152,6 +152,7 @@ function loadSchema(templateName) {
 // Pass 1: The Fiscal Router
 // ─────────────────────────────────────────────
 async function routeScenes(scriptText, settings) {
+  const ratio = settings?.templateRatio ?? 60
   const theme = settings?.colorScheme || 'CLEAN'
 
   const systemPrompt = `You are the FISCAL PAL structural director. You analyze financial scripts and break them into scenes.
@@ -163,41 +164,42 @@ SCENE TYPES:
 - [TEMPLATE]: ONLY use for explicit financial charts, data, timelines, or structural beats.
 - [ILLUSTRATION]: DEFAULT for editorial watercolor illustrations of people, narrative action, story beats, or symbolic scenes.
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE 1 — VERB-BASED ROUTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+→ NARRATIVE VERBS = [ILLUSTRATION]
+clicked, opened, called, walked, arrived, sat, felt, saw, said, wrote, sent, received, noticed, believed, suspected, realized, decided, logged in, downloaded, uploaded, ran, fled, denied, signed, printed, met, waited, replied, threatened, paid
+
+→ DATA / EXPLANATORY VERBS = [TEMPLATE]
+grew, increased, decreased, compared, ranked, scheduled, analyzed, totaled, reached, peaked, dropped, averaged, distributed, comprised, mapped, connected, tracked, flowed, spread, generated, processed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE 2 — SENTENCE STRUCTURE TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ask: Is a PERSON doing something, OR is DATA being described?
+  "The agents arrived"   → PERSON doing → [ILLUSTRATION]
+  "He was stressed"      → PERSON feeling → [ILLUSTRATION]
+  "Revenue grew 50%"     → DATA metric → [TEMPLATE]
+
 CATEGORIES (for TEMPLATE only):
 ${Object.keys(TEMPLATE_CATEGORIES).join(', ')}
 
-DIRECTIVE:
-- VISUAL-STORY MATCHING: The visual MUST match the literal event in the script.
-- If the script says "The agents arrived", it is [ILLUSTRATION] (editorial scene), NOT a chart.
-- If the script says "He was stressed", it is [ILLUSTRATION] (portrait), NOT a timeline.
-- YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
-- EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
-- Maintain exactly a 50/50 split between TEMPLATE and ILLUSTRATION.
-- Combine short sentences into single scenes (25-40 words each).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COVERAGE AND RATIO REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. YOU MUST COVER EVERY SENTENCE verbatim.
+2. Target ratio: ${ratio}% TEMPLATE, ${100 - ratio}% ILLUSTRATION.
+3. POST-PROCESSING ENFORCER: Final check: Count your totals. If TEMPLATE count is below ${ratio}%, force-convert [ILLUSTRATION] scenes by extracting data or charts. Templates are essential for channel identity.
 
-POST-PROCESSING ENFORCER:
-1. Final check: Count your TEMPLATE vs ILLUSTRATION scenes. You MUST maintain a 50/50 balance.
-2. If short on TEMPLATES, force-convert ILLUSTRATION scenes by extracting data or creating a timeline/chart from the script.
-3. Templates are essential for channel identity. Use them aggressively.
-
-OUTPUT FORMAT (JSON array only):
+OUTPUT FORMAT (strict JSON array only):
 [
   {
-    "type": "TEMPLATE",
-    "category": "FINANCIAL",
-    "script": "exact sentence(s)",
-    "reasoning": "why this category fits"
-  },
-  {
-    "type": "ILLUSTRATION",
-    "subject": "main character or object (e.g., a stressed banker at a desk)",
-    "setting": "background setting (e.g., a busy stock exchange, a quiet library)",
-    "style": "editorial watercolor illustration, courtroom sketch aesthetic, loose ink linework",
-    "script": "exact sentence(s)",
-    "reasoning": "why this illustration fits"
+    "type": "TEMPLATE" | "ILLUSTRATION",
+    "category": "FINANCIAL" | "TIMELINE" | ... (TEMPLATE only),
+    "script": "original sentence verbatim",
+    "routing_reason": "One sentence: WHY this type was chosen"
   }
-]
-`
+]`
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
@@ -205,7 +207,7 @@ OUTPUT FORMAT (JSON array only):
     generationConfig: { temperature: 0.1, responseMimeType: 'application/json' }
   })
 
-  const result = await model.generateContent(`Analyze this financial script:\n\n${scriptText}`)
+  const result = await callGemini(model, `Analyze this financial script:\n\n${scriptText}`)
   const raw = result.response.text()
   return robustParseJSON(raw)
 }
@@ -301,11 +303,22 @@ export async function generateScenes(scriptText, generationSettings = null) {
     } else {
       console.log(`   🎨 Scene ${scene.index}: Generating Editorial Illustration prompt...`)
       
-      const imgModel = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() })
-      const imgPrompt = `Create a 60-word editorial watercolor illustration prompt based on this scene: "${scene.script}". 
-      Style: courtroom sketch aesthetic, loose ink linework, soft washes, warm muted palette.`
+      const imgModel = googleAI.getGenerativeModel({ 
+        model: getGEMINI_MODEL(),
+        systemInstruction: `You are the ARXXIS editorial illustrator. You write prompts for watercolor editorial illustrations in the style of courtroom sketches and financial newspaper artwork.
+
+THREE-STEP METHOD:
+1. MOOD WORD: Choose one (anxious, triumphant, secretive, chaotic) to set the palette.
+2. SYMBOLIC OBJECT: Find the single object that carries the meaning. Avoid literal people.
+3. COMPOSITIONAL DETAIL: Describe the foreground object, watercolor wash, and paper grain.
+
+STYLE RULES:
+- 50-65 words max. Loose ink linework over soft washes.
+- Warm muted palette (burnt sienna, raw umber, slate blue).
+- NO photorealism, NO text, NO writing.`
+      })
       
-      const promptRes = await callGemini(imgModel, imgPrompt)
+      const promptRes = await callGemini(imgModel, `Script: "${scene.script}"`)
       scene.prompt = promptRes.response.text().trim()
       
       scene.environment = 'editorial-illustration'

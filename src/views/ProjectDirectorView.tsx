@@ -1368,9 +1368,20 @@ const ProjectDirectorView: React.FC = () => {
                                                                     />
                                                                     {scene.template && <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{scene.template}</Typography>}
                                                                 </Box>
-                                                                <Typography variant="body1" sx={{ color: '#fff', fontStyle: 'italic', mb: 2, pl: 2, borderLeft: '2px solid rgba(255,255,255,0.2)' }}>
+                                                                <Typography variant="body1" sx={{ color: '#fff', fontStyle: 'italic', mb: 1, pl: 2, borderLeft: '2px solid rgba(255,255,255,0.2)' }}>
                                                                     "{scene.script}"
                                                                 </Typography>
+
+                                                                {(scene as any).routing_reason && (
+                                                                    <Box sx={{ mb: 2, p: 1, bgcolor: 'rgba(201,169,97,0.05)', borderRadius: 1, borderLeft: '3px solid var(--accent-gold)' }}>
+                                                                        <Typography variant="caption" sx={{ color: 'var(--accent-gold)', display: 'block', fontWeight: 'bold', fontSize: '0.65rem', textTransform: 'uppercase', mb: 0.5 }}>
+                                                                            Director's Note
+                                                                        </Typography>
+                                                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic', fontSize: '0.75rem', lineHeight: 1.2 }}>
+                                                                            {(scene as any).routing_reason}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
 
                                                                 {!isLocked && (
                                                                     <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
