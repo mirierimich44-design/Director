@@ -279,9 +279,14 @@ ${catalogSummary}
 DIRECTIVE:
 - YOU MUST COVER THE ENTIRE SCRIPT. DO NOT SKIP ANY SENTENCES.
 - EVERY SINGLE WORD from the provided script must appear in the "script" field of exactly one scene.
-- Target approximately ${ratio}% TEMPLATE and ${100 - ratio}% 3D_RENDER.
+- EXACTLY ${ratio}% of scenes MUST be TEMPLATE type. This is a hard requirement, not a suggestion. Count your scenes before outputting and adjust.
 - Each scene script must be 15–25 words. Split long sentences at natural pauses. Combine short ones.
 - Assign a THEME based on mood: THREAT (urgent/red), COLD (analytical/blue), INTEL (mysterious/purple), DARK (dramatic/black), CLEAN (neutral/white).
+
+POST-PROCESSING ENFORCER:
+1. Final check: Count your TEMPLATE vs 3D_RENDER scenes. If you have 10 scenes and the ratio is 60%, exactly 6 MUST be TEMPLATE.
+2. If short on TEMPLATES, force-convert 3D_RENDER scenes by finding ANY technical or data-driven angle in the text.
+3. Templates are the priority. 3D Renders are only for physical environments where no data exists.
 
 OUTPUT FORMAT (JSON array only):
 [

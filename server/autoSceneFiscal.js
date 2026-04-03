@@ -96,6 +96,11 @@ DIRECTIVE:
 - Maintain exactly a 50/50 split between TEMPLATE and ILLUSTRATION.
 - Combine short sentences into single scenes (25-40 words each).
 
+POST-PROCESSING ENFORCER:
+1. Final check: Count your TEMPLATE vs ILLUSTRATION scenes. You MUST maintain a 50/50 balance.
+2. If short on TEMPLATES, force-convert ILLUSTRATION scenes by extracting data or creating a timeline/chart from the script.
+3. Templates are essential for channel identity. Use them aggressively.
+
 OUTPUT FORMAT (JSON array only):
 [
   {
