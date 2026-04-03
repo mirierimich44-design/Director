@@ -314,42 +314,7 @@ function startVideoRenderJob(filledCode, opts = {}) {
             }
 
         } catch (err) {
-            // ── Fallback: Generate 3D image when render fails ─────────────────────────────────
-            if (opts.sceneData && opts.sceneData.type === 'TEMPLATE') {
-                try {
-                    console.log(`   🔄 Render failed, attempting 3D image fallback...`);
-                    job.message = 'Render failed, generating fallback image...';
-                    job.phase = 'fallback';
-                    job.progress = 90;
-
-                    const { script, template, theme, content, environment } = opts.sceneData;
-                    const fallbackPrompt = await generateFallback3DPrompt(script, template, theme, content);
-                    const fallbackImageUrl = await generateFallbackImage(fallbackPrompt, environment);
-
-                    job.status = 'fallback';
-                    job.progress = 100;
-                    job.imageUrl = fallbackImageUrl;
-                    job.fallbackPrompt = fallbackPrompt;
-                    job.message = 'Fallback image ready';
-                    console.log(`   ✅ Fallback image generated for failed render ${job.id}`);
-
-                    // Auto-persist fallback to project file
-                    if (hasPersistence) {
-                        const { updateScene } = await import('./projects.js');
-                        await updateScene(projectId, chapterId, sceneIndex, {
-                            imageUrl: fallbackImageUrl,
-                            status: 'rendered',
-                            error: null,
-                            fallbackPrompt
-                        });
-                    }
-                    return;
-                } catch (fallbackErr) {
-                    console.error(`   ❌ Fallback generation also failed:`, fallbackErr.message);
-                }
-            }
-
-            // Original error handling
+            // Template renders must output MP4 — no image fallback
             job.status = 'error';
             job.error = err.message;
             job.message = 'Render failed';

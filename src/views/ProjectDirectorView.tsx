@@ -545,23 +545,6 @@ const ProjectDirectorView: React.FC = () => {
                                 setSceneProgress(p => { const n = { ...p }; delete n[sceneKey]; return n; });
                                 loadProjectDetails(proj.id);
                                 resolveSSE();
-                            } else if (job.status === 'fallback') {
-                                evtSrc.close();
-                                // Fallback to 3D image when Remotion render failed
-                                await fetch(`/api/projects/${proj.id}/chapters/${chapterId}/scenes/${sceneIndex}`, {
-                                    method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        imageUrl: job.imageUrl,
-                                        status: 'rendered',
-                                        fallbackPrompt: job.fallbackPrompt,
-                                        type: '3D_RENDER' // Mark as 3D render since we have an image
-                                    })
-                                });
-                                setSceneProgress(p => { const n = { ...p }; delete n[sceneKey]; return n; });
-                                loadProjectDetails(proj.id);
-                                console.log(`   ✅ Fallback to 3D image for scene ${scene.globalIndex}`);
-                                resolveSSE();
                             } else if (job.status === 'error') {
                                 evtSrc.close();
                                 throw new Error(job.error || 'Render failed');
