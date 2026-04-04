@@ -752,6 +752,23 @@ const ProjectDirectorView: React.FC = () => {
         }
     };
 
+    const handleReanalyzeTemplate = async (chapterId: string, sceneIndex: number) => {
+        if (!selectedProject) return;
+        setSceneRenderStatus(chapterId, sceneIndex, 'rendering');
+        try {
+            const res = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/retry`,
+                { method: 'POST' }
+            );
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            await loadProjectDetails(selectedProject.id);
+            renderScene(chapterId, sceneIndex);
+        } catch (err: any) {
+            setSceneRenderStatus(chapterId, sceneIndex, 'error', err.message);
+        }
+    };
+
     const handleGenerateTemplate = async (chapterId: string, sceneIndex: number) => {
         if (!selectedProject) return;
         setSceneRenderStatus(chapterId, sceneIndex, 'rendering');
@@ -1450,6 +1467,21 @@ const ProjectDirectorView: React.FC = () => {
                                                                                     variant="outlined"
                                                                                     startIcon={<ReanalyzePromptIcon />}
                                                                                     onClick={() => handleRegeneratePrompt(chapter.id, idx)}
+                                                                                    disabled={scene.renderStatus === 'rendering'}
+                                                                                    sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
+                                                                                >
+                                                                                    Re-analyze
+                                                                                </Button>
+                                                                            </Tooltip>
+                                                                        )}
+
+                                                                        {scene.type === 'TEMPLATE' && (
+                                                                            <Tooltip title="Re-fill fields from script via AI, then render">
+                                                                                <Button
+                                                                                    size="small"
+                                                                                    variant="outlined"
+                                                                                    startIcon={<ReanalyzePromptIcon />}
+                                                                                    onClick={() => handleReanalyzeTemplate(chapter.id, idx)}
                                                                                     disabled={scene.renderStatus === 'rendering'}
                                                                                     sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
                                                                                 >
