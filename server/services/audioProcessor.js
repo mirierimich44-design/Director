@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { join, basename, extname } from 'path';
+import { join, basename, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs/promises';
@@ -426,12 +426,66 @@ export async function getAudioInfo(inputPath) {
     });
 }
 
+/**
+ * Assemble a chapter: concatenate scene videos and mux in a voiceover track.
+ *
+ * @param {string[]} videoPaths   - Ordered list of absolute paths to scene .mp4 files
+ * @param {string|null} audioPath - Absolute path to the voiceover .mp3/.wav (or null for no audio)
+ * @param {string} outputPath     - Absolute path for the final assembled .mp4
+ * @param {object} options
+ * @param {number} [options.audioVolume=1.0] - Mix level for the voiceover (0–1)
+ */
+export async function assembleChapterVideo(videoPaths, audioPath, outputPath, options = {}) {
+    const { audioVolume = 1.0 } = options;
+
+    if (!videoPaths?.length) throw new Error('assembleChapterVideo: no video paths provided');
+
+    await fs.mkdir(dirname(outputPath), { recursive: true });
+
+    // Build a concat list for the video streams
+    const concatListPath = join(dirname(outputPath), `concat_${uuidv4()}.txt`);
+    const concatContent  = videoPaths.map(p => `file '${p.replace(/'/g, "'\\''")}'`).join('\n');
+    await fs.writeFile(concatListPath, concatContent);
+
+    try {
+        if (!audioPath) {
+            // Video-only assembly — just concatenate
+            await runFFmpeg([
+                '-y',
+                '-f', 'concat', '-safe', '0', '-i', concatListPath,
+                '-c', 'copy',
+                outputPath,
+            ]);
+        } else {
+            // Concatenate video + mux voiceover
+            // -shortest: stop when the shorter stream ends (so audio doesn't pad past video)
+            const vol = Math.max(0, Math.min(1, audioVolume));
+            await runFFmpeg([
+                '-y',
+                '-f', 'concat', '-safe', '0', '-i', concatListPath,
+                '-i', audioPath,
+                '-filter_complex', `[1:a]volume=${vol}[vo]`,
+                '-map', '0:v:0',
+                '-map', '[vo]',
+                '-c:v', 'copy',
+                '-c:a', 'aac', '-b:a', '192k',
+                '-shortest',
+                outputPath,
+            ]);
+        }
+        return outputPath;
+    } finally {
+        try { await fs.unlink(concatListPath); } catch (_) {}
+    }
+}
+
 export { changeSpeed };
 
 export default {
     processVoiceover,
     processBatch,
     concatenateAudio,
+    assembleChapterVideo,
     getAudioInfo,
     removeSilence,
     enhanceAudio,

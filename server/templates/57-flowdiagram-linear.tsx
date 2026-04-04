@@ -27,8 +27,10 @@ export const AnimationComponent = () => {
   const startX = (1920 - totalW) / 2
   const blockY = 380
 
+  // All cards use a dark semi-transparent background, so text must always be light.
+  // TEXT_ON_* colors are for light/colored backgrounds — avoid them here.
   const blockColors = ['PRIMARY_COLOR', 'PANEL_LEFT_BG', 'PANEL_LEFT_BG', 'SECONDARY_COLOR']
-  const textColors = ['TEXT_ON_PRIMARY', 'TEXT_ON_SECONDARY', 'TEXT_ON_SECONDARY', 'TEXT_ON_SECONDARY']
+  const textColors = ['#ffffff', '#ffffff', '#ffffff', '#ffffff']
 
   return (
     <div style={{
@@ -139,7 +141,7 @@ export const AnimationComponent = () => {
             transform: `translateY(${ty}px)`,
           }}>
             <div style={{ position: 'absolute', top: 28, left: 24, width: blockW - 48, height: 44 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: i === 0 ? 'TEXT_ON_PRIMARY' : 'ACCENT_COLOR', fontFamily: 'sans-serif', letterSpacing: 3, textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'ACCENT_COLOR', fontFamily: 'sans-serif', letterSpacing: 3, textTransform: 'uppercase' }}>
                 {item.phase}
               </span>
             </div>

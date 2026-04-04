@@ -68,13 +68,14 @@ export const AnimationComponent = () => {
         left: 120,
         width: 480,
         height: 300,
-        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backgroundColor: 'rgba(20, 30, 55, 0.92)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        borderTop: '3px solid PRIMARY_COLOR',
         borderRadius: 16,
         overflow: 'hidden',
         boxSizing: 'border-box',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
         opacity: op1,
       }}>
         <div style={{
@@ -83,7 +84,7 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 120,
-          color: 'TEXT_ON_PRIMARY',
+          color: 'PRIMARY_COLOR',
           fontSize: 80,
           fontWeight: 900,
           whiteSpace: 'nowrap',
@@ -98,12 +99,12 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 40,
-          color: 'TEXT_ON_PRIMARY',
+          color: '#ffffff',
           fontSize: 20,
           fontWeight: 700,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          opacity: 0.8,
+          opacity: 0.9,
         }}>
           {label1}
         </div>
@@ -113,12 +114,12 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 36,
-          color: 'TEXT_ON_PRIMARY',
+          color: 'SUPPORT_COLOR',
           fontSize: 18,
           fontWeight: 500,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          opacity: 0.6,
+          opacity: 0.8,
         }}>
           {sub1}
         </div>
@@ -142,13 +143,14 @@ export const AnimationComponent = () => {
         left: 720,
         width: 480,
         height: 300,
-        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backgroundColor: 'rgba(20, 30, 55, 0.92)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        borderTop: '3px solid SECONDARY_COLOR',
         borderRadius: 16,
         overflow: 'hidden',
         boxSizing: 'border-box',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
         opacity: op2,
       }}>
         <div style={{
@@ -157,7 +159,7 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 120,
-          color: 'TEXT_ON_SECONDARY',
+          color: 'SECONDARY_COLOR',
           fontSize: 80,
           fontWeight: 900,
           whiteSpace: 'nowrap',
@@ -172,12 +174,12 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 40,
-          color: 'TEXT_ON_SECONDARY',
+          color: '#ffffff',
           fontSize: 20,
           fontWeight: 700,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          opacity: 0.8,
+          opacity: 0.9,
         }}>
           {label2}
         </div>
@@ -187,12 +189,12 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 36,
-          color: 'TEXT_ON_SECONDARY',
+          color: 'SUPPORT_COLOR',
           fontSize: 18,
           fontWeight: 500,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          opacity: 0.6,
+          opacity: 0.8,
         }}>
           {sub2}
         </div>
@@ -216,13 +218,14 @@ export const AnimationComponent = () => {
         left: 1320,
         width: 480,
         height: 300,
-        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backgroundColor: 'rgba(20, 30, 55, 0.92)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        borderTop: '3px solid ACCENT_COLOR',
         borderRadius: 16,
         overflow: 'hidden',
         boxSizing: 'border-box',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
         opacity: op3,
       }}>
         <div style={{
@@ -231,7 +234,7 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 120,
-          color: 'TEXT_ON_ACCENT',
+          color: 'ACCENT_COLOR',
           fontSize: 80,
           fontWeight: 900,
           whiteSpace: 'nowrap',
@@ -246,12 +249,12 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 40,
-          color: 'TEXT_ON_ACCENT',
+          color: '#ffffff',
           fontSize: 20,
           fontWeight: 700,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          opacity: 0.8,
+          opacity: 0.9,
         }}>
           {label3}
         </div>
@@ -261,12 +264,12 @@ export const AnimationComponent = () => {
           left: 40,
           width: 400,
           height: 36,
-          color: 'TEXT_ON_ACCENT',
+          color: 'SUPPORT_COLOR',
           fontSize: 18,
           fontWeight: 500,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          opacity: 0.6,
+          opacity: 0.8,
         }}>
           {sub3}
         </div>
@@ -279,10 +282,10 @@ export const AnimationComponent = () => {
         left: 120,
         width: 1680,
         height: 72,
-        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backgroundColor: 'rgba(20, 30, 55, 0.92)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        color: 'TEXT_ON_SECONDARY',
+        border: '1px solid rgba(255,255,255,0.15)',
+        color: '#ffffff',
         borderRadius: 16,
         padding: '20px 40px',
         boxShadow: '0 20px 50px rgba(0,0,0,0.5)',

@@ -46,7 +46,7 @@ export const AnimationComponent = () => {
                flex: 1, height: 44, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.2)', 
                border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', padding: '0 20px'
            }}>
-              <div style={{ fontSize: 18, color: '#fff', fontWeight: 500 }}>
+              <div style={{ fontSize: 24, color: '#fff', fontWeight: 500 }}>
                 {query.substring(0, visibleChars)}
                 {frame < resultsStart && (frame % 20 < 10) && <span style={{ color: 'PRIMARY_COLOR' }}>_</span>}
               </div>
@@ -67,9 +67,9 @@ export const AnimationComponent = () => {
                  padding: '32px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 20, 
                  border: '1px solid rgba(255,255,255,0.05)', marginBottom: 24
              }}>
-                <div style={{ color: 'ACCENT_COLOR', fontSize: 14, fontWeight: 800, marginBottom: 8 }}>{r1Url}</div>
-                <div style={{ color: 'PRIMARY_COLOR', fontSize: 32, fontWeight: 900, marginBottom: 16, lineHeight: 1.1 }}>{r1Title}</div>
-                <div style={{ color: 'SUPPORT_COLOR', fontSize: 18, lineHeight: 1.5, opacity: 0.8 }}>{r1Desc}</div>
+                <div style={{ color: 'ACCENT_COLOR', fontSize: 18, fontWeight: 800, marginBottom: 10 }}>{r1Url}</div>
+                <div style={{ color: 'PRIMARY_COLOR', fontSize: 42, fontWeight: 900, marginBottom: 18, lineHeight: 1.1 }}>{r1Title}</div>
+                <div style={{ color: 'SUPPORT_COLOR', fontSize: 24, lineHeight: 1.5, opacity: 0.8 }}>{r1Desc}</div>
              </div>
 
              {/* Ghost Results */}
@@ -94,10 +94,10 @@ export const AnimationComponent = () => {
                 </div>
              </div>
              
-             <div style={{ fontSize: 28, fontWeight: 900, color: 'PRIMARY_COLOR', marginBottom: 8 }}>{kTitle}</div>
-             <div style={{ fontSize: 12, color: 'SUPPORT_COLOR', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 24 }}>KNOWLEDGE_DATABASE_ENTRY</div>
-             
-             <div style={{ fontSize: 18, color: 'SUPPORT_COLOR', lineHeight: 1.5, marginBottom: 32, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 10, WebkitBoxOrient: 'vertical' }}>
+             <div style={{ fontSize: 36, fontWeight: 900, color: 'PRIMARY_COLOR', marginBottom: 8 }}>{kTitle}</div>
+             <div style={{ fontSize: 14, color: 'SUPPORT_COLOR', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 24 }}>KNOWLEDGE_DATABASE_ENTRY</div>
+
+             <div style={{ fontSize: 22, color: 'SUPPORT_COLOR', lineHeight: 1.5, marginBottom: 32, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
                {kDesc}
              </div>
 

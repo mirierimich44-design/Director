@@ -42,8 +42,8 @@ export const AnimationComponent = () => {
         }}>
           {segments.map((seg, i) => {
             const delay = i * 8;
-            const op = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateLeft: 'clamp' });
-            const tx = interpolate(frame, [delay, delay + 20], [60, 0], { extrapolateLeft: 'clamp', easing: Easing.out(Easing.quad) });
+            const op = interpolate(frame, [delay, delay + 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+            const tx = interpolate(frame, [delay, delay + 20], [60, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
 
             return (
               <div key={i} style={{

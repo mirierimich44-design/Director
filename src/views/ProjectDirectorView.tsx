@@ -17,6 +17,7 @@ import {
     Settings as SettingsIcon,
     Palette as PaletteIcon,
     Edit as EditIcon,
+    ImageSearch as ReanalyzePromptIcon,
 } from '@mui/icons-material';
 
 interface Scene {
@@ -734,6 +735,23 @@ const ProjectDirectorView: React.FC = () => {
         );
     };
 
+    const handleRegeneratePrompt = async (chapterId: string, sceneIndex: number) => {
+        if (!selectedProject) return;
+        setSceneRenderStatus(chapterId, sceneIndex, 'rendering');
+        try {
+            const res = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/regenerate-prompt`,
+                { method: 'POST' }
+            );
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setSceneRenderStatus(chapterId, sceneIndex, 'idle');
+            loadProjectDetails(selectedProject.id);
+        } catch (err: any) {
+            setSceneRenderStatus(chapterId, sceneIndex, 'error', err.message);
+        }
+    };
+
     const handleGenerateTemplate = async (chapterId: string, sceneIndex: number) => {
         if (!selectedProject) return;
         setSceneRenderStatus(chapterId, sceneIndex, 'rendering');
@@ -1388,7 +1406,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                 </Typography>
 
                                                                 {(scene as any).routing_reason && (
-                                                                    <Box sx={{ mb: 2, p: 1, bgcolor: 'rgba(201,169,97,0.05)', borderRadius: 1, borderLeft: '3px solid var(--accent-gold)' }}>
+                                                                    <Box sx={{ mb: 1, p: 1, bgcolor: 'rgba(201,169,97,0.05)', borderRadius: 1, borderLeft: '3px solid var(--accent-gold)' }}>
                                                                         <Typography variant="caption" sx={{ color: 'var(--accent-gold)', display: 'block', fontWeight: 'bold', fontSize: '0.65rem', textTransform: 'uppercase', mb: 0.5 }}>
                                                                             Director's Note
                                                                         </Typography>
@@ -1398,8 +1416,19 @@ const ProjectDirectorView: React.FC = () => {
                                                                     </Box>
                                                                 )}
 
+                                                                {scene.type === '3D_RENDER' && (scene as any).prompt && (
+                                                                    <Box sx={{ mb: 2, p: 1, bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, borderLeft: '3px solid rgba(255,255,255,0.15)' }}>
+                                                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block', fontWeight: 'bold', fontSize: '0.6rem', textTransform: 'uppercase', mb: 0.5 }}>
+                                                                            Image Prompt
+                                                                        </Typography>
+                                                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.72rem', lineHeight: 1.3, display: 'block' }}>
+                                                                            {(scene as any).prompt}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
+
                                                                 {!isLocked && (
-                                                                    <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                                                                    <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
                                                                         <Button
                                                                             size="small"
                                                                             variant="contained"
@@ -1408,11 +1437,26 @@ const ProjectDirectorView: React.FC = () => {
                                                                             disabled={scene.renderStatus === 'rendering'}
                                                                             sx={{ bgcolor: 'var(--accent-gold)', color: '#000' }}
                                                                         >
-                                                                            {scene.renderStatus === 'rendering' ? 
-                                                                                (scene.type === 'TEMPLATE' ? 'Rendering...' : 'Generating...') : 
+                                                                            {scene.renderStatus === 'rendering' ?
+                                                                                (scene.type === 'TEMPLATE' ? 'Rendering...' : 'Generating...') :
                                                                                 (scene.status === 'rendered' ? 'Re-Render' : (scene.type === 'TEMPLATE' ? 'Render' : 'Generate'))
                                                                             }
                                                                         </Button>
+
+                                                                        {scene.type === '3D_RENDER' && (
+                                                                            <Tooltip title="Re-generate image prompt via Gemini">
+                                                                                <Button
+                                                                                    size="small"
+                                                                                    variant="outlined"
+                                                                                    startIcon={<ReanalyzePromptIcon />}
+                                                                                    onClick={() => handleRegeneratePrompt(chapter.id, idx)}
+                                                                                    disabled={scene.renderStatus === 'rendering'}
+                                                                                    sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
+                                                                                >
+                                                                                    Re-analyze
+                                                                                </Button>
+                                                                            </Tooltip>
+                                                                        )}
 
                                                                         {(scene.type === 'TEMPLATE' ? scene.videoUrl : (scene.videoUrl || scene.imageUrl)) && (
                                                                             <Button

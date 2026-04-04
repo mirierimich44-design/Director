@@ -17,7 +17,7 @@ import archiver from 'archiver';
 
 import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
-import { processVoiceover, processBatch, concatenateAudio, changeSpeed } from './services/audioProcessor.js';
+import { processVoiceover, processBatch, concatenateAudio, changeSpeed, assembleChapterVideo } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';
 import { generateImage as generateGeminiImage } from './services/gemini.js';
 import { renderVideo as renderRemotion, warmupBundler, purgeOldTempDirs } from './engines/remotion/renderer.js';
@@ -611,6 +611,35 @@ app.post('/api/utils/clear-temp', async (req, res) => {
     }
 });
 
+// POST /api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt
+// Regenerates the Gemini image prompt for a 3D_RENDER scene using story context
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt', async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+
+        const sceneIndex = parseInt(idx);
+        const scene = chapter.scenes[sceneIndex];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+        if (scene.type !== '3D_RENDER') return res.status(400).json({ error: 'Scene is not a 3D_RENDER type' });
+
+        console.log(`   🎨 Regenerating image prompt for Scene ${sceneIndex}...`);
+
+        const { regenerateImagePrompt } = await import('./autoScene.js');
+        const newPrompt = await regenerateImagePrompt(scene.script, chapter.scriptText || scene.script);
+
+        const result = await updateScene(pid, cid, sceneIndex, { prompt: newPrompt });
+        res.json({ success: true, prompt: newPrompt, ...result });
+    } catch (err) {
+        console.error('❌ Regenerate prompt error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // POST /api/projects/:pid/chapters/:cid/scenes/:idx/retry — targeted scene repair
 app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/retry', async (req, res) => {
     try {
@@ -972,6 +1001,85 @@ app.delete('/api/voiceover/processed/:filename', async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// ── ASSEMBLY ──────────────────────────────────────────────────────────────────
+// POST /api/projects/:pid/chapters/:cid/assemble
+// Body: { videoPaths: ["/videos/…", …], audioPath: "/audio/processed/…", audioVolume: 0.9 }
+// Concatenates scene videos and muxes the voiceover into a single chapter .mp4
+app.post('/api/projects/:pid/chapters/:cid/assemble', async (req, res) => {
+    try {
+        const { pid, cid } = req.params;
+        const { videoPaths, audioPath, audioVolume } = req.body;
+
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        if (!videoPaths?.length) return res.status(400).json({ error: 'videoPaths is required' });
+
+        // Resolve public-URL paths to absolute filesystem paths
+        const absVideos = videoPaths.map(u => join(publicDir, u.replace(/^\//, '')));
+        const absAudio  = audioPath ? join(publicDir, audioPath.replace(/^\//, '')) : null;
+
+        for (const p of absVideos) {
+            try { await fs.access(p); }
+            catch { return res.status(400).json({ error: `Video file not found: ${p}` }); }
+        }
+        if (absAudio) {
+            try { await fs.access(absAudio); }
+            catch { return res.status(400).json({ error: `Audio file not found: ${absAudio}` }); }
+        }
+
+        const outputFilename = `assembled_${pid}_${cid}_${Date.now()}.mp4`;
+        const outputPath     = join(videosDir, outputFilename);
+
+        console.log(`   🎬 Assembling chapter "${chapter.title}" — ${absVideos.length} scenes`);
+        await assembleChapterVideo(absVideos, absAudio, outputPath, { audioVolume });
+
+        const outputUrl = `/videos/${outputFilename}`;
+        updateChapter(pid, cid, { assembledVideoUrl: outputUrl, status: 'assembled' });
+
+        res.json({ success: true, outputUrl });
+    } catch (err) {
+        console.error('❌ Chapter assembly error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// POST /api/projects/:pid/assemble
+// Assembles all chapters in order into one full-project .mp4
+app.post('/api/projects/:pid/assemble', async (req, res) => {
+    try {
+        const { pid } = req.params;
+        const { audioVolume } = req.body;
+
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+
+        // Collect assembled chapter videos in order
+        const chapterVideos = (project.chapters || [])
+            .filter(c => c.assembledVideoUrl)
+            .map(c => join(publicDir, c.assembledVideoUrl.replace(/^\//, '')));
+
+        if (!chapterVideos.length) {
+            return res.status(400).json({ error: 'No assembled chapter videos found. Assemble chapters first.' });
+        }
+
+        const outputFilename = `project_${pid}_${Date.now()}.mp4`;
+        const outputPath     = join(videosDir, outputFilename);
+
+        console.log(`   🎬 Assembling project "${project.name}" — ${chapterVideos.length} chapters`);
+        await assembleChapterVideo(chapterVideos, null, outputPath, { audioVolume });
+
+        const outputUrl = `/videos/${outputFilename}`;
+        updateProject(pid, { assembledVideoUrl: outputUrl, status: 'assembled' });
+
+        res.json({ success: true, outputUrl });
+    } catch (err) {
+        console.error('❌ Project assembly error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 

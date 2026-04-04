@@ -139,9 +139,13 @@ function inferCategory(script) {
   if (/network|connect|node|hub|link|relationship|attribution/.test(s))             return 'NETWORK'
   if (/step|phase|stage|process|method|how it works|procedure/.test(s))            return 'FLOW'
   if (/chat|message|post|social|dark web|forum/.test(s))                           return 'SOCIAL'
-  if (/document|file|record|report|classified|evidence/.test(s))                   return 'EVIDENCE'
+  if (/document|file|email|record|report|classified|evidence|contract|receipt/.test(s)) return 'EVIDENCE'
   if (/\d+\s*%|percent|rate|ratio|share|portion/.test(s))                          return 'STAT'
   if (/\d/.test(s))                                                                return 'STAT'
+  // Atmospheric/narrative object mentions — use dramatic visual templates, NOT data charts
+  if (/phone|door|screen|computer|laptop|device|server|terminal|camera|alarm/.test(s)) return 'DRAMATIC'
+  // Pure speech / quote
+  if (/said|replied|told|asked|admitted|confessed|whispered|shouted/.test(s))      return 'QUOTE'
   return 'STAT'
 }
 
@@ -150,35 +154,59 @@ function inferCategory(script) {
 // Upgrades 3D_RENDER scenes to TEMPLATE until targetRatio% is reached.
 // Prefers scenes with numbers/mechanisms; only touches pure narrative as last resort.
 // ─────────────────────────────────────────────
+// Score how "TEMPLATE-worthy" a scene is.
+// Positive = has data/mechanism signal worth visualising as a chart/diagram.
+// Negative = pure human narrative or atmosphere — avoid upgrading if possible.
+function templateScore(script) {
+  const s = script.toLowerCase()
+  let score = 0
+
+  // Strong data signals — these scenes SHOULD be templates
+  if (/\$[\d,.]+|\d+\s*(million|billion|thousand)/.test(s))                                        score += 3
+  if (/\d+\s*%|percent|ratio|rate|share/.test(s))                                                  score += 3
+  if (/\d+\s*(countries|nations|servers|systems|victims|files|records|devices|machines)/.test(s))  score += 3
+  if (/(ranked|distributed|allocated|totaled|averaged|peaked|reached|dropped|grew|increased|decreased)/.test(s)) score += 2
+  // Mechanism being EXPLAINED (passive — the thing is the subject, not a person)
+  if (/(the (malware|virus|exploit|ransomware|botnet|software|algorithm|attack|payload)\s+(spread|encrypts?|infected|scanned|generated|executed|ran|processes?))/.test(s)) score += 2
+  if (/(how it works|the process|the method|the technique|the system|the attack chain)/.test(s))   score += 2
+  // General numeric/technical content
+  if (/\d+/.test(s))                                                                                score += 1
+  if (/(global|worldwide|infrastructure|network|database|servers?)/.test(s))                       score += 1
+
+  // Pure human-action penalties — these belong in 3D_RENDER
+  if (/^\s*(he|she|they|i|we|his|her|their)\b/i.test(s))                                          score -= 3
+  if (/^[A-Z][a-z]+ (said|told|called|walked|sent|wrote|clicked|opened|signed|paid|met|replied|threatened|denied|ran|fled|sat|felt|saw|received|noticed|believed|realized|arrived|waited)/i.test(s)) score -= 3
+  if (/(said|replied|told|asked|answered|shouted|whispered|explained|warned|admitted|confessed|denied)\b/.test(s)) score -= 2
+  // Atmospheric / sensory — a device doing something ≠ data being shown
+  if (/^(the )?(phone|door|email|screen|light|computer|laptop|device|window|car|office|room|building|voice|call|signal|bell|alarm)\s+(rang|opened|flashed|appeared|showed|displayed|arrived|came|started|began|went|turned|lit up)/i.test(s)) score -= 2
+  if (/(sat in|sat at|stood at|walked into|entered the|left the|arrived at)/.test(s))              score -= 2
+
+  return score
+}
+
 function enforceRatio(scenes, targetRatio) {
   const needed  = Math.ceil(scenes.length * targetRatio / 100)
   const current = scenes.filter(s => s.type === 'TEMPLATE').length
   if (current >= needed) return scenes
 
   const toUpgrade = needed - current
+
+  // Rank all 3D_RENDER candidates by how data-like they are, highest first.
+  // This ensures we always upgrade the most visually "template-worthy" scenes
+  // first, and only fall back to pure narrative as a last resort.
+  const candidates = scenes
+    .filter(s => s.type === '3D_RENDER')
+    .map(s => ({ scene: s, score: templateScore(s.script) }))
+    .sort((a, b) => b.score - a.score)
+
   let upgraded = 0
-
-  // Pure narrative guard — sentences where a named person is clearly the subject
-  const isPureNarrative = (script) =>
-    /^\s*(he|she|they|i|we)\s+(clicked|opened|called|walked|arrived|sat|felt|saw|said|wrote|sent|ran|fled|denied|paid|signed|met|waited|replied|threatened)\b/i.test(script)
-
-  // Pass 1: upgrade non-narrative scenes first
-  for (const scene of scenes) {
+  for (const { scene, score } of candidates) {
     if (upgraded >= toUpgrade) break
-    if (scene.type !== '3D_RENDER' || isPureNarrative(scene.script)) continue
     scene.type           = 'TEMPLATE'
     scene.category       = inferCategory(scene.script)
-    scene.routing_reason = `[ratio-enforced] Upgraded to meet ${targetRatio}% TEMPLATE target`
-    upgraded++
-  }
-
-  // Pass 2: if still short, upgrade even pure narrative scenes (last resort)
-  for (const scene of scenes) {
-    if (upgraded >= toUpgrade) break
-    if (scene.type !== '3D_RENDER') continue
-    scene.type           = 'TEMPLATE'
-    scene.category       = 'STAT'
-    scene.routing_reason = `[ratio-enforced:forced] Force-upgraded to meet ${targetRatio}% target`
+    scene.routing_reason = score >= 1
+      ? `[ratio-enforced] Upgraded: data/mechanism content (score: ${score})`
+      : `[ratio-enforced:forced] Force-upgraded to meet ${targetRatio}% target`
     upgraded++
   }
 
@@ -190,7 +218,7 @@ function enforceRatio(scenes, targetRatio) {
 // Helper: Build story context for image prompts
 // Gives the cinematographer the who/where/when of the full chapter
 // ─────────────────────────────────────────────
-function buildStoryContext(scriptText) {
+export function buildStoryContext(scriptText) {
   // Take the first 400 chars as the story lead — enough to establish setting/characters
   const lead = scriptText.replace(/\s+/g, ' ').trim().substring(0, 400)
 
@@ -523,6 +551,16 @@ export async function generateScenes(scriptText, generationSettings = null) {
   let rawScenes = await routeScenes(scriptText, generationSettings)
   console.log(`   ✅ Pass 1 complete: ${rawScenes.length} scenes identified`)
 
+  // --- TYPE NORMALIZATION ---
+  // The LLM sometimes outputs type: "QUOTE" or type: "FLOW" (a category name) instead of
+  // type: "TEMPLATE" with category: "QUOTE". Normalize those here so downstream code works.
+  rawScenes = rawScenes.map(s => {
+    if (s.type !== 'TEMPLATE' && s.type !== '3D_RENDER' && TEMPLATE_CATEGORIES[s.type]) {
+      return { ...s, category: s.type, type: 'TEMPLATE' }
+    }
+    return s
+  })
+
   // --- HARD RATIO ENFORCEMENT (code-level, not LLM-level) ---
   const targetRatio = generationSettings?.templateRatio ?? 60
   rawScenes = enforceRatio(rawScenes, targetRatio)
@@ -594,23 +632,36 @@ export async function generateScenes(scriptText, generationSettings = null) {
         systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL RULE — SPECIFICITY OVER GENERICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Your prompt MUST be SPECIFIC to THIS scene and THIS story.
+• Extract the exact location, objects, or technology named in the scene sentence.
+• If the scene mentions a specific company, country, device, or event — use it.
+• NEVER produce a generic "dark moody room" prompt that could belong to any scene.
+• If the story is about a cyberattack → show servers, terminals, network cables.
+• If the story is about a financial fraud → show trading screens, documents, money.
+• If the story is about espionage → show listening devices, surveillance equipment.
+• The viewer should be able to guess what the story is just from seeing your image.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 THREE-STEP METHOD (follow in order)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STEP 1 — SET THE ATMOSPHERE
-Begin with one emotional quality that fits the scene:
+One emotional quality that fits THIS specific scene:
 tension, isolation, dread, secrecy, discovery, betrayal, urgency, quiet menace, hollow bureaucracy, digital coldness
 
 STEP 2 — CHOOSE THE SYMBOLIC OBJECT
-Never draw the person. Find the ONE object from the scene that carries the meaning:
-  "He clicked the link"       → glowing monitor in an empty dark room
-  "She didn't believe it"     → a single coffee cup, steam rising, on a desk scattered with papers at 3 AM
-  "The phone rang"            → a ringing desk phone, light flashing, in an otherwise silent office
-  "He was arrested"           → an empty chair, handcuffs on a metal table
-  "The company went bankrupt" → an empty lobby, single flickering light, abandoned reception desk
-Use the STORY CONTEXT provided to make the object specific to this story's setting, era, and characters.
+Never draw the person. Find the ONE object from THIS scene that carries the meaning.
+Use the STORY CONTEXT and KEY ENTITIES to make it specific:
+  "He clicked the phishing link" + story about SolarWinds → glowing monitor showing SolarWinds dashboard in a dark server room
+  "The phone rang"              + FBI investigation story  → a government-issue desk phone, red light flashing, J. Edgar Hoover building hallway
+  "She denied the allegations"  + corporate fraud story   → a stack of financial documents stamped CONFIDENTIAL on a mahogany boardroom table
+  "He was arrested"             + hacker story            → a laptop screen still open to a terminal, handcuffs resting beside the keyboard
+Generic fallback ONLY if no specific object/location exists in the scene.
 
 STEP 3 — DESCRIBE THE ENVIRONMENT
-Add the space around the object: room type, lighting quality, depth of field, color temperature, surface materials, time of day.
+Room type, lighting quality, depth of field, color temperature, surface materials, time of day.
+Match the environment to the story's world (government building, data center, suburban home, law firm, etc.)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STYLE RULES
@@ -620,11 +671,11 @@ STYLE RULES
 • Deep shadows with single dramatic light source
 • Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood)
 • No humans, no faces, no hands, no body parts
-• No text, no labels, no UI elements on screens (blur them)
+• No text, no labels, no UI elements on screens (blur or obscure them)
 • Shallow depth of field — hero object sharp, background soft
 • 16:9 cinematic framing
 
-Output only the prompt text. No explanation.`
+Output only the prompt text. No explanation. No preamble.`
       })
 
       const promptRes = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${scene.script}"`)
@@ -643,6 +694,37 @@ Output only the prompt text. No explanation.`
   return processed
 }
 
+// ─────────────────────────────────────────────
+// Exported: Re-generate image prompt for a single 3D_RENDER scene
+// Called by POST /api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt
+// ─────────────────────────────────────────────
+export async function regenerateImagePrompt(sceneScript, chapterScriptText) {
+  const storyContext = buildStoryContext(chapterScriptText || sceneScript)
+
+  const model = googleAI.getGenerativeModel({
+    model: getGEMINI_MODEL(),
+    systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
+
+CRITICAL RULE — SPECIFICITY OVER GENERICS
+Your prompt MUST be SPECIFIC to THIS scene and THIS story.
+• Extract the exact location, objects, or technology named in the scene sentence.
+• If the scene mentions a specific company, country, device, or event — use it.
+• NEVER produce a generic "dark moody room" prompt that could belong to any scene.
+• The viewer should be able to guess what the story is just from seeing your image.
+
+THREE-STEP METHOD:
+1. ATMOSPHERE — one emotional quality (tension, dread, secrecy, discovery, urgency...)
+2. SYMBOLIC OBJECT — the ONE object from the scene that carries the meaning. Use story context to make it specific.
+3. ENVIRONMENT — room type, lighting, depth of field, color temperature, surface materials.
+
+STYLE: 60–80 words, dark cinematic, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9.
+Output only the prompt text.`,
+  })
+
+  const result = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${sceneScript}"`)
+  return result.response.text().trim()
+}
+
 function autoSaveGeneration(scriptText, scenes) {
   try {
     const genDir = path.join(__dirname, 'generations')
@@ -652,7 +734,3 @@ function autoSaveGeneration(scriptText, scenes) {
   } catch (e) {}
 }
 
-export async function refineScene(sceneData) {
-    // Keep original refine logic or simplify
-    return { success: false, message: 'Refinement not implemented in this version' }
-}

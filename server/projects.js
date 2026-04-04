@@ -147,10 +147,11 @@ export function updateProject(id, updates) {
   const project = loadProject(id)
   if (!project) throw new Error('Project not found')
 
-  if (updates.name !== undefined) project.name = updates.name
-  if (updates.description !== undefined) project.description = updates.description
-  if (updates.status !== undefined) project.status = updates.status
-  if (updates.settings) project.settings = { ...project.settings, ...updates.settings }
+  if (updates.name               !== undefined) project.name               = updates.name
+  if (updates.description        !== undefined) project.description        = updates.description
+  if (updates.status             !== undefined) project.status             = updates.status
+  if (updates.assembledVideoUrl  !== undefined) project.assembledVideoUrl  = updates.assembledVideoUrl
+  if (updates.settings)           project.settings           = { ...project.settings,           ...updates.settings }
   if (updates.generationSettings) project.generationSettings = { ...project.generationSettings, ...updates.generationSettings }
 
   return saveProject(project)
@@ -199,9 +200,10 @@ export function updateChapter(projectId, chapterId, updates) {
   const chapter = project.chapters.find(c => c.id === chapterId)
   if (!chapter) throw new Error('Chapter not found')
 
-  if (updates.title !== undefined) chapter.title = updates.title
-  if (updates.status !== undefined) chapter.status = updates.status
-  if (updates.notes !== undefined) chapter.notes = updates.notes
+  if (updates.title              !== undefined) chapter.title              = updates.title
+  if (updates.status             !== undefined) chapter.status             = updates.status
+  if (updates.notes              !== undefined) chapter.notes              = updates.notes
+  if (updates.assembledVideoUrl  !== undefined) chapter.assembledVideoUrl  = updates.assembledVideoUrl
   chapter.updatedAt = new Date().toISOString()
 
   saveProject(project)

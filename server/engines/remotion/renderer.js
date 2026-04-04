@@ -447,8 +447,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf-8');
 
         let bundleLocation;
-        let isCached = false;
-        
+
         // Setup progress bar for this specific render job
         const jobName = outputPath.split(/[\\/]/).pop().split('.')[0] || hash.substring(0, 8);
         const progressBar = multibar.create(100, 0, { jobId: jobName, phase: 'Bundling' });
@@ -574,7 +573,6 @@ export async function renderStill(tsxCode, outputPath, frame, settings) {
         await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf-8');
 
         let bundleLocation;
-        let isCached = false;
 
         // Acquire lock and perform bundling
         bundleLocation = await (bundleLock = bundleLock.then(async () => {
