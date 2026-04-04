@@ -96,12 +96,21 @@ const voiceoverStorage = multer.diskStorage({
 });
 const voiceoverUpload = multer({
     storage: voiceoverStorage,
+    limits: { fileSize: 200 * 1024 * 1024 }, // 200 MB per file
     fileFilter: (req, file, cb) => {
         const allowed = /mp3|wav|m4a|aac|ogg|flac|webm/;
         const ext = file.originalname.split('.').pop().toLowerCase();
         cb(null, allowed.test(ext));
     }
 });
+
+// Handle multer errors (e.g. 413 file too large) with JSON instead of HTML
+function handleMulterError(err, req, res, next) {
+    if (err?.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'File too large. Maximum size is 200 MB.' });
+    }
+    next(err);
+}
 
 // ── Render job tracking ───────────────────────────────────────────────────────
 const renderJobs = new Map();
@@ -961,7 +970,7 @@ app.get('/api/job-status/:jobId', (req, res) => {
 });
 
 // ── VOICEOVER ─────────────────────────────────────────────────────────────────
-app.post('/api/voiceover/process', voiceoverUpload.single('audio'), async (req, res) => {
+app.post('/api/voiceover/process', (req, res, next) => voiceoverUpload.single('audio')(req, res, (err) => err ? handleMulterError(err, req, res, next) : next()), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'No audio file provided' });
 
@@ -990,7 +999,7 @@ app.post('/api/voiceover/process', voiceoverUpload.single('audio'), async (req, 
     }
 });
 
-app.post('/api/voiceover/batch', voiceoverUpload.array('audio', 20), async (req, res) => {
+app.post('/api/voiceover/batch', (req, res, next) => voiceoverUpload.array('audio', 20)(req, res, (err) => err ? handleMulterError(err, req, res, next) : next()), async (req, res) => {
     try {
         if (!req.files?.length) return res.status(400).json({ error: 'No audio files provided' });
 
