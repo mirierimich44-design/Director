@@ -404,6 +404,21 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
             }
         }
 
+            // Fix 5: Hyphenated CSS property names used as unquoted JS object keys
+            // e.g. `background-color: '#fff'` → `backgroundColor: '#fff'`
+            // esbuild reports "Expected ;" but found "-" for these.
+            if (preCheck.error && preCheck.error.includes('Expected ";" but found "-"')) {
+                const camelCase = (s) => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+                lines = wrappedCode.split('\n');
+                const fixedLines = lines.map(l =>
+                    l.replace(/\b([a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)+)\s*:/g, (match, prop) => `${camelCase(prop)}:`)
+                );
+                if (fixedLines.join('\n') !== wrappedCode) {
+                    wrappedCode = fixedLines.join('\n');
+                    console.log(`   🔧 camelCased hyphenated CSS properties`);
+                }
+            }
+
         // Re-check after fix attempt
         const recheck = await syntaxPreCheck(wrappedCode);
         if (!recheck.valid) {
