@@ -410,12 +410,26 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
             if (preCheck.error && preCheck.error.includes('Expected ";" but found "-"')) {
                 const camelCase = (s) => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
                 lines = wrappedCode.split('\n');
-                const fixedLines = lines.map(l =>
+
+                // Fix 5a: CSS hyphenated property keys in style objects
+                let fixed5 = lines.map(l =>
                     l.replace(/\b([a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)+)\s*:/g, (match, prop) => `${camelCase(prop)}:`)
                 );
-                if (fixedLines.join('\n') !== wrappedCode) {
-                    wrappedCode = fixedLines.join('\n');
-                    console.log(`   🔧 camelCased hyphenated CSS properties`);
+
+                // Fix 5b: `const <invalid-identifier> = ...` — LLM used a phrase/sentence as a var name.
+                // Detect lines where the token between `const ` and `=` is not a valid JS identifier
+                // (contains spaces, hyphens, or other non-identifier characters) and comment them out.
+                fixed5 = fixed5.map(l => {
+                    const m = l.match(/^(\s*)const\s+([^=]+?)\s*=/);
+                    if (!m) return l;
+                    const ident = m[2].trim();
+                    if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(ident)) return l; // valid — leave it
+                    return `${m[1]}// [auto-removed invalid identifier: ${ident}]`;
+                });
+
+                if (fixed5.join('\n') !== wrappedCode) {
+                    wrappedCode = fixed5.join('\n');
+                    console.log(`   🔧 Fixed invalid const identifiers / hyphenated CSS properties`);
                 }
             }
 
