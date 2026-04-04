@@ -404,10 +404,13 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
             }
         }
 
-            // Fix 5: Hyphenated CSS property names used as unquoted JS object keys
-            // e.g. `background-color: '#fff'` → `backgroundColor: '#fff'`
-            // esbuild reports "Expected ;" but found "-" for these.
-            if (preCheck.error && preCheck.error.includes('Expected ";" but found "-"')) {
+            // Fix 5: Hyphenated CSS props + invalid LLM identifiers.
+            // Triggers on either of the two esbuild errors these produce.
+            const _hasBadIdent = preCheck.error && (
+                preCheck.error.includes('Expected ";" but found "-"') ||
+                preCheck.error.includes('Expected "}" but found')
+            );
+            if (_hasBadIdent) {
                 const camelCase = (s) => s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
                 lines = wrappedCode.split('\n');
 
@@ -416,16 +419,30 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                     l.replace(/\b([a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)+)\s*:/g, (match, prop) => `${camelCase(prop)}:`)
                 );
 
-                // Fix 5b: `const <invalid-identifier> = ...` — LLM used a phrase/sentence as a var name.
-                // Detect lines where the token between `const ` and `=` is not a valid JS identifier
-                // (contains spaces, hyphens, or other non-identifier characters) and comment them out.
+                // Fix 5b: `const <invalid-identifier> = 'value'` — LLM used a phrase as a var name.
+                // 1. Capture the invalid ident + its string value.
+                // 2. Comment out the const declaration.
+                // 3. Replace any JSX {invalid-ident} references with {'value'} inline strings.
+                const invalidIdents = []; // [{ ident, value }]
                 fixed5 = fixed5.map(l => {
-                    const m = l.match(/^(\s*)const\s+([^=]+?)\s*=/);
+                    const m = l.match(/^(\s*)const\s+([^=]+?)\s*=\s*(['"`])([\s\S]*?)\3\s*;?\s*$/);
                     if (!m) return l;
                     const ident = m[2].trim();
                     if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(ident)) return l; // valid — leave it
+                    invalidIdents.push({ ident, value: m[4] });
                     return `${m[1]}// [auto-removed invalid identifier: ${ident}]`;
                 });
+
+                // Replace JSX {invalid ident} with {'value'}
+                if (invalidIdents.length > 0) {
+                    const joined = fixed5.join('\n');
+                    const replaced = invalidIdents.reduce((code, { ident, value }) => {
+                        const escaped = ident.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const safe = value.replace(/'/g, "\\'");
+                        return code.replace(new RegExp(`\\{\\s*${escaped}\\s*\\}`, 'g'), `{'${safe}'}`);
+                    }, joined);
+                    fixed5 = replaced.split('\n');
+                }
 
                 if (fixed5.join('\n') !== wrappedCode) {
                     wrappedCode = fixed5.join('\n');
