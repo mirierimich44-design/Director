@@ -20,20 +20,21 @@ const SCHEMAS_DIR = path.join(__dirname, 'schemas')
 // Shared Categories Mapping
 // ─────────────────────────────────────────────
 const TEMPLATE_CATEGORIES = {
-  CHAPTER: ['42-chapter-word-drop', '43-chapter-typewriter', '44-chapter-countup', '45-chapter-wipe', '158-chapter-word-drop', '81-transition-fade-title', '82-transition-wipe-chapter'],
-  MARKET: ['142-stock-ticker-strip', '95-candlestick-ohlc', '156-crypto-price-candles', '98-barchart-race'],
+  CHAPTER: ['42-chapter-word-drop', '43-chapter-typewriter', '44-chapter-countup', '45-chapter-wipe', '46-chapter-glitch', '158-chapter-word-drop', '159-chapter-word-drop', '81-transition-fade-title', '82-transition-wipe-chapter', '83-transition-zoom-reveal'],
+  MARKET: ['142-stock-ticker-strip', '95-candlestick-ohlc', '156-crypto-price-candles', '98-barchart-race', '73-ticker-scroll', '94-marimekko-mosaic'],
   PIE_CHART: ['143-portfolio-allocation', '05-donutchart-fill', '06-percentagefill-single', '50-treemap', '148-market-cap-treemap'],
-  FINANCIAL: ['144-profit-loss-waterfall', '08-waterfall-chart', '154-earnings-reveal', '109-number-odometer', '72-countup-hero', '145-kpi-financial-dashboard', '103-dashboard-summary', '01-statcluster-3box', '02-statcluster-2box', '96-bulletchart-kpi'],
-  GAUGE: ['146-compound-interest-curve', '147-inflation-erosion', '149-interest-rate-gauge', '52-gaugechart', '04-linechart-draw'],
-  FLOW_SANKEY: ['150-cash-flow-sankey', '93-sankey-flow', '57-flowdiagram-linear'],
-  TIMELINE: ['153-debt-payoff-timeline', '14-timeline-horizontal', '15-timeline-vertical', '16-timeline-escalation', '135-threat-actor-timeline', '60-timeline-gantt'],
-  COMPARISON: ['155-risk-return-scatter', '48-scatterplot', '152-asset-comparison-slope', '97-slopechart-change', '07-comparisonchart-dual', '99-before-after-split', '09-split-2panel', '64-split-quadrant', '112-comparison-table'],
-  FLOW: ['51-funnelchart', '47-barchart-horizontal', '113-bracket-tournament', '57-flowdiagram-linear', '58-flowdiagram-branching', '17-phase-horizontal', '63-phase-numbered', '119-kill-chain-steps'],
-  PERSON: ['76-organization-card', '75-person-profile', '80-threat-actor-card'],
-  MAP: ['34-map-dotplot', '34b-map-country-zoom', '35-map-region-highlight', '36-map-arc-connection', '139-attack-origin-heatmap'],
-  NETWORK: ['19-nodenetwork-centered', '24-nodenetwork-hierarchy', '20-nodenetwork-flow', '136-attribution-web'],
-  EVIDENCE: ['130-news-article-highlight', '111-magazine-cover', '157-archive-newspaper-reel'],
-  DRAMATIC: ['49-heatmap-grid', '30-icongrid-3x3', '31-icongrid-4x4', '77-quote-fullscreen']
+  FINANCIAL: ['144-profit-loss-waterfall', '08-waterfall-chart', '154-earnings-reveal', '109-number-odometer', '72-countup-hero', '145-kpi-financial-dashboard', '103-dashboard-summary', '01-statcluster-3box', '02-statcluster-2box', '96-bulletchart-kpi', '151-break-even-chart', '03-barchart-vertical'],
+  GAUGE: ['146-compound-interest-curve', '147-inflation-erosion', '149-interest-rate-gauge', '52-gaugechart', '04-linechart-draw', '86-radarchart-spider', '97-slopechart-change'],
+  FLOW_SANKEY: ['150-cash-flow-sankey', '93-sankey-flow', '57-flowdiagram-linear', '51-funnelchart'],
+  TIMELINE: ['153-debt-payoff-timeline', '14-timeline-horizontal', '15-timeline-vertical', '16-timeline-escalation', '59-timeline-comparison', '60-timeline-gantt', '61-timeline-circular', '79-timeline-incident'],
+  COMPARISON: ['155-risk-return-scatter', '48-scatterplot', '152-asset-comparison-slope', '07-comparisonchart-dual', '99-before-after-split', '09-split-2panel', '10-split-3panel', '64-split-quadrant', '65-split-spotlight', '112-comparison-table'],
+  FLOW: ['47-barchart-horizontal', '113-bracket-tournament', '58-flowdiagram-branching', '17-phase-horizontal', '18-phase-circular', '62-phase-vertical', '63-phase-numbered'],
+  PERSON: ['76-organization-card', '75-person-profile', '114-dossier-open', '85-person-profile'],
+  MAP: ['34-map-dotplot', '34b-map-country-zoom', '35-map-region-highlight', '35b-map-country-compare', '36-map-arc-connection', '37-map-spread'],
+  NETWORK: ['19-nodenetwork-centered', '24-nodenetwork-hierarchy', '20-nodenetwork-flow', '53-nodenetwork-bipartite', '55-nodenetwork-cluster', '136-attribution-web'],
+  EVIDENCE: ['130-news-article-highlight', '111-magazine-cover', '157-archive-newspaper-reel', '78-evidence-item', '107-redacted-reveal', '108-stamped-verdict', '115-wanted-poster'],
+  KNOWLEDGE: ['151-knowledge-card', '152-search-engine-reveal', '100-zoom-to-detail', '102-annotation-callout', '161-annotation-callout', '106-word-highlight-scan'],
+  DRAMATIC: ['49-heatmap-grid', '30-icongrid-3x3', '31-icongrid-4x4', '77-quote-fullscreen', '110-scramble-decode', '132-ransom-note-reveal']
 }
 
 // ─────────────────────────────────────────────
@@ -182,7 +183,21 @@ Ask: Is a PERSON doing something, OR is DATA being described?
   "Revenue grew 50%"     → DATA metric → [TEMPLATE]
 
 CATEGORIES (for TEMPLATE only):
-${Object.keys(TEMPLATE_CATEGORIES).join(', ')}
+CHAPTER: Chapter openers, section titles, transitions
+MARKET: Stock tickers, crypto prices, candlestick charts, bar races
+PIE_CHART: Portfolio allocation, donut charts, treemaps, market cap
+FINANCIAL: Profit/loss, earnings, KPI dashboards, countups, stat clusters, break-even
+GAUGE: Line charts, compound interest, inflation, rate gauges, radar/spider charts
+FLOW_SANKEY: Cash flow, sankey diagrams, funnels
+TIMELINE: Debt payoff, history of events, gantt, escalation timelines
+COMPARISON: Scatter plots, slope charts, side-by-side panels, tables
+FLOW: Bar charts, phase diagrams, bracket flows, process steps
+PERSON: Executive profiles, organization cards, dossiers
+MAP: Country maps, region highlights, global trade routes
+NETWORK: Relationship webs, node networks, attribution diagrams
+EVIDENCE: News articles, magazine covers, archive documents, redacted reports
+KNOWLEDGE: Knowledge cards, search reveals, annotations, word highlights
+DRAMATIC: Heatmaps, icon grids, quote reveals, scramble effects
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 COVERAGE AND RATIO REQUIREMENTS

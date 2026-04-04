@@ -22,7 +22,7 @@ const SCHEMAS_DIR = path.join(__dirname, 'schemas')
 const TEMPLATE_CATEGORIES = {
   CHAPTER: {
     desc: 'Chapter openers, structural beats, transitions',
-    templates: ['42-chapter-word-drop', '43-chapter-typewriter', '44-chapter-countup', '45-chapter-wipe', '46-chapter-glitch', '158-chapter-word-drop', '81-transition-fade-title', '82-transition-wipe-chapter', '83-transition-zoom-reveal', '84-transition-glitch-cut']
+    templates: ['42-chapter-word-drop', '43-chapter-typewriter', '44-chapter-countup', '45-chapter-wipe', '46-chapter-glitch', '158-chapter-word-drop', '159-chapter-word-drop', '81-transition-fade-title', '82-transition-wipe-chapter', '83-transition-zoom-reveal', '84-transition-glitch-cut']
   },
   PERSON: {
     desc: 'Profiles of people, threat actors, hackers',
@@ -50,23 +50,23 @@ const TEMPLATE_CATEGORIES = {
   },
   COMPARISON: {
     desc: 'Side-by-side comparisons, tables, split panels',
-    templates: ['07-comparisonchart-dual', '112-comparison-table', '99-before-after-split', '09-split-2panel', '64-split-quadrant', '152-asset-comparison-slope']
+    templates: ['07-comparisonchart-dual', '112-comparison-table', '99-before-after-split', '09-split-2panel', '10-split-3panel', '11-split-topbottom', '12-split-diagonal', '13-split-percentage', '64-split-quadrant', '65-split-spotlight', '66-split-overlay', '67-split-morph', '68-split-reveal-wipe', '152-asset-comparison-slope']
   },
   FINANCIAL: {
     desc: 'Waterfall charts, profit/loss, earnings, dashboards',
-    templates: ['08-waterfall-chart', '144-profit-loss-waterfall', '154-earnings-reveal', '145-kpi-financial-dashboard', '103-dashboard-summary']
+    templates: ['08-waterfall-chart', '144-profit-loss-waterfall', '154-earnings-reveal', '145-kpi-financial-dashboard', '103-dashboard-summary', '147-inflation-erosion', '151-break-even-chart']
   },
   TIMELINE: {
     desc: 'Dated events, sequence of history, escalations',
-    templates: ['14-timeline-horizontal', '15-timeline-vertical', '16-timeline-escalation', '59-timeline-comparison', '60-timeline-gantt', '79-timeline-incident', '135-threat-actor-timeline', '153-debt-payoff-timeline']
+    templates: ['14-timeline-horizontal', '15-timeline-vertical', '16-timeline-escalation', '59-timeline-comparison', '60-timeline-gantt', '61-timeline-circular', '79-timeline-incident', '135-threat-actor-timeline', '153-debt-payoff-timeline', '162-threat-actor-timeline']
   },
   FLOW: {
     desc: 'Process diagrams, attack chains, kill chains, exploit flows',
-    templates: ['57-flowdiagram-linear', '58-flowdiagram-branching', '119-kill-chain-steps', '121-exploit-chain', '120-lateral-movement', '17-phase-horizontal', '63-phase-numbered']
+    templates: ['57-flowdiagram-linear', '58-flowdiagram-branching', '119-kill-chain-steps', '121-exploit-chain', '120-lateral-movement', '17-phase-horizontal', '18-phase-circular', '62-phase-vertical', '63-phase-numbered']
   },
   NETWORK: {
     desc: 'Relationships, connections, attack networks, attribution webs',
-    templates: ['19-nodenetwork-centered', '20-nodenetwork-flow', '21-nodenetwork-attack', '24-nodenetwork-hierarchy', '53-nodenetwork-bipartite', '55-nodenetwork-cluster', '136-attribution-web']
+    templates: ['19-nodenetwork-centered', '20-nodenetwork-flow', '21-nodenetwork-attack', '24-nodenetwork-hierarchy', '53-nodenetwork-bipartite', '54-nodenetwork-timeline', '55-nodenetwork-cluster', '136-attribution-web']
   },
   MAP: {
     desc: 'Geography, country highlights, trade routes, heatmaps',
@@ -74,11 +74,11 @@ const TEMPLATE_CATEGORIES = {
   },
   CODE: {
     desc: 'Source code, terminal logs, registry keys, wireshark streams',
-    templates: ['38-codesnippet-reveal', '39-terminal-typewriter', '40-logstream-highlight', '41-registrykey-reveal', '122-port-scan-reveal', '125-hex-dump-scroll', '126-memory-map', '127-wireshark-row-stream', '128-sql-injection-demo', '129-log-anomaly-detect']
+    templates: ['38-codesnippet-reveal', '39-terminal-typewriter', '40-logstream-highlight', '41-registrykey-reveal', '122-port-scan-reveal', '123-c2-beacon', '125-hex-dump-scroll', '126-memory-map', '127-wireshark-row-stream', '128-sql-injection-demo', '129-log-anomaly-detect']
   },
   PARTICLE: {
     desc: 'Infection spread, DDoS floods, packet flows',
-    templates: ['25-particle-burst', '26-particle-stream', '27-particle-scatter', '29-particle-infection', '124-packet-flood-ddos', '56-expanding-pulse']
+    templates: ['25-particle-burst', '26-particle-stream', '27-particle-scatter', '28-particle-converge', '29-particle-infection', '22-expanding-origin', '23-expanding-web', '56-expanding-pulse', '74-pulse-rings', '124-packet-flood-ddos']
   },
   ICON_GRID: {
     desc: 'Grids of icons, techniques, spotlight highlights',
@@ -86,23 +86,23 @@ const TEMPLATE_CATEGORIES = {
   },
   EVIDENCE: {
     desc: 'Documents, classified reports, newspaper archives, redactions',
-    templates: ['78-evidence-item', '157-archive-newspaper-reel', '107-redacted-reveal', '108-stamped-verdict', '118-classified-stamp', '130-news-article-highlight', '111-magazine-cover']
+    templates: ['78-evidence-item', '157-archive-newspaper-reel', '107-redacted-reveal', '108-stamped-verdict', '115-wanted-poster', '118-classified-stamp', '130-news-article-highlight', '111-magazine-cover', '137-vulnerability-card', '154-file-explorer-leak']
   },
   KNOWLEDGE: {
     desc: 'Web search, knowledge cards, annotations',
-    templates: ['152-search-engine-reveal', '151-knowledge-card', '100-zoom-to-detail', '102-annotation-callout']
+    templates: ['152-search-engine-reveal', '151-knowledge-card', '100-zoom-to-detail', '101-scrollytelling-step', '102-annotation-callout', '105-zoom-to-detail', '106-word-highlight-scan', '160-word-highlight-scan', '161-annotation-callout']
   },
   SOCIAL: {
     desc: 'Chat interfaces, social media, dark web listings',
     templates: ['153-social-media-impact', '150-mobile-chat-ui', '156-biometric-access-scan', '138-dark-web-chatter', '116-dark-web-listing']
   },
   DATE: {
-    desc: 'Calendars, countdowns, breach counters',
-    templates: ['155-calendar-date-highlight', '131-countdown-breach', '141-breach-counter']
+    desc: 'Calendars, countdowns, breach counters, alerts',
+    templates: ['155-calendar-date-highlight', '131-countdown-breach', '141-breach-counter', '104-alert-notification', '157-alert-notification']
   },
   GAUGE: {
     desc: 'Meters, scores, risk ratings, spider charts',
-    templates: ['52-gaugechart', '134-cvss-score-reveal', '149-interest-rate-gauge', '86-radarchart-spider']
+    templates: ['52-gaugechart', '134-cvss-score-reveal', '149-interest-rate-gauge', '86-radarchart-spider', '87-radarchart-spider', '88-radarchart-spider', '89-radarchart-spider', '91-radarchart-spider']
   },
   FLOW_SANKEY: {
     desc: 'Cash flow, funnel charts, money movement',
@@ -114,11 +114,11 @@ const TEMPLATE_CATEGORIES = {
   },
   HEATMAP: {
     desc: 'Correlation grids, scatterplots, bubble maps',
-    templates: ['49-heatmap-grid', '48-scatterplot', '155-risk-return-scatter', '90-bubblemap-sized']
+    templates: ['49-heatmap-grid', '48-scatterplot', '155-risk-return-scatter', '90-bubblemap-sized', '92-bubblemap-sized']
   },
   DRAMATIC: {
-    desc: 'Glitches, corruption, ransom notes, error cascades',
-    templates: ['130-glitch-corrupt', '132-ransom-note-reveal', '110-scramble-decode', '70-glitchreveal-full', '163-error-cascade']
+    desc: 'Glitches, corruption, ransom notes, error cascades, matrix effects',
+    templates: ['130-glitch-corrupt', '132-ransom-note-reveal', '110-scramble-decode', '70-glitchreveal-full', '69-morphshape-transform', '71-splitword-assembly', '163-error-cascade', '163-matrix-rain']
   },
   QUOTE: {
     desc: 'Direct quotes, punchy claims',
