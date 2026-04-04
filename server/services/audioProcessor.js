@@ -150,7 +150,7 @@ async function enhanceAudio(inputPath, outputPath, options = {}) {
     // 7. Compression for consistent levels
     if (compression) {
         // attack=5ms, release=50ms, threshold=-20dB, ratio=4:1, knee=2.5dB
-        filters.push('acompressor=threshold=-20dB:ratio=4:attack=5:release=50:knee=2.5dB');
+        filters.push('acompressor=threshold=0.1:ratio=4:attack=5:release=50:knee=2.5');
     }
 
     // 8. Light noise reduction (optional)

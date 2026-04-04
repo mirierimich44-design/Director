@@ -8,7 +8,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, basename } from 'path';
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import { v4 as uuidv4 } from 'uuid';
@@ -1048,7 +1048,7 @@ app.post('/api/voiceover/concatenate', async (req, res) => {
         await concatenateAudio(filesToMerge, outputPath);
         for (const t of tempFiles) { try { await fs.unlink(t); } catch (_) {} }
 
-        const outputUrl = `/audio/processed/${outputPath.split('/').pop()}`;
+        const outputUrl = `/audio/processed/${basename(outputPath)}`;
         res.json({ success: true, outputUrl, message: `Merged ${files.length} files` });
     } catch (err) {
         res.status(500).json({ error: err.message });
