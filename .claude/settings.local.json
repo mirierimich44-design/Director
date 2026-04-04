@@ -28,7 +28,20 @@
       "Bash(cd /c/Users/MICH/\"Desktop/Code Files\"/director)",
       "Bash(grep -n \"resolvedImageUrl\\\\|imageUrl.*startsWith\\\\|staticFile\" server/templates/*.tsx)",
       "Bash(node -e \":*)",
-      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director' -name *.config.js -o -name pm2.json -o -name package-lock.json)"
+      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director' -name *.config.js -o -name pm2.json -o -name package-lock.json)",
+      "Bash(find 'C:/Users/MICH/Desktop/Code Files/director' -type f \\\\\\(-name *.ts -o -name *.tsx -o -name *.js -o -name *.jsx \\\\\\) -path */server/* -o -path */backend/* -o -path */api/*)",
+      "Bash(grep -r \"generate-template\\\\|generateTemplate\" 'C:/Users/MICH/Desktop/Code Files/director' --include=*.ts --include=*.tsx --include=*.js --include=*.jsx -l)",
+      "Bash(grep -rn wrapperTemplates*= 'C:/Users/MICH/Desktop/Code Files/director' --include=*.js --include=*.tsx)",
+      "Bash(find 'C:/Users/MICH/Desktop/Code Files/director/server' -type f -name *wrapper* -o -name *template*)",
+      "Bash(do grep:*)",
+      "Bash(do if:*)",
+      "Bash(then echo:*)",
+      "Bash(fi)",
+      "Bash(node -e \"const x = \\(n\\) => { return n*2; }\\(5\\); console.log\\(x\\);\")",
+      "Bash(wc -l \"C:/Users/MICH/Desktop/Code Files/director/server\"/*.js)",
+      "Bash(where gh:*)",
+      "Bash(cd /c/Users/MICH/Desktop/\"Code Files\"/director)",
+      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director' -type f -name *154* -o -name *earnings*)"
     ]
   }
 }
