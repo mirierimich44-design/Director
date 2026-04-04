@@ -684,10 +684,9 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/retry', async (req, res) 
 
         console.log(`   🛠️  Retrying Scene ${sceneIndex} for Project ${pid}...`);
 
-        const { fillSceneFields } = await import('./autoScene.js');
+        const { fillSceneFields, loadSchema } = await import('./autoScene.js');
         const { fillTemplate } = await import('./templateFiller.js');
         const { fuzzyMapFields } = await import('./templateSystem.js');
-        const { loadSchema } = await import('./templateSystem.js');
 
         // Pass 2: Field Filling
         const content = await fillSceneFields(scene, scene.template);
