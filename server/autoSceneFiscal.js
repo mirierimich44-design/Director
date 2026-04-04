@@ -248,6 +248,117 @@ OUTPUT FORMAT (JSON object only):
 }
 
 // ─────────────────────────────────────────────
+// Helper: Word count
+// ─────────────────────────────────────────────
+function countWords(str) {
+  return str.trim().split(/\s+/).filter(Boolean).length
+}
+
+function splitScriptNearMiddle(script) {
+  const mid = Math.floor(script.length / 2)
+  for (let offset = 0; offset < mid; offset++) {
+    for (const pos of [mid + offset, mid - offset]) {
+      if (/[,;.!?—–]/.test(script[pos]) && script[pos + 1] === ' ') {
+        return [script.slice(0, pos + 1).trim(), script.slice(pos + 1).trim()]
+      }
+    }
+  }
+  const words = script.trim().split(/\s+/)
+  const midWord = Math.floor(words.length / 2)
+  return [words.slice(0, midWord).join(' '), words.slice(midWord).join(' ')]
+}
+
+function normalizeSceneWordCounts(scenes, min = 15, max = 25) {
+  // Step 1: Split scenes over max words
+  let result = []
+  for (const scene of scenes) {
+    if (countWords(scene.script) > max) {
+      const [a, b] = splitScriptNearMiddle(scene.script)
+      result.push({ ...scene, script: a })
+      result.push({ ...scene, script: b })
+    } else {
+      result.push(scene)
+    }
+  }
+
+  // Step 2: Merge scenes under min words (repeat until stable)
+  let changed = true
+  while (changed) {
+    changed = false
+    const merged = []
+    let i = 0
+    while (i < result.length) {
+      const scene = result[i]
+      if (countWords(scene.script) < min) {
+        if (i < result.length - 1) {
+          const next = result[i + 1]
+          merged.push({ ...scene, script: scene.script.trim() + ' ' + next.script.trim() })
+          i += 2
+        } else if (merged.length > 0) {
+          const prev = merged.pop()
+          merged.push({ ...prev, script: prev.script.trim() + ' ' + scene.script.trim() })
+          i++
+        } else {
+          merged.push(scene)
+          i++
+        }
+        changed = true
+      } else {
+        merged.push(scene)
+        i++
+      }
+    }
+    result = merged
+  }
+
+  return result
+}
+
+// ─────────────────────────────────────────────
+// Helper: Hard ratio enforcement (post-LLM)
+// Upgrades ILLUSTRATION scenes to TEMPLATE until targetRatio% is reached.
+// ─────────────────────────────────────────────
+function illustrationTemplateScore(script) {
+  const s = script.toLowerCase()
+  let score = 0
+  if (/\$[\d,.]+|\d+\s*(million|billion|thousand)/.test(s))   score += 3
+  if (/\d+\s*%|percent|ratio|rate|return|yield/.test(s))       score += 3
+  if (/(grew|increased|decreased|peaked|dropped|reached|averaged|totaled|ranked|compared)/.test(s)) score += 2
+  if (/\d+/.test(s))                                            score += 1
+  if (/(revenue|profit|loss|debt|equity|portfolio|market|stock|fund|asset|price|cost|fee)/.test(s)) score += 1
+  // Penalty for pure narrative
+  if (/^\s*(he|she|they|i|we)\b/i.test(s))                    score -= 3
+  if (/(said|told|called|walked|felt|saw|met|signed|paid)\b/.test(s)) score -= 2
+  return score
+}
+
+function enforceRatio(scenes, targetRatio) {
+  const needed  = Math.ceil(scenes.length * targetRatio / 100)
+  const current = scenes.filter(s => s.type === 'TEMPLATE').length
+  if (current >= needed) return scenes
+
+  const toUpgrade = needed - current
+  const candidates = scenes
+    .filter(s => s.type === 'ILLUSTRATION')
+    .map(s => ({ scene: s, score: illustrationTemplateScore(s.script) }))
+    .sort((a, b) => b.score - a.score)
+
+  let upgraded = 0
+  for (const { scene, score } of candidates) {
+    if (upgraded >= toUpgrade) break
+    scene.type     = 'TEMPLATE'
+    scene.category = 'FINANCIAL'
+    scene.routing_reason = score >= 1
+      ? `[ratio-enforced] Upgraded: financial data content (score: ${score})`
+      : `[ratio-enforced:forced] Force-upgraded to meet ${targetRatio}% target`
+    upgraded++
+  }
+
+  console.log(`   📊 Fiscal ratio enforcer: ${current} → ${current + upgraded} TEMPLATE scenes (target: ${needed}/${scenes.length})`)
+  return scenes
+}
+
+// ─────────────────────────────────────────────
 // Main Generation Flow
 // ─────────────────────────────────────────────
 export async function generateScenes(scriptText, generationSettings = null) {
@@ -255,8 +366,17 @@ export async function generateScenes(scriptText, generationSettings = null) {
 
   console.log(`🎬 Fiscal Pal: Two-Pass Generation Starting...`)
 
+  const targetRatio = generationSettings?.templateRatio ?? 60
+
   let rawScenes = await routeScenes(scriptText, generationSettings)
   console.log(`   ✅ Pass 1 complete: ${rawScenes.length} scenes identified`)
+
+  // Combine short sentences before processing
+  rawScenes = normalizeSceneWordCounts(rawScenes, 15, 25)
+  console.log(`   ✅ Word count normalized: ${rawScenes.length} scenes after combining`)
+
+  // Enforce 60/40 ratio
+  rawScenes = enforceRatio(rawScenes, targetRatio)
 
   // --- COVERAGE CHECK ---
   const sentences = scriptText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 5)

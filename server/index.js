@@ -489,24 +489,43 @@ app.get('/api/projects/:id/export', (req, res) => {
         });
 
         // ── CHAPTERS ──────────────────────────────────────────────────────────────────
+const _chapterInFlight = new Set();
+
 app.post('/api/projects/:id/chapters', async (req, res) => {
     try {
         const { title, scriptText, scenes } = req.body;
         if (!scriptText) return res.status(400).json({ error: 'scriptText is required' });
 
-        let processedScenes = scenes;
-        if (!processedScenes) {
-            const project = getProject(req.params.id);
-            const genSettings = project?.generationSettings || null;
-            const directorType = project?.settings?.director || 'standard';
-            
-            console.log(`   🎬 Using director: ${directorType}`);
-            const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
-            processedScenes = await generateScenes(scriptText, genSettings);
+        const project = getProject(req.params.id);
+
+        // Deduplicate: if a chapter with identical script already exists, return it
+        const existing = project?.chapters?.find(c => c.scriptText?.trim() === scriptText.trim());
+        if (existing) {
+            console.log(`   ⚠️ Duplicate chapter detected — returning existing`);
+            return res.json({ success: true, project, chapter: existing });
         }
 
-        const result = addChapter(req.params.id, title || `Chapter ${Date.now()}`, scriptText, processedScenes);
-        res.json({ success: true, project: result.project, chapter: result.chapter });
+        // Prevent concurrent identical requests
+        const lockKey = `${req.params.id}:${scriptText.slice(0, 60)}`;
+        if (_chapterInFlight.has(lockKey)) {
+            return res.status(409).json({ error: 'Chapter analysis already in progress' });
+        }
+        _chapterInFlight.add(lockKey);
+
+        try {
+            let processedScenes = scenes;
+            if (!processedScenes) {
+                const genSettings = project?.generationSettings || null;
+                const directorType = project?.settings?.director || 'standard';
+                console.log(`   🎬 Using director: ${directorType}`);
+                const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
+                processedScenes = await generateScenes(scriptText, genSettings);
+            }
+            const result = addChapter(req.params.id, title || `Chapter ${Date.now()}`, scriptText, processedScenes);
+            res.json({ success: true, project: result.project, chapter: result.chapter });
+        } finally {
+            _chapterInFlight.delete(lockKey);
+        }
     } catch (err) {
         console.error('❌ Add chapter error:', err);
         res.status(500).json({ success: false, error: err.message });
