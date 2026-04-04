@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-    Box, Typography, Grid, Card, CardContent, CardActionArea,
+    Box, Typography, Grid, Card, CardActionArea,
     Button, TextField, CircularProgress, Alert, IconButton,
-    Stack, Divider, Paper, LinearProgress, MenuItem, Select,
-    FormControl, InputLabel, Tooltip
+    Stack, Paper, LinearProgress, MenuItem, Select,
+    FormControl, InputLabel, Tooltip, InputAdornment, Chip
 } from '@mui/material';
 import {
     Movie as MovieIcon,
-    Refresh as RefreshIcon,
     PlayArrow as RenderIcon,
     CheckCircle as DoneIcon,
     ContentCopy as CopyIcon,
     Palette as ThemeIcon,
-    ViewQuilt as LayoutIcon,
-    List as ListIcon
+    Search as SearchIcon,
+    AutoAwesome as AIIcon,
+    List as ListIcon,
+    Clear as ClearIcon
 } from '@mui/icons-material';
 
 interface Template {
@@ -21,6 +22,7 @@ interface Template {
     name: string;
     description: string;
     category: string;
+    tags: string[];
     fields: string[];
 }
 
@@ -33,101 +35,95 @@ interface RenderJob {
     error?: string;
 }
 
+const CATEGORY_COLORS: Record<string, string> = {
+    charts: '#4fc3f7',
+    timeline: '#81c784',
+    network: '#ff8a65',
+    map: '#ce93d8',
+    flow: '#ffb74d',
+    code: '#a5d6a7',
+    evidence: '#f48fb1',
+    person: '#80deea',
+    organization: '#b39ddb',
+    financial: '#fff176',
+    comparison: '#90caf9',
+    social: '#ef9a9a',
+    general: '#aaaaaa',
+};
+
 const SceneStudioView: React.FC = () => {
     const [templates, setTemplates] = useState<Template[]>([]);
     const [themes, setThemes] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
+    const [script, setScript] = useState('');
+    const [search, setSearch] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-    const [selectedTheme, setSelectedTheme] = useState<string>('THREAT');
-    const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
-    
+    const [selectedTheme, setSelectedTheme] = useState('THREAT');
+
     const [renderJob, setRenderJob] = useState<RenderJob | null>(null);
-    const [renderHistory, setRenderHistory] = useState<RenderJob[]>([]);
+    const [extractedFields, setExtractedFields] = useState<Record<string, string> | null>(null);
+    const [renderHistory, setRenderHistory] = useState<{ job: RenderJob; template: string; theme: string }[]>([]);
 
-    const loadData = async () => {
-        setLoading(true);
-        try {
-            const [tRes, thRes] = await Promise.all([
-                fetch('/api/templates/library'),
-                fetch('/api/themes')
-            ]);
-            const tData = await tRes.json();
-            const thData = await thRes.json();
-            
-            if (tData.success) setTemplates(tData.templates);
-            if (thData.success) setThemes(thData.themes);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const evtSrcRef = useRef<EventSource | null>(null);
 
-    useEffect(() => { loadData(); }, []);
+    useEffect(() => {
+        (async () => {
+            try {
+                const [tRes, thRes] = await Promise.all([
+                    fetch('/api/templates/library'),
+                    fetch('/api/themes')
+                ]);
+                const tData = await tRes.json();
+                const thData = await thRes.json();
+                if (tData.success) setTemplates(tData.templates);
+                if (thData.success) setThemes(thData.themes);
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, []);
 
-    const handleSelectTemplate = (t: Template) => {
-        setSelectedTemplate(t);
-        const defaults: Record<string, string> = {};
-        t.fields.forEach(f => {
-            if (f.includes('VALUE')) defaults[f] = '1,200';
-            else if (f.includes('LABEL') || f.includes('TEXT')) defaults[f] = 'Sample Text';
-            else defaults[f] = '';
-        });
-        setFieldValues(defaults);
-        setRenderJob(null);
-    };
+    useEffect(() => () => { evtSrcRef.current?.close(); }, []);
 
-    const handleFieldChange = (field: string, value: string) => {
-        setFieldValues(prev => ({ ...prev, [field]: value }));
-    };
+    const filteredTemplates = templates.filter(t => {
+        if (!search) return true;
+        const q = search.toLowerCase();
+        return t.id.includes(q) || t.name.toLowerCase().includes(q) ||
+            t.category.toLowerCase().includes(q) || (t.tags || []).some(tag => tag.toLowerCase().includes(q));
+    });
 
-    const handleRender = async () => {
-        if (!selectedTemplate) return;
-        
-        setRenderJob({ id: 'init', status: 'processing', progress: 0, message: 'Filling template...' });
+    const handleGenerate = async () => {
+        if (!script.trim() || !selectedTemplate) return;
+
+        evtSrcRef.current?.close();
+        setRenderJob({ id: 'init', status: 'processing', progress: 0, message: 'Asking AI to extract fields...' });
+        setExtractedFields(null);
 
         try {
-            // 1. Get filled TSX code
-            const fillRes = await fetch('/api/templates/generate', {
+            const res = await fetch('/api/scene-studio/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    description: selectedTemplate.description,
-                    suggestedName: selectedTemplate.id,
-                    theme: selectedTheme,
-                    content: fieldValues
-                })
+                body: JSON.stringify({ script, templateId: selectedTemplate.id, theme: selectedTheme })
             });
-            const fillData = await fillRes.json();
-            if (!fillData.success) throw new Error(fillData.error);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
 
-            // 2. Start render job
-            const renderRes = await fetch('/api/manual-render-job', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code: fillData.code,
-                    duration: 10,
-                    fps: 30
-                })
-            });
-            const renderData = await renderRes.json();
-            if (!renderData.success) throw new Error(renderData.error);
+            setExtractedFields(data.content || null);
+            setRenderJob({ id: data.jobId, status: 'processing', progress: 0, message: 'Render started...' });
 
-            const jobId = renderData.jobId;
-            setRenderJob({ id: jobId, status: 'processing', progress: 0, message: 'Render started...' });
+            const evtSrc = new EventSource(`/api/render-progress/${data.jobId}`);
+            evtSrcRef.current = evtSrc;
 
-            // 3. Track via SSE
-            const evtSrc = new EventSource(`/api/render-progress/${jobId}`);
             evtSrc.onmessage = (e) => {
                 const job = JSON.parse(e.data);
                 setRenderJob(prev => prev ? { ...prev, ...job } : job);
-                
                 if (job.status === 'completed') {
                     evtSrc.close();
-                    setRenderHistory(prev => [{ ...job, id: jobId }, ...prev].slice(0, 5));
+                    setRenderHistory(prev => [
+                        { job: { ...job, id: data.jobId }, template: selectedTemplate.id, theme: selectedTheme },
+                        ...prev
+                    ].slice(0, 8));
                 } else if (job.status === 'error') {
                     evtSrc.close();
                 }
@@ -142,158 +138,289 @@ const SceneStudioView: React.FC = () => {
         }
     };
 
-    if (loading) return <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}><CircularProgress color="inherit" /></Box>;
+    const canGenerate = script.trim().length > 0 && selectedTemplate !== null && renderJob?.status !== 'processing';
+
+    if (loading) return (
+        <Box sx={{ p: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <CircularProgress sx={{ color: 'var(--accent-gold)' }} />
+        </Box>
+    );
 
     return (
         <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
-            <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                    <Typography variant="h4" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', mb: 1 }}>
-                        SCENE STUDIO
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
-                        Create, customize, and render standalone cinematic scenes.
-                    </Typography>
-                </Box>
-                <Button startIcon={<RefreshIcon />} onClick={loadData} variant="outlined" color="inherit">Refresh Catalog</Button>
+            {/* Header */}
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h4" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', mb: 0.5 }}>
+                    SCENE STUDIO
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
+                    Paste your script, pick a template, and let AI generate the scene.
+                </Typography>
             </Box>
 
-            <Grid container spacing={4}>
-                {/* Left: Template & Field Editor */}
+            <Grid container spacing={3}>
+                {/* ── LEFT COLUMN: Script + Template Picker ── */}
                 <Grid size={{ xs: 12, lg: 7 }}>
-                    <Paper sx={{ p: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)', mb: 3 }}>
-                        <Typography variant="h6" sx={{ color: '#fff', mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <LayoutIcon sx={{ color: 'var(--accent-gold)' }} /> 1. SELECT TEMPLATE
+
+                    {/* Step 1: Script */}
+                    <Paper sx={{ p: 3, mb: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                        <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, mb: 1.5, display: 'block' }}>
+                            1 — SCRIPT LINES
                         </Typography>
-                        
-                        <Grid container spacing={2} sx={{ maxHeight: 400, overflow: 'auto', pr: 1, mb: 4 }}>
-                            {templates.map(t => (
-                                <Grid size={{ xs: 6, sm: 4 }} key={t.id}>
-                                    <Card 
-                                        sx={{ 
-                                            bgcolor: selectedTemplate?.id === t.id ? 'rgba(201,169,97,0.15)' : 'rgba(255,255,255,0.02)',
-                                            border: `1px solid ${selectedTemplate?.id === t.id ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)'}`,
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        <CardActionArea onClick={() => handleSelectTemplate(t)} sx={{ p: 1.5 }}>
-                                            <Typography variant="caption" sx={{ color: 'var(--accent-gold)', fontFamily: 'monospace', fontSize: '0.65rem' }}>{t.id}</Typography>
-                                            <Typography variant="body2" sx={{ color: '#fff', fontWeight: 'bold', fontSize: '0.75rem', mt: 0.5 }}>{t.name}</Typography>
-                                        </CardActionArea>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
+                        <TextField
+                            fullWidth
+                            multiline
+                            minRows={4}
+                            maxRows={8}
+                            placeholder={`Paste your script lines here...\n\n"Can you think of any reason that China would target your little community?" "That's the exact question I had for the FBI when they visited me on that first day," Lawler said.`}
+                            value={script}
+                            onChange={e => setScript(e.target.value)}
+                            InputProps={{
+                                endAdornment: script ? (
+                                    <InputAdornment position="end" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                                        <IconButton size="small" onClick={() => setScript('')} sx={{ color: '#666' }}>
+                                            <ClearIcon fontSize="small" />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ) : undefined
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    bgcolor: 'rgba(255,255,255,0.02)',
+                                    color: '#fff',
+                                    fontSize: '0.95rem',
+                                    lineHeight: 1.6,
+                                    '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
+                                    '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+                                    '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' }
+                                },
+                                '& .MuiOutlinedInput-input::placeholder': { color: '#555', opacity: 1 }
+                            }}
+                        />
+                    </Paper>
+
+                    {/* Step 2: Template + Theme */}
+                    <Paper sx={{ p: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                            <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2 }}>
+                                2 — SELECT TEMPLATE
+                            </Typography>
+                            <FormControl size="small" sx={{ minWidth: 160 }}>
+                                <InputLabel sx={{ color: '#888', fontSize: '0.8rem' }}>Theme</InputLabel>
+                                <Select
+                                    value={selectedTheme}
+                                    onChange={e => setSelectedTheme(e.target.value)}
+                                    label="Theme"
+                                    startAdornment={<ThemeIcon sx={{ color: 'var(--accent-gold)', fontSize: 16, mr: 0.5 }} />}
+                                    sx={{
+                                        color: '#fff', fontSize: '0.85rem',
+                                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                                        '& .MuiSelect-icon': { color: '#888' }
+                                    }}
+                                >
+                                    {themes.map(th => <MenuItem key={th} value={th} sx={{ fontSize: '0.85rem' }}>{th}</MenuItem>)}
+                                </Select>
+                            </FormControl>
+                        </Box>
+
+                        <TextField
+                            fullWidth
+                            size="small"
+                            placeholder="Search templates by name, category, or tag..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: '#666', fontSize: 18 }} /></InputAdornment>,
+                                endAdornment: search ? (
+                                    <InputAdornment position="end">
+                                        <IconButton size="small" onClick={() => setSearch('')} sx={{ color: '#555' }}>
+                                            <ClearIcon fontSize="small" />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ) : undefined
+                            }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiOutlinedInput-root': {
+                                    bgcolor: 'rgba(255,255,255,0.02)', color: '#fff',
+                                    '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
+                                    '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.15)' },
+                                    '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' }
+                                }
+                            }}
+                        />
+
+                        <Box sx={{ maxHeight: 340, overflow: 'auto', pr: 0.5 }}>
+                            <Grid container spacing={1.5}>
+                                {filteredTemplates.map(t => {
+                                    const isSelected = selectedTemplate?.id === t.id;
+                                    const catColor = CATEGORY_COLORS[t.category] || '#aaa';
+                                    return (
+                                        <Grid size={{ xs: 6, sm: 4 }} key={t.id}>
+                                            <Card sx={{
+                                                bgcolor: isSelected ? 'rgba(201,169,97,0.12)' : 'rgba(255,255,255,0.02)',
+                                                border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)'}`,
+                                                borderRadius: 2,
+                                                transition: 'all 0.15s',
+                                                '&:hover': { border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'rgba(255,255,255,0.2)'}` }
+                                            }}>
+                                                <CardActionArea onClick={() => setSelectedTemplate(isSelected ? null : t)} sx={{ p: 1.5 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                                                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: catColor, flexShrink: 0 }} />
+                                                        <Typography variant="caption" sx={{ color: catColor, fontFamily: 'monospace', fontSize: '0.6rem', lineHeight: 1 }}>{t.category}</Typography>
+                                                    </Box>
+                                                    <Typography variant="caption" sx={{ color: '#888', fontFamily: 'monospace', fontSize: '0.6rem', display: 'block' }}>{t.id}</Typography>
+                                                    <Typography variant="body2" sx={{ color: '#fff', fontWeight: 'bold', fontSize: '0.72rem', mt: 0.3, lineHeight: 1.3 }}>{t.name}</Typography>
+                                                </CardActionArea>
+                                            </Card>
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                            {filteredTemplates.length === 0 && (
+                                <Typography variant="body2" sx={{ color: '#555', textAlign: 'center', py: 4 }}>No templates match "{search}"</Typography>
+                            )}
+                        </Box>
 
                         {selectedTemplate && (
-                            <>
-                                <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.05)' }} />
-                                <Typography variant="h6" sx={{ color: '#fff', mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                    <ThemeIcon sx={{ color: 'var(--accent-gold)' }} /> 2. CUSTOMIZE DATA
+                            <Box sx={{ mt: 2, p: 1.5, bgcolor: 'rgba(201,169,97,0.06)', borderRadius: 2, border: '1px solid rgba(201,169,97,0.2)' }}>
+                                <Typography variant="caption" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                                    {selectedTemplate.name}
                                 </Typography>
-
-                                <Box sx={{ mb: 4, display: 'flex', gap: 2 }}>
-                                    <FormControl fullWidth size="small">
-                                        <InputLabel sx={{ color: '#aaa' }}>Visual Theme</InputLabel>
-                                        <Select 
-                                            value={selectedTheme} 
-                                            onChange={(e) => setSelectedTheme(e.target.value)} 
-                                            label="Visual Theme"
-                                            sx={{ color: '#fff', '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' } }}
-                                        >
-                                            {themes.map(th => <MenuItem key={th} value={th}>{th}</MenuItem>)}
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-
-                                <Grid container spacing={2}>
-                                    {selectedTemplate.fields.map(field => (
-                                        <Grid size={{ xs: 12, md: 6 }} key={field}>
-                                            <TextField
-                                                fullWidth
-                                                label={field}
-                                                size="small"
-                                                variant="filled"
-                                                value={fieldValues[field] || ''}
-                                                onChange={(e) => handleFieldChange(field, e.target.value)}
-                                                sx={{ 
-                                                    '& .MuiFilledInput-root': { bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1 },
-                                                    '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
-                                                    '& .MuiFilledInput-input': { color: '#fff' }
-                                                }}
-                                            />
-                                        </Grid>
+                                <Typography variant="caption" sx={{ color: '#aaa', display: 'block', mb: 1 }}>
+                                    {selectedTemplate.description}
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                                    {selectedTemplate.fields.map(f => (
+                                        <Chip key={f} label={f} size="small" sx={{ height: 18, fontSize: '0.6rem', bgcolor: 'rgba(255,255,255,0.05)', color: '#aaa', '& .MuiChip-label': { px: 1 } }} />
                                     ))}
-                                </Grid>
-
-                                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
-                                    <Button 
-                                        variant="contained" 
-                                        size="large"
-                                        startIcon={renderJob?.status === 'processing' ? <CircularProgress size={20} color="inherit" /> : <RenderIcon />}
-                                        disabled={renderJob?.status === 'processing'}
-                                        onClick={handleRender}
-                                        sx={{ bgcolor: 'var(--accent-gold)', color: '#000', px: 4, fontWeight: 'bold', '&:hover': { bgcolor: '#fff' } }}
-                                    >
-                                        RENDER STANDALONE SCENE
-                                    </Button>
                                 </Box>
-                            </>
+                            </Box>
                         )}
+
+                        {/* Generate Button */}
+                        <Box sx={{ mt: 3 }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                size="large"
+                                startIcon={renderJob?.status === 'processing'
+                                    ? <CircularProgress size={18} color="inherit" />
+                                    : <AIIcon />}
+                                disabled={!canGenerate}
+                                onClick={handleGenerate}
+                                sx={{
+                                    bgcolor: canGenerate ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)',
+                                    color: canGenerate ? '#000' : '#444',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.9rem',
+                                    letterSpacing: 1,
+                                    py: 1.5,
+                                    '&:hover': { bgcolor: canGenerate ? '#fff' : undefined },
+                                    '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.05)', color: '#444' }
+                                }}
+                            >
+                                {renderJob?.status === 'processing' ? 'GENERATING...' : 'GENERATE SCENE'}
+                            </Button>
+                            {(!script.trim() || !selectedTemplate) && (
+                                <Typography variant="caption" sx={{ color: '#555', display: 'block', textAlign: 'center', mt: 1 }}>
+                                    {!script.trim() ? 'Paste a script above' : 'Select a template'}
+                                </Typography>
+                            )}
+                        </Box>
                     </Paper>
                 </Grid>
 
-                {/* Right: Preview & Jobs */}
+                {/* ── RIGHT COLUMN: Preview + AI Fields + History ── */}
                 <Grid size={{ xs: 12, lg: 5 }}>
-                    <Paper sx={{ p: 3, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', minHeight: 400, position: 'relative', overflow: 'hidden' }}>
+                    {/* Video Preview */}
+                    <Paper sx={{ p: 0, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', overflow: 'hidden', minHeight: 280 }}>
                         {renderJob?.url ? (
-                            <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                <video src={renderJob.url} controls autoPlay loop style={{ width: '100%', borderRadius: 12 }} />
-                                <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(76,175,80,0.1)', border: '1px solid #4caf50', borderRadius: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box>
+                                <video src={renderJob.url} controls autoPlay loop style={{ width: '100%', display: 'block' }} />
+                                <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'rgba(76,175,80,0.08)', borderTop: '1px solid rgba(76,175,80,0.2)' }}>
                                     <Box>
-                                        <Typography variant="body2" sx={{ color: '#4caf50', fontWeight: 'bold' }}>RENDER SUCCESSFUL</Typography>
-                                        <Typography variant="caption" sx={{ color: '#aaa' }}>{renderJob.url}</Typography>
+                                        <Typography variant="caption" sx={{ color: '#4caf50', fontWeight: 'bold', display: 'block' }}>RENDER COMPLETE</Typography>
+                                        <Typography variant="caption" sx={{ color: '#666', fontFamily: 'monospace', fontSize: '0.65rem' }}>{renderJob.url}</Typography>
                                     </Box>
-                                    <Tooltip title="Copy Link"><IconButton onClick={() => navigator.clipboard.writeText(window.location.origin + renderJob.url)} sx={{ color: '#4caf50' }}><CopyIcon /></IconButton></Tooltip>
+                                    <Tooltip title="Copy link">
+                                        <IconButton size="small" onClick={() => navigator.clipboard.writeText(window.location.origin + renderJob.url!)} sx={{ color: '#4caf50' }}>
+                                            <CopyIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Box>
                             </Box>
-                        ) : renderJob ? (
-                            <Box sx={{ py: 10, textAlign: 'center' }}>
-                                <CircularProgress size={60} sx={{ color: 'var(--accent-gold)', mb: 3 }} />
-                                <Typography variant="h6" sx={{ color: '#fff' }}>{renderJob.message}</Typography>
-                                <Typography variant="caption" sx={{ color: '#aaa' }}>Progress: {Math.round(renderJob.progress || 0)}%</Typography>
-                                <LinearProgress variant="determinate" value={renderJob.progress || 0} sx={{ width: '70%', mx: 'auto', mt: 3, height: 6, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }} />
-                                {renderJob.status === 'error' && <Alert severity="error" sx={{ mt: 3, mx: 2 }}>{renderJob.error}</Alert>}
+                        ) : renderJob && renderJob.status !== 'error' ? (
+                            <Box sx={{ py: 8, px: 3, textAlign: 'center' }}>
+                                <CircularProgress size={48} sx={{ color: 'var(--accent-gold)', mb: 2 }} />
+                                <Typography variant="body2" sx={{ color: '#fff', mb: 0.5 }}>{renderJob.message}</Typography>
+                                <Typography variant="caption" sx={{ color: '#666' }}>{Math.round(renderJob.progress || 0)}%</Typography>
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={renderJob.progress || 0}
+                                    sx={{ width: '80%', mx: 'auto', mt: 2, height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }}
+                                />
+                            </Box>
+                        ) : renderJob?.status === 'error' ? (
+                            <Box sx={{ p: 3 }}>
+                                <Alert severity="error" sx={{ bgcolor: 'rgba(244,67,54,0.1)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)' }}>
+                                    {renderJob.error}
+                                </Alert>
                             </Box>
                         ) : (
-                            <Box sx={{ py: 15, textAlign: 'center', opacity: 0.3 }}>
-                                <MovieIcon sx={{ fontSize: 100, color: '#fff', mb: 2 }} />
-                                <Typography variant="h6" sx={{ color: '#fff' }}>NO ACTIVE RENDER</Typography>
-                                <Typography variant="body2" sx={{ color: '#fff' }}>Configure and click Render to preview.</Typography>
+                            <Box sx={{ py: 10, textAlign: 'center', opacity: 0.2 }}>
+                                <MovieIcon sx={{ fontSize: 80, color: '#fff', mb: 1 }} />
+                                <Typography variant="body2" sx={{ color: '#fff' }}>Preview will appear here</Typography>
                             </Box>
                         )}
                     </Paper>
 
-                    <Paper sx={{ p: 3, mt: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
-                        <Typography variant="h6" sx={{ color: '#fff', mb: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <ListIcon sx={{ color: 'var(--accent-gold)' }} /> RECENT RENDERS
-                        </Typography>
-                        <Stack spacing={1}>
-                            {renderHistory.length === 0 ? (
-                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', fontStyle: 'italic' }}>No renders this session.</Typography>
-                            ) : (
-                                renderHistory.map(job => (
-                                    <Box key={job.id} sx={{ p: 1.5, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <DoneIcon sx={{ color: '#4caf50', fontSize: 16 }} />
-                                            <Typography variant="caption" sx={{ color: '#fff', fontWeight: 'bold' }}>{job.id.substring(0, 8)}</Typography>
-                                        </Box>
-                                        <Button size="small" onClick={() => setRenderJob(job)} sx={{ color: 'var(--accent-gold)', fontSize: '0.7rem' }}>View</Button>
+                    {/* AI Extracted Fields */}
+                    {extractedFields && Object.keys(extractedFields).length > 0 && (
+                        <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid rgba(201,169,97,0.2)' }}>
+                            <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
+                                AI EXTRACTED FIELDS
+                            </Typography>
+                            <Stack spacing={0.75}>
+                                {Object.entries(extractedFields).map(([key, val]) => (
+                                    <Box key={key} sx={{ display: 'flex', gap: 1.5, alignItems: 'baseline' }}>
+                                        <Typography variant="caption" sx={{ color: '#666', fontFamily: 'monospace', fontSize: '0.65rem', flexShrink: 0, width: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                            {key}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#ccc', fontSize: '0.75rem', fontWeight: 500 }}>
+                                            {String(val)}
+                                        </Typography>
                                     </Box>
-                                ))
-                            )}
-                        </Stack>
-                    </Paper>
+                                ))}
+                            </Stack>
+                        </Paper>
+                    )}
+
+                    {/* History */}
+                    {renderHistory.length > 0 && (
+                        <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                            <Typography variant="overline" sx={{ color: '#888', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
+                                <ListIcon sx={{ fontSize: 12, mr: 0.5, verticalAlign: 'middle' }} />
+                                RECENT RENDERS
+                            </Typography>
+                            <Stack spacing={1}>
+                                {renderHistory.map((h, i) => (
+                                    <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 1.5, border: '1px solid rgba(255,255,255,0.04)' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <DoneIcon sx={{ color: '#4caf50', fontSize: 14 }} />
+                                            <Box>
+                                                <Typography variant="caption" sx={{ color: '#fff', fontWeight: 'bold', display: 'block', fontSize: '0.7rem' }}>{h.template}</Typography>
+                                                <Typography variant="caption" sx={{ color: '#555', fontSize: '0.62rem' }}>{h.theme}</Typography>
+                                            </Box>
+                                        </Box>
+                                        <Button size="small" onClick={() => setRenderJob(h.job)} sx={{ color: 'var(--accent-gold)', fontSize: '0.65rem', minWidth: 0, px: 1 }}>
+                                            View
+                                        </Button>
+                                    </Box>
+                                ))}
+                            </Stack>
+                        </Paper>
+                    )}
                 </Grid>
             </Grid>
         </Box>

@@ -313,7 +313,7 @@ function robustParseJSON(text) {
 // ─────────────────────────────────────────────
 // Helper: Load JSON Schema
 // ─────────────────────────────────────────────
-function loadSchema(templateName) {
+export function loadSchema(templateName) {
   try {
     const p = path.join(SCHEMAS_DIR, `${templateName}.json`)
     if (!fs.existsSync(p)) return null
@@ -504,7 +504,7 @@ OUTPUT FORMAT (strict JSON array only):
 // ─────────────────────────────────────────────
 // Pass 2: The Focused Filler (Worker)
 // ─────────────────────────────────────────────
-async function fillSceneFields(scene, templateName) {
+export async function fillSceneFields(scene, templateName) {
   const schema = loadSchema(templateName)
   if (!schema) return {}
 

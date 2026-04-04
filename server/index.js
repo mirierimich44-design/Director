@@ -833,7 +833,74 @@ app.post('/api/auto-scene/render-image-video', async (req, res) => {
     }
 });
 
-// ... [rest of template generation routes] ...
+// ── SCENE STUDIO ─────────────────────────────────────────────────────────────
+const SCHEMAS_DIR_SS = join(__dirname, 'schemas');
+const THEMES_FILE_SS = join(__dirname, 'themes/themes.json');
+
+app.get('/api/templates/library', async (req, res) => {
+    try {
+        const files = await fs.readdir(SCHEMAS_DIR_SS);
+        const templates = [];
+        for (const file of files.filter(f => f.endsWith('.json'))) {
+            try {
+                const raw = await fs.readFile(join(SCHEMAS_DIR_SS, file), 'utf8');
+                const schema = JSON.parse(raw);
+                templates.push({
+                    id: schema.template || file.replace('.json', ''),
+                    name: schema.name || file.replace('.json', ''),
+                    description: schema.description || '',
+                    category: schema.category || 'general',
+                    tags: schema.tags || [],
+                    fields: Object.keys(schema.fields || {})
+                });
+            } catch (_) {}
+        }
+        templates.sort((a, b) => a.id.localeCompare(b.id));
+        res.json({ success: true, templates });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/themes', async (req, res) => {
+    try {
+        const raw = await fs.readFile(THEMES_FILE_SS, 'utf8');
+        const themes = Object.keys(JSON.parse(raw));
+        res.json({ success: true, themes });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/scene-studio/generate', async (req, res) => {
+    try {
+        const { script, templateId, theme } = req.body;
+        if (!script || !templateId) return res.status(400).json({ success: false, error: 'script and templateId are required' });
+
+        const { fillSceneFields, loadSchema } = await import('./autoScene.js');
+        const { fillTemplate } = await import('./templateFiller.js');
+        const { fuzzyMapFields } = await import('./templateSystem.js');
+
+        // Pass 2: AI extracts field values from the script (same as project director)
+        const rawContent = await fillSceneFields({ script }, templateId);
+
+        // Fuzzy-map AI field names → schema field names
+        const schema = loadSchema(templateId);
+        const content = schema?.fields ? fuzzyMapFields(rawContent, schema.fields) : rawContent;
+
+        // Fill the template TSX with extracted values + theme
+        const code = fillTemplate(templateId, theme || 'THREAT', content);
+
+        // Start render job
+        const { job, videoId } = startVideoRenderJob(code, { duration: 10, fps: 30 });
+
+        console.log(`   🎬 Scene Studio render started: ${job.id} (template: ${templateId})`);
+        res.json({ success: true, jobId: job.id, videoId, content });
+    } catch (err) {
+        console.error('❌ scene-studio/generate error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
 
 // ── RENDER JOBS ───────────────────────────────────────────────────────────────
 app.post('/api/manual-render-job', async (req, res) => {
