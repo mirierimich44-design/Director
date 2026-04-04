@@ -16,6 +16,26 @@ const multibar = new cliProgress.MultiBar({
     format: ' {bar} | {jobId} | {phase} | {percentage}%',
 }, cliProgress.Presets.shades_classic);
 
+// Minimum free disk space required before starting a render (500 MB)
+const MIN_FREE_BYTES = 500 * 1024 * 1024;
+async function checkDiskSpace(dir) {
+    try {
+        const { execFile } = await import('child_process');
+        const { promisify } = await import('util');
+        const exec = promisify(execFile);
+        const { stdout } = await exec('df', ['-k', '--output=avail', dir]);
+        const lines = stdout.trim().split('\n');
+        const availKb = parseInt(lines[lines.length - 1].trim(), 10);
+        const availBytes = availKb * 1024;
+        if (availBytes < MIN_FREE_BYTES) {
+            throw new Error(`Insufficient disk space: ${Math.round(availBytes / 1024 / 1024)}MB free, need at least ${Math.round(MIN_FREE_BYTES / 1024 / 1024)}MB`);
+        }
+    } catch (e) {
+        if (e.message.startsWith('Insufficient')) throw e;
+        // df unavailable (Windows dev) — skip check
+    }
+}
+
 // Cleanup helper: removes a temp directory after successful render
 async function cleanupTempDir(dirPath) {
     try {
@@ -498,13 +518,17 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         const jobName = outputPath.split(/[\\/]/).pop().split('.')[0] || hash.substring(0, 8);
         const progressBar = multibar.create(100, 0, { jobId: jobName, phase: 'Bundling' });
 
-        // Acquire lock and perform bundling
-        bundleLocation = await (bundleLock = bundleLock.then(async () => {
+        // Fail fast if disk is nearly full before burning a bundle slot.
+        await checkDiskSpace(tempDir);
+
+        // Acquire lock and perform bundling.
+        // IMPORTANT: split the chain so a bundle failure resets the lock for the
+        // next caller instead of leaving bundleLock permanently rejected.
+        const bundleWork = bundleLock.then(async () => {
             // Check for cached bundle info
             try {
                 const bundleInfo = JSON.parse(await fs.readFile(bundleInfoPath, 'utf-8'));
                 await fs.access(bundleInfo.location);
-                // console.log('   📦 Using cached bundle');
                 progressBar.update(100, { phase: 'Cached Bundle' });
                 if (onProgress) onProgress({ phase: 'bundling', progress: 30 });
                 return bundleInfo.location;
@@ -512,13 +536,12 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                 // Not cached or invalid, proceed to bundle
             }
 
-            // console.log('   📦 Bundling Remotion project...');
             const publicDir = join(__dirname, '../../../public');
             const loc = await withTimeout(
                 bundle({
                     entryPoint: entryPath,
                     publicDir: publicDir,
-                    outDir: join(LOCAL_REMOTION_TMP, `bundle-${hash.substring(0, 8)}`), // Explicit outDir
+                    outDir: join(LOCAL_REMOTION_TMP, `bundle-${hash.substring(0, 8)}`),
                     onProgress: (progress) => {
                         const pct = Math.round(progress * 100);
                         progressBar.update(pct, { phase: 'Bundling' });
@@ -527,13 +550,15 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                         }
                     },
                 }),
-                90_000, // 90s bundle timeout
+                90_000,
                 'bundling'
             );
-            // Cache the bundle info
             await fs.writeFile(bundleInfoPath, JSON.stringify({ location: loc }), 'utf-8');
             return loc;
-        }));
+        });
+        // Reset the lock regardless of success/failure so the next render isn't blocked.
+        bundleLock = bundleWork.catch(() => {});
+        bundleLocation = await bundleWork;
 
         // console.log('   🎥 Selecting composition...');
         progressBar.update(0, { phase: 'Selecting Composition' });

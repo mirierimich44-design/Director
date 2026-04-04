@@ -119,10 +119,15 @@ const MAX_JOBS_IN_MAP = 200;
 
 function pruneRenderJobs() {
     if (renderJobs.size <= MAX_JOBS_IN_MAP) return;
-    // Evict oldest completed/errored jobs first
+    const now = Date.now();
+    // Evict: finished jobs first, then stuck processing jobs older than retention window
     const entries = [...renderJobs.entries()]
-        .filter(([, j]) => j.status === 'completed' || j.status === 'error' || j.status === 'fallback')
-        .sort((a, b) => a[1].startTime - b[1].startTime);
+        .filter(([, j]) => {
+            const done = j.status === 'completed' || j.status === 'error' || j.status === 'fallback';
+            const stale = (now - (j.startTime || 0)) > MAX_JOB_RETENTION_MS;
+            return done || stale;
+        })
+        .sort((a, b) => (a[1].startTime || 0) - (b[1].startTime || 0));
     const toDelete = entries.slice(0, renderJobs.size - MAX_JOBS_IN_MAP);
     toDelete.forEach(([id]) => renderJobs.delete(id));
 }
@@ -965,20 +970,26 @@ app.get('/api/render-progress/:jobId', (req, res) => {
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    const send = (data) => res.write(`data: ${JSON.stringify(data)}\n\n`);
-    const job = renderJobs.get(req.params.jobId);
+    let closed = false;
+    const send = (data) => {
+        if (closed) return;
+        try { res.write(`data: ${JSON.stringify(data)}\n\n`); } catch (_) { closed = true; }
+    };
+    const finish = (interval) => { closed = true; clearInterval(interval); res.end(); };
 
+    const job = renderJobs.get(req.params.jobId);
     if (!job) { send({ status: 'error', error: 'Job not found' }); return res.end(); }
     if (job.status === 'completed' || job.status === 'error') { send(job); return res.end(); }
 
     const interval = setInterval(() => {
+        if (closed) return clearInterval(interval);
         const j = renderJobs.get(req.params.jobId);
-        if (!j) { clearInterval(interval); return res.end(); }
+        if (!j) return finish(interval);
         send(j);
-        if (j.status === 'completed' || j.status === 'error') { clearInterval(interval); res.end(); }
+        if (j.status === 'completed' || j.status === 'error') finish(interval);
     }, 1000);
 
-    req.on('close', () => clearInterval(interval));
+    req.on('close', () => { closed = true; clearInterval(interval); });
 });
 
 app.get('/api/job-status/:jobId', (req, res) => {

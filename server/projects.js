@@ -123,7 +123,10 @@ export function listProjects() {
           chapterCount: data.chapters.length,
           lockedChapters: data.chapters.filter(c => c.status === 'locked').length,
         }
-      } catch { return null }
+      } catch (e) {
+        console.error(`❌ Failed to load project file ${f}:`, e.message)
+        return null
+      }
     })
     .filter(Boolean)
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
@@ -165,52 +168,61 @@ export function deleteProject(id) {
 // ─────────────────────────────────────────────
 // Chapter management
 // ─────────────────────────────────────────────
-export function addChapter(projectId, title, scriptText, scenes = []) {
-  const project = loadProject(projectId)
-  if (!project) throw new Error('Project not found')
+export async function addChapter(projectId, title, scriptText, scenes = []) {
+  const release = await acquireProjectLock(projectId)
+  try {
+    const project = loadProject(projectId)
+    if (!project) throw new Error('Project not found')
 
-  // Calculate scene offset (continue numbering from previous chapters)
-  const sceneOffset = project.chapters.reduce((sum, ch) => sum + ch.scenes.length, 0)
+    const sceneOffset = project.chapters.reduce((sum, ch) => sum + ch.scenes.length, 0)
+    const chapter = createChapterData(title, scriptText, sceneOffset)
 
-  const chapter = createChapterData(title, scriptText, sceneOffset)
+    chapter.scenes = scenes.map((scene, i) => ({
+      ...scene,
+      globalIndex: sceneOffset + i + 1,
+      chapterIndex: i + 1,
+      status: 'pending',
+      flag: null,
+      notes: '',
+      renderedAt: null,
+      editHistory: scene.editHistory || [],
+    }))
 
-  // Number scenes continuously
-  chapter.scenes = scenes.map((scene, i) => ({
-    ...scene,
-    globalIndex: sceneOffset + i + 1,
-    chapterIndex: i + 1,
-    status: 'pending',          // pending | rendered | flagged | locked
-    flag: null,                 // null | 'needs-fix' | 'needs-review' | 'approved'
-    notes: '',
-    renderedAt: null,
-    editHistory: scene.editHistory || [],
-  }))
+    project.chapters.push(chapter)
+    saveProject(project)
 
-  project.chapters.push(chapter)
-  saveProject(project)
-
-  console.log(`📁 Chapter "${title}" added to project "${project.name}" — ${chapter.scenes.length} scenes (${sceneOffset + 1}-${sceneOffset + chapter.scenes.length})`)
-  return { project, chapter }
+    console.log(`📁 Chapter "${title}" added to project "${project.name}" — ${chapter.scenes.length} scenes (${sceneOffset + 1}-${sceneOffset + chapter.scenes.length})`)
+    return { project, chapter }
+  } finally {
+    release()
+  }
 }
 
-export function updateChapter(projectId, chapterId, updates) {
-  const project = loadProject(projectId)
-  if (!project) throw new Error('Project not found')
+export async function updateChapter(projectId, chapterId, updates) {
+  const release = await acquireProjectLock(projectId)
+  try {
+    const project = loadProject(projectId)
+    if (!project) throw new Error('Project not found')
 
-  const chapter = project.chapters.find(c => c.id === chapterId)
-  if (!chapter) throw new Error('Chapter not found')
+    const chapter = project.chapters.find(c => c.id === chapterId)
+    if (!chapter) throw new Error('Chapter not found')
 
-  if (updates.title              !== undefined) chapter.title              = updates.title
-  if (updates.status             !== undefined) chapter.status             = updates.status
-  if (updates.notes              !== undefined) chapter.notes              = updates.notes
-  if (updates.assembledVideoUrl  !== undefined) chapter.assembledVideoUrl  = updates.assembledVideoUrl
-  chapter.updatedAt = new Date().toISOString()
+    if (updates.title              !== undefined) chapter.title              = updates.title
+    if (updates.status             !== undefined) chapter.status             = updates.status
+    if (updates.notes              !== undefined) chapter.notes              = updates.notes
+    if (updates.assembledVideoUrl  !== undefined) chapter.assembledVideoUrl  = updates.assembledVideoUrl
+    chapter.updatedAt = new Date().toISOString()
 
-  saveProject(project)
-  return { project, chapter }
+    saveProject(project)
+    return { project, chapter }
+  } finally {
+    release()
+  }
 }
 
-export function updateChapterScenes(projectId, chapterId, scenes) {
+export async function updateChapterScenes(projectId, chapterId, scenes) {
+  const release = await acquireProjectLock(projectId)
+  try {
   const project = loadProject(projectId)
   if (!project) throw new Error('Project not found')
 
@@ -259,9 +271,14 @@ export function updateChapterScenes(projectId, chapterId, scenes) {
 
   saveProject(project)
   return { project, chapter }
+  } finally {
+    release()
+  }
 }
 
-export function deleteChapter(projectId, chapterId) {
+export async function deleteChapter(projectId, chapterId) {
+  const release = await acquireProjectLock(projectId)
+  try {
   const project = loadProject(projectId)
   if (!project) throw new Error('Project not found')
 
@@ -282,6 +299,9 @@ export function deleteChapter(projectId, chapterId) {
 
   saveProject(project)
   return project
+  } finally {
+    release()
+  }
 }
 
 // ─────────────────────────────────────────────
