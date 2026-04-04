@@ -302,6 +302,60 @@ async function syntaxPreCheck(tsxCode) {
     }
 }
 
+/**
+ * Surgical Gemini syntax fixer.
+ * Shows Gemini only the broken lines (±10 context), asks it to return
+ * only those lines fixed. We then splice the fix back in.
+ * This prevents Gemini from modifying unrelated code.
+ */
+async function geminiSyntaxFix(fullCode, preCheck) {
+    try {
+        const { GoogleGenerativeAI } = await import('@google/generative-ai');
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+        const lines = fullCode.split('\n');
+        const errorLine = preCheck.line || 1;
+        const CONTEXT = 10;
+        const startLine = Math.max(1, errorLine - CONTEXT);
+        const endLine = Math.min(lines.length, errorLine + CONTEXT);
+
+        const snippet = lines.slice(startLine - 1, endLine).map((l, i) =>
+            `${startLine + i}| ${l}`
+        ).join('\n');
+
+        const prompt = `You are a TypeScript/TSX syntax fixer. Fix ONLY the syntax error described below.
+Return ONLY the fixed lines (no line numbers, no explanation, no markdown fences).
+The output must have exactly ${endLine - startLine + 1} lines.
+Do NOT change any logic, variable names, or lines outside the error.
+
+ERROR: ${preCheck.error}
+ERROR IS ON LINE: ${errorLine}
+
+LINES TO FIX (with line numbers for reference only — do not include them in output):
+${snippet}`;
+
+        const result = await model.generateContent(prompt);
+        const fixedSnippet = result.response.text().trim();
+        const fixedLines = fixedSnippet.split('\n');
+
+        if (fixedLines.length !== endLine - startLine + 1) {
+            console.log(`   ⚠️ Gemini returned ${fixedLines.length} lines, expected ${endLine - startLine + 1} — skipping splice`);
+            return null;
+        }
+
+        const newLines = [
+            ...lines.slice(0, startLine - 1),
+            ...fixedLines,
+            ...lines.slice(endLine),
+        ];
+        return newLines.join('\n');
+    } catch (e) {
+        console.warn(`   ⚠️ geminiSyntaxFix error: ${e.message}`);
+        return null;
+    }
+}
+
 // Calculate MD5 hash of content
 const calculateHash = (content) => {
     return createHash('md5').update(content).digest('hex');
@@ -470,10 +524,20 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                 }
             }
 
-        // Re-check after fix attempt
+        // Re-check after built-in fix attempt
         const recheck = await syntaxPreCheck(wrappedCode);
         if (!recheck.valid) {
-            console.log(`   ❌ Syntax still broken after fix attempt. Passing to render for retry loop.`);
+            console.log(`   ❌ Built-in fixers failed. Attempting Gemini surgical fix...`);
+            const geminiFixed = await geminiSyntaxFix(wrappedCode, recheck);
+            if (geminiFixed) {
+                const geminiCheck = await syntaxPreCheck(geminiFixed);
+                if (geminiCheck.valid) {
+                    console.log(`   ✅ Gemini fix succeeded`);
+                    wrappedCode = geminiFixed;
+                } else {
+                    console.log(`   ❌ Gemini fix did not resolve syntax. Passing to bundler.`);
+                }
+            }
         } else {
             console.log(`   ✅ Syntax pre-check passed after fix`);
         }
