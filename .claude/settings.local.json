@@ -41,7 +41,12 @@
       "Bash(wc -l \"C:/Users/MICH/Desktop/Code Files/director/server\"/*.js)",
       "Bash(where gh:*)",
       "Bash(cd /c/Users/MICH/Desktop/\"Code Files\"/director)",
-      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director' -type f -name *154* -o -name *earnings*)"
+      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director' -type f -name *154* -o -name *earnings*)",
+      "Bash(ls \"C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director\\\\server\\\\templates\"\" | grep -E \"15[0-9]- \")",
+      "Bash(python3 -c \":*)",
+      "Bash(grep -l \"152-asset-comparison-slope\\\\|161-annotation-callout\" \"/c/Users/MICH/Desktop/Code Files/director/server/projects/\"*.json)",
+      "Bash(grep -l \"152-asset\\\\|161-annotation\" \"/c/Users/MICH/Desktop/Code Files/director/server/projects/\"*.json)",
+      "Bash(grep -rl \"asset-comparison\\\\|annotation-callout\" '/c/Users/MICH/Desktop/Code Files/director/server/' --include=*.json)"
     ]
   }
 }
