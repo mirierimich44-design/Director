@@ -504,13 +504,24 @@ OUTPUT FORMAT (strict JSON array only):
 // ─────────────────────────────────────────────
 // Pass 2: The Focused Filler (Worker)
 // ─────────────────────────────────────────────
-export async function fillSceneFields(scene, templateName) {
+export async function fillSceneFields(scene, templateName, priorityFields = null) {
   const schema = loadSchema(templateName)
   if (!schema) return {}
 
-  const fieldList = Object.entries(schema.fields || {})
+  const allEntries = Object.entries(schema.fields || {})
+  // On retry, only send the fields that were unfilled — reduces noise for Gemini
+  const schemaEntries = priorityFields
+    ? allEntries.filter(([name]) => priorityFields.includes(name))
+    : allEntries
+  const fieldList = schemaEntries
     .map(([name, desc]) => `- ${name}: ${desc}`)
     .join('\n')
+
+  // Build an example output block using the exact key names so Gemini
+  // never invents shortened variants like STAT_VAL instead of STAT_VALUE_1.
+  const exampleOutput = '{' + schemaEntries
+    .map(([name]) => `"${name}": "..."`)
+    .join(', ') + '}'
 
   const systemPrompt = `You are an expert data extractor. Extract values from the script to fill the fields for the template "${templateName}".
 
@@ -518,12 +529,13 @@ FIELDS TO FILL:
 ${fieldList}
 
 RULES:
+- Your JSON keys MUST match the field names EXACTLY as shown above — do not abbreviate or rename them.
 - Use ALL CAPS for labels, max 3 words.
 - Keep units ($4.5B, 44%).
 - If a field is not in the script, infer a logical value. Do not leave blank.
 
-OUTPUT FORMAT (JSON object only):
-{ "FIELD_NAME": "value", ... }`
+OUTPUT FORMAT (JSON object only, keys must be exact):
+${exampleOutput}`
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
@@ -613,12 +625,37 @@ export async function generateScenes(scriptText, generationSettings = null) {
 
       // --- PASS 2: FIELD FILLING ---
       try {
-        scene.content = await fillSceneFields(scene, templateName)
         const schema = loadSchema(templateName)
-        if (schema?.fields) scene.content = fuzzyMapFields(scene.content, schema.fields)
-        
-        // Final TSX generation
-        scene.code = fillTemplate(templateName, scene.theme, scene.content)
+
+        // Attempt field fill — retry once if too many placeholders survive
+        let content = await fillSceneFields(scene, templateName)
+        if (schema?.fields) content = fuzzyMapFields(content, schema.fields)
+
+        // Post-fill validation: count unfilled schema placeholders in generated code
+        const candidateCode = fillTemplate(templateName, scene.theme, content)
+        const schemaKeys = schema?.fields ? Object.keys(schema.fields) : []
+        const unfilled = schemaKeys.filter(k => candidateCode.includes(`'${k}'`) || candidateCode.includes(`"${k}"`))
+
+        if (unfilled.length > 0) {
+          console.warn(`   ⚠️ Scene ${scene.index}: ${unfilled.length} unfilled placeholders after Pass 2 [${unfilled.slice(0, 3).join(', ')}${unfilled.length > 3 ? '...' : ''}] — retrying field fill`)
+          // Retry: fresh Gemini call, same template, unfilled fields highlighted in prompt
+          const retryContent = await fillSceneFields(scene, templateName, unfilled)
+          const merged = { ...content, ...retryContent }
+          const remapped = schema?.fields ? fuzzyMapFields(merged, schema.fields) : merged
+          const retryCode = fillTemplate(templateName, scene.theme, remapped)
+          const stillUnfilled = schemaKeys.filter(k => retryCode.includes(`'${k}'`) || retryCode.includes(`"${k}"`))
+          if (stillUnfilled.length < unfilled.length) {
+            content = remapped
+            scene.code = retryCode
+            console.log(`   ✅ Scene ${scene.index}: retry reduced unfilled from ${unfilled.length} → ${stillUnfilled.length}`)
+          } else {
+            scene.code = candidateCode
+          }
+        } else {
+          scene.code = candidateCode
+        }
+
+        scene.content = content
         console.log(`   🎨 Scene ${scene.index}: ${templateName} [${scene.theme}] filled`)
       } catch (err) {
         console.error(`   ❌ Scene ${scene.index} failed:`, err.message)

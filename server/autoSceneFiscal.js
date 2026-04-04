@@ -230,13 +230,21 @@ OUTPUT FORMAT (strict JSON array only):
 // ─────────────────────────────────────────────
 // Pass 2: The Focused Filler (Worker)
 // ─────────────────────────────────────────────
-async function fillSceneFields(scene, templateName) {
+async function fillSceneFields(scene, templateName, priorityFields = null) {
   const schema = loadSchema(templateName)
   if (!schema) return {}
 
-  const fieldList = Object.entries(schema.fields || {})
+  const allEntries = Object.entries(schema.fields || {})
+  const schemaEntries = priorityFields
+    ? allEntries.filter(([name]) => priorityFields.includes(name))
+    : allEntries
+  const fieldList = schemaEntries
     .map(([name, desc]) => `- ${name}: ${desc}`)
     .join('\n')
+
+  const exampleOutput = '{' + schemaEntries
+    .map(([name]) => `"${name}": "..."`)
+    .join(', ') + '}'
 
   const systemPrompt = `Extract values from the script to fill the fields for the template "${templateName}".
 
@@ -244,12 +252,13 @@ FIELDS TO FILL:
 ${fieldList}
 
 RULES:
+- Your JSON keys MUST match the field names EXACTLY as shown above — do not abbreviate or rename them.
 - ALL CAPS labels, max 3 words.
 - Keep units ($4.5B).
 - If a field is missing, infer logically.
 
-OUTPUT FORMAT (JSON object only):
-{ "FIELD_NAME": "value", ... }`
+OUTPUT FORMAT (JSON object only, keys must be exact):
+${exampleOutput}`
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
@@ -430,10 +439,28 @@ export async function generateScenes(scriptText, generationSettings = null) {
       console.log(`   🛠️ Scene ${scene.index}: ${scene.category} → ${templateName}`)
 
       try {
-        scene.content = await fillSceneFields(scene, templateName)
         const schema = loadSchema(templateName)
-        if (schema?.fields) scene.content = fuzzyMapFields(scene.content, schema.fields)
-        scene.code = fillTemplate(templateName, scene.theme, scene.content)
+        let content = await fillSceneFields(scene, templateName)
+        if (schema?.fields) content = fuzzyMapFields(content, schema.fields)
+
+        const candidateCode = fillTemplate(templateName, scene.theme, content)
+        const schemaKeys = schema?.fields ? Object.keys(schema.fields) : []
+        const unfilled = schemaKeys.filter(k => candidateCode.includes(`'${k}'`) || candidateCode.includes(`"${k}"`))
+
+        if (unfilled.length > 0) {
+          console.warn(`   ⚠️ Scene ${scene.index}: ${unfilled.length} unfilled placeholders — retrying`)
+          const retryContent = await fillSceneFields(scene, templateName, unfilled)
+          const merged = { ...content, ...retryContent }
+          const remapped = schema?.fields ? fuzzyMapFields(merged, schema.fields) : merged
+          const retryCode = fillTemplate(templateName, scene.theme, remapped)
+          const stillUnfilled = schemaKeys.filter(k => retryCode.includes(`'${k}'`) || retryCode.includes(`"${k}"`))
+          content = remapped
+          scene.code = stillUnfilled.length < unfilled.length ? retryCode : candidateCode
+        } else {
+          scene.code = candidateCode
+        }
+
+        scene.content = content
       } catch (err) { scene.error = err.message }
     } else {
       console.log(`   🎨 Scene ${scene.index}: Generating Editorial Illustration prompt...`)

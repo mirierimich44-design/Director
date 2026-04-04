@@ -104,10 +104,17 @@ export function fuzzyMapFields(userValues, schemaFields) {
       }
     }
 
-    if (bestKey && bestScore >= 0.35) {
+    if (bestKey && bestScore >= 0.15) {
+      // Confident-enough fuzzy match — use schema key
+      mapped[bestKey] = val
+      claimedSchema.add(bestKey)
+    } else if (bestKey && availableSchema.length > 0) {
+      // No keyword overlap at all, but there's an unclaimed schema slot — map to it
+      // so the template gets a value rather than leaving a literal placeholder.
       mapped[bestKey] = val
       claimedSchema.add(bestKey)
     } else {
+      // Pass through with original key (fillTemplate will ignore it harmlessly)
       mapped[userKey] = val
     }
   }
