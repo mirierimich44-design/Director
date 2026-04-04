@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import { join, basename, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 
