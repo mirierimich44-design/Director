@@ -8,14 +8,41 @@ NGINX_CONF="/etc/nginx/nginx.conf"
 SITE_CONF="/etc/nginx/sites-available/director"
 SITE_LINK="/etc/nginx/sites-enabled/director"
 
-echo "==> Setting client_max_body_size in $NGINX_CONF"
+echo "==> Writing clean nginx.conf"
 
-# Remove any previous broken attempts first
-sudo sed -i '/client_max_body_size/d' "$NGINX_CONF"
-sudo sed -i '/^\.\.\./d' "$NGINX_CONF"
+sudo tee "$NGINX_CONF" > /dev/null << 'EOF'
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
 
-# Insert client_max_body_size after the http { line
-sudo sed -i 's|http {|http {\n    client_max_body_size 200M;|' "$NGINX_CONF"
+events {
+    worker_connections 768;
+    multi_accept on;
+}
+
+http {
+    client_max_body_size 200M;
+
+    sendfile on;
+    tcp_nopush on;
+    types_hash_max_size 2048;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    gzip on;
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+EOF
 
 echo "==> Writing Director site config to $SITE_CONF"
 
