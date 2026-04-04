@@ -3,7 +3,7 @@ import {
     Box, Typography, Grid, Card, CardActionArea,
     Button, TextField, CircularProgress, Alert, IconButton,
     Stack, Paper, LinearProgress, MenuItem, Select,
-    FormControl, InputLabel, Tooltip, InputAdornment, Chip
+    FormControl, InputLabel, Tooltip, InputAdornment, Chip, Divider
 } from '@mui/material';
 import {
     Movie as MovieIcon,
@@ -56,13 +56,19 @@ const SceneStudioView: React.FC = () => {
     const [themes, setThemes] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Step 1
     const [script, setScript] = useState('');
     const [search, setSearch] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
     const [selectedTheme, setSelectedTheme] = useState('THREAT');
 
+    // Step 2 — AI-filled fields (editable)
+    const [analyzing, setAnalyzing] = useState(false);
+    const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+    const [fieldValues, setFieldValues] = useState<Record<string, string> | null>(null);
+
+    // Step 3 — Render
     const [renderJob, setRenderJob] = useState<RenderJob | null>(null);
-    const [extractedFields, setExtractedFields] = useState<Record<string, string> | null>(null);
     const [renderHistory, setRenderHistory] = useState<{ job: RenderJob; template: string; theme: string }[]>([]);
 
     const evtSrcRef = useRef<EventSource | null>(null);
@@ -86,6 +92,14 @@ const SceneStudioView: React.FC = () => {
 
     useEffect(() => () => { evtSrcRef.current?.close(); }, []);
 
+    // Selecting a new template clears previous analysis
+    const handleSelectTemplate = (t: Template) => {
+        setSelectedTemplate(prev => prev?.id === t.id ? null : t);
+        setFieldValues(null);
+        setAnalyzeError(null);
+        setRenderJob(null);
+    };
+
     const filteredTemplates = templates.filter(t => {
         if (!search) return true;
         const q = search.toLowerCase();
@@ -93,23 +107,46 @@ const SceneStudioView: React.FC = () => {
             t.category.toLowerCase().includes(q) || (t.tags || []).some(tag => tag.toLowerCase().includes(q));
     });
 
-    const handleGenerate = async () => {
+    // Step 2: Ask Gemini to analyze + fill fields
+    const handleAnalyze = async () => {
         if (!script.trim() || !selectedTemplate) return;
+        setAnalyzing(true);
+        setAnalyzeError(null);
+        setFieldValues(null);
+        setRenderJob(null);
+
+        try {
+            const res = await fetch('/api/scene-studio/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ script, templateId: selectedTemplate.id })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setFieldValues(data.content);
+        } catch (err: any) {
+            setAnalyzeError(err.message);
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
+    // Step 3: Render with (possibly edited) field values
+    const handleGenerate = async () => {
+        if (!selectedTemplate || !fieldValues) return;
 
         evtSrcRef.current?.close();
-        setRenderJob({ id: 'init', status: 'processing', progress: 0, message: 'Asking AI to extract fields...' });
-        setExtractedFields(null);
+        setRenderJob({ id: 'init', status: 'processing', progress: 0, message: 'Starting render...' });
 
         try {
             const res = await fetch('/api/scene-studio/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ script, templateId: selectedTemplate.id, theme: selectedTheme })
+                body: JSON.stringify({ templateId: selectedTemplate.id, theme: selectedTheme, content: fieldValues })
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
 
-            setExtractedFields(data.content || null);
             setRenderJob({ id: data.jobId, status: 'processing', progress: 0, message: 'Render started...' });
 
             const evtSrc = new EventSource(`/api/render-progress/${data.jobId}`);
@@ -132,13 +169,13 @@ const SceneStudioView: React.FC = () => {
                 evtSrc.close();
                 setRenderJob(prev => prev ? { ...prev, status: 'error', error: 'Connection lost' } : null);
             };
-
         } catch (err: any) {
             setRenderJob({ id: 'err', status: 'error', progress: 0, message: 'Failed', error: err.message });
         }
     };
 
-    const canGenerate = script.trim().length > 0 && selectedTemplate !== null && renderJob?.status !== 'processing';
+    const canAnalyze = script.trim().length > 0 && selectedTemplate !== null && !analyzing;
+    const canGenerate = fieldValues !== null && renderJob?.status !== 'processing';
 
     if (loading) return (
         <Box sx={{ p: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -148,18 +185,17 @@ const SceneStudioView: React.FC = () => {
 
     return (
         <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
-            {/* Header */}
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', mb: 0.5 }}>
                     SCENE STUDIO
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
-                    Paste your script, pick a template, and let AI generate the scene.
+                    Paste your script, pick a template — Gemini fills the data, you hit Generate.
                 </Typography>
             </Box>
 
             <Grid container spacing={3}>
-                {/* ── LEFT COLUMN: Script + Template Picker ── */}
+                {/* ── LEFT: Script + Template ── */}
                 <Grid size={{ xs: 12, lg: 7 }}>
 
                     {/* Step 1: Script */}
@@ -170,15 +206,15 @@ const SceneStudioView: React.FC = () => {
                         <TextField
                             fullWidth
                             multiline
-                            minRows={4}
-                            maxRows={8}
-                            placeholder={`Paste your script lines here...\n\n"Can you think of any reason that China would target your little community?" "That's the exact question I had for the FBI when they visited me on that first day," Lawler said.`}
+                            minRows={3}
+                            maxRows={7}
+                            placeholder={`Paste your script lines here...\n\n"Can you think of any reason that China would target your little community?"`}
                             value={script}
-                            onChange={e => setScript(e.target.value)}
+                            onChange={e => { setScript(e.target.value); setFieldValues(null); setAnalyzeError(null); }}
                             InputProps={{
                                 endAdornment: script ? (
                                     <InputAdornment position="end" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                                        <IconButton size="small" onClick={() => setScript('')} sx={{ color: '#666' }}>
+                                        <IconButton size="small" onClick={() => { setScript(''); setFieldValues(null); }} sx={{ color: '#666' }}>
                                             <ClearIcon fontSize="small" />
                                         </IconButton>
                                     </InputAdornment>
@@ -186,10 +222,8 @@ const SceneStudioView: React.FC = () => {
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    bgcolor: 'rgba(255,255,255,0.02)',
-                                    color: '#fff',
-                                    fontSize: '0.95rem',
-                                    lineHeight: 1.6,
+                                    bgcolor: 'rgba(255,255,255,0.02)', color: '#fff',
+                                    fontSize: '0.95rem', lineHeight: 1.6,
                                     '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
                                     '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
                                     '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' }
@@ -199,13 +233,13 @@ const SceneStudioView: React.FC = () => {
                         />
                     </Paper>
 
-                    {/* Step 2: Template + Theme */}
+                    {/* Step 2: Template + Theme + Analyze */}
                     <Paper sx={{ p: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                             <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2 }}>
                                 2 — SELECT TEMPLATE
                             </Typography>
-                            <FormControl size="small" sx={{ minWidth: 160 }}>
+                            <FormControl size="small" sx={{ minWidth: 150 }}>
                                 <InputLabel sx={{ color: '#888', fontSize: '0.8rem' }}>Theme</InputLabel>
                                 <Select
                                     value={selectedTheme}
@@ -224,9 +258,8 @@ const SceneStudioView: React.FC = () => {
                         </Box>
 
                         <TextField
-                            fullWidth
-                            size="small"
-                            placeholder="Search templates by name, category, or tag..."
+                            fullWidth size="small"
+                            placeholder="Search by name, category, tag..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             InputProps={{
@@ -250,7 +283,7 @@ const SceneStudioView: React.FC = () => {
                             }}
                         />
 
-                        <Box sx={{ maxHeight: 340, overflow: 'auto', pr: 0.5 }}>
+                        <Box sx={{ maxHeight: 300, overflow: 'auto', pr: 0.5, mb: 2 }}>
                             <Grid container spacing={1.5}>
                                 {filteredTemplates.map(t => {
                                     const isSelected = selectedTemplate?.id === t.id;
@@ -260,81 +293,120 @@ const SceneStudioView: React.FC = () => {
                                             <Card sx={{
                                                 bgcolor: isSelected ? 'rgba(201,169,97,0.12)' : 'rgba(255,255,255,0.02)',
                                                 border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)'}`,
-                                                borderRadius: 2,
-                                                transition: 'all 0.15s',
-                                                '&:hover': { border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'rgba(255,255,255,0.2)'}` }
+                                                borderRadius: 2, transition: 'all 0.15s',
+                                                '&:hover': { border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'rgba(255,255,255,0.18)'}` }
                                             }}>
-                                                <CardActionArea onClick={() => setSelectedTemplate(isSelected ? null : t)} sx={{ p: 1.5 }}>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                                                <CardActionArea onClick={() => handleSelectTemplate(t)} sx={{ p: 1.5 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.3 }}>
                                                         <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: catColor, flexShrink: 0 }} />
-                                                        <Typography variant="caption" sx={{ color: catColor, fontFamily: 'monospace', fontSize: '0.6rem', lineHeight: 1 }}>{t.category}</Typography>
+                                                        <Typography variant="caption" sx={{ color: catColor, fontFamily: 'monospace', fontSize: '0.6rem' }}>{t.category}</Typography>
                                                     </Box>
-                                                    <Typography variant="caption" sx={{ color: '#888', fontFamily: 'monospace', fontSize: '0.6rem', display: 'block' }}>{t.id}</Typography>
-                                                    <Typography variant="body2" sx={{ color: '#fff', fontWeight: 'bold', fontSize: '0.72rem', mt: 0.3, lineHeight: 1.3 }}>{t.name}</Typography>
+                                                    <Typography variant="caption" sx={{ color: '#777', fontFamily: 'monospace', fontSize: '0.58rem', display: 'block' }}>{t.id}</Typography>
+                                                    <Typography variant="body2" sx={{ color: '#fff', fontWeight: 'bold', fontSize: '0.72rem', mt: 0.2, lineHeight: 1.3 }}>{t.name}</Typography>
                                                 </CardActionArea>
                                             </Card>
                                         </Grid>
                                     );
                                 })}
+                                {filteredTemplates.length === 0 && (
+                                    <Grid size={{ xs: 12 }}>
+                                        <Typography variant="body2" sx={{ color: '#555', textAlign: 'center', py: 3 }}>No templates match "{search}"</Typography>
+                                    </Grid>
+                                )}
                             </Grid>
-                            {filteredTemplates.length === 0 && (
-                                <Typography variant="body2" sx={{ color: '#555', textAlign: 'center', py: 4 }}>No templates match "{search}"</Typography>
-                            )}
                         </Box>
 
-                        {selectedTemplate && (
-                            <Box sx={{ mt: 2, p: 1.5, bgcolor: 'rgba(201,169,97,0.06)', borderRadius: 2, border: '1px solid rgba(201,169,97,0.2)' }}>
-                                <Typography variant="caption" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', display: 'block', mb: 0.5 }}>
-                                    {selectedTemplate.name}
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: '#aaa', display: 'block', mb: 1 }}>
-                                    {selectedTemplate.description}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                                    {selectedTemplate.fields.map(f => (
-                                        <Chip key={f} label={f} size="small" sx={{ height: 18, fontSize: '0.6rem', bgcolor: 'rgba(255,255,255,0.05)', color: '#aaa', '& .MuiChip-label': { px: 1 } }} />
-                                    ))}
-                                </Box>
-                            </Box>
+                        {/* Analyze button */}
+                        <Button
+                            fullWidth variant="outlined" size="large"
+                            startIcon={analyzing ? <CircularProgress size={18} color="inherit" /> : <AIIcon />}
+                            disabled={!canAnalyze}
+                            onClick={handleAnalyze}
+                            sx={{
+                                borderColor: canAnalyze ? 'var(--accent-gold)' : 'rgba(255,255,255,0.08)',
+                                color: canAnalyze ? 'var(--accent-gold)' : '#444',
+                                fontWeight: 'bold', letterSpacing: 1,
+                                '&:hover': { bgcolor: 'rgba(201,169,97,0.08)', borderColor: 'var(--accent-gold)' },
+                                '&.Mui-disabled': { borderColor: 'rgba(255,255,255,0.05)', color: '#444' }
+                            }}
+                        >
+                            {analyzing ? 'ANALYZING...' : 'ANALYZE WITH GEMINI'}
+                        </Button>
+
+                        {analyzeError && (
+                            <Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)', fontSize: '0.8rem' }}>
+                                {analyzeError}
+                            </Alert>
                         )}
 
-                        {/* Generate Button */}
-                        <Box sx={{ mt: 3 }}>
+                        {!script.trim() && !selectedTemplate && (
+                            <Typography variant="caption" sx={{ color: '#444', display: 'block', textAlign: 'center', mt: 1 }}>
+                                Paste a script and select a template to enable analysis
+                            </Typography>
+                        )}
+                    </Paper>
+
+                    {/* Step 3: AI-filled fields (editable) + Generate */}
+                    {fieldValues && (
+                        <Paper sx={{ p: 3, mt: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid rgba(201,169,97,0.25)' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5 }}>
+                                <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2 }}>
+                                    3 — REVIEW & GENERATE
+                                </Typography>
+                                <Chip
+                                    icon={<AIIcon sx={{ fontSize: '14px !important' }} />}
+                                    label="Filled by Gemini"
+                                    size="small"
+                                    sx={{ bgcolor: 'rgba(201,169,97,0.1)', color: 'var(--accent-gold)', border: '1px solid rgba(201,169,97,0.3)', fontSize: '0.65rem' }}
+                                />
+                            </Box>
+
+                            <Grid container spacing={2} sx={{ mb: 3 }}>
+                                {Object.entries(fieldValues).map(([key, val]) => (
+                                    <Grid size={{ xs: 12, md: 6 }} key={key}>
+                                        <TextField
+                                            fullWidth size="small" label={key}
+                                            value={val}
+                                            onChange={e => setFieldValues(prev => prev ? { ...prev, [key]: e.target.value } : prev)}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    bgcolor: 'rgba(255,255,255,0.03)', color: '#fff',
+                                                    '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
+                                                    '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+                                                    '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' }
+                                                },
+                                                '& .MuiInputLabel-root': { color: '#666', fontSize: '0.75rem' },
+                                                '& .MuiInputLabel-root.Mui-focused': { color: 'var(--accent-gold)' }
+                                            }}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+
+                            <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)', mb: 3 }} />
+
                             <Button
-                                fullWidth
-                                variant="contained"
-                                size="large"
-                                startIcon={renderJob?.status === 'processing'
-                                    ? <CircularProgress size={18} color="inherit" />
-                                    : <AIIcon />}
+                                fullWidth variant="contained" size="large"
+                                startIcon={renderJob?.status === 'processing' ? <CircularProgress size={18} color="inherit" /> : <RenderIcon />}
                                 disabled={!canGenerate}
                                 onClick={handleGenerate}
                                 sx={{
                                     bgcolor: canGenerate ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)',
                                     color: canGenerate ? '#000' : '#444',
-                                    fontWeight: 'bold',
-                                    fontSize: '0.9rem',
-                                    letterSpacing: 1,
-                                    py: 1.5,
+                                    fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: 1, py: 1.5,
                                     '&:hover': { bgcolor: canGenerate ? '#fff' : undefined },
                                     '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.05)', color: '#444' }
                                 }}
                             >
-                                {renderJob?.status === 'processing' ? 'GENERATING...' : 'GENERATE SCENE'}
+                                {renderJob?.status === 'processing' ? 'RENDERING...' : 'GENERATE SCENE'}
                             </Button>
-                            {(!script.trim() || !selectedTemplate) && (
-                                <Typography variant="caption" sx={{ color: '#555', display: 'block', textAlign: 'center', mt: 1 }}>
-                                    {!script.trim() ? 'Paste a script above' : 'Select a template'}
-                                </Typography>
-                            )}
-                        </Box>
-                    </Paper>
+                        </Paper>
+                    )}
                 </Grid>
 
-                {/* ── RIGHT COLUMN: Preview + AI Fields + History ── */}
+                {/* ── RIGHT: Preview + History ── */}
                 <Grid size={{ xs: 12, lg: 5 }}>
-                    {/* Video Preview */}
-                    <Paper sx={{ p: 0, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', overflow: 'hidden', minHeight: 280 }}>
+                    <Paper sx={{ p: 0, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', overflow: 'hidden', minHeight: 260 }}>
                         {renderJob?.url ? (
                             <Box>
                                 <video src={renderJob.url} controls autoPlay loop style={{ width: '100%', display: 'block' }} />
@@ -356,8 +428,7 @@ const SceneStudioView: React.FC = () => {
                                 <Typography variant="body2" sx={{ color: '#fff', mb: 0.5 }}>{renderJob.message}</Typography>
                                 <Typography variant="caption" sx={{ color: '#666' }}>{Math.round(renderJob.progress || 0)}%</Typography>
                                 <LinearProgress
-                                    variant="determinate"
-                                    value={renderJob.progress || 0}
+                                    variant="determinate" value={renderJob.progress || 0}
                                     sx={{ width: '80%', mx: 'auto', mt: 2, height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }}
                                 />
                             </Box>
@@ -368,38 +439,16 @@ const SceneStudioView: React.FC = () => {
                                 </Alert>
                             </Box>
                         ) : (
-                            <Box sx={{ py: 10, textAlign: 'center', opacity: 0.2 }}>
+                            <Box sx={{ py: 10, textAlign: 'center', opacity: 0.15 }}>
                                 <MovieIcon sx={{ fontSize: 80, color: '#fff', mb: 1 }} />
                                 <Typography variant="body2" sx={{ color: '#fff' }}>Preview will appear here</Typography>
                             </Box>
                         )}
                     </Paper>
 
-                    {/* AI Extracted Fields */}
-                    {extractedFields && Object.keys(extractedFields).length > 0 && (
-                        <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid rgba(201,169,97,0.2)' }}>
-                            <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
-                                AI EXTRACTED FIELDS
-                            </Typography>
-                            <Stack spacing={0.75}>
-                                {Object.entries(extractedFields).map(([key, val]) => (
-                                    <Box key={key} sx={{ display: 'flex', gap: 1.5, alignItems: 'baseline' }}>
-                                        <Typography variant="caption" sx={{ color: '#666', fontFamily: 'monospace', fontSize: '0.65rem', flexShrink: 0, width: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {key}
-                                        </Typography>
-                                        <Typography variant="caption" sx={{ color: '#ccc', fontSize: '0.75rem', fontWeight: 500 }}>
-                                            {String(val)}
-                                        </Typography>
-                                    </Box>
-                                ))}
-                            </Stack>
-                        </Paper>
-                    )}
-
-                    {/* History */}
                     {renderHistory.length > 0 && (
                         <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
-                            <Typography variant="overline" sx={{ color: '#888', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
+                            <Typography variant="overline" sx={{ color: '#666', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
                                 <ListIcon sx={{ fontSize: 12, mr: 0.5, verticalAlign: 'middle' }} />
                                 RECENT RENDERS
                             </Typography>

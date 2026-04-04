@@ -872,30 +872,40 @@ app.get('/api/themes', async (req, res) => {
     }
 });
 
-app.post('/api/scene-studio/generate', async (req, res) => {
+// Step 1: Gemini analyzes script + template → returns filled field values (no render)
+app.post('/api/scene-studio/analyze', async (req, res) => {
     try {
-        const { script, templateId, theme } = req.body;
+        const { script, templateId } = req.body;
         if (!script || !templateId) return res.status(400).json({ success: false, error: 'script and templateId are required' });
 
         const { fillSceneFields, loadSchema } = await import('./autoScene.js');
-        const { fillTemplate } = await import('./templateFiller.js');
         const { fuzzyMapFields } = await import('./templateSystem.js');
 
-        // Pass 2: AI extracts field values from the script (same as project director)
         const rawContent = await fillSceneFields({ script }, templateId);
-
-        // Fuzzy-map AI field names → schema field names
         const schema = loadSchema(templateId);
         const content = schema?.fields ? fuzzyMapFields(rawContent, schema.fields) : rawContent;
 
-        // Fill the template TSX with extracted values + theme
-        const code = fillTemplate(templateId, theme || 'THREAT', content);
+        console.log(`   🤖 Scene Studio analyze: ${templateId} → ${Object.keys(content).length} fields`);
+        res.json({ success: true, content });
+    } catch (err) {
+        console.error('❌ scene-studio/analyze error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
 
-        // Start render job
+// Step 2: Render using user-confirmed field values
+app.post('/api/scene-studio/generate', async (req, res) => {
+    try {
+        const { templateId, theme, content } = req.body;
+        if (!templateId || !content) return res.status(400).json({ success: false, error: 'templateId and content are required' });
+
+        const { fillTemplate } = await import('./templateFiller.js');
+
+        const code = fillTemplate(templateId, theme || 'THREAT', content);
         const { job, videoId } = startVideoRenderJob(code, { duration: 10, fps: 30 });
 
         console.log(`   🎬 Scene Studio render started: ${job.id} (template: ${templateId})`);
-        res.json({ success: true, jobId: job.id, videoId, content });
+        res.json({ success: true, jobId: job.id, videoId });
     } catch (err) {
         console.error('❌ scene-studio/generate error:', err.message);
         res.status(500).json({ success: false, error: err.message });
