@@ -63,7 +63,7 @@ export const AnimationComponent = () => {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'sans-serif' }}>
-      <div ref={mapRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0.55 , filter: 'brightness(2.2) contrast(1.15)'}} />
+      <div ref={mapRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0.55 , filter: 'brightness(2.0) contrast(1.2) saturate(4) hue-rotate(120deg)'}} />
 
       {/* Vignette */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%)', pointerEvents: 'none' }} />
