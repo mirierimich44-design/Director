@@ -135,7 +135,7 @@ export const AnimationComponent = () => {
       </div>
 
       {/* MapLibre background for country area */}
-      <div ref={mapRef} style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4 }} />
+      <div ref={mapRef} style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4 , filter: 'brightness(2.2) contrast(1.15)'}} />
 
       {/* SVG country shape overlay */}
       <svg

@@ -68,7 +68,7 @@ export const AnimationComponent = () => {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR', fontFamily: 'sans-serif' }}>
-      <div ref={mapRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: mapOp }} />
+      <div ref={mapRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: mapOp , filter: 'brightness(2.2) contrast(1.15)'}} />
 
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
         <defs>

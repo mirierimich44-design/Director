@@ -73,7 +73,7 @@ export const AnimationComponent = () => {
       </div>
 
       {/* MapLibre background */}
-      <div ref={mapRef} style={{ position: 'absolute', top: mapY, left: mapX, width: mapW, height: mapH, opacity: mapOp, borderRadius: 4 }} />
+      <div ref={mapRef} style={{ position: 'absolute', top: mapY, left: mapX, width: mapW, height: mapH, opacity: mapOp, borderRadius: 4 , filter: 'brightness(2.2) contrast(1.15)'}} />
 
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
         <rect x={regionX} y={regionY} width={regionW} height={regionH} fill="SECONDARY_COLOR" rx={4} opacity={regionOp * 0.25} transform={`scale(${regionScale})`} style={{ transformOrigin: `${regionX + regionW / 2}px ${regionY + regionH / 2}px` }} />

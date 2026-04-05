@@ -212,6 +212,11 @@ const BackgroundWrapper = ({children}) => (
         }
     }
 
+    const durationFrames = Math.round((settings.duration || 15) * (settings.fps || 30));
+    const fpsValue = settings.fps || 30;
+    const widthValue = settings.width || 1920;
+    const heightValue = settings.height || 1080;
+
     // When rendering at less than full 1920×1080 (e.g. preview at 960×540),
     // scale the 1920×1080 component down so nothing is clipped.
     const needsScale = widthValue < 1920 || heightValue < 1080;
@@ -230,11 +235,6 @@ const BackgroundWrapper = ({children}) => (
   </AbsoluteFill>
 );`
         : `const WrappedAnimation = () => ${innerAnim};`;
-
-    const durationFrames = Math.round((settings.duration || 15) * (settings.fps || 30));
-    const fpsValue = settings.fps || 30;
-    const widthValue = settings.width || 1920;
-    const heightValue = settings.height || 1080;
 
     // Strip any remaining duplicate React imports from component code
     componentCode = componentCode.replace(/import\s+React\s*(?:,\s*\{[^}]*\})?\s*from\s*['"]react['"];?\s*\n?/g, '');
