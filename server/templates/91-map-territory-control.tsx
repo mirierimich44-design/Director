@@ -18,14 +18,8 @@ export const AnimationComponent = () => {
   const label1 = "LABEL_1"
   const label2 = "LABEL_2"
 
-  // Two territory polygons — left (side1) and right (side2)
-  // Designed for a regional conflict zone around eastern Europe/Middle East area
-  // map center [32, 48], zoom 4
-  const territory1 = 'M 540,200 L 720,190 L 800,250 L 820,340 L 790,440 L 730,510 L 640,530 L 540,510 L 460,450 L 430,360 L 440,270 Z'
-  const territory2 = 'M 800,250 L 960,200 L 1080,220 L 1150,290 L 1140,390 L 1080,470 L 980,510 L 860,510 L 790,440 L 820,340 Z'
-
-  // Front line: shared border between territories
-  const frontLine = 'M 800,250 L 820,340 L 790,440'
+  // Dividing line x-position (center of screen)
+  const DIVIDE_X = 960
 
   useEffect(() => {
     if (!mapRef.current) return
@@ -61,35 +55,39 @@ export const AnimationComponent = () => {
 
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
         <defs>
-          <filter id="tc-glow">
-            <feGaussianBlur stdDeviation="8" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
           <filter id="tc-glow-sm">
             <feGaussianBlur stdDeviation="3" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
+          {/* Left territory wash */}
+          <linearGradient id="grad-left" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="PRIMARY_COLOR" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="PRIMARY_COLOR" stopOpacity="0.04" />
+          </linearGradient>
+          {/* Right territory wash */}
+          <linearGradient id="grad-right" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="SECONDARY_COLOR" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="SECONDARY_COLOR" stopOpacity="0.28" />
+          </linearGradient>
         </defs>
 
-        {/* Territory 1 — PRIMARY_COLOR */}
-        <path d={territory1} fill="PRIMARY_COLOR" opacity={t1Op * 0.35} filter="url(#tc-glow)" />
-        <path d={territory1} fill="PRIMARY_COLOR" opacity={t1Op * 0.2} />
-        <path d={territory1} fill="none" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={t1Op * 0.7} />
+        {/* Left territory color wash */}
+        <rect x={0} y={0} width={DIVIDE_X} height={1080} fill="url(#grad-left)" opacity={t1Op} />
 
-        {/* Territory 2 — SECONDARY_COLOR */}
-        <path d={territory2} fill="SECONDARY_COLOR" opacity={t2Op * 0.35} filter="url(#tc-glow)" />
-        <path d={territory2} fill="SECONDARY_COLOR" opacity={t2Op * 0.2} />
-        <path d={territory2} fill="none" stroke="SECONDARY_COLOR" strokeWidth={2} opacity={t2Op * 0.7} />
+        {/* Right territory color wash */}
+        <rect x={DIVIDE_X} y={0} width={1920 - DIVIDE_X} height={1080} fill="url(#grad-right)" opacity={t2Op} />
 
-        {/* Front line */}
-        <path d={frontLine} fill="none" stroke="#ff4444" strokeWidth={flPulse + 2} strokeDasharray={500} strokeDashoffset={frontDash}
+        {/* Front line — vertical divider */}
+        <line x1={DIVIDE_X} y1={100} x2={DIVIDE_X} y2={980}
+          stroke="#ff4444" strokeWidth={flPulse + 1} strokeDasharray="12 8"
           opacity={frontOp * flPulseOp} strokeLinecap="round" filter="url(#tc-glow-sm)" />
-        <path d={frontLine} fill="none" stroke="#ff4444" strokeWidth={2} strokeDasharray="8 6"
-          opacity={frontOp * 0.8} strokeLinecap="round" />
+        <line x1={DIVIDE_X} y1={100} x2={DIVIDE_X} y2={980}
+          stroke="#ff4444" strokeWidth={1.5} strokeDasharray="12 8"
+          opacity={frontOp * 0.6} strokeLinecap="round" />
 
         {/* Front line label */}
         {frontOp > 0.1 && (
-          <text x={810} y={350} textAnchor="middle" fill="#ff4444" fontSize={13} fontWeight={700} fontFamily="sans-serif" letterSpacing={2} opacity={frontOp}>
+          <text x={DIVIDE_X + 14} y={560} textAnchor="start" fill="#ff4444" fontSize={12} fontWeight={700} fontFamily="sans-serif" letterSpacing={3} opacity={frontOp}>
             FRONT LINE
           </text>
         )}
