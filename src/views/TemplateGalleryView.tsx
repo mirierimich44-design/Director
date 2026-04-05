@@ -270,11 +270,9 @@ const TemplateGalleryView: React.FC = () => {
                                                 overflow: 'hidden',
                                             }}
                                         >
-                                            {cachedPreviews[t.name] ? (
-                                                <video src={cachedPreviews[t.name]} muted loop autoPlay
-                                                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
-                                            ) : (
-                                                <RenderIcon sx={{ color: catColor(cat), opacity: 0.5, fontSize: 32 }} />
+                                            <RenderIcon sx={{ color: catColor(cat), opacity: 0.5, fontSize: 32 }} />
+                                            {cachedPreviews[t.name] && (
+                                                <Box sx={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, borderRadius: '50%', bgcolor: '#4caf50', boxShadow: '0 0 6px #4caf50' }} />
                                             )}
                                         </Box>
                                         <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '0.78rem', lineHeight: 1.3, mb: 0.5 }}>

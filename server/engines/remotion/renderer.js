@@ -212,9 +212,24 @@ const BackgroundWrapper = ({children}) => (
         }
     }
 
-    const componentWrapper = hasBackground
-        ? 'const WrappedAnimation = () => <BackgroundWrapper><AbsoluteFill><AnimationComponent /></AbsoluteFill></BackgroundWrapper>;'
-        : 'const WrappedAnimation = () => <AbsoluteFill><AnimationComponent /></AbsoluteFill>;';
+    // When rendering at less than full 1920×1080 (e.g. preview at 960×540),
+    // scale the 1920×1080 component down so nothing is clipped.
+    const needsScale = widthValue < 1920 || heightValue < 1080;
+    const previewScale = needsScale ? Math.min(widthValue / 1920, heightValue / 1080).toFixed(6) : '1';
+
+    const innerAnim = hasBackground
+        ? '<BackgroundWrapper><AbsoluteFill><AnimationComponent /></AbsoluteFill></BackgroundWrapper>'
+        : '<AbsoluteFill><AnimationComponent /></AbsoluteFill>';
+
+    const componentWrapper = needsScale
+        ? `const WrappedAnimation = () => (
+  <AbsoluteFill style={{ overflow: 'hidden', background: 'transparent' }}>
+    <div style={{ width: 1920, height: 1080, transform: 'scale(${previewScale})', transformOrigin: 'top left', position: 'absolute', top: 0, left: 0 }}>
+      ${innerAnim}
+    </div>
+  </AbsoluteFill>
+);`
+        : `const WrappedAnimation = () => ${innerAnim};`;
 
     const durationFrames = Math.round((settings.duration || 15) * (settings.fps || 30));
     const fpsValue = settings.fps || 30;
@@ -650,6 +665,11 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         // console.log('   🎬 Rendering video...');
         progressBar.update(0, { phase: 'Rendering Video' });
         if (onProgress) onProgress({ phase: 'rendering', progress: 35 });
+        // Scale the hard cap by composition size:
+        // 960×540 (preview) → ~90s cap; 1920×1080 (full) → 360s cap
+        const isPreview = widthValue <= 960 && heightValue <= 540;
+        const renderTimeoutMs = isPreview ? 90_000 : 360_000;
+
         await withTimeout(
             renderMedia({
                 composition,
@@ -658,6 +678,9 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                 outputLocation: outputPath,
                 concurrency: RENDER_CONCURRENCY,
                 browserExecutable: browserPath,
+                // Cap delayRender (e.g. maplibre tile loading) so map templates
+                // fail fast instead of hanging for the full render duration.
+                timeoutInMilliseconds: isPreview ? 15_000 : 30_000,
                 onProgress: ({ progress }) => {
                     const pct = Math.round(progress * 100);
                     progressBar.update(pct, { phase: 'Rendering' });
@@ -666,7 +689,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                     }
                 },
             }),
-            360_000, // 6-minute hard cap per render
+            renderTimeoutMs,
             'renderMedia'
         );
 
