@@ -665,10 +665,8 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         // console.log('   🎬 Rendering video...');
         progressBar.update(0, { phase: 'Rendering Video' });
         if (onProgress) onProgress({ phase: 'rendering', progress: 35 });
-        // Scale the hard cap by composition size:
-        // 960×540 (preview) → ~90s cap; 1920×1080 (full) → 360s cap
         const isPreview = (settings.width || 1920) <= 960 && (settings.height || 1080) <= 540;
-        const renderTimeoutMs = isPreview ? 180_000 : 360_000;
+        const renderTimeoutMs = 360_000;
 
         await withTimeout(
             renderMedia({
@@ -678,6 +676,8 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
                 outputLocation: outputPath,
                 concurrency: RENDER_CONCURRENCY,
                 browserExecutable: browserPath,
+                // Lower quality (higher CRF) for previews → faster encode
+                ...(isPreview ? { crf: 35 } : {}),
                 // Cap delayRender (e.g. maplibre tile loading) so map templates
                 // fail fast instead of hanging for the full render duration.
                 timeoutInMilliseconds: isPreview ? 15_000 : 30_000,
