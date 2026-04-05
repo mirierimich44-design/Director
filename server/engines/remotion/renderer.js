@@ -667,7 +667,7 @@ export async function renderVideo(tsxCode, outputPath, settings, onProgress = nu
         if (onProgress) onProgress({ phase: 'rendering', progress: 35 });
         // Scale the hard cap by composition size:
         // 960×540 (preview) → ~90s cap; 1920×1080 (full) → 360s cap
-        const isPreview = widthValue <= 960 && heightValue <= 540;
+        const isPreview = (settings.width || 1920) <= 960 && (settings.height || 1080) <= 540;
         const renderTimeoutMs = isPreview ? 90_000 : 360_000;
 
         await withTimeout(
