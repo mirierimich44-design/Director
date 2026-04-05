@@ -456,7 +456,7 @@ app.get('/api/templates', async (req, res) => {
 // POST /api/templates/preview — render a template with placeholder values only
 app.post('/api/templates/preview', async (req, res) => {
     try {
-        const { template, theme = 'DARK', duration = 180 } = req.body;
+        const { template, theme = 'DARK' } = req.body;
         if (!template) return res.status(400).json({ error: 'template required' });
 
         const { fillTemplate } = await import('./templateFiller.js');
@@ -474,10 +474,10 @@ app.post('/api/templates/preview', async (req, res) => {
             await acquireRenderSlot();
             try {
                 await renderRemotion(code, outputPath, {
-                    duration,
+                    duration: 90,   // 3 seconds — enough to see the animation
                     fps: 30,
-                    width: 1920,
-                    height: 1080,
+                    width: 960,     // half-res — much faster to render
+                    height: 540,
                     onProgress: (p) => {
                         job.phase = p.phase;
                         job.progress = p.progress;
