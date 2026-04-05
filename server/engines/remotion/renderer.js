@@ -214,6 +214,10 @@ const BackgroundWrapper = ({children}) => (
     // Strip any remaining duplicate React imports from component code
     componentCode = componentCode.replace(/import\s+React\s*(?:,\s*\{[^}]*\})?\s*from\s*['"]react['"];?\s*\n?/g, '');
 
+    // Strip CSS imports — Remotion's webpack bundler has no CSS loader and will
+    // throw "unexpected end of file" trying to parse CSS as JS.
+    componentCode = componentCode.replace(/^import\s+['"][^'"]*\.css['"]\s*;?\s*$/gm, '');
+
     // Safeguard: heal broken injection artifacts from old templateFiller bug.
     // The old regex replaced variable NAMES (identifiers) with quoted strings, producing
     // invalid syntax like: const "10.0" = "PLACEHOLDER"
