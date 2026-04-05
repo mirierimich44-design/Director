@@ -1,0 +1,22 @@
+{
+  "template": "180-image-5up",
+  "description": "Five images — 2 large on top, 3 smaller on bottom — with title and individual labels. Blue-black bordered boxes. Suggestion placeholders when images not uploaded.",
+  "fields": {
+    "TITLE_TEXT":   { "type": "string", "description": "Headline above the grid", "example": "Attack Timeline — Visual Evidence" },
+    "IMAGE_URL_1":  { "type": "image",  "description": "Top-left image URL (large)", "example": "IMAGE_URL_1" },
+    "IMAGE_URL_2":  { "type": "image",  "description": "Top-right image URL (large)", "example": "IMAGE_URL_2" },
+    "IMAGE_URL_3":  { "type": "image",  "description": "Bottom-left image URL", "example": "IMAGE_URL_3" },
+    "IMAGE_URL_4":  { "type": "image",  "description": "Bottom-center image URL", "example": "IMAGE_URL_4" },
+    "IMAGE_URL_5":  { "type": "image",  "description": "Bottom-right image URL", "example": "IMAGE_URL_5" },
+    "LABEL_1":      { "type": "string", "description": "Caption for top-left image", "example": "Initial access — phishing email" },
+    "LABEL_2":      { "type": "string", "description": "Caption for top-right image", "example": "Lateral movement detected" },
+    "LABEL_3":      { "type": "string", "description": "Caption for bottom-left image", "example": "Credential dump — 03:14 UTC" },
+    "LABEL_4":      { "type": "string", "description": "Caption for bottom-center image", "example": "Data staged — temp folder" },
+    "LABEL_5":      { "type": "string", "description": "Caption for bottom-right image", "example": "Exfiltration confirmed" },
+    "SUGGESTION_1": { "type": "string", "description": "What to upload for top-left slot", "example": "Upload a screenshot of the phishing email" },
+    "SUGGESTION_2": { "type": "string", "description": "What to upload for top-right slot", "example": "Upload a network diagram showing lateral movement" },
+    "SUGGESTION_3": { "type": "string", "description": "What to upload for bottom-left slot", "example": "Upload a log screenshot showing credential access" },
+    "SUGGESTION_4": { "type": "string", "description": "What to upload for bottom-center slot", "example": "Upload a file explorer screenshot of the staging directory" },
+    "SUGGESTION_5": { "type": "string", "description": "What to upload for bottom-right slot", "example": "Upload a traffic capture or exfil confirmation screenshot" }
+  }
+}

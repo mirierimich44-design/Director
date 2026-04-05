@@ -1,0 +1,13 @@
+{
+  "template": "177-image-2up",
+  "description": "Two images side-by-side with title and individual labels. Blue-black bordered boxes. Suggestion placeholders when images not uploaded.",
+  "fields": {
+    "TITLE_TEXT":   { "type": "string", "description": "Headline above the images", "example": "Before & After" },
+    "IMAGE_URL_1":  { "type": "image",  "description": "Left image URL", "example": "IMAGE_URL_1" },
+    "IMAGE_URL_2":  { "type": "image",  "description": "Right image URL", "example": "IMAGE_URL_2" },
+    "LABEL_1":      { "type": "string", "description": "Caption for left image", "example": "Headquarters — 2019" },
+    "LABEL_2":      { "type": "string", "description": "Caption for right image", "example": "Headquarters — 2024" },
+    "SUGGESTION_1": { "type": "string", "description": "What to upload for left slot", "example": "Upload the original building exterior photo" },
+    "SUGGESTION_2": { "type": "string", "description": "What to upload for right slot", "example": "Upload the renovated building exterior photo" }
+  }
+}

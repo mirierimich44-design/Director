@@ -48,11 +48,14 @@ const audioProcessedDir = join(publicDir, 'audio/processed');
 const audioTtsDir       = join(publicDir, 'audio/tts');
 const imagesDir         = join(publicDir, 'images');
 
+const slidesDir = join(publicDir, 'images/slides');
+
 await fs.mkdir(videosDir,         { recursive: true });
 await fs.mkdir(audioDir,          { recursive: true });
 await fs.mkdir(audioProcessedDir, { recursive: true });
 await fs.mkdir(audioTtsDir,       { recursive: true });
 await fs.mkdir(imagesDir,         { recursive: true });
+await fs.mkdir(slidesDir,         { recursive: true });
 await fs.mkdir(join(__dirname, 'projects'), { recursive: true });
 await fs.mkdir(join(__dirname, '../.temp/remotion'), { recursive: true });
 
@@ -87,6 +90,58 @@ app.post('/api/upload-image', imageUpload.single('image'), (req, res) => {
     const url = isVideo ? `/videos/${req.file.filename}` : `/images/${req.file.filename}`;
     res.json({ success: true, url });
 });
+
+// ── Multer — slide image uploads ─────────────────────────────────────────────
+const slideStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, slidesDir),
+    filename:    (req, file, cb) => cb(null, `slide_${uuidv4()}.${file.originalname.split('.').pop().toLowerCase()}`)
+});
+const slideUpload = multer({
+    storage: slideStorage,
+    limits: { fileSize: 20 * 1024 * 1024, files: 6 },
+    fileFilter: (req, file, cb) => {
+        const ext = file.originalname.split('.').pop().toLowerCase();
+        cb(null, /jpg|jpeg|png|webp/.test(ext));
+    }
+});
+
+// POST /api/projects/:pid/chapters/:cid/scenes/:idx/upload-slides
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/upload-slides',
+    slideUpload.array('slides', 6),
+    async (req, res) => {
+        try {
+            const { pid, cid, idx } = req.params;
+            const project = getProject(pid);
+            if (!project) return res.status(404).json({ error: 'Project not found' });
+            const chapter = project.chapters.find(c => c.id === cid);
+            if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+            const scene = chapter.scenes[parseInt(idx)];
+            if (!scene) return res.status(404).json({ error: 'Scene not found' });
+            if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
+
+            // Build IMAGE_URL_N updates (1-indexed)
+            const contentUpdates = {};
+            req.files.forEach((file, i) => {
+                contentUpdates[`IMAGE_URL_${i + 1}`] = `/images/slides/${file.filename}`;
+            });
+
+            // Merge with existing content and regenerate code
+            const newContent = { ...(scene.content || {}), ...contentUpdates };
+            const { fillTemplate } = await import('./templateFiller.js');
+            const code = fillTemplate(scene.template, scene.theme || 'DARK', newContent);
+
+            const result = await updateScene(pid, cid, parseInt(idx), { content: newContent, code });
+            res.json({
+                success: true,
+                urls: Object.values(contentUpdates),
+                ...result
+            });
+        } catch (err) {
+            console.error('slide upload error:', err);
+            res.status(500).json({ success: false, error: err.message });
+        }
+    }
+);
 
 // ── Multer — voiceover uploads ──────────────────────────────────────────────────
 
@@ -371,6 +426,80 @@ app.put('/api/settings', (req, res) => {
         res.json({ success: true, settings: updated });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ── TEMPLATE GALLERY ─────────────────────────────────────────────────────────
+
+// GET /api/templates — list every .tsx template with its category
+app.get('/api/templates', async (req, res) => {
+    try {
+        const templatesDir = join(__dirname, 'templates');
+        const files = await fs.readdir(templatesDir);
+        const names = files.filter(f => f.endsWith('.tsx')).map(f => f.replace('.tsx', '')).sort();
+
+        const { TEMPLATE_CATEGORIES } = await import('./autoScene.js');
+        const catMap = {};
+        for (const [cat, info] of Object.entries(TEMPLATE_CATEGORIES)) {
+            for (const t of info.templates) catMap[t] = cat;
+        }
+
+        res.json({
+            templates: names.map(name => ({ name, category: catMap[name] || 'OTHER' })),
+            categories: Object.fromEntries(Object.entries(TEMPLATE_CATEGORIES).map(([k, v]) => [k, v.desc]))
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/templates/preview — render a template with placeholder values only
+app.post('/api/templates/preview', async (req, res) => {
+    try {
+        const { template, theme = 'DARK', duration = 180 } = req.body;
+        if (!template) return res.status(400).json({ error: 'template required' });
+
+        const { fillTemplate } = await import('./templateFiller.js');
+        const code = fillTemplate(template, theme, {}); // empty content = all placeholders visible
+
+        const job = createRenderJob({});
+        const videoId = `preview_${template.replace(/[^a-z0-9]/gi, '_')}_${job.id.substring(0, 6)}`;
+        const outputPath = join(videosDir, `${videoId}.mp4`);
+
+        job.phase = 'bundling';
+        job.status = 'processing';
+        job.message = 'Preparing preview render...';
+
+        (async () => {
+            await acquireRenderSlot();
+            try {
+                await renderRemotion(code, outputPath, {
+                    duration,
+                    fps: 30,
+                    width: 1920,
+                    height: 1080,
+                    onProgress: (p) => {
+                        job.phase = p.phase;
+                        job.progress = p.progress;
+                        job.message = p.phase === 'bundling' ? `Bundling... ${Math.round((p.progress / 30) * 100)}%` : `Rendering... ${p.progress}%`;
+                    }
+                });
+                job.status = 'completed';
+                job.progress = 100;
+                job.url = `/videos/${videoId}.mp4`;
+                job.message = 'Done';
+            } catch (err) {
+                job.status = 'error';
+                job.error = err.message;
+                job.message = 'Render failed';
+            } finally {
+                releaseRenderSlot();
+            }
+        })();
+
+        res.json({ success: true, jobId: job.id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

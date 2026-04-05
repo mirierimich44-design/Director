@@ -1,0 +1,10 @@
+{
+  "template": "176-image-1up",
+  "description": "Single full-screen image with title and label. Blue-black bordered box. Shows suggestion text when no image is uploaded.",
+  "fields": {
+    "TITLE_TEXT":   { "type": "string", "description": "Headline above the image", "example": "Key Evidence" },
+    "IMAGE_URL_1":  { "type": "image",  "description": "URL of the image to display", "example": "IMAGE_URL_1" },
+    "LABEL_1":      { "type": "string", "description": "Caption shown at the bottom of the image", "example": "Crime scene photograph — 14 March 2024" },
+    "SUGGESTION_1": { "type": "string", "description": "What image the user should upload for this slot (shown when no image is present)", "example": "Upload a photo of the crime scene entrance" }
+  }
+}

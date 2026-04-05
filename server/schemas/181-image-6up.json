@@ -1,0 +1,25 @@
+{
+  "template": "181-image-6up",
+  "description": "Six images in a 3×2 grid with title and individual labels. Blue-black bordered boxes. Suggestion placeholders when images not uploaded.",
+  "fields": {
+    "TITLE_TEXT":   { "type": "string", "description": "Headline above the grid", "example": "Key Personnel" },
+    "IMAGE_URL_1":  { "type": "image",  "description": "Row 1, Col 1 image URL", "example": "IMAGE_URL_1" },
+    "IMAGE_URL_2":  { "type": "image",  "description": "Row 1, Col 2 image URL", "example": "IMAGE_URL_2" },
+    "IMAGE_URL_3":  { "type": "image",  "description": "Row 1, Col 3 image URL", "example": "IMAGE_URL_3" },
+    "IMAGE_URL_4":  { "type": "image",  "description": "Row 2, Col 1 image URL", "example": "IMAGE_URL_4" },
+    "IMAGE_URL_5":  { "type": "image",  "description": "Row 2, Col 2 image URL", "example": "IMAGE_URL_5" },
+    "IMAGE_URL_6":  { "type": "image",  "description": "Row 2, Col 3 image URL", "example": "IMAGE_URL_6" },
+    "LABEL_1":      { "type": "string", "description": "Caption for image 1", "example": "CEO — John Mercer" },
+    "LABEL_2":      { "type": "string", "description": "Caption for image 2", "example": "CTO — Sarah Lin" },
+    "LABEL_3":      { "type": "string", "description": "Caption for image 3", "example": "CFO — David Okafor" },
+    "LABEL_4":      { "type": "string", "description": "Caption for image 4", "example": "Head of Security — Ana Reyes" },
+    "LABEL_5":      { "type": "string", "description": "Caption for image 5", "example": "Lead Analyst — Tom Briggs" },
+    "LABEL_6":      { "type": "string", "description": "Caption for image 6", "example": "Operations — Wei Zhang" },
+    "SUGGESTION_1": { "type": "string", "description": "What to upload for slot 1", "example": "Upload a headshot or photo of the CEO" },
+    "SUGGESTION_2": { "type": "string", "description": "What to upload for slot 2", "example": "Upload a headshot or photo of the CTO" },
+    "SUGGESTION_3": { "type": "string", "description": "What to upload for slot 3", "example": "Upload a headshot or photo of the CFO" },
+    "SUGGESTION_4": { "type": "string", "description": "What to upload for slot 4", "example": "Upload a headshot or photo of the Head of Security" },
+    "SUGGESTION_5": { "type": "string", "description": "What to upload for slot 5", "example": "Upload a headshot or photo of the Lead Analyst" },
+    "SUGGESTION_6": { "type": "string", "description": "What to upload for slot 6", "example": "Upload a headshot or photo of the Operations lead" }
+  }
+}

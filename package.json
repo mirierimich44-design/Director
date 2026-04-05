@@ -10,7 +10,9 @@
     "start": "node server/index.js",
     "audit:speed": "npx @google/gemini-cli --file src/views/ProjectDirectorView.tsx 'Audit this for React re-render bottlenecks, O(n) complexity in scene processing, and redundant state updates. Suggest useMemo/useCallback where applicable.'",
     "audit:backend": "npx @google/gemini-cli --file server/index.js 'Analyze for expensive synchronous fs operations and suggest async alternatives or caching strategies for project metadata.'",
-    "audit:staged": "git diff --cached | npx @google/gemini-cli 'Review these staged changes for performance regressions and adherence to the Two-Pass architecture rules.'"
+    "audit:staged": "git diff --cached | npx @google/gemini-cli 'Review these staged changes for performance regressions and adherence to the Two-Pass architecture rules.'",
+    "map:studio": "npx remotion studio",
+    "map:render": "npx remotion render --gl=angle --composition=MapTest --output=public/videos/map-test.mp4"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
@@ -29,6 +31,7 @@
     "dotenv": "^16.4.7",
     "esbuild": "^0.25.1",
     "express": "^4.21.2",
+    "maplibre-gl": "^5.22.0",
     "multer": "^1.4.5-lts.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

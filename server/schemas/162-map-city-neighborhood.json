@@ -1,0 +1,14 @@
+{
+  "template": "162-map-city-neighborhood",
+  "description": "Street-level city map with a scanning targeting box highlighting a specific area. Best for zooming into a specific district — crime scene, military base, factory, embassy, data center.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'TARGET FACILITY' or 'INCIDENT ZONE'",
+    "MAP_LABEL_1": "City/area key (uppercase): MANHATTAN, DOWNTOWN_LA, CITY_OF_LONDON, PARIS_CENTER, DUBAI_CENTER, TOKYO_CENTER, KYIV_CENTER, GAZA_CITY, ALEPPO, DONETSK",
+    "MAP_LABEL_2": "Name of the highlighted area, e.g. 'FINANCIAL DISTRICT' or 'NUCLEAR FACILITY'",
+    "CONTEXT_TEXT": "Supporting description, e.g. 'The facility is located 2km from the main checkpoint'",
+    "STAT_VALUE_1": "Key stat, e.g. '2.3km²' or '450 staff'",
+    "LABEL_1": "Label for stat 1, e.g. 'AREA' or 'PERSONNEL'",
+    "STAT_VALUE_2": "Secondary stat, e.g. 'CLASSIFIED' or '$1.2B'",
+    "LABEL_2": "Label for stat 2, e.g. 'STATUS' or 'ASSET VALUE'"
+  }
+}

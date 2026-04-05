@@ -1,0 +1,14 @@
+{
+  "template": "91-map-territory-control",
+  "description": "Two colored territory zones with an animated contested front line. Best for conflict coverage — war zones, disputed borders, occupied territories, political divisions.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'UKRAINE FRONT LINES' or 'CONTESTED TERRITORY'",
+    "CONTEXT_TEXT": "Summary sentence, e.g. 'As of March 2025, approximately 20% of Ukrainian territory remains occupied'",
+    "MAP_LABEL_1": "Side 1 name, e.g. 'UKRAINE' or 'GOVERNMENT FORCES'",
+    "MAP_LABEL_2": "Side 2 name, e.g. 'RUSSIA' or 'REBEL FORCES'",
+    "STAT_VALUE_1": "Key stat for side 1, e.g. '80%' or '42,000 km²'",
+    "LABEL_1": "Stat label for side 1, e.g. 'TERRITORY HELD' or 'CONTROLLED AREA'",
+    "STAT_VALUE_2": "Key stat for side 2, e.g. '20%' or '12,000 km²'",
+    "LABEL_2": "Stat label for side 2"
+  }
+}

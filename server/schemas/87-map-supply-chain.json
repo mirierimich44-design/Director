@@ -1,0 +1,20 @@
+{
+  "template": "87-map-supply-chain",
+  "description": "Animated multi-stop supply chain across a world map. Numbered waypoints appear sequentially with arcs connecting them. Best for logistics, production chains, trafficking routes, contraband flows.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'FENTANYL SUPPLY CHAIN' or 'GLOBAL PRODUCTION ROUTE'",
+    "CONTEXT_TEXT": "Summary sentence shown at end, e.g. 'Raw materials processed across 4 countries before reaching consumers'",
+    "MAP_LABEL_1": "Name of stop 1, e.g. 'MEXICO' or 'SHENZHEN'",
+    "STAT_VALUE_1": "Stat for stop 1, e.g. '$200M' or 'Step 1'",
+    "LABEL_1": "Stat label for stop 1, e.g. 'PRODUCTION' or 'SOURCING'",
+    "MAP_LABEL_2": "Name of stop 2",
+    "STAT_VALUE_2": "Stat for stop 2",
+    "LABEL_2": "Stat label for stop 2",
+    "MAP_LABEL_3": "Name of stop 3",
+    "STAT_VALUE_3": "Stat for stop 3",
+    "LABEL_3": "Stat label for stop 3",
+    "MAP_LABEL_4": "Name of stop 4",
+    "STAT_VALUE_4": "Stat for stop 4",
+    "LABEL_4": "Stat label for stop 4"
+  }
+}

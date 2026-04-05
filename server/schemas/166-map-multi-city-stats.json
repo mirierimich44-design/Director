@@ -1,0 +1,26 @@
+{
+  "template": "166-map-multi-city-stats",
+  "description": "Up to 6 city dots on a world map, each with a leader line to a stat callout card. Best for comparing multiple cities or countries — rankings, incident counts, economic figures, attack volumes.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'TOP CITIES BY CYBER INCIDENTS' or 'GLOBAL DEBT EXPOSURE'",
+    "CONTEXT_TEXT": "Summary line at bottom, e.g. 'Data represents Q1 2025 figures'",
+    "MAP_LABEL_1": "City/country name 1, e.g. 'NEW YORK'",
+    "STAT_VALUE_1": "Stat for city 1, e.g. '$4.2B'",
+    "LABEL_1": "Stat label, e.g. 'LOSSES'",
+    "MAP_LABEL_2": "City/country name 2",
+    "STAT_VALUE_2": "Stat for city 2",
+    "LABEL_2": "Stat label 2",
+    "MAP_LABEL_3": "City/country name 3",
+    "STAT_VALUE_3": "Stat for city 3",
+    "LABEL_3": "Stat label 3",
+    "MAP_LABEL_4": "City/country name 4",
+    "STAT_VALUE_4": "Stat for city 4",
+    "LABEL_4": "Stat label 4",
+    "MAP_LABEL_5": "City/country name 5 (optional)",
+    "STAT_VALUE_5": "Stat for city 5 (optional)",
+    "LABEL_5": "Stat label 5 (optional)",
+    "MAP_LABEL_6": "City/country name 6 (optional)",
+    "STAT_VALUE_6": "Stat for city 6 (optional)",
+    "LABEL_6": "Stat label 6 (optional)"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "template": "89-map-choropleth",
+  "description": "World regions shaded by data value intensity (5 tiers: very low to very high). Best for global comparisons — GDP, military spending, corruption index, internet penetration, disease rates.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'MILITARY SPENDING BY REGION' or 'CORRUPTION INDEX 2024'",
+    "CONTEXT_TEXT": "Source or summary line, e.g. 'Source: World Bank 2024'",
+    "LABEL_1": "Name of the metric shown in the legend, e.g. 'MILITARY SPENDING' or 'CORRUPTION SCORE'",
+    "STAT_VALUE_1": "Value for North America, e.g. '$900B'",
+    "STAT_VALUE_2": "Value for South America",
+    "STAT_VALUE_3": "Value for Europe",
+    "STAT_VALUE_4": "Value for Africa",
+    "STAT_VALUE_5": "Value for Middle East",
+    "STAT_VALUE_6": "Value for Russia",
+    "STAT_VALUE_7": "Value for Asia",
+    "STAT_VALUE_8": "Value for Oceania"
+  }
+}

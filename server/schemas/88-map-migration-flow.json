@@ -1,0 +1,17 @@
+{
+  "template": "88-map-migration-flow",
+  "description": "Multiple origin arcs converging on one destination, with arc thickness showing volume. Best for migration flows, investment sources, attack origins, import sources.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'MIGRATION FLOWS TO EUROPE' or 'FOREIGN INVESTMENT SOURCES'",
+    "CONTEXT_TEXT": "Summary sentence, e.g. 'Over 2 million people crossed borders in 2024'",
+    "ARC_TO": "Destination label, e.g. 'EUROPE' or 'UNITED STATES'",
+    "MAP_LABEL_1": "Origin 1 name, e.g. 'SYRIA'",
+    "STAT_VALUE_1": "Volume from origin 1, e.g. '620K'",
+    "MAP_LABEL_2": "Origin 2 name",
+    "STAT_VALUE_2": "Volume from origin 2",
+    "MAP_LABEL_3": "Origin 3 name",
+    "STAT_VALUE_3": "Volume from origin 3",
+    "MAP_LABEL_4": "Origin 4 name",
+    "STAT_VALUE_4": "Volume from origin 4"
+  }
+}

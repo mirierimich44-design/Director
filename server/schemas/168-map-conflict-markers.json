@@ -1,0 +1,17 @@
+{
+  "template": "168-map-conflict-markers",
+  "description": "Conflict events appear sequentially across a regional map with explosion shockwaves. Four marker types: strike (missile/airstrike), warning (threat alert), troops (ground forces), incident (civilian/infrastructure). Best for war coverage, attack campaigns, security incident maps.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'ATTACK MAP — UKRAINE' or 'CONFLICT INCIDENTS: MARCH 2025'",
+    "CONTEXT_TEXT": "Summary line, e.g. 'ACLED data: 127 verified incidents in Q1 2025'",
+    "MAP_LABEL_1": "Region name shown in stats panel, e.g. 'UKRAINE' or 'GAZA STRIP'",
+    "STAT_VALUE_1": "Total incident count or key figure, e.g. '127' or '43'",
+    "LABEL_1": "Label for total stat, e.g. 'VERIFIED INCIDENTS' or 'AIRSTRIKES'",
+    "MAP_LABEL_2": "Location of event 1, e.g. 'KHARKIV'",
+    "MAP_LABEL_3": "Location of event 2, e.g. 'ZAPORIZHZHIA'",
+    "MAP_LABEL_4": "Location of event 3",
+    "MAP_LABEL_5": "Location of event 4",
+    "MAP_LABEL_6": "Location of event 5 (optional)",
+    "MAP_LABEL_7": "Location of event 6 (optional)"
+  }
+}

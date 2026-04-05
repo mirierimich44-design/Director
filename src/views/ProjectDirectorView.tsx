@@ -786,6 +786,33 @@ const ProjectDirectorView: React.FC = () => {
         }
     };
 
+    const IMAGE_SEQUENCE_TEMPLATES = ['170-image-cascade', '171-image-kenburns', '172-image-polaroid', '173-image-filmstrip', '174-image-stack', '175-image-grid', '176-image-1up', '177-image-2up', '178-image-3up', '179-image-4up', '180-image-5up', '181-image-6up'];
+    const isImageSequenceScene = (scene: Scene) => !!scene.template && IMAGE_SEQUENCE_TEMPLATES.includes(scene.template);
+    const needsImages = (scene: Scene) => isImageSequenceScene(scene) && (!scene.content?.IMAGE_URL_1 || scene.content.IMAGE_URL_1.startsWith('IMAGE_URL_'));
+
+    const [slideUploading, setSlideUploading] = useState<Record<string, boolean>>({});
+
+    const handleUploadSlides = async (chapterId: string, sceneIndex: number, files: FileList) => {
+        if (!selectedProject || files.length === 0) return;
+        const key = `${chapterId}-${sceneIndex}`;
+        setSlideUploading(prev => ({ ...prev, [key]: true }));
+        try {
+            const formData = new FormData();
+            Array.from(files).slice(0, 6).forEach(f => formData.append('slides', f));
+            const res = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/upload-slides`,
+                { method: 'POST', body: formData }
+            );
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            await loadProjectDetails(selectedProject.id);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setSlideUploading(prev => ({ ...prev, [key]: false }));
+        }
+    };
+
     const handleUpdateSceneContent = async (chapterId: string, sceneIndex: number, field: string, value: string) => {
         if (!selectedProject) return;
         const chapter = selectedProject.chapters.find(c => c.id === chapterId);
@@ -1417,6 +1444,9 @@ const ProjectDirectorView: React.FC = () => {
                                                                         }} 
                                                                     />
                                                                     {scene.template && <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{scene.template}</Typography>}
+                                                                    {needsImages(scene) && (
+                                                                        <Chip size="small" label="⚠ Needs Images" sx={{ ml: 1, bgcolor: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid #f59e0b', fontWeight: 700, fontSize: '0.65rem' }} />
+                                                                    )}
                                                                 </Box>
                                                                 <Typography variant="body1" sx={{ color: '#fff', fontStyle: 'italic', mb: 1, pl: 2, borderLeft: '2px solid rgba(255,255,255,0.2)' }}>
                                                                     "{scene.script}"
@@ -1490,6 +1520,28 @@ const ProjectDirectorView: React.FC = () => {
                                                                             </Tooltip>
                                                                         )}
 
+                                                                        {isImageSequenceScene(scene) && (
+                                                                            <>
+                                                                                <input
+                                                                                    type="file"
+                                                                                    accept="image/jpeg,image/png,image/webp"
+                                                                                    multiple
+                                                                                    id={`slide-input-${chapter.id}-${idx}`}
+                                                                                    style={{ display: 'none' }}
+                                                                                    onChange={e => e.target.files && handleUploadSlides(chapter.id, idx, e.target.files)}
+                                                                                />
+                                                                                <Button
+                                                                                    size="small"
+                                                                                    variant="outlined"
+                                                                                    disabled={slideUploading[`${chapter.id}-${idx}`]}
+                                                                                    onClick={() => document.getElementById(`slide-input-${chapter.id}-${idx}`)?.click()}
+                                                                                    sx={{ color: '#f59e0b', borderColor: '#f59e0b' }}
+                                                                                >
+                                                                                    {slideUploading[`${chapter.id}-${idx}`] ? 'Uploading…' : (needsImages(scene) ? 'Upload Images' : 'Replace Images')}
+                                                                                </Button>
+                                                                            </>
+                                                                        )}
+
                                                                         {(scene.type === 'TEMPLATE' ? scene.videoUrl : (scene.videoUrl || scene.imageUrl)) && (
                                                                             <Button
                                                                                 size="small"
@@ -1501,6 +1553,41 @@ const ProjectDirectorView: React.FC = () => {
                                                                                 Download {scene.videoUrl ? 'Video' : 'Image'}
                                                                             </Button>
                                                                         )}
+                                                                    </Box>
+                                                                )}
+
+                                                                {/* Suggestion list — shown for 176-181 IMAGE_GRID templates when images not yet uploaded */}
+                                                                {isImageSequenceScene(scene) && needsImages(scene) && [1,2,3,4,5,6].some(n => scene.content?.[`SUGGESTION_${n}`] && !scene.content[`SUGGESTION_${n}`].startsWith('SUGGESTION_')) && (
+                                                                    <Box sx={{ mt: 2, p: 1.5, bgcolor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 2 }}>
+                                                                        <Typography variant="caption" sx={{ color: '#60a5fa', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.6rem', display: 'block', mb: 1 }}>
+                                                                            Suggested images to upload
+                                                                        </Typography>
+                                                                        {[1,2,3,4,5,6].map(n => {
+                                                                            const sug = scene.content?.[`SUGGESTION_${n}`];
+                                                                            if (!sug || sug.startsWith('SUGGESTION_')) return null;
+                                                                            const hasImg = scene.content?.[`IMAGE_URL_${n}`] && !scene.content[`IMAGE_URL_${n}`].startsWith('IMAGE_URL_');
+                                                                            return (
+                                                                                <Box key={n} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+                                                                                    <Typography variant="caption" sx={{ color: hasImg ? '#4ade80' : '#60a5fa', fontWeight: 700, minWidth: 18, fontSize: '0.7rem' }}>{hasImg ? '✓' : n}</Typography>
+                                                                                    <Typography variant="caption" sx={{ color: hasImg ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.65)', fontSize: '0.72rem', lineHeight: 1.3, textDecoration: hasImg ? 'line-through' : 'none' }}>{sug}</Typography>
+                                                                                </Box>
+                                                                            );
+                                                                        })}
+                                                                    </Box>
+                                                                )}
+
+                                                                {/* Uploaded image thumbnails */}
+                                                                {isImageSequenceScene(scene) && !needsImages(scene) && (
+                                                                    <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
+                                                                        {[1,2,3,4,5,6].map(n => {
+                                                                            const url = scene.content?.[`IMAGE_URL_${n}`];
+                                                                            if (!url || url.startsWith('IMAGE_URL_')) return null;
+                                                                            return (
+                                                                                <Box key={n} sx={{ width: 52, height: 40, borderRadius: 1, overflow: 'hidden', border: '1px solid rgba(59,130,246,0.4)' }}>
+                                                                                    <img src={url} alt={`Slot ${n}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                                </Box>
+                                                                            );
+                                                                        })}
                                                                     </Box>
                                                                 )}
 

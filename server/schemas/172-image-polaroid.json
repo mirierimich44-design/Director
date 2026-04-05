@@ -1,0 +1,26 @@
+{
+  "template": "172-image-polaroid",
+  "purpose": "Images drop onto screen one-by-one as polaroid photo cards with handwritten captions. Supports 1–6 photos. Best for evidence boards, case files, personal profiles, recovered photos.",
+  "fields": {
+    "TITLE_TEXT": "Title displayed at top after all photos drop in. Example: 'Recovered Evidence'",
+    "BACKGROUND_COLOR": "Background color. Use a dark muted tone. Example: #1a1a2e or #2d1b1b",
+    "IMAGE_URL_1": "URL to first uploaded photo. Leave as IMAGE_URL_1 if not yet uploaded.",
+    "IMAGE_URL_2": "URL to second uploaded photo. Leave as IMAGE_URL_2 if not yet uploaded.",
+    "IMAGE_URL_3": "URL to third uploaded photo. Leave as IMAGE_URL_3 if not yet uploaded.",
+    "IMAGE_URL_4": "URL to fourth uploaded photo. Leave as IMAGE_URL_4 if not yet uploaded.",
+    "IMAGE_URL_5": "URL to fifth uploaded photo. Leave as IMAGE_URL_5 if not yet uploaded.",
+    "IMAGE_URL_6": "URL to sixth uploaded photo. Leave as IMAGE_URL_6 if not yet uploaded.",
+    "CAPTION_1": "Handwritten-style caption below first polaroid. Short, max 4 words. Example: 'Suspect - Jan 12'",
+    "CAPTION_2": "Caption for second polaroid.",
+    "CAPTION_3": "Caption for third polaroid.",
+    "CAPTION_4": "Caption for fourth polaroid.",
+    "CAPTION_5": "Caption for fifth polaroid.",
+    "CAPTION_6": "Caption for sixth polaroid.",
+    "SUGGESTION_1": "Describe exactly what photo the user should upload for slot 1. Be specific. Example: 'Upload a close-up photo of the recovered item or evidence'",
+    "SUGGESTION_2": "Describe what to upload for slot 2. Example: 'Upload a photo of the second suspect or location'",
+    "SUGGESTION_3": "Describe what to upload for slot 3. Leave blank if only 2 images are needed.",
+    "SUGGESTION_4": "Describe what to upload for slot 4. Leave blank if fewer than 4 images are needed.",
+    "SUGGESTION_5": "Describe what to upload for slot 5. Leave blank if fewer than 5 images are needed.",
+    "SUGGESTION_6": "Describe what to upload for slot 6. Leave blank if fewer than 6 images are needed."
+  }
+}

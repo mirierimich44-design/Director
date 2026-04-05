@@ -1,0 +1,17 @@
+{
+  "template": "167-map-radar-sweep",
+  "description": "Rotating radar sweep over a city-level map. Targets appear as the sweep crosses them. Best for surveillance operations, signal intercept, missile defense coverage, intelligence monitoring.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'SIGNALS INTELLIGENCE — NSA STATION' or 'RADAR COVERAGE MAP'",
+    "MAP_LABEL_1": "Radar station city key (uppercase): LOS_ANGELES, NEW_YORK, LONDON, DUBAI, TOKYO, WASHINGTON_DC, MOSCOW, TEHRAN, BEIJING, PYONGYANG",
+    "CONTEXT_TEXT": "Intel description, e.g. 'Station monitors communications across a 400km radius'",
+    "STAT_VALUE_1": "Primary radar stat, e.g. '400km' or '24/7'",
+    "LABEL_1": "Label for stat 1, e.g. 'COVERAGE RADIUS' or 'MONITORING'",
+    "STAT_VALUE_2": "Secondary stat, e.g. '14' or '99.2%'",
+    "LABEL_2": "Label for stat 2, e.g. 'TARGETS DETECTED' or 'UPTIME'",
+    "MAP_LABEL_2": "Detected target 1 label, e.g. 'FACILITY ALPHA'",
+    "MAP_LABEL_3": "Detected target 2 label, e.g. 'COMMS TOWER'",
+    "MAP_LABEL_4": "Detected target 3 label (optional)",
+    "MAP_LABEL_5": "Detected target 4 label (optional)"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "template": "164-map-satellite-reveal",
+  "description": "Camera zooms into a city from space, crosshair locks on with a rotating scan animation and forensic HUD overlay. Best for surveillance, target acquisition, intelligence briefings, classified locations.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'SURVEILLANCE OPERATION' or 'TARGET ACQUIRED'",
+    "MAP_LABEL_1": "City key (uppercase): LOS_ANGELES, NEW_YORK, LONDON, DUBAI, TOKYO, KYIV, MOSCOW, TEHRAN, GAZA, BEIJING, SINGAPORE, CAIRO",
+    "TAG_1": "Classification or operation tag, e.g. 'TOP SECRET' or 'OPERATION BLACKOUT'",
+    "CONTEXT_TEXT": "Intel summary, e.g. 'Satellite imagery confirms activity at the facility since March 2024'",
+    "STAT_VALUE_1": "Intelligence figure, e.g. '340' or '14km'",
+    "LABEL_1": "Label for stat 1, e.g. 'CONFIRMED TARGETS' or 'RADIUS'",
+    "STAT_VALUE_2": "Secondary figure, e.g. '72hrs' or 'ACTIVE'",
+    "LABEL_2": "Label for stat 2, e.g. 'OBSERVATION WINDOW' or 'STATUS'"
+  }
+}

@@ -1,8 +1,10 @@
-import React from 'react'
-import { useCurrentFrame, interpolate } from 'remotion'
+import React, { useEffect, useRef } from 'react'
+import { useCurrentFrame, interpolate, useDelayRender } from 'remotion'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
-// Mapbox Static Image coordinates per country [lon, lat, zoom]
-const COUNTRY_MAPBOX: Record<string, [number, number, number]> = {
+// MapLibre-compatible coordinates per country [lon, lat, zoom]
+const COUNTRY_COORDS: Record<string, [number, number, number]> = {
   USA:        [-100, 38, 3],
   UK:         [-2, 54, 5],
   RUSSIA:     [55, 55, 2.5],
@@ -15,7 +17,7 @@ const COUNTRY_MAPBOX: Record<string, [number, number, number]> = {
   GERMANY:    [10, 51, 5],
 }
 
-// Simplified country shapes for side-by-side comparison
+// Simplified country shapes for SVG overlay
 const SHAPES: Record<string, string> = {
   USA:        'M 40,60 L 80,50 L 130,48 L 190,50 L 230,55 L 250,75 L 248,110 L 230,140 L 190,155 L 140,160 L 90,155 L 50,138 L 30,110 L 28,80 Z',
   UK:         'M 80,50 L 110,45 L 130,55 L 135,90 L 125,130 L 105,155 L 85,150 L 70,120 L 65,85 L 72,62 Z',
@@ -31,8 +33,10 @@ const SHAPES: Record<string, string> = {
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
-
-  const stadiaKey = "STADIA_API_KEY"
+  const { delayRender, continueRender } = useDelayRender()
+  const [handle] = React.useState(() => delayRender('Loading maps'))
+  const mapRefs = useRef<(HTMLDivElement | null)[]>([])
+  const loadedCount = useRef(0)
 
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
@@ -41,15 +45,13 @@ export const AnimationComponent = () => {
   const title = "TITLE_TEXT"
   const contextText = "CONTEXT_TEXT"
 
-  // Raw data
   const rawItems = [
     { key: 'NORTHKOREA', name: "MAP_LABEL_1", stat: "STAT_VALUE_1", label: "LABEL_1" },
-    { key: 'IRAN', name: "MAP_LABEL_2", stat: "STAT_VALUE_2", label: "LABEL_2" },
-    { key: 'RUSSIA', name: "MAP_LABEL_3", stat: "STAT_VALUE_3", label: "LABEL_3" }
+    { key: 'IRAN',       name: "MAP_LABEL_2", stat: "STAT_VALUE_2", label: "LABEL_2" },
+    { key: 'RUSSIA',     name: "MAP_LABEL_3", stat: "STAT_VALUE_3", label: "LABEL_3" },
   ]
 
-  // Filter logic
-  const items = rawItems.filter(item => 
+  const items = rawItems.filter(item =>
     item.name !== '' && item.name !== 'Placeholder' &&
     item.stat !== '' && item.stat !== 'Placeholder'
   )
@@ -62,11 +64,38 @@ export const AnimationComponent = () => {
   const startX = (1920 - totalW) / 2
   const cardY = 160
 
-  // Animation timings based on count
   const getOp = (i: number) => interpolate(frame, [15 + i * 13, 32 + i * 13], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const getDash = (i: number) => interpolate(frame, [18 + i * 14, 55 + i * 14], [1500, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const labelOp = interpolate(frame, [62, 76], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const statOp = interpolate(frame, [70, 84], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
+  useEffect(() => {
+    const total = items.length
+    if (total === 0) { continueRender(handle); return }
+    loadedCount.current = 0
+    const maps: maplibregl.Map[] = []
+
+    items.forEach((item, i) => {
+      const container = mapRefs.current[i]
+      if (!container) return
+      const coords = COUNTRY_COORDS[item.key] || COUNTRY_COORDS['NORTHKOREA']
+      const map = new maplibregl.Map({
+        container,
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        interactive: false,
+        fadeDuration: 0,
+        center: [coords[0], coords[1]],
+        zoom: coords[2],
+      })
+      map.on('load', () => {
+        loadedCount.current++
+        if (loadedCount.current >= total) continueRender(handle)
+      })
+      maps.push(map)
+    })
+
+    return () => maps.forEach(m => m.remove())
+  }, [handle])
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
@@ -82,24 +111,17 @@ export const AnimationComponent = () => {
         const shape = SHAPES[item.key] || SHAPES['NORTHKOREA']
         const cardOpacity = getOp(i)
         const dashOffset = getDash(i)
-        
+
         return (
           <div key={i} style={{ position: 'absolute', top: cardY, left: x, width: cardW, height: cardH, overflow: 'hidden', backgroundColor: 'CHART_BG', borderRadius: 8, border: '1px solid', borderColor: 'CHART_BORDER', opacity: cardOpacity, boxSizing: 'border-box' }}>
 
-            {stadiaKey ? (() => {
-              const coords = COUNTRY_MAPBOX[item.key] || COUNTRY_MAPBOX['NORTHKOREA']
-              const url = `https://tiles.stadiamaps.com/static/alidade_smooth_dark/${coords[0]},${coords[1]},${coords[2]}/250x130@2x.png?api_key=${stadiaKey}`
-              return <img src={url} style={{ position: 'absolute', top: 0, left: 0, width: cardW, height: 260, objectFit: 'cover', opacity: 0.7 }} />
-            })() : null}
+            {/* MapLibre per-country background */}
+            <div
+              ref={el => { mapRefs.current[i] = el }}
+              style={{ position: 'absolute', top: 0, left: 0, width: cardW, height: 260, opacity: 0.7 }}
+            />
 
             <svg viewBox="0 0 280 220" width={cardW} height={260} style={{ position: 'absolute', top: 0, left: 0 }}>
-              {!stadiaKey && <rect width={280} height={220} fill="PANEL_LEFT_BG" opacity={0.5} />}
-              {!stadiaKey && [55, 110, 165].map((y, gi) => (
-                <line key={gi} x1={0} y1={y} x2={280} y2={y} stroke="GRID_LINE" strokeWidth={0.5} opacity={0.4} />
-              ))}
-              {!stadiaKey && [70, 140, 210].map((xx, gi) => (
-                <line key={gi} x1={xx} y1={0} x2={xx} y2={220} stroke="GRID_LINE" strokeWidth={0.5} opacity={0.4} />
-              ))}
               <path d={shape} fill="PRIMARY_COLOR" opacity={0.3} />
               <path d={shape} fill="none" stroke="PRIMARY_COLOR" strokeWidth={3} strokeDasharray={1500} strokeDashoffset={dashOffset} strokeLinecap="round" strokeLinejoin="round" opacity={0.95} />
               <path d={shape} fill="none" stroke="PRIMARY_COLOR" strokeWidth={6} strokeDasharray={1500} strokeDashoffset={dashOffset} strokeLinecap="round" strokeLinejoin="round" opacity={0.15} />

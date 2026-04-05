@@ -9,6 +9,7 @@ import {
     AutoFixHigh as AutoFixIcon,
     ExitToApp as LogoutIcon,
     Movie as MovieIcon,
+    GridView as GalleryIcon,
 } from '@mui/icons-material';
 
 // Lazy load views for better initial speed
@@ -17,6 +18,7 @@ const AudioProcessorView = lazy(() => import('./views/AudioProcessorView'));
 const SettingsView = lazy(() => import('./views/SettingsView'));
 const VideoGeneratorView = lazy(() => import('./views/VideoGeneratorView'));
 const SceneStudioView = lazy(() => import('./views/SceneStudioView'));
+const TemplateGalleryView = lazy(() => import('./views/TemplateGalleryView'));
 
 const ViewFallback = () => (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
@@ -24,7 +26,7 @@ const ViewFallback = () => (
     </Box>
 );
 
-type Mode = 'project-director' | 'audio' | 'settings' | 'video-generator' | 'scene-studio';
+type Mode = 'project-director' | 'audio' | 'settings' | 'video-generator' | 'scene-studio' | 'template-gallery';
 
 const App: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => 
@@ -62,6 +64,7 @@ const App: React.FC = () => {
         { id: 'project-director',    label: 'Project Director',    icon: <ProjectIcon />,   desc: 'Chapter-based Projects' },
         { id: 'video-generator',     label: 'B-Roll Avatar',       icon: <AutoFixIcon />,   desc: 'Gemini + Pexels + HeyGen' },
         { id: 'scene-studio',        label: 'Scene Studio',        icon: <MovieIcon />,     desc: 'Custom Standalone Scenes' },
+        { id: 'template-gallery',    label: 'Template Gallery',    icon: <GalleryIcon />,   desc: 'Browse All Templates' },
         { id: 'audio',               label: 'Audio Studio',        icon: <AudioIcon />,     desc: 'Voiceover Processor' },
         { id: 'settings',            label: 'LLM Settings',        icon: <SettingsIcon />,  desc: 'API Keys & Models' },
     ];
@@ -137,6 +140,7 @@ const App: React.FC = () => {
                     {mode === 'project-director'    && <ProjectDirectorView />}
                     {mode === 'video-generator'     && <VideoGeneratorView />}
                     {mode === 'scene-studio'        && <SceneStudioView />}
+                    {mode === 'template-gallery'    && <TemplateGalleryView />}
                     {mode === 'audio'               && <AudioProcessorView />}
                     {mode === 'settings'            && <SettingsView />}
                 </Suspense>

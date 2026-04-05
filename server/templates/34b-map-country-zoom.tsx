@@ -1,8 +1,10 @@
-import React from 'react'
-import { useCurrentFrame, interpolate } from 'remotion'
+import React, { useEffect, useRef } from 'react'
+import { useCurrentFrame, interpolate, useDelayRender } from 'remotion'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
-// Mapbox Static Image coordinates per country [lon, lat, zoom]
-const COUNTRY_MAPBOX: Record<string, [number, number, number]> = {
+// MapLibre-compatible coordinates per country [lon, lat, zoom]
+const COUNTRY_COORDS: Record<string, [number, number, number]> = {
   USA:        [-100, 38, 3],
   UK:         [-2, 54, 5],
   RUSSIA:     [55, 55, 2.5],
@@ -16,7 +18,6 @@ const COUNTRY_MAPBOX: Record<string, [number, number, number]> = {
 }
 
 // Country border paths — simplified but recognizable outlines
-// All paths normalized to fit within a 1200x800 viewBox, centered on the country
 const COUNTRY_PATHS: Record<string, { path: string; viewBox: string; label: string }> = {
   USA: {
     viewBox: '0 0 1200 800',
@@ -72,49 +73,33 @@ const COUNTRY_PATHS: Record<string, { path: string; viewBox: string; label: stri
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
+  const mapRef = useRef<HTMLDivElement>(null)
+  const { delayRender, continueRender } = useDelayRender()
+  const [handle] = React.useState(() => delayRender('Loading map'))
 
-  // Which country to show — controlled by placeholder
   const countryKey = "MAP_LABEL_1"
-
-  // Look up country path using the placeholder value, fallback to USA if not found
   const country = COUNTRY_PATHS[countryKey] || COUNTRY_PATHS['USA']
+  const coords = COUNTRY_COORDS[countryKey] || COUNTRY_COORDS['USA']
 
-  const stadiaKey = "STADIA_API_KEY"
-  const mapboxCoords = COUNTRY_MAPBOX[countryKey] || COUNTRY_MAPBOX['USA']
-  const stadiaUrl = stadiaKey
-    ? `https://tiles.stadiamaps.com/static/alidade_smooth_dark/${mapboxCoords[0]},${mapboxCoords[1]},${mapboxCoords[2]}/480x400@2x.png?api_key=${stadiaKey}`
-    : null
-
-  // Animations
   const bgOp = interpolate(frame, [0, 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const titleOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const titleTy = interpolate(frame, [0, 20], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const barWAnim = interpolate(frame, [10, 40], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-
-  // Country fill fades in
   const fillOp = interpolate(frame, [15, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-
-  // Border draws via dashoffset
   const borderDash = interpolate(frame, [20, 70], [3000, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-
-  // Pulse ring
   const pulseR1 = interpolate(frame % 70, [0, 70], [0, 200], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const pulseOp1 = interpolate(frame % 70, [0, 35, 70], [0.6, 0.2, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const pulseR2 = interpolate((frame + 35) % 70, [0, 70], [0, 200], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const pulseOp2 = interpolate((frame + 35) % 70, [0, 35, 70], [0.6, 0.2, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-
-  // Label animations
   const nameOp = interpolate(frame, [55, 70], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const nameTy = interpolate(frame, [55, 70], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const stat1Op = interpolate(frame, [62, 76], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const stat2Op = interpolate(frame, [70, 84], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const divW = interpolate(frame, [58, 78], [0, 400], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
-  // Center of country shape (approximate centroid)
   const cx = 590
   const cy = 325
 
-  // Content placeholders
   const titleText = "TITLE_TEXT"
   const countryName = "MAP_LABEL_1"
   const statValue1 = "STAT_VALUE_1"
@@ -124,94 +109,60 @@ export const AnimationComponent = () => {
   const contextText = "CONTEXT_TEXT"
   const tag1 = "TAG_1"
 
+  useEffect(() => {
+    if (!mapRef.current) return
+    const map = new maplibregl.Map({
+      container: mapRef.current,
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      interactive: false,
+      fadeDuration: 0,
+      center: [coords[0], coords[1]],
+      zoom: coords[2],
+    })
+    map.on('load', () => continueRender(handle))
+    return () => map.remove()
+  }, [handle])
+
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
 
-      {/* Background tint */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'PANEL_LEFT_BG', opacity: bgOp * 0.06 }} />
-
-      {/* Top + bottom accents */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 5, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR', opacity: titleOp }} />
       <div style={{ position: 'absolute', top: 1074, left: 0, width: barWAnim, height: 6, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR' }} />
 
-      {/* Title */}
       <div style={{ position: 'absolute', top: 50, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <span style={{ fontSize: 26, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{titleText}</span>
       </div>
 
-      {/* Mapbox background for country area */}
-      {stadiaUrl ? (
-        <img
-          src={stadiaUrl}
-          style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4, objectFit: 'cover' }}
-        />
-      ) : null}
+      {/* MapLibre background for country area */}
+      <div ref={mapRef} style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4 }} />
 
-      {/* SVG — country shape centered on left portion of screen */}
+      {/* SVG country shape overlay */}
       <svg
         viewBox={country.viewBox}
         width={960}
         height={800}
         style={{ position: 'absolute', top: 140, left: 60 }}
       >
-        {/* Glow layer — same shape, blurred fill */}
         <path d={country.path} fill="PRIMARY_COLOR" opacity={fillOp * 0.08} />
-
-        {/* Country fill */}
         <path d={country.path} fill="PRIMARY_COLOR" opacity={fillOp * 0.35} />
-
-        {/* Animated border outline */}
-        <path
-          d={country.path}
-          fill="none"
-          stroke="PRIMARY_COLOR"
-          strokeWidth={6}
-          strokeDasharray={3000}
-          strokeDashoffset={borderDash}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity={0.9}
-        />
-
-        {/* Secondary outline glow */}
-        <path
-          d={country.path}
-          fill="none"
-          stroke="ACCENT_COLOR"
-          strokeWidth={2}
-          strokeDasharray={3000}
-          strokeDashoffset={borderDash}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity={0.5}
-        />
-
-        {/* Pulse rings at centroid */}
+        <path d={country.path} fill="none" stroke="PRIMARY_COLOR" strokeWidth={6} strokeDasharray={3000} strokeDashoffset={borderDash} strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
+        <path d={country.path} fill="none" stroke="ACCENT_COLOR" strokeWidth={2} strokeDasharray={3000} strokeDashoffset={borderDash} strokeLinecap="round" strokeLinejoin="round" opacity={0.5} />
         <circle cx={cx} cy={cy} r={pulseR1} fill="none" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={pulseOp1 * fillOp} />
         <circle cx={cx} cy={cy} r={pulseR2} fill="none" stroke="ACCENT_COLOR" strokeWidth={1.5} opacity={pulseOp2 * fillOp} />
-
-        {/* Center dot */}
         <circle cx={cx} cy={cy} r={14} fill="PRIMARY_COLOR" opacity={fillOp} />
         <circle cx={cx} cy={cy} r={6} fill="BACKGROUND_COLOR" opacity={fillOp} />
       </svg>
 
       {/* Right side info panel */}
       <div style={{ position: 'absolute', top: 160, left: 1020, width: 820, height: 720, overflow: 'hidden' }}>
-
-        {/* Country name */}
         <div style={{ position: 'absolute', top: 40, left: 0, width: 820, height: 110, overflow: 'hidden', opacity: nameOp, transform: `translateY(${nameTy}px)` }}>
           <span style={{ fontSize: 80, fontWeight: 900, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', lineHeight: 1, letterSpacing: -2 }}>{countryName}</span>
         </div>
-
-        {/* Divider */}
         <div style={{ position: 'absolute', top: 162, left: 0, width: divW, height: 3, overflow: 'hidden', backgroundColor: 'ACCENT_COLOR' }} />
-
-        {/* Tag */}
         <div style={{ position: 'absolute', top: 182, left: 0, width: 820, height: 44, overflow: 'hidden', opacity: nameOp }}>
           <span style={{ fontSize: 22, fontWeight: 600, color: 'ACCENT_COLOR', fontFamily: 'sans-serif', letterSpacing: 3, textTransform: 'uppercase' }}>{tag1}</span>
         </div>
-
-        {/* Stat 1 */}
         <div style={{ position: 'absolute', top: 260, left: 0, width: 380, height: 160, overflow: 'hidden', opacity: stat1Op, backgroundColor: 'CHART_BG', borderRadius: 6, border: '1px solid', borderColor: 'CHART_BORDER', boxSizing: 'border-box' }}>
           <div style={{ position: 'absolute', top: 20, left: 24, width: 332, height: 80, overflow: 'hidden' }}>
             <span style={{ fontSize: 64, fontWeight: 900, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', lineHeight: 1 }}>{statValue1}</span>
@@ -220,8 +171,6 @@ export const AnimationComponent = () => {
             <span style={{ fontSize: 18, fontWeight: 500, color: 'SUPPORT_COLOR', fontFamily: 'sans-serif', textTransform: 'uppercase', letterSpacing: 1 }}>{statLabel1}</span>
           </div>
         </div>
-
-        {/* Stat 2 */}
         <div style={{ position: 'absolute', top: 260, left: 420, width: 380, height: 160, overflow: 'hidden', opacity: stat2Op, backgroundColor: 'CHART_BG', borderRadius: 6, border: '1px solid', borderColor: 'CHART_BORDER', boxSizing: 'border-box' }}>
           <div style={{ position: 'absolute', top: 20, left: 24, width: 332, height: 80, overflow: 'hidden' }}>
             <span style={{ fontSize: 64, fontWeight: 900, color: 'SECONDARY_COLOR', fontFamily: 'sans-serif', lineHeight: 1 }}>{statValue2}</span>
@@ -230,12 +179,9 @@ export const AnimationComponent = () => {
             <span style={{ fontSize: 18, fontWeight: 500, color: 'SUPPORT_COLOR', fontFamily: 'sans-serif', textTransform: 'uppercase', letterSpacing: 1 }}>{statLabel2}</span>
           </div>
         </div>
-
-        {/* Context paragraph */}
         <div style={{ position: 'absolute', top: 450, left: 0, width: 820, height: 200, overflow: 'hidden', opacity: stat2Op }}>
           <span style={{ fontSize: 26, fontWeight: 400, color: 'TEXT_ON_SECONDARY', fontFamily: 'sans-serif', lineHeight: 1.65 }}>{contextText}</span>
         </div>
-
       </div>
 
     </div>

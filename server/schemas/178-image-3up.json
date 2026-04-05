@@ -1,0 +1,16 @@
+{
+  "template": "178-image-3up",
+  "description": "Three images in a row with title and individual labels. Blue-black bordered boxes. Suggestion placeholders when images not uploaded.",
+  "fields": {
+    "TITLE_TEXT":   { "type": "string", "description": "Headline above the images", "example": "The Three Suspects" },
+    "IMAGE_URL_1":  { "type": "image",  "description": "Left image URL", "example": "IMAGE_URL_1" },
+    "IMAGE_URL_2":  { "type": "image",  "description": "Center image URL", "example": "IMAGE_URL_2" },
+    "IMAGE_URL_3":  { "type": "image",  "description": "Right image URL", "example": "IMAGE_URL_3" },
+    "LABEL_1":      { "type": "string", "description": "Caption for left image", "example": "Suspect A — last seen 14 March" },
+    "LABEL_2":      { "type": "string", "description": "Caption for center image", "example": "Suspect B — alias unknown" },
+    "LABEL_3":      { "type": "string", "description": "Caption for right image", "example": "Suspect C — whereabouts confirmed" },
+    "SUGGESTION_1": { "type": "string", "description": "What to upload for left slot", "example": "Upload a headshot or profile photo of the first person" },
+    "SUGGESTION_2": { "type": "string", "description": "What to upload for center slot", "example": "Upload a headshot or profile photo of the second person" },
+    "SUGGESTION_3": { "type": "string", "description": "What to upload for right slot", "example": "Upload a headshot or profile photo of the third person" }
+  }
+}

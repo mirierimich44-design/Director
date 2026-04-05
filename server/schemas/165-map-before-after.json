@@ -1,0 +1,13 @@
+{
+  "template": "165-map-before-after",
+  "description": "Split screen showing the same location with two different map styles (dark vs light) representing before/after states. Best for war damage, urban development, border changes, infrastructure before and after an event.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'MARIUPOL: BEFORE & AFTER' or 'URBAN TRANSFORMATION'",
+    "MAP_LABEL_1": "City key (uppercase): LOS_ANGELES, NEW_YORK, LONDON, DUBAI, TOKYO, KYIV, GAZA, ALEPPO, BEIRUT, MARIUPOL",
+    "LABEL_1": "Before label, e.g. 'FEBRUARY 2022' or 'PRE-CONFLICT'",
+    "LABEL_2": "After label, e.g. 'MARCH 2025' or 'POST-CONFLICT'",
+    "STAT_VALUE_1": "Before stat, e.g. '450,000'",
+    "STAT_VALUE_2": "After stat, e.g. '87,000'",
+    "CONTEXT_TEXT": "Summary comparing the two states, e.g. 'Population dropped by 81% following the siege'"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "template": "170-image-cascade",
+  "purpose": "Animated image slideshow with configurable slide/fade/zoom/wipe transitions. User uploads 1–6 images. Best for evidence reveals, photo montages, before/after comparisons, news photo sequences.",
+  "fields": {
+    "TITLE_TEXT": "Optional overlay title in top-left corner. Leave blank if not needed.",
+    "TRANSITION_STYLE": "Animation style between slides. Options: slide-right, slide-left, slide-up, fade, zoom, wipe. Default: slide-right",
+    "FRAMES_PER_SLIDE": "How long each image is shown in frames (30fps). Example: 90 = 3 seconds, 60 = 2 seconds. Default: 90",
+    "TRANSITION_FRAMES": "Duration of the transition between slides in frames. Example: 25. Default: 25",
+    "IMAGE_URL_1": "URL to first uploaded image. Leave as IMAGE_URL_1 if not yet uploaded.",
+    "IMAGE_URL_2": "URL to second uploaded image. Leave as IMAGE_URL_2 if not yet uploaded.",
+    "IMAGE_URL_3": "URL to third uploaded image. Leave as IMAGE_URL_3 if not yet uploaded.",
+    "IMAGE_URL_4": "URL to fourth uploaded image. Leave as IMAGE_URL_4 if not yet uploaded.",
+    "IMAGE_URL_5": "URL to fifth uploaded image. Leave as IMAGE_URL_5 if not yet uploaded.",
+    "IMAGE_URL_6": "URL to sixth uploaded image. Leave as IMAGE_URL_6 if not yet uploaded.",
+    "CAPTION_1": "Caption for first image shown at the bottom during slideshow. Example: 'Crime scene — 14 March 2024'",
+    "CAPTION_2": "Caption for second image.",
+    "CAPTION_3": "Caption for third image.",
+    "CAPTION_4": "Caption for fourth image.",
+    "CAPTION_5": "Caption for fifth image.",
+    "CAPTION_6": "Caption for sixth image.",
+    "SUGGESTION_1": "Describe exactly what photo or screenshot the user should upload for slot 1. Be specific. Example: 'Upload a photo of the main entrance or lobby'",
+    "SUGGESTION_2": "Describe what to upload for slot 2. Example: 'Upload a screenshot of the breach notification email'",
+    "SUGGESTION_3": "Describe what to upload for slot 3. Leave blank if only 2 images are needed.",
+    "SUGGESTION_4": "Describe what to upload for slot 4. Leave blank if fewer than 4 images are needed.",
+    "SUGGESTION_5": "Describe what to upload for slot 5. Leave blank if fewer than 5 images are needed.",
+    "SUGGESTION_6": "Describe what to upload for slot 6. Leave blank if fewer than 6 images are needed."
+  }
+}

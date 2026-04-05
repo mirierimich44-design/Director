@@ -1,0 +1,28 @@
+{
+  "template": "175-image-grid",
+  "purpose": "Images revealed in a dynamic grid layout with scanning effect. Auto-adapts layout: 1 image = full screen, 2 = side-by-side, 3 = three columns, 4 = 2x2, 5-6 = 2x3 grid. Best for multi-source comparison, evidence overview, before/after sets.",
+  "fields": {
+    "TITLE_TEXT": "Title displayed above the grid. Example: 'Attack Surface Overview'",
+    "BACKGROUND_COLOR": "Background color. Example: #0f172a",
+    "ACCENT_COLOR": "Scan line and corner bracket color. Example: #f59e0b or #22c55e",
+    "PRIMARY_COLOR": "Title accent bar color. Example: #3b82f6",
+    "IMAGE_URL_1": "URL to first uploaded grid image. Leave as IMAGE_URL_1 if not yet uploaded.",
+    "IMAGE_URL_2": "URL to second uploaded grid image. Leave as IMAGE_URL_2 if not yet uploaded.",
+    "IMAGE_URL_3": "URL to third uploaded grid image. Leave as IMAGE_URL_3 if not yet uploaded.",
+    "IMAGE_URL_4": "URL to fourth uploaded grid image. Leave as IMAGE_URL_4 if not yet uploaded.",
+    "IMAGE_URL_5": "URL to fifth uploaded grid image. Leave as IMAGE_URL_5 if not yet uploaded.",
+    "IMAGE_URL_6": "URL to sixth uploaded grid image. Leave as IMAGE_URL_6 if not yet uploaded.",
+    "LABEL_1": "Label shown at bottom of first image. Example: 'Server Room A'",
+    "LABEL_2": "Label for second image.",
+    "LABEL_3": "Label for third image.",
+    "LABEL_4": "Label for fourth image.",
+    "LABEL_5": "Label for fifth image.",
+    "LABEL_6": "Label for sixth image.",
+    "SUGGESTION_1": "Describe exactly what photo or screenshot the user should upload for slot 1. Be specific. Example: 'Upload a photo of the server room or data center'",
+    "SUGGESTION_2": "Describe what to upload for slot 2. Example: 'Upload a network diagram or infrastructure screenshot'",
+    "SUGGESTION_3": "Describe what to upload for slot 3. Leave blank if only 2 images are needed.",
+    "SUGGESTION_4": "Describe what to upload for slot 4. Leave blank if fewer than 4 images are needed.",
+    "SUGGESTION_5": "Describe what to upload for slot 5. Leave blank if fewer than 5 images are needed.",
+    "SUGGESTION_6": "Describe what to upload for slot 6. Leave blank if fewer than 6 images are needed."
+  }
+}

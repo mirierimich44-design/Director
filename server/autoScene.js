@@ -69,8 +69,8 @@ const TEMPLATE_CATEGORIES = {
     templates: ['19-nodenetwork-centered', '20-nodenetwork-flow', '21-nodenetwork-attack', '24-nodenetwork-hierarchy', '53-nodenetwork-bipartite', '54-nodenetwork-timeline', '55-nodenetwork-cluster', '136-attribution-web']
   },
   MAP: {
-    desc: 'Geography, country highlights, trade routes, heatmaps',
-    templates: ['34-map-dotplot', '34b-map-country-zoom', '35-map-region-highlight', '35b-map-country-compare', '36-map-arc-connection', '37-map-spread', '139-attack-origin-heatmap', '140-botnet-spread']
+    desc: 'Geography, country highlights, trade routes, heatmaps, conflict zones, migration, supply chains',
+    templates: ['34-map-dotplot', '34b-map-country-zoom', '35-map-region-highlight', '35b-map-country-compare', '36-map-arc-connection', '37-map-spread', '139-attack-origin-heatmap', '140-botnet-spread', '86-map-flight-path', '87-map-supply-chain', '88-map-migration-flow', '89-map-choropleth', '91-map-territory-control', '159-map-timeline-spread', '160-map-location-pin', '162-map-city-neighborhood', '164-map-satellite-reveal', '165-map-before-after', '166-map-multi-city-stats', '167-map-radar-sweep', '168-map-conflict-markers']
   },
   CODE: {
     desc: 'Source code, terminal logs, registry keys, wireshark streams',
@@ -123,8 +123,18 @@ const TEMPLATE_CATEGORIES = {
   QUOTE: {
     desc: 'Direct quotes, punchy claims',
     templates: ['77-quote-fullscreen']
+  },
+  IMAGE_SEQUENCE: {
+    desc: 'Photo sequences, image montages, evidence reveals, surveillance footage, polaroid collections, filmstrip animations, image grids',
+    templates: ['170-image-cascade', '171-image-kenburns', '172-image-polaroid', '173-image-filmstrip', '174-image-stack', '175-image-grid']
+  },
+  IMAGE_GRID: {
+    desc: 'Static image layouts with labeled boxes: 1 image (176), 2 side-by-side (177), 3 in a row (178), 4 in 2x2 grid (179), 5 in 2+3 layout (180), 6 in 3x2 grid (181). Use when the script references people, locations, evidence, products, or any set of images that should be shown together with captions. Each slot shows an upload suggestion when no image is present.',
+    templates: ['176-image-1up', '177-image-2up', '178-image-3up', '179-image-4up', '180-image-5up', '181-image-6up']
   }
 }
+
+export { TEMPLATE_CATEGORIES }
 
 // ─────────────────────────────────────────────
 // Helper: Infer best template category from script text

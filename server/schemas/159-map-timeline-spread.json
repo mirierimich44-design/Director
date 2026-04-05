@@ -1,0 +1,20 @@
+{
+  "template": "159-map-timeline-spread",
+  "description": "Events appear one-by-one across a world map with ripple animations and a timeline bar. Best for showing escalation, outbreak spread, protest waves, cyberattack campaigns across multiple locations.",
+  "fields": {
+    "TITLE_TEXT": "Headline, e.g. 'RANSOMWARE CAMPAIGN TIMELINE' or 'PROTEST SPREAD 2024'",
+    "CONTEXT_TEXT": "Summary sentence shown at end, e.g. 'Campaign hit 6 countries over 8 weeks'",
+    "MAP_LABEL_1": "Location of event 1, e.g. 'LONDON'",
+    "LABEL_1": "Date/time of event 1, e.g. 'JAN 12' or 'WEEK 1'",
+    "MAP_LABEL_2": "Location of event 2",
+    "LABEL_2": "Date/time of event 2",
+    "MAP_LABEL_3": "Location of event 3",
+    "LABEL_3": "Date/time of event 3",
+    "MAP_LABEL_4": "Location of event 4",
+    "LABEL_4": "Date/time of event 4",
+    "MAP_LABEL_5": "Location of event 5",
+    "LABEL_5": "Date/time of event 5",
+    "MAP_LABEL_6": "Location of event 6 (optional)",
+    "LABEL_6": "Date/time of event 6 (optional)"
+  }
+}

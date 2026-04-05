@@ -1,0 +1,19 @@
+{
+  "template": "179-image-4up",
+  "description": "Four images in a 2×2 grid with title and individual labels. Blue-black bordered boxes. Suggestion placeholders when images not uploaded.",
+  "fields": {
+    "TITLE_TEXT":   { "type": "string", "description": "Headline above the grid", "example": "Locations of Interest" },
+    "IMAGE_URL_1":  { "type": "image",  "description": "Top-left image URL", "example": "IMAGE_URL_1" },
+    "IMAGE_URL_2":  { "type": "image",  "description": "Top-right image URL", "example": "IMAGE_URL_2" },
+    "IMAGE_URL_3":  { "type": "image",  "description": "Bottom-left image URL", "example": "IMAGE_URL_3" },
+    "IMAGE_URL_4":  { "type": "image",  "description": "Bottom-right image URL", "example": "IMAGE_URL_4" },
+    "LABEL_1":      { "type": "string", "description": "Caption for top-left image", "example": "Server room — Building A" },
+    "LABEL_2":      { "type": "string", "description": "Caption for top-right image", "example": "Network switch — Floor 3" },
+    "LABEL_3":      { "type": "string", "description": "Caption for bottom-left image", "example": "Entry point — south corridor" },
+    "LABEL_4":      { "type": "string", "description": "Caption for bottom-right image", "example": "Exfil point — loading bay" },
+    "SUGGESTION_1": { "type": "string", "description": "What to upload for top-left slot", "example": "Upload a photo of the server room or data center" },
+    "SUGGESTION_2": { "type": "string", "description": "What to upload for top-right slot", "example": "Upload a photo of the network infrastructure" },
+    "SUGGESTION_3": { "type": "string", "description": "What to upload for bottom-left slot", "example": "Upload a photo of the entry corridor or doorway" },
+    "SUGGESTION_4": { "type": "string", "description": "What to upload for bottom-right slot", "example": "Upload a photo of the loading area or exit point" }
+  }
+}

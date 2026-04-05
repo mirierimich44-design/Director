@@ -1,0 +1,12 @@
+{
+  "template": "86-map-flight-path",
+  "description": "Animated flight path between two cities — camera follows the route tip across the map. Best for trade routes, military movements, data transfers, flight connections.",
+  "fields": {
+    "TITLE_TEXT": "Headline above the map, e.g. 'WEAPONS TRANSFER ROUTE' or 'SUPPLY LINE'",
+    "ARC_FROM": "Origin city key (uppercase): LOS_ANGELES, NEW_YORK, LONDON, PARIS, DUBAI, TOKYO, BEIJING, MOSCOW, SYDNEY, SAO_PAULO, SINGAPORE, WASHINGTON_DC",
+    "ARC_TO": "Destination city key (uppercase): same options as ARC_FROM",
+    "CONTEXT_TEXT": "Short supporting sentence shown at end, e.g. 'Shipments routed via third-party intermediaries'",
+    "STAT_VALUE_1": "Key figure shown at destination, e.g. '$4.2B' or '340 flights'",
+    "LABEL_1": "Label for stat, e.g. 'TOTAL VALUE' or 'MONTHLY VOLUME'"
+  }
+}

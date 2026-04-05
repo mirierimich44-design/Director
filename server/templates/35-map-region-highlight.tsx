@@ -1,8 +1,13 @@
-import React, { useMemo } from 'react'
-import { useCurrentFrame, interpolate } from 'remotion'
+import React, { useMemo, useEffect, useRef } from 'react'
+import { useCurrentFrame, interpolate, useDelayRender } from 'remotion'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
+  const mapRef = useRef<HTMLDivElement>(null)
+  const { delayRender, continueRender } = useDelayRender()
+  const [handle] = React.useState(() => delayRender('Loading map'))
 
   const title = "TITLE_TEXT"
   const arcTo = "ARC_TO"
@@ -34,11 +39,6 @@ export const AnimationComponent = () => {
   const labelTy = interpolate(frame, [45, 60], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const statOp = interpolate(frame, [55, 70], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
-  const stadiaKey = "STADIA_API_KEY"
-  const stadiaUrl = stadiaKey
-    ? `https://tiles.stadiamaps.com/static/alidade_smooth_dark/0,20,1.2/860x360@2x.png?api_key=${stadiaKey}`
-    : null
-
   const mapX = 100
   const mapY = 150
   const mapW = 1720
@@ -50,6 +50,20 @@ export const AnimationComponent = () => {
 
   const corners = [[regionX, regionY], [regionX + regionW, regionY], [regionX, regionY + regionH], [regionX + regionW, regionY + regionH]]
 
+  useEffect(() => {
+    if (!mapRef.current) return
+    const map = new maplibregl.Map({
+      container: mapRef.current,
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      interactive: false,
+      fadeDuration: 0,
+      center: [0, 20],
+      zoom: 1.5,
+    })
+    map.on('load', () => continueRender(handle))
+    return () => map.remove()
+  }, [handle])
+
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 1080, overflow: 'hidden', backgroundColor: 'BACKGROUND_COLOR' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 5, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR', opacity: titleOp }} />
@@ -57,23 +71,11 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 50, left: 0, width: 1920, height: 60, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <span style={{ fontSize: 28, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{title}</span>
       </div>
-      {stadiaUrl ? (
-        <img
-          src={stadiaUrl}
-          style={{ position: 'absolute', top: mapY, left: mapX, width: mapW, height: mapH, opacity: mapOp, borderRadius: 4, objectFit: 'cover' }}
-        />
-      ) : null}
+
+      {/* MapLibre background */}
+      <div ref={mapRef} style={{ position: 'absolute', top: mapY, left: mapX, width: mapW, height: mapH, opacity: mapOp, borderRadius: 4 }} />
+
       <svg width={1920} height={1080} style={{ position: 'absolute', top: 0, left: 0 }}>
-        {!stadiaUrl && <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="CHART_BG" rx={4} opacity={mapOp} />}
-        {!stadiaUrl && [0.25, 0.5, 0.75].map((r, i) => (
-          <line key={`h${i}`} x1={mapX} y1={mapY + r * mapH} x2={mapX + mapW} y2={mapY + r * mapH} stroke="GRID_LINE" strokeWidth={1} opacity={mapOp * 0.3} />
-        ))}
-        {!stadiaUrl && [0.2, 0.4, 0.6, 0.8].map((r, i) => (
-          <line key={`v${i}`} x1={mapX + r * mapW} y1={mapY} x2={mapX + r * mapW} y2={mapY + mapH} stroke="GRID_LINE" strokeWidth={1} opacity={mapOp * 0.3} />
-        ))}
-        {!stadiaUrl && continents.map((path, i) => (
-          <path key={i} d={path} fill="PANEL_LEFT_BG" stroke="LINE_STROKE" strokeWidth={1} opacity={mapOp * 0.5} />
-        ))}
         <rect x={regionX} y={regionY} width={regionW} height={regionH} fill="SECONDARY_COLOR" rx={4} opacity={regionOp * 0.25} transform={`scale(${regionScale})`} style={{ transformOrigin: `${regionX + regionW / 2}px ${regionY + regionH / 2}px` }} />
         <rect x={regionX} y={regionY} width={regionW} height={regionH} fill="none" stroke="SECONDARY_COLOR" strokeWidth={3} rx={4} opacity={regionOp} transform={`scale(${regionScale})`} style={{ transformOrigin: `${regionX + regionW / 2}px ${regionY + regionH / 2}px` }} />
         {corners.map(([cx, cy], i) => (
@@ -81,6 +83,7 @@ export const AnimationComponent = () => {
         ))}
         <rect x={mapX} y={mapY} width={mapW} height={mapH} fill="none" stroke="CHART_BORDER" strokeWidth={2} rx={4} opacity={mapOp} />
       </svg>
+
       <div style={{ position: 'absolute', top: regionY - 50, left: regionX, width: regionW, height: 42, overflow: 'hidden', opacity: labelOp, transform: `translateY(${labelTy}px)`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'SECONDARY_COLOR', borderRadius: 4 }}>
         <span style={{ fontSize: 20, fontWeight: 700, color: 'TEXT_ON_SECONDARY', fontFamily: 'sans-serif', letterSpacing: 2, textTransform: 'uppercase' }}>{arcTo}</span>
       </div>
