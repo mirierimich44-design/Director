@@ -228,7 +228,7 @@ const TemplateGalleryView: React.FC = () => {
 
                     <Grid container spacing={2}>
                         {items.map(t => (
-                            <Grid item key={t.name} xs={12} sm={6} md={4} lg={3} xl={2}>
+                            <Grid key={t.name} size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}>
                                 <Card
                                     sx={{
                                         bgcolor: 'var(--bg-secondary)',
