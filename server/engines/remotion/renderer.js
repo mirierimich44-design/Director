@@ -107,12 +107,22 @@ async function ensureRemotionBrowser() {
         return browserExecutablePath;
     }
 
-    // Use Playwright's pre-downloaded headless_shell if available (common in some environments)
-    const PLAYWRIGHT_HEADLESS_SHELL = '/root/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell';
-    if (existsSync(PLAYWRIGHT_HEADLESS_SHELL)) {
-        browserExecutablePath = PLAYWRIGHT_HEADLESS_SHELL;
-        console.log(`✅ Using pre-installed Playwright browser: ${browserExecutablePath}`);
-        return browserExecutablePath;
+    // Check known system/Playwright Chrome locations before downloading
+    const SYSTEM_CHROME_CANDIDATES = [
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium',
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable',
+        '/snap/bin/chromium',
+        '/root/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell',
+        '/root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome',
+    ];
+    for (const candidate of SYSTEM_CHROME_CANDIDATES) {
+        if (existsSync(candidate)) {
+            browserExecutablePath = candidate;
+            console.log(`✅ Using system browser: ${browserExecutablePath}`);
+            return browserExecutablePath;
+        }
     }
 
     try {
