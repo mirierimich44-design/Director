@@ -58,6 +58,11 @@ const TemplateGalleryView: React.FC = () => {
     const [search, setSearch] = useState('');
     const [filterCat, setFilterCat] = useState('ALL');
 
+    // Persist generated preview URLs across opens (template name → video URL)
+    const [cachedPreviews, setCachedPreviews] = useState<Record<string, string>>(() => {
+        try { return JSON.parse(localStorage.getItem('gallery_previews') || '{}'); } catch { return {}; }
+    });
+
     // Preview dialog state
     const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
     const [previewJobId, setPreviewJobId]   = useState<string | null>(null);
@@ -87,28 +92,40 @@ const TemplateGalleryView: React.FC = () => {
                 if (d.status === 'completed' || d.status === 'error') {
                     clearInterval(pollRef.current!);
                     pollRef.current = null;
+                    if (d.status === 'completed' && d.url && previewTemplate) {
+                        setCachedPreviews(prev => {
+                            const next = { ...prev, [previewTemplate]: d.url! };
+                            localStorage.setItem('gallery_previews', JSON.stringify(next));
+                            return next;
+                        });
+                    }
                 }
             } catch { /* ignore */ }
         }, 800);
         return () => { if (pollRef.current) clearInterval(pollRef.current); };
     }, [previewJobId]);
 
-    const openPreview = async (name: string) => {
+    const openPreview = async (name: string, forceRender = false) => {
         setPreviewTemplate(name);
         setPreviewJobId(null);
-        setPreviewJob(null);
         setPreviewError('');
 
+        // If we already have a cached URL, show it immediately — no re-render needed
+        if (!forceRender && cachedPreviews[name]) {
+            setPreviewJob({ status: 'completed', progress: 100, message: 'Done', url: cachedPreviews[name] });
+            return;
+        }
+
+        setPreviewJob({ status: 'processing', progress: 0, message: 'Starting...' });
         try {
             const r = await fetch('/api/templates/preview', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ template: name, theme: 'DARK', duration: 180 }),
+                body: JSON.stringify({ template: name, theme: 'DARK' }),
             });
             const d = await r.json();
             if (!d.success) throw new Error(d.error || 'Render failed');
             setPreviewJobId(d.jobId);
-            setPreviewJob({ status: 'processing', progress: 0, message: 'Starting...' });
         } catch (e: any) {
             setPreviewError(e.message);
         }
@@ -249,9 +266,16 @@ const TemplateGalleryView: React.FC = () => {
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 mb: 1.5,
+                                                position: 'relative',
+                                                overflow: 'hidden',
                                             }}
                                         >
-                                            <RenderIcon sx={{ color: catColor(cat), opacity: 0.5, fontSize: 32 }} />
+                                            {cachedPreviews[t.name] ? (
+                                                <video src={cachedPreviews[t.name]} muted loop autoPlay
+                                                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+                                            ) : (
+                                                <RenderIcon sx={{ color: catColor(cat), opacity: 0.5, fontSize: 32 }} />
+                                            )}
                                         </Box>
                                         <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '0.78rem', lineHeight: 1.3, mb: 0.5 }}>
                                             {labelFor(t.name)}
@@ -351,6 +375,15 @@ const TemplateGalleryView: React.FC = () => {
                             sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)', textTransform: 'none', mr: 'auto' }}
                         >
                             Download
+                        </Button>
+                    )}
+                    {previewJob?.status === 'completed' && previewTemplate && (
+                        <Button
+                            onClick={() => openPreview(previewTemplate, true)}
+                            size="small"
+                            sx={{ color: 'var(--text-secondary)', textTransform: 'none' }}
+                        >
+                            Re-render
                         </Button>
                     )}
                     <Button onClick={closePreview} size="small" sx={{ color: 'var(--text-secondary)', textTransform: 'none' }}>
