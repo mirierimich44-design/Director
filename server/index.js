@@ -1002,35 +1002,36 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         const videoModel = getVideoModel() || 'veo-3.0-generate-preview';
         const generateAudio = videoModel.startsWith('veo-3');
 
-        // Build instance — include source image if provided (image-to-video)
+        // Build request body — generateVideos format
         const veoPromptSuffix = ' No humans, no people, no faces, no hands, no body parts. Cinematic camera movement, atmospheric depth, no text on screen.';
         const veoPrompt = (prompt || 'Cinematic camera push-in, atmospheric lighting.') + veoPromptSuffix;
-        const instance = { prompt: veoPrompt };
+
+        const veoBody = {
+            prompt: veoPrompt,
+            generationConfig: {
+                aspectRatio: '16:9',
+                durationSeconds: 5,
+                numberOfVideos: 1,
+                personGeneration: 'dont_allow',
+                ...(generateAudio ? { generateAudio: true } : {}),
+            },
+        };
+
+        // Include source image for image-to-video if available
         if (imageUrl) {
-            // Fetch image and encode as base64
             const imgRes = await fetch(`http://localhost:${process.env.PORT || 3000}${imageUrl}`);
             if (imgRes.ok) {
                 const imgBuf = await imgRes.arrayBuffer();
-                instance.image = {
+                veoBody.image = {
                     bytesBase64Encoded: Buffer.from(imgBuf).toString('base64'),
                     mimeType: 'image/jpeg',
                 };
             }
         }
 
-        const veoBody = {
-            instances: [instance],
-            parameters: {
-                aspectRatio: '16:9',
-                durationSeconds: 5,
-                sampleCount: 1,
-                ...(generateAudio ? { generateAudio: true } : {}),
-            },
-        };
-
         console.log(`   🎬 Starting Veo generation: model=${videoModel}, audio=${generateAudio}`);
         const startRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:predictLongRunning?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:generateVideos?key=${apiKey}`,
             { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(veoBody), signal: AbortSignal.timeout(30_000) }
         );
         if (!startRes.ok) {
@@ -1065,9 +1066,12 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         if (!videoData) throw new Error('Veo generation timed out after 6 minutes');
         if (videoData.error) throw new Error(`Veo error: ${videoData.error.message || JSON.stringify(videoData.error)}`);
 
-        const prediction = videoData.response?.predictions?.[0];
-        const b64 = prediction?.video?.bytesBase64Encoded;
-        const videoUri = prediction?.video?.uri;
+        // Handle both generatedVideos (Veo) and predictions (Imagen-style) response shapes
+        const genVideo = videoData.response?.generatedVideos?.[0]?.video;
+        const predVideo = videoData.response?.predictions?.[0]?.video;
+        const videoObj = genVideo || predVideo;
+        const b64 = videoObj?.bytesBase64Encoded;
+        const videoUri = videoObj?.uri;
 
         let videoBuf;
         if (b64) {
