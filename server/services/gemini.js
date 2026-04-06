@@ -14,8 +14,9 @@ const imagesDir = path.join(__dirname, '../../public/images');
 export async function generateImage(prompt, options = {}) {
     try {
         const modelName = options.model || getIMAGE_MODEL() || 'gemini-2.0-flash-exp';
+        const aspectRatio = options.aspectRatio || '16:9';
 
-        console.log(`   🎨 Gemini Image Gen: ${modelName}`);
+        console.log(`   🎨 Gemini Image Gen: ${modelName} [${aspectRatio}]`);
         console.log(`   📋 Prompt: ${prompt.substring(0, 100)}...`);
 
         const model = googleAI.getGenerativeModel({
@@ -25,7 +26,14 @@ export async function generateImage(prompt, options = {}) {
             },
         });
 
-        const result = await model.generateContent(prompt);
+        // Pass aspect ratio via imageGenerationConfig so Gemini returns 16:9 instead of square
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            generationConfig: {
+                responseModalities: ['IMAGE', 'TEXT'],
+                imageGenerationConfig: { aspectRatio },
+            },
+        });
         const response = result.response;
         const candidate = response.candidates?.[0];
 
