@@ -1003,7 +1003,9 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         const generateAudio = videoModel.startsWith('veo-3');
 
         // Build instance — include source image if provided (image-to-video)
-        const instance = { prompt: prompt || 'Cinematic camera push-in, atmospheric lighting.' };
+        const veoPromptSuffix = ' No humans, no people, no faces, no hands, no body parts. Cinematic camera movement, atmospheric depth, no text on screen.';
+        const veoPrompt = (prompt || 'Cinematic camera push-in, atmospheric lighting.') + veoPromptSuffix;
+        const instance = { prompt: veoPrompt };
         if (imageUrl) {
             // Fetch image and encode as base64
             const imgRes = await fetch(`http://localhost:${process.env.PORT || 3000}${imageUrl}`);
