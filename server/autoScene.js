@@ -604,9 +604,11 @@ export async function generateScenes(scriptText, generationSettings = null) {
     })
   }
 
-  // Enforce 15–25 word band per scene
+  // Enforce word band per scene (configurable via generationSettings.wordsPerScene)
+  const maxWords = generationSettings?.wordsPerScene ?? 25
+  const minWords = Math.max(10, Math.floor(maxWords * 0.6))
   const beforeCount = rawScenes.length
-  rawScenes = normalizeSceneWordCounts(rawScenes, 15, 25)
+  rawScenes = normalizeSceneWordCounts(rawScenes, minWords, maxWords)
   console.log(`   ✂️ Word-count normalization: ${beforeCount} → ${rawScenes.length} scenes`)
 
   const processed = []

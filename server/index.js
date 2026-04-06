@@ -148,6 +148,31 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/upload-slides',
     }
 );
 
+// POST /api/projects/:pid/chapters/:cid/scenes/:idx/set-slot
+// Sets a specific IMAGE_URL_N slot to an already-existing URL (e.g. from Imagen generation)
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/set-slot', express.json(), async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const { slot, url } = req.body;
+        if (!slot || !url) return res.status(400).json({ error: 'slot and url are required' });
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        const scene = chapter.scenes[parseInt(idx)];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+
+        const newContent = { ...(scene.content || {}), [`IMAGE_URL_${slot}`]: url };
+        const { fillTemplate } = await import('./templateFiller.js');
+        const code = fillTemplate(scene.template, scene.theme || 'DARK', newContent);
+        const result = await updateScene(pid, cid, parseInt(idx), { content: newContent, code });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('set-slot error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // ── Multer — voiceover uploads ──────────────────────────────────────────────────
 
 const voiceoverStorage = multer.diskStorage({

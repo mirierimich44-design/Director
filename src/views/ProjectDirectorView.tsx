@@ -59,6 +59,7 @@ interface GenerationSettings {
     templateVariety: string;
     maxTemplateReuse: number;
     customPrompt: string;
+    wordsPerScene: number;
 }
 
 interface Project {
@@ -187,6 +188,7 @@ const ProjectDirectorView: React.FC = () => {
         templateVariety: 'high',
         maxTemplateReuse: 1,
         customPrompt: '',
+        wordsPerScene: 25,
     });
 
     const selectedProjectRef = useRef<Project | null>(null);
@@ -238,7 +240,7 @@ const ProjectDirectorView: React.FC = () => {
             setGenSettings({
                 templateRatio: 60, colorScheme: 'auto',
                 customColors: { primary: '#FF6600', background: '#0A0A0A', accent: '#FFAA00' },
-                templateVariety: 'high', maxTemplateReuse: 1, customPrompt: '',
+                templateVariety: 'high', maxTemplateReuse: 1, customPrompt: '', wordsPerScene: 25,
             });
         }
     }, [selectedProject?.id]);
@@ -795,6 +797,7 @@ const ProjectDirectorView: React.FC = () => {
     const needsImages = (scene: Scene) => isImageSequenceScene(scene) && (!scene.content?.IMAGE_URL_1 || scene.content.IMAGE_URL_1.startsWith('IMAGE_URL_'));
 
     const [slideUploading, setSlideUploading] = useState<Record<string, boolean>>({});
+    const [slotGenerating, setSlotGenerating] = useState<Record<string, boolean>>({});
 
     const handleUploadSlides = async (chapterId: string, sceneIndex: number, files: FileList, slotIndex?: number) => {
         if (!selectedProject || files.length === 0) return;
@@ -819,6 +822,33 @@ const ProjectDirectorView: React.FC = () => {
             setError(err.message);
         } finally {
             setSlideUploading(prev => ({ ...prev, [key]: false }));
+        }
+    };
+
+    const handleGenerateSlotImage = async (chapterId: string, sceneIndex: number, slotIndex: number, prompt: string) => {
+        if (!selectedProject || !prompt) return;
+        const key = `${chapterId}-${sceneIndex}-${slotIndex}`;
+        setSlotGenerating(prev => ({ ...prev, [key]: true }));
+        try {
+            const renderRes = await fetch('/api/auto-scene/render-3d', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt }),
+            });
+            const renderData = await renderRes.json();
+            if (!renderData.success) throw new Error(renderData.error);
+
+            const setRes = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/set-slot`,
+                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slot: slotIndex, url: renderData.url }) }
+            );
+            const setData = await setRes.json();
+            if (!setData.success) throw new Error(setData.error);
+            await loadProjectDetails(selectedProject.id);
+        } catch (err: any) {
+            setError(`Image generation failed: ${err.message}`);
+        } finally {
+            setSlotGenerating(prev => ({ ...prev, [key]: false }));
         }
     };
 
@@ -1075,6 +1105,23 @@ const ProjectDirectorView: React.FC = () => {
                                         onChange={(_, v) => setGenSettings(prev => ({ ...prev, templateRatio: v as number }))}
                                         min={10} max={90} step={5}
                                         marks={[{ value: 10, label: '10%' }, { value: 50, label: '50/50' }, { value: 90, label: '90%' }]}
+                                        sx={{ color: 'var(--accent-gold)', '& .MuiSlider-markLabel': { color: 'var(--text-secondary)', fontSize: '0.7rem' } }}
+                                    />
+                                </Grid>
+
+                                {/* Words per Scene (density) */}
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <Typography variant="subtitle2" sx={{ color: '#fff', mb: 1 }}>
+                                        Scene Density: ~{genSettings.wordsPerScene} words max per scene
+                                        <Typography component="span" variant="caption" sx={{ color: 'var(--text-secondary)', ml: 1 }}>
+                                            ({genSettings.wordsPerScene <= 20 ? 'concise, more scenes' : genSettings.wordsPerScene >= 45 ? 'dense, fewer scenes' : 'balanced'})
+                                        </Typography>
+                                    </Typography>
+                                    <Slider
+                                        value={genSettings.wordsPerScene}
+                                        onChange={(_, v) => setGenSettings(prev => ({ ...prev, wordsPerScene: v as number }))}
+                                        min={15} max={60} step={5}
+                                        marks={[{ value: 15, label: '15' }, { value: 25, label: '25' }, { value: 40, label: '40' }, { value: 60, label: '60' }]}
                                         sx={{ color: 'var(--accent-gold)', '& .MuiSlider-markLabel': { color: 'var(--text-secondary)', fontSize: '0.7rem' } }}
                                     />
                                 </Grid>
@@ -1579,6 +1626,8 @@ const ProjectDirectorView: React.FC = () => {
                                                                                 const sug = scene.content?.[`SUGGESTION_${n}`];
                                                                                 const hasSug = sug && !sug.startsWith('SUGGESTION_');
                                                                                 const uploading = slideUploading[`${chapter.id}-${idx}`];
+                                                                                const generating = slotGenerating[`${chapter.id}-${idx}-${n}`];
+                                                                                const busy = uploading || generating;
                                                                                 return (
                                                                                     <Box key={n} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'center' }}>
                                                                                         <input
@@ -1588,26 +1637,45 @@ const ProjectDirectorView: React.FC = () => {
                                                                                             style={{ display: 'none' }}
                                                                                             onChange={e => e.target.files && handleUploadSlides(chapter.id, idx, e.target.files, n)}
                                                                                         />
+                                                                                        {/* Thumbnail / upload zone */}
                                                                                         <Box
-                                                                                            onClick={() => !uploading && (document.getElementById(`slide-input-${chapter.id}-${idx}-${n}`) as HTMLInputElement | null)?.click()}
+                                                                                            onClick={() => !busy && (document.getElementById(`slide-input-${chapter.id}-${idx}-${n}`) as HTMLInputElement | null)?.click()}
                                                                                             sx={{
-                                                                                                width: 64, height: 50, borderRadius: 1.5, overflow: 'hidden', position: 'relative', cursor: uploading ? 'default' : 'pointer',
+                                                                                                width: 72, height: 56, borderRadius: 1.5, overflow: 'hidden', position: 'relative', cursor: busy ? 'default' : 'pointer',
                                                                                                 border: hasImg ? '1px solid rgba(59,130,246,0.5)' : '1px dashed rgba(59,130,246,0.35)',
                                                                                                 bgcolor: 'rgba(8,18,50,0.8)',
-                                                                                                '&:hover': { borderColor: uploading ? undefined : '#3b82f6', bgcolor: uploading ? undefined : 'rgba(59,130,246,0.08)' },
+                                                                                                '&:hover': { borderColor: busy ? undefined : '#3b82f6', bgcolor: busy ? undefined : 'rgba(59,130,246,0.08)' },
                                                                                             }}
                                                                                         >
-                                                                                            {hasImg ? (
+                                                                                            {generating ? (
+                                                                                                <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                                                    <Typography sx={{ color: '#60a5fa', fontSize: '0.55rem', textAlign: 'center', px: 0.5 }}>Generating…</Typography>
+                                                                                                </Box>
+                                                                                            ) : hasImg ? (
                                                                                                 <img src={url} alt={`Slot ${n}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                                                             ) : (
-                                                                                                <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                                                                    <Typography sx={{ color: 'rgba(255,255,255,0.25)', fontSize: '1.1rem', lineHeight: 1 }}>+</Typography>
+                                                                                                <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.3 }}>
+                                                                                                    <Typography sx={{ color: 'rgba(255,255,255,0.25)', fontSize: '1rem', lineHeight: 1 }}>+</Typography>
+                                                                                                    <Typography sx={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.5rem', lineHeight: 1 }}>upload</Typography>
                                                                                                 </Box>
                                                                                             )}
                                                                                             <Box sx={{ position: 'absolute', top: 2, left: 3, fontSize: '0.5rem', color: hasImg ? '#4ade80' : 'rgba(255,255,255,0.35)', fontWeight: 700, lineHeight: 1 }}>{n}</Box>
                                                                                         </Box>
+                                                                                        {/* AI Generate button (only when suggestion exists and no image yet) */}
                                                                                         {hasSug && !hasImg && (
-                                                                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.55rem', maxWidth: 64, textAlign: 'center', lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                                                                            <Button
+                                                                                                size="small"
+                                                                                                variant="text"
+                                                                                                disabled={busy}
+                                                                                                onClick={() => handleGenerateSlotImage(chapter.id, idx, n, sug!)}
+                                                                                                sx={{ fontSize: '0.5rem', p: '1px 4px', minWidth: 0, color: '#60a5fa', textTransform: 'none', lineHeight: 1.2 }}
+                                                                                            >
+                                                                                                {generating ? '…' : 'AI gen'}
+                                                                                            </Button>
+                                                                                        )}
+                                                                                        {/* Suggestion label */}
+                                                                                        {hasSug && !hasImg && (
+                                                                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.52rem', maxWidth: 72, textAlign: 'center', lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                                                                                                 {sug}
                                                                                             </Typography>
                                                                                         )}

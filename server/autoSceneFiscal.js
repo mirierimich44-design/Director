@@ -395,8 +395,10 @@ export async function generateScenes(scriptText, generationSettings = null) {
   let rawScenes = await routeScenes(scriptText, generationSettings)
   console.log(`   ✅ Pass 1 complete: ${rawScenes.length} scenes identified`)
 
-  // Combine short sentences before processing
-  rawScenes = normalizeSceneWordCounts(rawScenes, 15, 25)
+  // Combine short sentences before processing (density configurable via generationSettings.wordsPerScene)
+  const maxWords = generationSettings?.wordsPerScene ?? 25
+  const minWords = Math.max(10, Math.floor(maxWords * 0.6))
+  rawScenes = normalizeSceneWordCounts(rawScenes, minWords, maxWords)
   console.log(`   ✅ Word count normalized: ${rawScenes.length} scenes after combining`)
 
   // Enforce 60/40 ratio
