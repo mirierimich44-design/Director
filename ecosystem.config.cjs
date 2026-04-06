@@ -28,7 +28,7 @@ module.exports = {
       interpreter: 'server/tts_venv/bin/python3',
       instances: 1,
       exec_mode: 'fork',
-      max_memory_restart: '800M',
+      max_memory_restart: '2000M',
       max_restarts: 5,
       min_uptime: '5s',
       restart_delay: 3000,

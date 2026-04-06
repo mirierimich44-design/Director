@@ -15,6 +15,13 @@ export const AnimationComponent = () => {
   const imageSrc = "IMAGE_SRC"
   const orgLabel = "ORG_LABEL"
 
+  // Resolve image — remote URLs must not be wrapped in staticFile()
+  const resolvedImage = useMemo(() => {
+    if (!imageSrc || imageSrc === 'IMAGE_SRC' || imageSrc.startsWith('IMAGE_')) return null;
+    if (/^https?:\/\//i.test(imageSrc)) return imageSrc;
+    return staticFile(imageSrc);
+  }, [imageSrc])
+
   // Filter bio lines
   const activeBios = useMemo(() => {
     return [bio1, bio2, bio3].filter(b => b !== '' && b !== 'Placeholder')
@@ -111,7 +118,7 @@ export const AnimationComponent = () => {
           transformOrigin: 'center center',
         }}>
           <Img
-            src={staticFile(imageSrc)}
+            src={resolvedImage || ''}
             style={{
               position: 'absolute',
               top: 0, left: 0,
