@@ -44,7 +44,7 @@ const DEFAULTS = {
       fallback: 'imagen-4.0-fast-generate-001',    // Fallback image model
     },
     video: {
-      primary: 'veo-3.0-generate-preview',      // Video generation (Veo 3)
+      primary: 'veo-3.1-generate-preview',      // Video generation (Veo 3.1)
     },
   },
 
@@ -247,9 +247,11 @@ export const MODEL_OPTIONS = {
     { id: 'gemini-2.5-flash-image', name: 'Nano Banana', provider: 'google' },
   ],
   video: [
-    { id: 'veo-3.0-generate-preview',      name: 'Veo 3.0 (with audio)',  provider: 'google' },
-    { id: 'veo-3.0-fast-generate-preview', name: 'Veo 3.0 Fast',          provider: 'google' },
-    { id: 'veo-2.0-generate-001',          name: 'Veo 2.0',               provider: 'google' },
+    { id: 'veo-3.1-generate-preview',      name: 'Veo 3.1 (latest, with audio)', provider: 'google' },
+    { id: 'veo-3.1-fast-generate-preview', name: 'Veo 3.1 Fast',                 provider: 'google' },
+    { id: 'veo-3.0-generate-001',          name: 'Veo 3.0 (GA, with audio)',      provider: 'google' },
+    { id: 'veo-3.0-fast-generate-001',     name: 'Veo 3.0 Fast (GA)',             provider: 'google' },
+    { id: 'veo-2.0-generate-001',          name: 'Veo 2.0 (stable)',              provider: 'google' },
   ],
 }
 

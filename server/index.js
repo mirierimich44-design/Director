@@ -1002,36 +1002,40 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         const videoModel = getVideoModel() || 'veo-3.0-generate-preview';
         const generateAudio = videoModel.startsWith('veo-3');
 
-        // Build request body — generateVideos format
+        // Build request body — predictLongRunning / instances+parameters format
         const veoPromptSuffix = ' No humans, no people, no faces, no hands, no body parts. Cinematic camera movement, atmospheric depth, no text on screen.';
         const veoPrompt = (prompt || 'Cinematic camera push-in, atmospheric lighting.') + veoPromptSuffix;
 
+        const instance = { prompt: veoPrompt };
+
+        // Include source image for image-to-video (must use inlineData format)
+        if (imageUrl) {
+            const imgRes = await fetch(`http://localhost:${process.env.PORT || 3000}${imageUrl}`);
+            if (imgRes.ok) {
+                const imgBuf = await imgRes.arrayBuffer();
+                instance.image = {
+                    inlineData: {
+                        mimeType: 'image/jpeg',
+                        data: Buffer.from(imgBuf).toString('base64'),
+                    },
+                };
+            }
+        }
+
         const veoBody = {
-            prompt: veoPrompt,
-            generationConfig: {
+            instances: [instance],
+            parameters: {
                 aspectRatio: '16:9',
-                durationSeconds: 5,
-                numberOfVideos: 1,
+                durationSeconds: 8,
+                sampleCount: 1,
                 personGeneration: 'dont_allow',
                 ...(generateAudio ? { generateAudio: true } : {}),
             },
         };
 
-        // Include source image for image-to-video if available
-        if (imageUrl) {
-            const imgRes = await fetch(`http://localhost:${process.env.PORT || 3000}${imageUrl}`);
-            if (imgRes.ok) {
-                const imgBuf = await imgRes.arrayBuffer();
-                veoBody.image = {
-                    bytesBase64Encoded: Buffer.from(imgBuf).toString('base64'),
-                    mimeType: 'image/jpeg',
-                };
-            }
-        }
-
         console.log(`   🎬 Starting Veo generation: model=${videoModel}, audio=${generateAudio}`);
         const startRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:generateVideos?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:predictLongRunning?key=${apiKey}`,
             { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(veoBody), signal: AbortSignal.timeout(30_000) }
         );
         if (!startRes.ok) {
