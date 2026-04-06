@@ -247,8 +247,9 @@ export const MODEL_OPTIONS = {
     { id: 'gemini-2.5-flash-image', name: 'Nano Banana', provider: 'google' },
   ],
   video: [
-    { id: 'veo-3.0-generate-preview', name: 'Veo 3.0', provider: 'google' },
-    { id: 'veo-2.0-generate-001', name: 'Veo 2.0', provider: 'google' },
+    { id: 'veo-3.0-generate-preview',      name: 'Veo 3.0 (with audio)',  provider: 'google' },
+    { id: 'veo-3.0-fast-generate-preview', name: 'Veo 3.0 Fast',          provider: 'google' },
+    { id: 'veo-2.0-generate-001',          name: 'Veo 2.0',               provider: 'google' },
   ],
 }
 

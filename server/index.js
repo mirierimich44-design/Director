@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import archiver from 'archiver';
 
-import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel } from './settings.js';
+import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel, getVideoModel } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed, assembleChapterVideo } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';
@@ -986,6 +986,128 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         const cause = err.cause ? ` | cause: ${err.cause?.code || err.cause?.message || JSON.stringify(err.cause)}` : '';
         console.error(`❌ render-3d error: ${err.message}${cause}`);
         res.status(500).json({ success: false, error: err.message, cause: String(err.cause || '') });
+    }
+});
+
+// ── VEO 3 IMAGE-TO-VIDEO ANIMATION ───────────────────────────────────────────
+// Animate a generated image using Google Veo via predictLongRunning
+app.post('/api/auto-scene/animate-veo', async (req, res) => {
+    try {
+        const { prompt, imageUrl } = req.body;
+        if (!prompt && !imageUrl) return res.status(400).json({ error: 'prompt or imageUrl is required' });
+
+        const apiKey = getGoogleKey();
+        if (!apiKey) return res.status(503).json({ error: 'Google API key not configured' });
+
+        const videoModel = getVideoModel() || 'veo-3.0-generate-preview';
+        const generateAudio = videoModel.startsWith('veo-3');
+
+        // Build instance — include source image if provided (image-to-video)
+        const instance = { prompt: prompt || 'Cinematic camera push-in, atmospheric lighting.' };
+        if (imageUrl) {
+            // Fetch image and encode as base64
+            const imgRes = await fetch(`http://localhost:${process.env.PORT || 3000}${imageUrl}`);
+            if (imgRes.ok) {
+                const imgBuf = await imgRes.arrayBuffer();
+                instance.image = {
+                    bytesBase64Encoded: Buffer.from(imgBuf).toString('base64'),
+                    mimeType: 'image/jpeg',
+                };
+            }
+        }
+
+        const veoBody = {
+            instances: [instance],
+            parameters: {
+                aspectRatio: '16:9',
+                durationSeconds: 5,
+                sampleCount: 1,
+                ...(generateAudio ? { generateAudio: true } : {}),
+            },
+        };
+
+        console.log(`   🎬 Starting Veo generation: model=${videoModel}, audio=${generateAudio}`);
+        const startRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:predictLongRunning?key=${apiKey}`,
+            { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(veoBody), signal: AbortSignal.timeout(30_000) }
+        );
+        if (!startRes.ok) {
+            const errText = await startRes.text();
+            throw new Error(`Veo start failed ${startRes.status}: ${errText.substring(0, 300)}`);
+        }
+        const startData = await startRes.json();
+        const operationName = startData.name;
+        if (!operationName) throw new Error('No operation name returned from Veo');
+
+        console.log(`   ⏳ Veo operation started: ${operationName}`);
+
+        // Poll until done (max 6 min, every 8 s)
+        const maxWait = 360_000;
+        const pollInterval = 8_000;
+        const deadline = Date.now() + maxWait;
+        let videoData = null;
+        while (Date.now() < deadline) {
+            await new Promise(r => setTimeout(r, pollInterval));
+            const pollRes = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`,
+                { signal: AbortSignal.timeout(15_000) }
+            );
+            if (!pollRes.ok) continue;
+            const pollData = await pollRes.json();
+            if (pollData.done) {
+                videoData = pollData;
+                break;
+            }
+        }
+
+        if (!videoData) throw new Error('Veo generation timed out after 6 minutes');
+        if (videoData.error) throw new Error(`Veo error: ${videoData.error.message || JSON.stringify(videoData.error)}`);
+
+        const prediction = videoData.response?.predictions?.[0];
+        const b64 = prediction?.video?.bytesBase64Encoded;
+        const videoUri = prediction?.video?.uri;
+
+        let videoBuf;
+        if (b64) {
+            videoBuf = Buffer.from(b64, 'base64');
+        } else if (videoUri) {
+            const dlRes = await fetch(videoUri.includes('?') ? videoUri : `${videoUri}?key=${apiKey}`, { signal: AbortSignal.timeout(60_000) });
+            if (!dlRes.ok) throw new Error(`Failed to download Veo video: ${dlRes.status}`);
+            videoBuf = Buffer.from(await dlRes.arrayBuffer());
+        } else {
+            throw new Error('No video data in Veo response: ' + JSON.stringify(videoData).substring(0, 300));
+        }
+
+        const videoId = `veo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const videoPath = join(videosDir, `${videoId}.mp4`);
+        await fs.writeFile(videoPath, videoBuf);
+
+        console.log(`   ✅ Veo video saved: ${videoId}.mp4 (${(videoBuf.length / 1024 / 1024).toFixed(1)} MB)`);
+        res.json({ success: true, url: `/videos/${videoId}.mp4` });
+    } catch (err) {
+        console.error('❌ animate-veo error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// POST /api/projects/:pid/chapters/:cid/scenes/:idx/set-video
+// Saves a Veo-generated (or any) video URL directly to a scene
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/set-video', express.json(), async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const { videoUrl } = req.body;
+        if (!videoUrl) return res.status(400).json({ error: 'videoUrl is required' });
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        const scene = chapter.scenes[parseInt(idx)];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+        const result = await updateScene(pid, cid, parseInt(idx), { videoUrl, status: 'rendered', renderStatus: 'completed' });
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('set-video error:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 

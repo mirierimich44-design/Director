@@ -798,6 +798,7 @@ const ProjectDirectorView: React.FC = () => {
 
     const [slideUploading, setSlideUploading] = useState<Record<string, boolean>>({});
     const [slotGenerating, setSlotGenerating] = useState<Record<string, boolean>>({});
+    const [veoAnimating, setVeoAnimating] = useState<Record<string, boolean>>({});
 
     const handleUploadSlides = async (chapterId: string, sceneIndex: number, files: FileList, slotIndex?: number) => {
         if (!selectedProject || files.length === 0) return;
@@ -822,6 +823,33 @@ const ProjectDirectorView: React.FC = () => {
             setError(err.message);
         } finally {
             setSlideUploading(prev => ({ ...prev, [key]: false }));
+        }
+    };
+
+    const handleAnimateWithVeo = async (chapterId: string, sceneIndex: number, prompt: string, imageUrl?: string) => {
+        if (!selectedProject) return;
+        const key = `${chapterId}-${sceneIndex}`;
+        setVeoAnimating(prev => ({ ...prev, [key]: true }));
+        try {
+            const animRes = await fetch('/api/auto-scene/animate-veo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, imageUrl }),
+            });
+            const animData = await animRes.json();
+            if (!animData.success) throw new Error(animData.error);
+
+            const saveRes = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/set-video`,
+                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ videoUrl: animData.url }) }
+            );
+            const saveData = await saveRes.json();
+            if (!saveData.success) throw new Error(saveData.error);
+            await loadProjectDetails(selectedProject.id);
+        } catch (err: any) {
+            setError(`Veo animation failed: ${err.message}`);
+        } finally {
+            setVeoAnimating(prev => ({ ...prev, [key]: false }));
         }
     };
 
@@ -1557,6 +1585,20 @@ const ProjectDirectorView: React.FC = () => {
                                                                                     sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)' }}
                                                                                 >
                                                                                     Re-analyze
+                                                                                </Button>
+                                                                            </Tooltip>
+                                                                        )}
+
+                                                                        {scene.type === '3D_RENDER' && (scene as any).prompt && (
+                                                                            <Tooltip title="Animate this scene with Google Veo (image-to-video). Takes 2–5 min.">
+                                                                                <Button
+                                                                                    size="small"
+                                                                                    variant="outlined"
+                                                                                    disabled={scene.renderStatus === 'rendering' || veoAnimating[`${chapter.id}-${idx}`]}
+                                                                                    onClick={() => handleAnimateWithVeo(chapter.id, idx, (scene as any).prompt, scene.imageUrl)}
+                                                                                    sx={{ color: '#a78bfa', borderColor: '#a78bfa', '&:hover': { borderColor: '#c4b5fd', color: '#c4b5fd' } }}
+                                                                                >
+                                                                                    {veoAnimating[`${chapter.id}-${idx}`] ? 'Animating…' : 'Animate (Veo)'}
                                                                                 </Button>
                                                                             </Tooltip>
                                                                         )}
