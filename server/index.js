@@ -121,9 +121,14 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/upload-slides',
 
             // Build IMAGE_URL_N updates (1-indexed)
             const contentUpdates = {};
-            req.files.forEach((file, i) => {
-                contentUpdates[`IMAGE_URL_${i + 1}`] = `/images/slides/${file.filename}`;
-            });
+            const slot = req.body.slot ? parseInt(req.body.slot) : null;
+            if (slot && slot >= 1 && slot <= 6 && req.files.length > 0) {
+                contentUpdates[`IMAGE_URL_${slot}`] = `/images/slides/${req.files[0].filename}`;
+            } else {
+                req.files.forEach((file, i) => {
+                    contentUpdates[`IMAGE_URL_${i + 1}`] = `/images/slides/${file.filename}`;
+                });
+            }
 
             // Merge with existing content and regenerate code
             const newContent = { ...(scene.content || {}), ...contentUpdates };

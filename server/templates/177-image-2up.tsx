@@ -11,8 +11,8 @@ const SUGGESTION_1 = 'SUGGESTION_1';
 const SUGGESTION_2 = 'SUGGESTION_2';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PAD     = 56;
-const GAP     = 16;
+const PAD     = 100;
+const GAP     = 28;
 const TITLE_H = 96;
 const TOP     = PAD + TITLE_H + GAP;
 const CELL_H  = 1080 - TOP - PAD;
@@ -57,10 +57,10 @@ const ImageCell: React.FC<{
 
   return (
     <div style={{ position: 'absolute', left: x, top: y, width: w, height: h, opacity: op, transform: `scale(${sc})`, transformOrigin: 'center' }}>
-      <div style={{ position: 'absolute', inset: -2, borderRadius: 10, background: 'rgba(59,130,246,0.10)', filter: 'blur(6px)', opacity: hasImg ? 0.8 : 0.4 }} />
+      <div style={{ position: 'absolute', inset: -2, borderRadius: 18, background: 'rgba(59,130,246,0.10)', filter: 'blur(6px)', opacity: hasImg ? 0.8 : 0.4 }} />
       <div style={{
-        position: 'absolute', inset: 0, borderRadius: 8, overflow: 'hidden',
-        border: hasImg ? '2px solid rgba(59,130,246,0.55)' : '2px dashed rgba(59,130,246,0.3)',
+        position: 'absolute', inset: 0, borderRadius: 16, overflow: 'hidden',
+        border: hasImg ? '2px solid rgba(59,130,246,0.7)' : '2px dashed rgba(59,130,246,0.4)',
         backgroundColor: CELL_BG,
       }}>
         {hasImg ? (
