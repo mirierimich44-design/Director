@@ -124,10 +124,14 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/upload-slides',
             const slot = req.body.slot ? parseInt(req.body.slot) : null;
             if (slot && slot >= 1 && slot <= 6 && req.files.length > 0) {
                 contentUpdates[`IMAGE_URL_${slot}`] = `/images/slides/${req.files[0].filename}`;
+                // Also populate bare IMAGE_URL for templates that use a single slot (e.g. 153-social-media-impact)
+                if (slot === 1) contentUpdates['IMAGE_URL'] = contentUpdates['IMAGE_URL_1'];
             } else {
                 req.files.forEach((file, i) => {
                     contentUpdates[`IMAGE_URL_${i + 1}`] = `/images/slides/${file.filename}`;
                 });
+                // Also populate bare IMAGE_URL for templates that use a single IMAGE_URL key
+                if (req.files.length >= 1) contentUpdates['IMAGE_URL'] = contentUpdates['IMAGE_URL_1'];
             }
 
             // Merge with existing content and regenerate code

@@ -790,11 +790,15 @@ const ProjectDirectorView: React.FC = () => {
 
     const IMAGE_SEQUENCE_TEMPLATES = ['170-image-cascade', '171-image-kenburns', '172-image-polaroid', '173-image-filmstrip', '174-image-stack', '175-image-grid'];
     const IMAGE_GRID_TEMPLATES = ['176-image-1up', '177-image-2up', '178-image-3up', '179-image-4up', '180-image-5up', '181-image-6up'];
+    // Templates that use a single bare IMAGE_URL (no number suffix)
+    const SINGLE_IMAGE_TEMPLATES = ['114-dossier-open', '151-knowledge-card', '153-social-media-impact', '156-biometric-access-scan', '157-archive-newspaper-reel'];
     const ALL_IMAGE_TEMPLATES = [...IMAGE_SEQUENCE_TEMPLATES, ...IMAGE_GRID_TEMPLATES];
     const isImageSequenceScene = (scene: Scene) => !!scene.template && ALL_IMAGE_TEMPLATES.includes(scene.template);
     const isGridImageScene = (scene: Scene) => !!scene.template && IMAGE_GRID_TEMPLATES.includes(scene.template);
+    const isSingleImageScene = (scene: Scene) => !!scene.template && SINGLE_IMAGE_TEMPLATES.some(t => scene.template!.includes(t));
     const getGridImageCount = (template: string): number => { const m = template.match(/(\d+)up$/); return m ? parseInt(m[1]) : 1; };
     const needsImages = (scene: Scene) => isImageSequenceScene(scene) && (!scene.content?.IMAGE_URL_1 || scene.content.IMAGE_URL_1.startsWith('IMAGE_URL_'));
+    const needsSingleImage = (scene: Scene) => isSingleImageScene(scene) && (!scene.content?.IMAGE_URL || scene.content.IMAGE_URL.startsWith('IMAGE_'));
 
     const [slideUploading, setSlideUploading] = useState<Record<string, boolean>>({});
     const [slotGenerating, setSlotGenerating] = useState<Record<string, boolean>>({});
@@ -1618,6 +1622,28 @@ const ProjectDirectorView: React.FC = () => {
                                                                             </Tooltip>
                                                                         )}
 
+                                                                        {/* Single image upload — templates with one bare IMAGE_URL slot */}
+                                                                        {isSingleImageScene(scene) && (
+                                                                            <>
+                                                                                <input
+                                                                                    type="file"
+                                                                                    accept="image/jpeg,image/png,image/webp"
+                                                                                    id={`single-img-input-${chapter.id}-${idx}`}
+                                                                                    style={{ display: 'none' }}
+                                                                                    onChange={e => e.target.files && handleUploadSlides(chapter.id, idx, e.target.files, 1)}
+                                                                                />
+                                                                                <Button
+                                                                                    size="small"
+                                                                                    variant="outlined"
+                                                                                    disabled={slideUploading[`${chapter.id}-${idx}`]}
+                                                                                    onClick={() => document.getElementById(`single-img-input-${chapter.id}-${idx}`)?.click()}
+                                                                                    sx={{ color: '#f59e0b', borderColor: '#f59e0b' }}
+                                                                                >
+                                                                                    {slideUploading[`${chapter.id}-${idx}`] ? 'Uploading…' : (needsSingleImage(scene) ? 'Upload Image' : 'Replace Image')}
+                                                                                </Button>
+                                                                            </>
+                                                                        )}
+
                                                                         {/* Bulk upload button — sequence templates only (170-175) */}
                                                                         {isImageSequenceScene(scene) && !isGridImageScene(scene) && (
                                                                             <>
@@ -1745,6 +1771,15 @@ const ProjectDirectorView: React.FC = () => {
                                                                                 </Box>
                                                                             );
                                                                         })}
+                                                                    </Box>
+                                                                )}
+
+                                                                {/* Uploaded image thumbnail — single IMAGE_URL templates */}
+                                                                {isSingleImageScene(scene) && !needsSingleImage(scene) && scene.content?.IMAGE_URL && (
+                                                                    <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                                                                        <Box sx={{ width: 80, height: 56, borderRadius: 1.5, overflow: 'hidden', border: '1px solid rgba(59,130,246,0.4)' }}>
+                                                                            <img src={scene.content.IMAGE_URL} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                        </Box>
                                                                     </Box>
                                                                 )}
 
