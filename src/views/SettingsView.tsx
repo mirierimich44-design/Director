@@ -66,12 +66,14 @@ const SettingsView: React.FC = () => {
     const [settings, setSettings] = useState<Settings | null>(null);
     const [modelOptions, setModelOptions] = useState<ModelOptions>({ language: [], image: [], video: [] });
     const [googleKey, setGoogleKey] = useState('');
+    const [googleKey2, setGoogleKey2] = useState('');
     const [anthropicKey, setAnthropicKey] = useState('');
     const [stadiaKey, setStadiaKey] = useState('');
     const [heygenKey, setHeygenKey] = useState('');
     const [pexelsKey, setPexelsKey] = useState('');
     const [publicUrl, setPublicUrl] = useState('');
     const [showGoogleKey, setShowGoogleKey] = useState(false);
+    const [showGoogleKey2, setShowGoogleKey2] = useState(false);
     const [showAnthropicKey, setShowAnthropicKey] = useState(false);
     const [showStadiaKey, setShowStadiaKey] = useState(false);
     const [showHeygenKey, setShowHeygenKey] = useState(false);
@@ -115,6 +117,7 @@ const SettingsView: React.FC = () => {
             };
             // ... keys ...
             if (googleKey) payload.keys = { ...payload.keys, google: googleKey };
+            if (googleKey2) payload.keys = { ...(payload.keys || {}), google2: googleKey2 };
             if (anthropicKey) payload.keys = { ...(payload.keys || {}), anthropic: anthropicKey };
             if (stadiaKey) payload.keys = { ...(payload.keys || {}), stadia: stadiaKey };
             if (heygenKey) payload.keys = { ...(payload.keys || {}), heygen: heygenKey };
@@ -130,6 +133,7 @@ const SettingsView: React.FC = () => {
 
             setSettings(data.settings);
             setGoogleKey('');
+            setGoogleKey2('');
             setAnthropicKey('');
             setStadiaKey('');
             setHeygenKey('');
@@ -257,6 +261,49 @@ const SettingsView: React.FC = () => {
                                         <InputAdornment position="end">
                                             <IconButton size="small" onClick={() => setShowGoogleKey(!showGoogleKey)} sx={{ color: 'var(--text-secondary)' }}>
                                                 {showGoogleKey ? <HideIcon fontSize="small" /> : <ShowIcon fontSize="small" />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </Box>
+
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
+                                    Google AI API Key (Fallback)
+                                </Typography>
+                                <Chip
+                                    label={settings.keys.google2Set ? 'CONFIGURED' : 'NOT SET'}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: settings.keys.google2Set ? 'rgba(0,200,0,0.15)' : 'rgba(255,150,0,0.15)',
+                                        color: settings.keys.google2Set ? '#00CC00' : '#FF9900',
+                                        fontSize: '0.65rem',
+                                    }}
+                                />
+                            </Box>
+                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mb: 1, display: 'block' }}>
+                                Used automatically when the primary key hits quota limits (429)
+                            </Typography>
+                            {settings.keys.google2 && (
+                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mb: 1, display: 'block' }}>
+                                    Current: {settings.keys.google2}
+                                </Typography>
+                            )}
+                            <TextField
+                                fullWidth
+                                size="small"
+                                type={showGoogleKey2 ? 'text' : 'password'}
+                                value={googleKey2}
+                                onChange={(e) => setGoogleKey2(e.target.value)}
+                                placeholder="Enter fallback Google AI API key (AIza...)"
+                                sx={textFieldSx}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton size="small" onClick={() => setShowGoogleKey2(!showGoogleKey2)} sx={{ color: 'var(--text-secondary)' }}>
+                                                {showGoogleKey2 ? <HideIcon fontSize="small" /> : <ShowIcon fontSize="small" />}
                                             </IconButton>
                                         </InputAdornment>
                                     ),
