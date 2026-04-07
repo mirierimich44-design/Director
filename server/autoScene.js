@@ -559,12 +559,75 @@ ${exampleOutput}`
 }
 
 // ─────────────────────────────────────────────
+// Theme Assignment — per-scene variety
+// ─────────────────────────────────────────────
+const VALID_THEMES = new Set(['CLEAN', 'THREAT', 'COLD', 'DARK', 'INTEL', 'TECHNICAL', 'CREAM'])
+
+// Each category maps to an ordered pool; scenes cycle through it so consecutive
+// scenes in the same category still look different.
+const CATEGORY_THEMES = {
+  CODE:           ['TECHNICAL', 'DARK'],
+  FLOW:           ['TECHNICAL', 'COLD'],
+  NETWORK:        ['DARK', 'TECHNICAL'],
+  PARTICLE:       ['TECHNICAL', 'DARK'],
+  EVIDENCE:       ['DARK', 'THREAT'],
+  DRAMATIC:       ['DARK', 'THREAT'],
+  FINANCIAL:      ['CLEAN', 'CREAM'],
+  MARKET:         ['CLEAN', 'COLD'],
+  PIE_CHART:      ['COLD', 'CLEAN'],
+  FLOW_SANKEY:    ['CREAM', 'CLEAN'],
+  STAT:           ['COLD', 'DARK'],
+  BAR_CHART:      ['COLD', 'CLEAN'],
+  LINE_CHART:     ['COLD', 'CLEAN'],
+  COMPARISON:     ['CLEAN', 'COLD'],
+  HEATMAP:        ['DARK', 'COLD'],
+  MAP:            ['DARK', 'INTEL'],
+  TIMELINE:       ['DARK', 'COLD'],
+  SOCIAL:         ['THREAT', 'DARK'],
+  DATE:           ['THREAT', 'DARK'],
+  GAUGE:          ['INTEL', 'CLEAN'],
+  KNOWLEDGE:      ['INTEL', 'CLEAN'],
+  QUOTE:          ['CREAM', 'INTEL'],
+  PERSON:         ['INTEL', 'THREAT'],
+  ORGANIZATION:   ['INTEL', 'DARK'],
+  CHAPTER:        ['DARK', 'THREAT'],
+  IMAGE_SEQUENCE: ['DARK', 'INTEL'],
+  IMAGE_GRID:     ['DARK', 'COLD'],
+  ICON_GRID:      ['TECHNICAL', 'DARK'],
+}
+
+// Track per-category usage so consecutive same-category scenes alternate themes
+const _categoryCounters = {}
+
+function assignSceneTheme(scene, userTheme) {
+  // Scene already has a theme (e.g. coverage-check fallbacks) — keep it, but
+  // validate it's a real theme name (not 'auto' or undefined).
+  if (scene.theme && VALID_THEMES.has(scene.theme)) return scene.theme
+
+  // User explicitly chose a fixed theme
+  if (userTheme && VALID_THEMES.has(userTheme)) return userTheme
+
+  // AUTO mode: derive from category
+  const cat = scene.category || (scene.type === '3D_RENDER' ? '_3D' : 'STAT')
+  const pool = CATEGORY_THEMES[cat] || ['DARK', 'COLD', 'THREAT']
+  const count = _categoryCounters[cat] || 0
+  _categoryCounters[cat] = count + 1
+  return pool[count % pool.length]
+}
+
+// ─────────────────────────────────────────────
 // Main Generation Flow
 // ─────────────────────────────────────────────
 export async function generateScenes(scriptText, generationSettings = null) {
   if (!scriptText?.trim()) throw new Error('Empty script')
 
   console.log(`🎬 Auto-Scene: Two-Pass Generation Starting...`)
+
+  // Reset per-run category counters so every generation gets fresh variety
+  Object.keys(_categoryCounters).forEach(k => delete _categoryCounters[k])
+
+  const userTheme = generationSettings?.colorScheme
+  const fixedTheme = userTheme && VALID_THEMES.has(userTheme) ? userTheme : null
 
   // Build story context once — used by all image prompt calls
   const storyContext = buildStoryContext(scriptText)
@@ -583,6 +646,9 @@ export async function generateScenes(scriptText, generationSettings = null) {
     return s
   })
 
+  // --- THEME ASSIGNMENT — assign before ratio enforcement so all scenes get a theme ---
+  rawScenes = rawScenes.map(s => ({ ...s, theme: assignSceneTheme(s, fixedTheme) }))
+
   // --- HARD RATIO ENFORCEMENT (code-level, not LLM-level) ---
   const targetRatio = generationSettings?.templateRatio ?? 60
   rawScenes = enforceRatio(rawScenes, targetRatio)
@@ -597,7 +663,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
     missingSentences.forEach(s => {
       rawScenes.push({
         type: '3D_RENDER',
-        theme: generationSettings?.colorScheme || 'THREAT',
+        theme: fixedTheme || 'THREAT',
         script: s,
         reasoning: 'Fallback: Sentence skipped by LLM during analysis'
       })

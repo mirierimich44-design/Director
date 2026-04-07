@@ -51,30 +51,32 @@ export const AnimationComponent = () => {
       </div>
 
       {/* KPI Stats */}
-      <div style={{ position: 'absolute', top: 200, left: 120, width: 1680, display: 'flex', gap: 36, zIndex: 10 }}>
+      <div style={{ position: 'absolute', top: 200, left: 120, width: 1680, height: 160, display: 'flex', gap: 36, zIndex: 10 }}>
         <div style={{
-          flex: 1, padding: '32px 40px',
+          flex: 1, padding: '28px 40px',
           backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(24px)',
           borderRadius: 20, border: '1px solid rgba(255,255,255,0.1)', borderLeft: '7px solid PRIMARY_COLOR',
           opacity: stat1Op, boxShadow: '0 20px 40px rgba(0,0,0,0.7)',
+          overflow: 'hidden', boxSizing: 'border-box',
         }}>
-          <div style={{ fontSize: 58, fontWeight: 900, color: '#fff', fontFamily: 'monospace', lineHeight: 1 }}>{stat1}</div>
-          <div style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 10 }}>{label1}</div>
+          <div style={{ fontSize: 52, fontWeight: 900, color: '#fff', fontFamily: 'monospace', lineHeight: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{stat1}</div>
+          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.45)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 10, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{label1}</div>
         </div>
         <div style={{
-          flex: 1, padding: '32px 40px',
+          flex: 1, padding: '28px 40px',
           backgroundColor: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(24px)',
           borderRadius: 20, border: '1px solid rgba(255,255,255,0.1)', borderLeft: '7px solid ACCENT_COLOR',
           opacity: stat2Op, boxShadow: '0 20px 40px rgba(0,0,0,0.7)',
+          overflow: 'hidden', boxSizing: 'border-box',
         }}>
-          <div style={{ fontSize: 58, fontWeight: 900, color: 'ACCENT_COLOR', fontFamily: 'monospace', lineHeight: 1 }}>{stat2}</div>
-          <div style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 10 }}>{label2}</div>
+          <div style={{ fontSize: 52, fontWeight: 900, color: 'ACCENT_COLOR', fontFamily: 'monospace', lineHeight: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{stat2}</div>
+          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.45)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 10, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{label2}</div>
         </div>
       </div>
 
-      {/* Bar chart — top shifted down 10px, height reduced */}
+      {/* Bar chart */}
       <div style={{
-        position: 'absolute', top: 510, left: 120, width: 1680, height: chartH,
+        position: 'absolute', top: 390, left: 120, width: 1680, height: chartH,
         display: 'flex', alignItems: 'flex-end', gap: 16,
       }}>
         {chartData.map((val, i) => {

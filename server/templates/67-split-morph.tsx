@@ -7,11 +7,9 @@ export const AnimationComponent = () => {
   const barW = interpolate(frame, [10, 40], [0, 1920], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const bgOp = interpolate(frame, [0, 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
-  // Phase 1: show left state (frames 0-60)
-  // Morph: frames 45-85
-  // Phase 2: show right state (frames 75+)
-  const splitX = interpolate(frame, [45, 85], [960, 1820], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const leftOp = interpolate(frame, [0, 15, 75, 95], [0, 1, 1, 0.3], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  // Phase 1: left fills full screen (0-50), morph to 50/50 split (50-80), phase 2 holds (80+)
+  const splitX = interpolate(frame, [50, 80], [1920, 960], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const leftOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const rightOp = interpolate(frame, [55, 80], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const rightTx = interpolate(frame, [55, 80], [80, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
@@ -55,7 +53,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 0, left: splitX - 3, width: 6, height: 1080, overflow: 'hidden', backgroundColor: 'ACCENT_COLOR', opacity: bgOp }} />
 
       {/* Right state panel */}
-      <div style={{ position: 'absolute', top: 0, left: splitX, width: 1920 - splitX, height: 1080, overflow: 'hidden', backgroundColor: 'CHART_BG', opacity: rightOp, transform: `translateX(${rightTx}px)` }}>
+      <div style={{ position: 'absolute', top: 0, left: splitX, width: Math.max(960, 1920 - splitX), height: 1080, overflow: 'hidden', backgroundColor: 'SECONDARY_COLOR', opacity: rightOp, transform: `translateX(${rightTx}px)` }}>
         <div style={{ position: 'absolute', top: 200, left: 80, width: 700, height: 60, overflow: 'hidden', opacity: label2Op, transform: `translateY(${label2Ty}px)` }}>
           <span style={{ fontSize: 28, fontWeight: 600, color: 'SECONDARY_COLOR', fontFamily: 'sans-serif', letterSpacing: 4, textTransform: 'uppercase' }}>{compareLabel2}</span>
         </div>

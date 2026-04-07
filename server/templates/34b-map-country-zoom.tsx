@@ -134,20 +134,11 @@ export const AnimationComponent = () => {
         <span style={{ fontSize: 26, fontWeight: 700, color: 'PRIMARY_COLOR', letterSpacing: 5, textTransform: 'uppercase', fontFamily: 'sans-serif' }}>{titleText}</span>
       </div>
 
-      {/* MapLibre background for country area */}
-      <div ref={mapRef} style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp * 0.6, borderRadius: 4 , filter: 'brightness(2.0) contrast(1.2) saturate(4) hue-rotate(25deg)'}} />
+      {/* MapLibre map — full left panel */}
+      <div ref={mapRef} style={{ position: 'absolute', top: 140, left: 60, width: 960, height: 800, opacity: fillOp, borderRadius: 4, filter: 'brightness(1.4) contrast(1.1) saturate(3) hue-rotate(25deg)' }} />
 
-      {/* SVG country shape overlay */}
-      <svg
-        viewBox={country.viewBox}
-        width={960}
-        height={800}
-        style={{ position: 'absolute', top: 140, left: 60 }}
-      >
-        <path d={country.path} fill="PRIMARY_COLOR" opacity={fillOp * 0.08} />
-        <path d={country.path} fill="PRIMARY_COLOR" opacity={fillOp * 0.35} />
-        <path d={country.path} fill="none" stroke="PRIMARY_COLOR" strokeWidth={6} strokeDasharray={3000} strokeDashoffset={borderDash} strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
-        <path d={country.path} fill="none" stroke="ACCENT_COLOR" strokeWidth={2} strokeDasharray={3000} strokeDashoffset={borderDash} strokeLinecap="round" strokeLinejoin="round" opacity={0.5} />
+      {/* Pulse rings overlay — no country path, only the center dot */}
+      <svg width={960} height={800} style={{ position: 'absolute', top: 140, left: 60, pointerEvents: 'none' }}>
         <circle cx={cx} cy={cy} r={pulseR1} fill="none" stroke="PRIMARY_COLOR" strokeWidth={2} opacity={pulseOp1 * fillOp} />
         <circle cx={cx} cy={cy} r={pulseR2} fill="none" stroke="ACCENT_COLOR" strokeWidth={1.5} opacity={pulseOp2 * fillOp} />
         <circle cx={cx} cy={cy} r={14} fill="PRIMARY_COLOR" opacity={fillOp} />

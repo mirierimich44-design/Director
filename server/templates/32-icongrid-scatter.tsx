@@ -103,37 +103,45 @@ export const AnimationComponent = () => {
             width: 160,
             height: 160,
             overflow: 'hidden',
-            backgroundColor: 'CHART_BG',
+            backgroundColor: 'rgba(255,255,255,0.08)',
             borderRadius: 12,
-            border: '1px solid',
-            borderColor: 'CHART_BORDER',
+            border: '2px solid',
+            borderColor: 'ACCENT_COLOR',
             opacity: op,
             transform: `scale(${scale})`,
             boxSizing: 'border-box',
           }}>
+            {/* Icon circle */}
             <div style={{
               position: 'absolute',
-              top: 22,
+              top: 18,
               left: 52,
               width: 56,
               height: 56,
               overflow: 'hidden',
-              backgroundColor: 'NODE_FILL',
+              backgroundColor: 'ACCENT_COLOR',
               borderRadius: 28,
-            }} />
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{ width: 24, height: 24, backgroundColor: 'BACKGROUND_COLOR', borderRadius: 4, opacity: 0.9 }} />
+            </div>
+            {/* Label */}
             <div style={{
               position: 'absolute',
-              top: 90,
+              top: 84,
               left: 0,
               width: 160,
-              height: 58,
+              height: 64,
               overflow: 'hidden',
-              fontSize: 18,
-              fontWeight: 600,
-              color: 'TEXT_ON_PRIMARY',
+              fontSize: 15,
+              fontWeight: 700,
+              color: '#ffffff',
               textAlign: 'center',
-              padding: '8px 8px',
+              padding: '6px 8px',
               boxSizing: 'border-box',
+              lineHeight: 1.3,
             }}>
               {icon.label}
             </div>

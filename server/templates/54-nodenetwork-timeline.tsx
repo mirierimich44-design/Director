@@ -99,15 +99,15 @@ export const AnimationComponent = () => {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
           })
-          const nodeR = interpolate(frame, [ev.delay, ev.delay + 14], [0, 28], {
+          const nodeR = interpolate(frame, [ev.delay, ev.delay + 14], [0, 38], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
           })
           return (
             <g key={i} opacity={nodeOp}>
-              <circle cx={nx} cy={ev.y} r={nodeR + 6} fill="NODE_FILL" opacity={0.3} />
-              <circle cx={nx} cy={ev.y} r={nodeR} fill="NODE_FILL" stroke="PRIMARY_COLOR" strokeWidth={3} />
-              <text x={nx} y={ev.y + 7} textAnchor="middle" fill="ACCENT_COLOR" fontSize={16} fontWeight="800">
+              <circle cx={nx} cy={ev.y} r={nodeR + 10} fill="NODE_FILL" opacity={0.25} />
+              <circle cx={nx} cy={ev.y} r={nodeR} fill="NODE_FILL" stroke="PRIMARY_COLOR" strokeWidth={4} />
+              <text x={nx} y={ev.y + 9} textAnchor="middle" fill="ACCENT_COLOR" fontSize={22} fontWeight="900">
                 {i + 1}
               </text>
             </g>
@@ -123,14 +123,14 @@ export const AnimationComponent = () => {
           extrapolateRight: 'clamp',
         })
         const isAbove = ev.y < spineY
-        const labelTop = isAbove ? ev.y - 110 : ev.y + 44
+        const labelTop = isAbove ? ev.y - 120 : ev.y + 52
         return (
           <div key={i} style={{
             position: 'absolute',
             top: labelTop,
             left: nx - 140,
             width: 280,
-            height: 90,
+            height: 110,
             overflow: 'hidden',
             opacity: labelOp,
           }}>
@@ -141,8 +141,8 @@ export const AnimationComponent = () => {
               width: 280,
               height: 30,
               overflow: 'hidden',
-              fontSize: 17,
-              fontWeight: 700,
+              fontSize: 20,
+              fontWeight: 800,
               color: 'ACCENT_COLOR',
               textAlign: 'center',
               letterSpacing: 2,
@@ -151,13 +151,13 @@ export const AnimationComponent = () => {
             </div>
             <div style={{
               position: 'absolute',
-              top: 32,
+              top: 34,
               left: 0,
               width: 280,
-              height: 56,
+              height: 72,
               overflow: 'hidden',
-              fontSize: 21,
-              fontWeight: 700,
+              fontSize: 26,
+              fontWeight: 800,
               color: 'TEXT_ON_PRIMARY',
               textAlign: 'center',
               lineHeight: 1.3,

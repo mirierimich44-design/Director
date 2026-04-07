@@ -22,11 +22,11 @@ export const AnimationComponent = () => {
   const maxPrice = Math.max(...allPrices) + 5;
   const priceRange = maxPrice - minPrice;
 
-  const svgLeft = 180;
-  const svgTop = 160;
-  const chartW = 1480;
-  const chartH = 620;
-  const candleW = 80;
+  const svgLeft = 160;
+  const svgTop = 150;
+  const chartW = 1520;
+  const chartH = 640;
+  const candleW = 100;
   const spacing = (chartW - candleW) / (candleData.length - 1);
 
   const scaleY = (price: number) => chartH - ((price - minPrice) / priceRange) * chartH;
@@ -62,7 +62,7 @@ export const AnimationComponent = () => {
           return (
             <g key={i} opacity={axisOp}>
               <line x1={50} y1={y} x2={chartW + 60} y2={y} stroke="GRID_LINE" strokeWidth={1} strokeDasharray="6 4" opacity={0.4} />
-              <text x={44} y={y + 5} fill="TEXT_ON_PRIMARY" fontSize={22} fontWeight="600" textAnchor="end" opacity={0.8}>{v}</text>
+              <text x={48} y={y + 6} fill="TEXT_ON_PRIMARY" fontSize={24} fontWeight="700" textAnchor="end" opacity={0.85}>{v}</text>
             </g>
           );
         })}
@@ -103,16 +103,16 @@ export const AnimationComponent = () => {
               {/* Close price label */}
               <text
                 x={cx} y={labelY}
-                fill={color} fontSize={22} fontWeight="700"
+                fill={color} fontSize={26} fontWeight="800"
                 textAnchor="middle" opacity={textOp}
               >
                 {d.close}
               </text>
               {/* Date label on X axis */}
               <text
-                x={cx} y={chartH + 36}
-                fill="TEXT_ON_PRIMARY" fontSize={22} fontWeight="600"
-                textAnchor="middle" opacity={axisOp} style={{ opacity: textOp }}
+                x={cx} y={chartH + 44}
+                fill="TEXT_ON_PRIMARY" fontSize={24} fontWeight="700"
+                textAnchor="middle" opacity={textOp}
               >
                 {dateLabels[i]}
               </text>

@@ -1003,7 +1003,7 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         const apiKey = getGoogleKey();
         if (!apiKey) return res.status(503).json({ error: 'Google API key not configured' });
 
-        const videoModel = getVideoModel() || 'veo-3.0-generate-preview';
+        const videoModel = getVideoModel() || 'veo-3.0-generate-001';
         const generateAudio = videoModel.startsWith('veo-3');
 
         // Build request body — predictLongRunning / instances+parameters format
@@ -1099,7 +1099,8 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         console.log(`   ✅ Veo video saved: ${videoId}.mp4 (${(videoBuf.length / 1024 / 1024).toFixed(1)} MB)`);
         res.json({ success: true, url: `/videos/${videoId}.mp4` });
     } catch (err) {
-        console.error('❌ animate-veo error:', err.message);
+        const veoCause = err.cause ? ` | cause: ${err.cause?.code || err.cause?.message || String(err.cause)}` : '';
+        console.error(`❌ animate-veo error: ${err.message}${veoCause}`);
         res.status(500).json({ success: false, error: err.message });
     }
 });

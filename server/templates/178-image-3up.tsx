@@ -15,11 +15,11 @@ const SUGGESTION_3 = 'SUGGESTION_3';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const PAD     = 80;
-const GAP     = 24;
+const GAP     = 48;
 const TITLE_H = 96;
 const TOP     = PAD + TITLE_H + GAP;
 const CELL_H  = 1080 - TOP - PAD;
-const CELL_W  = Math.floor((1920 - PAD * 2 - GAP * 2) / 3);  // 597
+const CELL_W  = Math.floor((1920 - PAD * 2 - GAP * 2) / 3);  // 581
 
 const BLUE    = '#3b82f6';
 const BG      = '#060d1e';

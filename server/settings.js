@@ -44,7 +44,7 @@ const DEFAULTS = {
       fallback: 'imagen-4.0-fast-generate-001',    // Fallback image model
     },
     video: {
-      primary: 'veo-3.1-generate-preview',      // Video generation (Veo 3.1)
+      primary: 'veo-3.0-generate-001',          // Video generation (Veo 3.0 GA)
     },
   },
 

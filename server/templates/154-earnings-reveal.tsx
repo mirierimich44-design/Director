@@ -20,10 +20,11 @@ export const AnimationComponent = () => {
   const card3Scale    = interpolate(frame, [60, 85],  [0.92, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: 'CHART_BG',
-    border: '2px solid NODE_STROKE',
-    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    border: 'none',
+    borderRadius: 16,
     padding: '48px 56px',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
   };
 
   return (
@@ -53,15 +54,15 @@ export const AnimationComponent = () => {
           opacity: card1Opacity,
           transform: `scale(${card1Scale})`,
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          borderTop: '4px solid PRIMARY_COLOR',
+          borderTop: '6px solid PRIMARY_COLOR',
         }}>
-          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '0.14em', color: 'SUPPORT_COLOR', marginBottom: 24 }}>
+          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '0.14em', color: '#555555', marginBottom: 24 }}>
             EPS PERFORMANCE
           </div>
-          <div style={{ fontSize: 96, fontWeight: 800, color: 'PRIMARY_COLOR', lineHeight: 1, fontFamily: 'monospace', marginBottom: 20 }}>
+          <div style={{ fontSize: 96, fontWeight: 800, color: '#111111', lineHeight: 1, fontFamily: 'monospace', marginBottom: 20 }}>
             {epsActual}
           </div>
-          <div style={{ fontSize: 30, color: 'SUPPORT_COLOR', fontFamily: 'monospace' }}>
+          <div style={{ fontSize: 30, color: '#444444', fontFamily: 'monospace' }}>
             vs Est. {epsEstimate}
           </div>
         </div>
@@ -73,15 +74,15 @@ export const AnimationComponent = () => {
           opacity: card2Opacity,
           transform: `scale(${card2Scale})`,
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          borderTop: '4px solid ACCENT_COLOR',
+          borderTop: '6px solid ACCENT_COLOR',
         }}>
-          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '0.14em', color: 'SUPPORT_COLOR', marginBottom: 24 }}>
+          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '0.14em', color: '#555555', marginBottom: 24 }}>
             REVENUE
           </div>
-          <div style={{ fontSize: 96, fontWeight: 800, color: 'ACCENT_COLOR', lineHeight: 1, fontFamily: 'monospace', marginBottom: 20 }}>
+          <div style={{ fontSize: 96, fontWeight: 800, color: '#111111', lineHeight: 1, fontFamily: 'monospace', marginBottom: 20 }}>
             {revenueBeat}
           </div>
-          <div style={{ fontSize: 22, color: 'SUPPORT_COLOR' }}>
+          <div style={{ fontSize: 22, color: '#444444' }}>
             QUARTERLY BEAT
           </div>
         </div>
@@ -93,14 +94,14 @@ export const AnimationComponent = () => {
         opacity: card3Opacity,
         transform: `scale(${card3Scale})`,
         display: 'flex', alignItems: 'center', gap: 40,
-        borderLeft: '6px solid PRIMARY_COLOR',
+        borderLeft: '8px solid PRIMARY_COLOR',
         padding: '36px 56px',
       }}>
-        <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '0.14em', color: 'SUPPORT_COLOR', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '0.14em', color: '#555555', whiteSpace: 'nowrap' }}>
           GUIDANCE
         </div>
-        <div style={{ width: 2, height: 40, backgroundColor: 'NODE_STROKE', flexShrink: 0 }} />
-        <div style={{ fontSize: 28, color: 'TEXT_ON_PRIMARY', lineHeight: 1.4, fontWeight: 500 }}>
+        <div style={{ width: 2, height: 40, backgroundColor: '#cccccc', flexShrink: 0 }} />
+        <div style={{ fontSize: 28, color: '#111111', lineHeight: 1.4, fontWeight: 500 }}>
           {guidanceText}
         </div>
       </div>

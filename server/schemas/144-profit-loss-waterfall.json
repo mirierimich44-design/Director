@@ -12,10 +12,15 @@
              ],
     "fields":  {
                    "TITLE_TEXT":  "Main chart title",
-                   "LABEL_1":  "Revenue label",
-                   "LABEL_2":  "Expense 1 label",
-                   "LABEL_3":  "Expense 2 label",
-                   "LABEL_4":  "Expense 3 label",
-                   "LABEL_5":  "Net Profit label"
+                   "LABEL_1":  "Revenue label (e.g. Revenue)",
+                   "LABEL_2":  "Expense 1 label (e.g. Cost of Goods)",
+                   "LABEL_3":  "Expense 2 label (e.g. Operating Costs)",
+                   "LABEL_4":  "Expense 3 label (e.g. Tax)",
+                   "LABEL_5":  "Net Profit label (e.g. Net Profit)",
+                   "STAT_VALUE_1":  "Revenue value as number, e.g. 850",
+                   "STAT_VALUE_2":  "Expense 1 value as negative number, e.g. -320",
+                   "STAT_VALUE_3":  "Expense 2 value as negative number, e.g. -180",
+                   "STAT_VALUE_4":  "Expense 3 value as negative number, e.g. -90",
+                   "STAT_VALUE_5":  "Net profit value as positive number, e.g. 260"
                }
 }
