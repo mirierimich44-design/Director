@@ -21,11 +21,13 @@ interface ModelOption {
 interface Settings {
     keys: {
         google: string;
+        google2: string;
         anthropic: string;
         stadia: string;
         heygen: string;
         pexels: string;
         googleSet: boolean;
+        google2Set: boolean;
         anthropicSet: boolean;
         stadiaSet: boolean;
         heygenSet: boolean;
