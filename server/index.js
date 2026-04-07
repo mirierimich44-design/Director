@@ -870,6 +870,48 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/retry', async (req, res) 
         res.status(500).json({ success: false, error: err.message });
     }
 });
+// Suggest a reference image for the Director's Note based on script text
+app.post('/api/auto-scene/suggest-reference-image', async (req, res) => {
+    try {
+        const { scriptText } = req.body;
+        if (!scriptText) return res.status(400).json({ error: 'scriptText is required' });
+        if (!getGoogleKey()) return res.status(503).json({ error: 'Google API key not configured' });
+
+        const result = await withGoogleKeyFallback(async (key) => {
+            const { GoogleGenerativeAI } = await import('@google/generative-ai');
+            const m = new GoogleGenerativeAI(key).getGenerativeModel({
+                model: getFastModel() || 'gemini-3.1-flash-lite-preview',
+                generationConfig: { temperature: 0.2, maxOutputTokens: 256, responseMimeType: 'application/json' },
+            });
+            return m.generateContent(`You analyze a video script and decide what single reference image would be most useful for the director.
+
+SCRIPT: "${scriptText}"
+
+Reply with JSON only:
+{
+  "description": "short plain-English label for the image, e.g. 'Boeing 747 on a runway' or 'Elon Musk portrait'",
+  "canGenerate": true or false,
+  "reason": "why it can or cannot be generated — if canGenerate is false, tell the director what kind of image to upload"
+}
+
+Rules:
+- canGenerate = true for: objects, vehicles, places, abstract concepts, animals, generic scenes, products, logos
+- canGenerate = false for: specific real people by name, proprietary brand logos, specific real documents/screenshots
+- description must be concise (3-8 words max)
+- If no reference image is needed for this script, return { "description": "", "canGenerate": false, "reason": "No reference image needed" }`);
+        });
+
+        const text = result.response.text().trim();
+        let parsed;
+        try { parsed = JSON.parse(text); } catch { return res.status(500).json({ error: 'Failed to parse Gemini response' }); }
+
+        res.json({ success: true, ...parsed });
+    } catch (err) {
+        console.error('❌ suggest-reference-image error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // Generate an AI image from a 3D render prompt using Google Imagen
 app.post('/api/auto-scene/render-3d', async (req, res) => {
     try {

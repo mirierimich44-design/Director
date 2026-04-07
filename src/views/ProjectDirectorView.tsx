@@ -161,6 +161,9 @@ const ProjectDirectorView: React.FC = () => {
     const [newChapterTitle, setNewChapterTitle] = useState('');
     const [newChapterScript, setNewChapterScript] = useState('');
     const [directorReferenceImage, setDirectorReferenceImage] = useState<string | null>(null);
+    const [imageSuggestion, setImageSuggestion] = useState<{ description: string; canGenerate: boolean; reason: string } | null>(null);
+    const [imageSuggesting, setImageSuggesting] = useState(false);
+    const [imageGenerating, setImageGenerating] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -337,9 +340,46 @@ const ProjectDirectorView: React.FC = () => {
         try {
             const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
             const data = await res.json();
-            if (data.success) setDirectorReferenceImage(data.url);
+            if (data.success) { setDirectorReferenceImage(data.url); setImageSuggestion(null); }
         } catch (err) {
             console.error('Reference image upload failed:', err);
+        }
+    };
+
+    const handleSuggestImage = async () => {
+        if (!newChapterScript.trim()) return;
+        setImageSuggesting(true);
+        setImageSuggestion(null);
+        try {
+            const res = await fetch('/api/auto-scene/suggest-reference-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ scriptText: newChapterScript }),
+            });
+            const data = await res.json();
+            if (data.success && data.description) setImageSuggestion(data);
+        } catch (err) {
+            console.error('Image suggestion failed:', err);
+        } finally {
+            setImageSuggesting(false);
+        }
+    };
+
+    const handleGenerateSuggestedImage = async () => {
+        if (!imageSuggestion) return;
+        setImageGenerating(true);
+        try {
+            const res = await fetch('/api/auto-scene/render-3d', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: imageSuggestion.description }),
+            });
+            const data = await res.json();
+            if (data.success) { setDirectorReferenceImage(data.url); setImageSuggestion(null); }
+        } catch (err) {
+            console.error('Image generation failed:', err);
+        } finally {
+            setImageGenerating(false);
         }
     };
 
@@ -362,6 +402,7 @@ const ProjectDirectorView: React.FC = () => {
                 setNewChapterTitle('');
                 setNewChapterScript('');
                 setDirectorReferenceImage(null);
+                setImageSuggestion(null);
                 if (data.chapter && data.chapter.id) {
                     setActiveChapterId(data.chapter.id);
                 }
@@ -1378,28 +1419,60 @@ const ProjectDirectorView: React.FC = () => {
 
                                 {/* Director's Reference Image */}
                                 <Box sx={{ mb: 2 }}>
-                                    <Box
-                                        component="label"
-                                        sx={{
-                                            display: 'flex', alignItems: 'center', gap: 1,
-                                            p: 1, borderRadius: 1, cursor: 'pointer',
-                                            border: '1px dashed',
-                                            borderColor: directorReferenceImage ? 'var(--accent-gold)' : 'rgba(255,255,255,0.15)',
-                                            bgcolor: directorReferenceImage ? 'rgba(201,169,97,0.07)' : 'transparent',
-                                            '&:hover': { borderColor: 'var(--accent-gold)' },
-                                        }}
-                                    >
-                                        <input type="file" hidden accept="image/*" onChange={(e) => { if (e.target.files?.[0]) handleDirectorImageUpload(e.target.files[0]); }} />
-                                        {directorReferenceImage ? (
-                                            <>
-                                                <Box component="img" src={directorReferenceImage} sx={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 0.5 }} />
-                                                <Typography variant="caption" sx={{ color: 'var(--accent-gold)', flex: 1 }}>Reference image attached</Typography>
-                                                <Box component="span" onClick={(e) => { e.preventDefault(); setDirectorReferenceImage(null); }} sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', cursor: 'pointer', '&:hover': { color: '#fff' } }}>✕</Box>
-                                            </>
-                                        ) : (
-                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)' }}>+ Attach reference image (optional)</Typography>
-                                        )}
-                                    </Box>
+                                    {directorReferenceImage ? (
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, borderRadius: 1, border: '1px solid var(--accent-gold)', bgcolor: 'rgba(201,169,97,0.07)' }}>
+                                            <Box component="img" src={directorReferenceImage} sx={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 0.5 }} />
+                                            <Typography variant="caption" sx={{ color: 'var(--accent-gold)', flex: 1 }}>Reference image attached</Typography>
+                                            <Box component="span" onClick={() => setDirectorReferenceImage(null)} sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', cursor: 'pointer', '&:hover': { color: '#fff' } }}>✕</Box>
+                                        </Box>
+                                    ) : (
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                                <Button
+                                                    size="small" variant="outlined" fullWidth
+                                                    onClick={handleSuggestImage}
+                                                    disabled={imageSuggesting || !newChapterScript.trim()}
+                                                    sx={{ color: 'rgba(255,255,255,0.5)', borderColor: 'rgba(255,255,255,0.15)', fontSize: '0.72rem', textTransform: 'none' }}
+                                                >
+                                                    {imageSuggesting ? <CircularProgress size={12} sx={{ mr: 1 }} /> : null}
+                                                    {imageSuggesting ? 'Thinking...' : '💡 Suggest image'}
+                                                </Button>
+                                                <Box component="label" sx={{ flex: 1 }}>
+                                                    <input type="file" hidden accept="image/*" onChange={(e) => { if (e.target.files?.[0]) handleDirectorImageUpload(e.target.files[0]); }} />
+                                                    <Button size="small" variant="outlined" fullWidth component="span"
+                                                        sx={{ color: 'rgba(255,255,255,0.5)', borderColor: 'rgba(255,255,255,0.15)', fontSize: '0.72rem', textTransform: 'none' }}
+                                                    >⬆ Upload</Button>
+                                                </Box>
+                                            </Box>
+                                            {imageSuggestion && (
+                                                <Box sx={{ p: 1, borderRadius: 1, bgcolor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                                    <Typography variant="caption" sx={{ color: '#fff', display: 'block', mb: 0.5, fontWeight: 600 }}>
+                                                        {imageSuggestion.description}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.45)', display: 'block', mb: 1, fontSize: '0.68rem' }}>
+                                                        {imageSuggestion.reason}
+                                                    </Typography>
+                                                    {imageSuggestion.canGenerate ? (
+                                                        <Button size="small" variant="contained"
+                                                            onClick={handleGenerateSuggestedImage}
+                                                            disabled={imageGenerating}
+                                                            sx={{ bgcolor: 'var(--accent-gold)', color: '#000', fontSize: '0.7rem', textTransform: 'none', py: 0.3 }}
+                                                        >
+                                                            {imageGenerating ? <CircularProgress size={10} sx={{ mr: 0.5 }} /> : null}
+                                                            {imageGenerating ? 'Generating...' : 'Generate'}
+                                                        </Button>
+                                                    ) : (
+                                                        <Box component="label">
+                                                            <input type="file" hidden accept="image/*" onChange={(e) => { if (e.target.files?.[0]) handleDirectorImageUpload(e.target.files[0]); }} />
+                                                            <Button size="small" variant="outlined" component="span"
+                                                                sx={{ color: 'var(--accent-gold)', borderColor: 'var(--accent-gold)', fontSize: '0.7rem', textTransform: 'none', py: 0.3 }}
+                                                            >Upload this image</Button>
+                                                        </Box>
+                                                    )}
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    )}
                                 </Box>
 
                                 <Button
