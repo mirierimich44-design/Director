@@ -160,6 +160,7 @@ const ProjectDirectorView: React.FC = () => {
     const [directorType, setDirectorType] = useState('standard');
     const [newChapterTitle, setNewChapterTitle] = useState('');
     const [newChapterScript, setNewChapterScript] = useState('');
+    const [directorReferenceImage, setDirectorReferenceImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -330,6 +331,18 @@ const ProjectDirectorView: React.FC = () => {
         }
     };
 
+    const handleDirectorImageUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        try {
+            const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) setDirectorReferenceImage(data.url);
+        } catch (err) {
+            console.error('Reference image upload failed:', err);
+        }
+    };
+
     const handleAddChapter = async () => {
         if (!selectedProject || !newChapterScript.trim()) return;
         setLoading(true);
@@ -340,13 +353,15 @@ const ProjectDirectorView: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title: newChapterTitle || `Chapter ${selectedProject.chapters.length + 1}`,
-                    scriptText: newChapterScript
+                    scriptText: newChapterScript,
+                    ...(directorReferenceImage ? { referenceImageUrl: directorReferenceImage } : {}),
                 })
             });
             const data = await res.json();
             if (data.success) {
                 setNewChapterTitle('');
                 setNewChapterScript('');
+                setDirectorReferenceImage(null);
                 if (data.chapter && data.chapter.id) {
                     setActiveChapterId(data.chapter.id);
                 }
@@ -1358,8 +1373,35 @@ const ProjectDirectorView: React.FC = () => {
                                     placeholder="Paste chapter script here..."
                                     value={newChapterScript}
                                     onChange={(e) => setNewChapterScript(e.target.value)}
-                                    sx={{ mb: 2 }}
+                                    sx={{ mb: 1 }}
                                 />
+
+                                {/* Director's Reference Image */}
+                                <Box sx={{ mb: 2 }}>
+                                    <Box
+                                        component="label"
+                                        sx={{
+                                            display: 'flex', alignItems: 'center', gap: 1,
+                                            p: 1, borderRadius: 1, cursor: 'pointer',
+                                            border: '1px dashed',
+                                            borderColor: directorReferenceImage ? 'var(--accent-gold)' : 'rgba(255,255,255,0.15)',
+                                            bgcolor: directorReferenceImage ? 'rgba(201,169,97,0.07)' : 'transparent',
+                                            '&:hover': { borderColor: 'var(--accent-gold)' },
+                                        }}
+                                    >
+                                        <input type="file" hidden accept="image/*" onChange={(e) => { if (e.target.files?.[0]) handleDirectorImageUpload(e.target.files[0]); }} />
+                                        {directorReferenceImage ? (
+                                            <>
+                                                <Box component="img" src={directorReferenceImage} sx={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 0.5 }} />
+                                                <Typography variant="caption" sx={{ color: 'var(--accent-gold)', flex: 1 }}>Reference image attached</Typography>
+                                                <Box component="span" onClick={(e) => { e.preventDefault(); setDirectorReferenceImage(null); }} sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', cursor: 'pointer', '&:hover': { color: '#fff' } }}>✕</Box>
+                                            </>
+                                        ) : (
+                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)' }}>+ Attach reference image (optional)</Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+
                                 <Button
                                     fullWidth variant="contained"
                                     onClick={handleAddChapter}
@@ -1547,17 +1589,6 @@ const ProjectDirectorView: React.FC = () => {
                                                                         </Typography>
                                                                         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic', fontSize: '0.75rem', lineHeight: 1.2 }}>
                                                                             {(scene as any).routing_reason}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                )}
-
-                                                                {scene.type === '3D_RENDER' && (scene as any).prompt && (
-                                                                    <Box sx={{ mb: 2, p: 1, bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, borderLeft: '3px solid rgba(255,255,255,0.15)' }}>
-                                                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block', fontWeight: 'bold', fontSize: '0.6rem', textTransform: 'uppercase', mb: 0.5 }}>
-                                                                            Image Prompt
-                                                                        </Typography>
-                                                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.72rem', lineHeight: 1.3, display: 'block' }}>
-                                                                            {(scene as any).prompt}
                                                                         </Typography>
                                                                     </Box>
                                                                 )}
