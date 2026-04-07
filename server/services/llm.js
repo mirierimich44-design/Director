@@ -6,6 +6,7 @@ import {
     getLanguageModel, getFastModel,
     getClaudeModel, getClaudeFastModel,
     getImageModel, getImageFallback,
+    withGoogleKeyFallback,
 } from '../settings.js';
 
 // ─────────────────────────────────────────────
@@ -25,12 +26,12 @@ function getAnthropicClient() {
     return _anthropic;
 }
 
-function getGoogleClient() {
-    const key = getGoogleKey();
-    if (_googleAI && _lastGoogleKey === key) return _googleAI;
-    _googleAI = new GoogleGenerativeAI(key);
-    _lastGoogleKey = key;
-    return _googleAI;
+function getGoogleClient(keyOverride) {
+    const key = keyOverride || getGoogleKey();
+    if (!keyOverride && _googleAI && _lastGoogleKey === key) return _googleAI;
+    const c = new GoogleGenerativeAI(key);
+    if (!keyOverride) { _googleAI = c; _lastGoogleKey = key; }
+    return c;
 }
 
 // ─────────────────────────────────────────────
@@ -44,6 +45,15 @@ export const anthropic = new Proxy({}, {
 export const googleAI = new Proxy({}, {
     get(_, prop) { return getGoogleClient()[prop]; }
 });
+
+/**
+ * Call fn(geminiClient) with the primary Google key.
+ * If it hits a quota/429 error and a second key is configured, retries with the fallback key.
+ * @param {(client: GoogleGenerativeAI) => Promise<any>} fn
+ */
+export async function callGeminiWithFallback(fn) {
+    return withGoogleKeyFallback((key) => fn(getGoogleClient(key)));
+}
 export const client = anthropic; // Backward compatibility
 
 // Model names — use getter functions so they read live settings

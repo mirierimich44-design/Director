@@ -19,6 +19,7 @@ const DEFAULTS = {
   // API Keys (override .env values)
   keys: {
     google: '',      // GOOGLE_AI_API_KEY
+    google2: '',     // GOOGLE_AI_API_KEY_2 — fallback key used when primary hits quota
     anthropic: '',   // ANTHROPIC_API_KEY
     stadia: '',      // STADIA_API_KEY (Stadia Maps — free map tiles)
     heygen: '',      // HEYGEN_API_KEY
@@ -84,6 +85,9 @@ export function loadSettings() {
   if (!settings.keys.google && process.env.GOOGLE_AI_API_KEY) {
     settings.keys.google = process.env.GOOGLE_AI_API_KEY
   }
+  if (!settings.keys.google2 && process.env.GOOGLE_AI_API_KEY_2) {
+    settings.keys.google2 = process.env.GOOGLE_AI_API_KEY_2
+  }
   if (!settings.keys.anthropic && process.env.ANTHROPIC_API_KEY) {
     settings.keys.anthropic = process.env.ANTHROPIC_API_KEY
   }
@@ -117,11 +121,13 @@ export function getSettings() {
   return {
     keys: {
       google: maskKey(settings.keys.google),
+      google2: maskKey(settings.keys.google2),
       anthropic: maskKey(settings.keys.anthropic),
       stadia: maskKey(settings.keys.stadia),
       heygen: maskKey(settings.keys.heygen),
       pexels: maskKey(settings.keys.pexels),
       googleSet: !!settings.keys.google,
+      google2Set: !!settings.keys.google2,
       anthropicSet: !!settings.keys.anthropic,
       stadiaSet: !!settings.keys.stadia,
       heygenSet: !!settings.keys.heygen,
@@ -148,6 +154,9 @@ export function updateSettings(updates) {
     // Only update keys that are explicitly provided and non-empty
     if (updates.keys.google !== undefined && updates.keys.google !== '') {
       settings.keys.google = updates.keys.google
+    }
+    if (updates.keys.google2 !== undefined && updates.keys.google2 !== '') {
+      settings.keys.google2 = updates.keys.google2
     }
     if (updates.keys.anthropic !== undefined && updates.keys.anthropic !== '') {
       settings.keys.anthropic = updates.keys.anthropic
@@ -180,6 +189,40 @@ export function updateSettings(updates) {
 // ─────────────────────────────────────────────
 export function getGoogleKey() {
   return settings.keys.google || process.env.GOOGLE_AI_API_KEY || ''
+}
+
+export function getGoogleKey2() {
+  return settings.keys.google2 || process.env.GOOGLE_AI_API_KEY_2 || ''
+}
+
+/**
+ * Returns [primaryKey, fallbackKey] filtered to non-empty values.
+ * Use with withGoogleKeyFallback() to retry on quota errors.
+ */
+export function getGoogleKeys() {
+  return [getGoogleKey(), getGoogleKey2()].filter(Boolean)
+}
+
+/**
+ * Calls fn(key) with the primary Google key.
+ * If it throws a quota/429 error and a second key is configured,
+ * automatically retries with the fallback key.
+ * @param {(key: string) => Promise<any>} fn
+ */
+export async function withGoogleKeyFallback(fn) {
+  const keys = getGoogleKeys()
+  if (keys.length === 0) throw new Error('Google API key not configured')
+  try {
+    return await fn(keys[0])
+  } catch (err) {
+    const msg = (err.message || '').toLowerCase()
+    const isQuota = err.status === 429 || msg.includes('429') || msg.includes('quota') || msg.includes('resource_exhausted') || msg.includes('too many requests')
+    if (isQuota && keys.length > 1 && keys[1] !== keys[0]) {
+      console.warn('⚠️  Primary Google key quota hit — switching to fallback key...')
+      return await fn(keys[1])
+    }
+    throw err
+  }
 }
 
 export function getAnthropicKey() {

@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import archiver from 'archiver';
 
-import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel, getVideoModel } from './settings.js';
+import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel, getVideoModel, withGoogleKeyFallback } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed, assembleChapterVideo } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';
@@ -223,20 +223,9 @@ function pruneRenderJobs() {
 
 // Helper: generate a 3D image prompt from template scene data
 async function generateFallback3DPrompt(script, template, theme, content) {
-    const apiKey = getGoogleKey();
-    if (!apiKey) {
-        throw new Error('Google API key not configured for fallback generation');
-    }
+    if (!getGoogleKey()) throw new Error('Google API key not configured for fallback generation');
 
-    const model = googleAI.getGenerativeModel({
-        model: 'gemini-3.1-flash-lite-preview',
-        generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 1024,
-        }
-    });
-
-    const prompt = `You are a 3D scene director. Convert this failed Remotion template scene into a single 3D render prompt.
+    const promptText = `You are a 3D scene director. Convert this failed Remotion template scene into a single 3D render prompt.
 
 TEMPLATE: ${template}
 THEME: ${theme}
@@ -255,21 +244,24 @@ Rules:
 Return ONLY the prompt text, no markdown, no explanations.`;
 
     try {
-        const result = await model.generateContent(prompt);
+        const result = await withGoogleKeyFallback(async (key) => {
+            const { GoogleGenerativeAI } = await import('@google/generative-ai');
+            const m = new GoogleGenerativeAI(key).getGenerativeModel({
+                model: 'gemini-3.1-flash-lite-preview',
+                generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+            });
+            return m.generateContent(promptText);
+        });
         return result.response.text().trim();
     } catch (err) {
         console.warn('⚠️ Fallback prompt generation failed:', err.message);
-        // Return a generic fallback prompt
         return `Cinematic documentary scene visualizing: ${script.substring(0, 50)}. Dark moody atmosphere, volumetric lighting, photorealistic 3D render, no humans.`;
     }
 }
 
 // Helper: generate a 3D image as fallback
 async function generateFallbackImage(prompt, environment = 'standard') {
-    const apiKey = getGoogleKey();
-    if (!apiKey) {
-        throw new Error('Google API key not configured for image generation');
-    }
+    if (!getGoogleKey()) throw new Error('Google API key not configured for image generation');
 
     const imageModel = getImageModel() || 'imagen-4.0-generate-001';
 
@@ -286,24 +278,31 @@ async function generateFallbackImage(prompt, environment = 'standard') {
         throw new Error(`Gemini Image Fallback failed: ${res.error}`);
     }
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
-
     const body = {
         instances: [{ prompt: `${prompt}${promptSuffix}` }],
         parameters: { sampleCount: 1, aspectRatio: '16:9' },
     };
 
-    const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(60_000),
+    const response = await withGoogleKeyFallback(async (key) => {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${key}`;
+        const r = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            signal: AbortSignal.timeout(60_000),
+        });
+        if (r.status === 429) {
+            const t = await r.text();
+            const err = new Error(`Fallback Imagen API 429: ${t.substring(0, 200)}`);
+            err.status = 429;
+            throw err;
+        }
+        return r;
     });
 
     if (!response.ok) {
         const errText = await response.text();
         console.error('❌ Fallback Imagen API error:', errText.substring(0, 500));
-        // Check if error is HTML (common for API issues)
         if (errText.trim().startsWith('<')) {
             console.error('   ⚠️ Fallback API returned HTML error page instead of JSON');
             throw new Error(`Fallback Imagen API returned HTML error page. Check your Google API key.`);
@@ -877,8 +876,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         const { prompt, environment, camera } = req.body;
         if (!prompt) return res.status(400).json({ error: 'prompt is required' });
 
-        const apiKey = getGoogleKey();
-        if (!apiKey) {
+        if (!getGoogleKey()) {
             console.error('❌ Imagen API: Google API key not configured in settings');
             return res.status(503).json({ error: 'Google API key not configured' });
         }
@@ -902,9 +900,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
             throw new Error(imgResult.error);
         }
 
-        // Call Imagen via Google AI REST API
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${apiKey}`;
-        const body = {
+        const imgBody = {
             instances: [{ prompt: `${prompt}${promptSuffix}` }],
             parameters: { sampleCount: 1, aspectRatio: '16:9' },
         };
@@ -915,7 +911,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         let response;
         let lastError;
         const maxAttempts = 3;
-        
+
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
                 if (attempt > 1) {
@@ -923,11 +919,21 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
                     await new Promise(r => setTimeout(r, 3000));
                 }
 
-                response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body),
-                    signal: AbortSignal.timeout(90_000), 
+                response = await withGoogleKeyFallback(async (key) => {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:predict?key=${key}`;
+                    const r = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(imgBody),
+                        signal: AbortSignal.timeout(90_000),
+                    });
+                    if (r.status === 429) {
+                        const t = await r.text();
+                        const err = new Error(`Imagen 429: ${t.substring(0, 200)}`);
+                        err.status = 429;
+                        throw err;
+                    }
+                    return r;
                 });
 
                 if (response.ok) break;
@@ -936,7 +942,6 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
                 lastError = `Imagen API ${response.status}: ${errText.substring(0, 200)}`;
                 console.error(`❌ Imagen Attempt ${attempt} failed:`, lastError);
 
-                // If it's a 429 (Too Many Requests), definitely retry
                 if (response.status !== 429 && response.status !== 503 && response.status !== 504) {
                     break; // Don't retry on 400/401/403/404
                 }
@@ -1000,8 +1005,7 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         const { prompt, imageUrl } = req.body;
         if (!prompt && !imageUrl) return res.status(400).json({ error: 'prompt or imageUrl is required' });
 
-        const apiKey = getGoogleKey();
-        if (!apiKey) return res.status(503).json({ error: 'Google API key not configured' });
+        if (!getGoogleKey()) return res.status(503).json({ error: 'Google API key not configured' });
 
         const videoModel = getVideoModel() || 'veo-3.0-generate-001';
         const generateAudio = videoModel.startsWith('veo-3');
@@ -1038,10 +1042,19 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         };
 
         console.log(`   🎬 Starting Veo generation: model=${videoModel}, audio=${generateAudio}`);
-        const startRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:predictLongRunning?key=${apiKey}`,
-            { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(veoBody), signal: AbortSignal.timeout(30_000) }
-        );
+        const startRes = await withGoogleKeyFallback(async (key) => {
+            const r = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${videoModel}:predictLongRunning?key=${key}`,
+                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(veoBody), signal: AbortSignal.timeout(30_000) }
+            );
+            if (r.status === 429) {
+                const t = await r.text();
+                const err = new Error(`Veo 429: ${t.substring(0, 200)}`);
+                err.status = 429;
+                throw err;
+            }
+            return r;
+        });
         if (!startRes.ok) {
             const errText = await startRes.text();
             throw new Error(`Veo start failed ${startRes.status}: ${errText.substring(0, 300)}`);
@@ -1050,6 +1063,8 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         const operationName = startData.name;
         if (!operationName) throw new Error('No operation name returned from Veo');
 
+        // Determine which key started the operation — use same key for polling
+        const veoActiveKey = getGoogleKey();
         console.log(`   ⏳ Veo operation started: ${operationName}`);
 
         // Poll until done (max 6 min, every 8 s)
@@ -1060,7 +1075,7 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         while (Date.now() < deadline) {
             await new Promise(r => setTimeout(r, pollInterval));
             const pollRes = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`,
+                `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${veoActiveKey}`,
                 { signal: AbortSignal.timeout(15_000) }
             );
             if (!pollRes.ok) continue;
@@ -1085,7 +1100,7 @@ app.post('/api/auto-scene/animate-veo', async (req, res) => {
         if (b64) {
             videoBuf = Buffer.from(b64, 'base64');
         } else if (videoUri) {
-            const dlRes = await fetch(videoUri.includes('?') ? videoUri : `${videoUri}?key=${apiKey}`, { signal: AbortSignal.timeout(60_000) });
+            const dlRes = await fetch(videoUri.includes('?') ? videoUri : `${videoUri}?key=${veoActiveKey}`, { signal: AbortSignal.timeout(60_000) });
             if (!dlRes.ok) throw new Error(`Failed to download Veo video: ${dlRes.status}`);
             videoBuf = Buffer.from(await dlRes.arrayBuffer());
         } else {
