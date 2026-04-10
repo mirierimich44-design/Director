@@ -503,7 +503,7 @@ const ProjectDirectorView: React.FC = () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             prompt: (scene as any).prompt,
-                            environment: (scene as any).environment || 'infrastructure',
+                            environment: selectedProject?.settings?.director === 'vortexis' ? 'vortexis' : ((scene as any).environment || 'infrastructure'),
                             camera: (scene as any).camera || 'cinematic',
                         })
                     });
@@ -921,7 +921,10 @@ const ProjectDirectorView: React.FC = () => {
             const renderRes = await fetch('/api/auto-scene/render-3d', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt }),
+                body: JSON.stringify({ 
+                    prompt,
+                    environment: selectedProject?.settings?.director === 'vortexis' ? 'vortexis' : 'infrastructure' 
+                }),
             });
             const renderData = await renderRes.json();
             if (!renderData.success) throw new Error(renderData.error);

@@ -741,8 +741,10 @@ export async function generateScenes(scriptText, generationSettings = null) {
       }
     } else {
       // 3D Render Prompt Generation — THREE-STEP CINEMATOGRAPHY METHOD
-      console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`)
+      console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`);
       
+      let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
+      let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
       let styleRules = `• 60–80 words maximum
 • Dark, moody, cinematic color grading
 • Deep shadows with single dramatic light source
@@ -751,11 +753,10 @@ export async function generateScenes(scriptText, generationSettings = null) {
 • No text, no labels, no UI elements on screens (blur or obscure them)
 • Shallow depth of field — hero object sharp, background soft
 • 16:9 cinematic framing`;
-      
-      let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
 
       if (scene.theme === 'VORTEXIS') {
-        initialInstruction = "You NEVER describe people with realistic details, but you MUST describe them as featureless, solid-colored silhouettes.";
+        cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
+        initialInstruction = "You MUST describe people as featureless, solid-colored silhouettes (red, blue, or black). NEVER use realistic details for humans.";
         styleRules = `• 60–80 words maximum
 • Unity 3D engine render style
 • True isometric orthographic camera angle
@@ -770,7 +771,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
 
       const model = googleAI.getGenerativeModel({
         model: getGEMINI_MODEL(),
-        systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. ${initialInstruction}
+        systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — SPECIFICITY OVER GENERICS
@@ -779,9 +780,6 @@ Your prompt MUST be SPECIFIC to THIS scene and THIS story.
 • Extract the exact location, objects, or technology named in the scene sentence.
 • If the scene mentions a specific company, country, device, or event — use it.
 • NEVER produce a generic "dark moody room" prompt that could belong to any scene.
-• If the story is about a cyberattack → show servers, terminals, network cables.
-• If the story is about a financial fraud → show trading screens, documents, money.
-• If the story is about espionage → show listening devices, surveillance equipment.
 • The viewer should be able to guess what the story is just from seeing your image.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -810,7 +808,8 @@ Output only the prompt text. No explanation. No preamble.`
       const promptRes = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${scene.script}"`)
       scene.prompt = promptRes.response.text().trim()
       
-      scene.environment = 'infrastructure'
+      const isVortexis = scene.theme === 'VORTEXIS' || generationSettings?._directorType === 'vortexis';
+      scene.environment = isVortexis ? 'vortexis' : 'infrastructure'
       scene.camera = 'cinematic'
       scene.lower_third = { text: scene.script.substring(0, 50) + '...', attribution: '', tone: '#FFAA00' }
     }
@@ -830,17 +829,19 @@ Output only the prompt text. No explanation. No preamble.`
 export async function regenerateImagePrompt(sceneScript, chapterScriptText, theme = null) {
   const storyContext = buildStoryContext(chapterScriptText || sceneScript)
 
-  let styleRules = `60–80 words, dark cinematic, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9.`;
+  let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
   let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
+  let styleRules = `60–80 words, dark cinematic, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9.`;
 
   if (theme === 'VORTEXIS') {
-    initialInstruction = "You NEVER describe people with realistic details, but you MUST describe them as featureless, solid-colored silhouettes.";
+    cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
+    initialInstruction = "You MUST describe people as featureless, solid-colored silhouettes (red, blue, or black). NEVER use realistic details for humans.";
     styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), people MUST be featureless flat silhouettes colored purely red/blue/black, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
   }
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
-    systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. ${initialInstruction}
+    systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
 CRITICAL RULE — SPECIFICITY OVER GENERICS
 Your prompt MUST be SPECIFIC to THIS scene and THIS story.

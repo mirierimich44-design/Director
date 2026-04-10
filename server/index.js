@@ -268,6 +268,8 @@ async function generateFallbackImage(prompt, environment = 'standard') {
     let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
     if (environment === 'editorial-illustration') {
         promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
+    } else if (environment === 'vortexis') {
+        promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist.";
     }
 
     // Support for Gemini Image Models (Nano Banana)
@@ -682,8 +684,7 @@ app.post('/api/projects/:id/chapters', async (req, res) => {
         try {
             let processedScenes = scenes;
             if (!processedScenes) {
-                const genSettings = project?.generationSettings || null;
-                const directorType = project?.settings?.director || 'standard';
+                const genSettings = { ...(project?.generationSettings || {}), _directorType: directorType };
                 console.log(`   🎬 Using director: ${directorType}`);
                 const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
                 processedScenes = await generateScenes(scriptText, genSettings);
@@ -930,6 +931,8 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
         if (environment === 'editorial-illustration') {
             promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
+        } else if (environment === 'vortexis') {
+            promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : 'PHOTOREALISTIC'}`);
