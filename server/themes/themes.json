@@ -138,5 +138,25 @@
     "GRID_LINE": "#E5E1D3",
     "CHART_BG": "#F9F7F0",
     "CHART_BORDER": "#DED9C4"
+  },
+  "VORTEXIS": {
+    "name": "Vortexis",
+    "description": "Dark silhouette style for the Vortexis channel",
+    "BACKGROUND_COLOR": "#050505",
+    "PANEL_LEFT_BG": "#050505",
+    "PANEL_RIGHT_BG": "#0A0A0A",
+    "PRIMARY_COLOR": "#FFFFFF",
+    "SECONDARY_COLOR": "#333333",
+    "ACCENT_COLOR": "#00FFCC",
+    "SUPPORT_COLOR": "#666666",
+    "TEXT_ON_PRIMARY": "#000000",
+    "TEXT_ON_SECONDARY": "#FFFFFF",
+    "TEXT_ON_ACCENT": "#000000",
+    "NODE_FILL": "#111111",
+    "NODE_STROKE": "#FFFFFF",
+    "LINE_STROKE": "#FFFFFF",
+    "GRID_LINE": "#222222",
+    "CHART_BG": "#050505",
+    "CHART_BORDER": "#333333"
   }
 }

@@ -561,7 +561,7 @@ ${exampleOutput}`
 // ─────────────────────────────────────────────
 // Theme Assignment — per-scene variety
 // ─────────────────────────────────────────────
-const VALID_THEMES = new Set(['CLEAN', 'THREAT', 'COLD', 'DARK', 'INTEL', 'TECHNICAL', 'CREAM'])
+const VALID_THEMES = new Set(['CLEAN', 'THREAT', 'COLD', 'DARK', 'INTEL', 'TECHNICAL', 'CREAM', 'VORTEXIS'])
 
 // Each category maps to an ordered pool; scenes cycle through it so consecutive
 // scenes in the same category still look different.
@@ -742,9 +742,34 @@ export async function generateScenes(scriptText, generationSettings = null) {
     } else {
       // 3D Render Prompt Generation — THREE-STEP CINEMATOGRAPHY METHOD
       console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`)
+      
+      let styleRules = `• 60–80 words maximum
+• Dark, moody, cinematic color grading
+• Deep shadows with single dramatic light source
+• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood)
+• No humans, no faces, no hands, no body parts
+• No text, no labels, no UI elements on screens (blur or obscure them)
+• Shallow depth of field — hero object sharp, background soft
+• 16:9 cinematic framing`;
+      
+      let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
+
+      if (scene.theme === 'VORTEXIS') {
+        initialInstruction = "You NEVER describe people with details, but you ALLOW and ENCOURAGE completely featureless silhouettes.";
+        styleRules = `• 60–80 words maximum
+• High contrast cinematic silhouette style
+• Featureless silhouettes of people are ALLOWED and ENCOURAGED, but they MUST be strictly featureless silhouettes.
+• Colors must be predominantly blue, black, and red.
+• Lighting must be light on the inside and dark on the edges (heavy vignette).
+• Deep shadows with single dramatic light source
+• No text, no labels, no UI elements on screens (blur or obscure them)
+• Shallow depth of field — hero object sharp, background soft
+• 16:9 cinematic framing`;
+      }
+
       const model = googleAI.getGenerativeModel({
         model: getGEMINI_MODEL(),
-        systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
+        systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. ${initialInstruction}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — SPECIFICITY OVER GENERICS
@@ -765,14 +790,9 @@ STEP 1 — SET THE ATMOSPHERE
 One emotional quality that fits THIS specific scene:
 tension, isolation, dread, secrecy, discovery, betrayal, urgency, quiet menace, hollow bureaucracy, digital coldness
 
-STEP 2 — CHOOSE THE SYMBOLIC OBJECT
-Never draw the person. Find the ONE object from THIS scene that carries the meaning.
-Use the STORY CONTEXT and KEY ENTITIES to make it specific:
-  "He clicked the phishing link" + story about SolarWinds → glowing monitor showing SolarWinds dashboard in a dark server room
-  "The phone rang"              + FBI investigation story  → a government-issue desk phone, red light flashing, J. Edgar Hoover building hallway
-  "She denied the allegations"  + corporate fraud story   → a stack of financial documents stamped CONFIDENTIAL on a mahogany boardroom table
-  "He was arrested"             + hacker story            → a laptop screen still open to a terminal, handcuffs resting beside the keyboard
-Generic fallback ONLY if no specific object/location exists in the scene.
+STEP 2 — CHOOSE THE SYMBOLIC OBJECT / SUBJECT
+Find the ONE object or silhouette from THIS scene that carries the meaning.
+Use the STORY CONTEXT and KEY ENTITIES to make it specific.
 
 STEP 3 — DESCRIBE THE ENVIRONMENT
 Room type, lighting quality, depth of field, color temperature, surface materials, time of day.
@@ -781,14 +801,7 @@ Match the environment to the story's world (government building, data center, su
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STYLE RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-• 60–80 words maximum
-• Dark, moody, cinematic color grading
-• Deep shadows with single dramatic light source
-• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood)
-• No humans, no faces, no hands, no body parts
-• No text, no labels, no UI elements on screens (blur or obscure them)
-• Shallow depth of field — hero object sharp, background soft
-• 16:9 cinematic framing
+${styleRules}
 
 Output only the prompt text. No explanation. No preamble.`
       })
@@ -813,12 +826,20 @@ Output only the prompt text. No explanation. No preamble.`
 // Exported: Re-generate image prompt for a single 3D_RENDER scene
 // Called by POST /api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt
 // ─────────────────────────────────────────────
-export async function regenerateImagePrompt(sceneScript, chapterScriptText) {
+export async function regenerateImagePrompt(sceneScript, chapterScriptText, theme = null) {
   const storyContext = buildStoryContext(chapterScriptText || sceneScript)
+
+  let styleRules = `60–80 words, dark cinematic, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9.`;
+  let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
+
+  if (theme === 'VORTEXIS') {
+    initialInstruction = "You NEVER describe people with details, but you ALLOW and ENCOURAGE completely featureless silhouettes.";
+    styleRules = `60–80 words, high contrast cinematic silhouette style, featureless silhouettes of people ALLOWED, blue/black/red colors, light inside and dark edges (vignette), no readable text on screens, shallow DOF, 16:9.`;
+  }
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
-    systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. You NEVER describe people — only environments, objects, and atmosphere.
+    systemInstruction: `You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. ${initialInstruction}
 
 CRITICAL RULE — SPECIFICITY OVER GENERICS
 Your prompt MUST be SPECIFIC to THIS scene and THIS story.
@@ -829,14 +850,16 @@ Your prompt MUST be SPECIFIC to THIS scene and THIS story.
 
 THREE-STEP METHOD:
 1. ATMOSPHERE — one emotional quality (tension, dread, secrecy, discovery, urgency...)
-2. SYMBOLIC OBJECT — the ONE object from the scene that carries the meaning. Use story context to make it specific.
+2. SYMBOLIC OBJECT / SUBJECT — the ONE object/silhouette from the scene that carries the meaning. Use story context to make it specific.
 3. ENVIRONMENT — room type, lighting, depth of field, color temperature, surface materials.
 
-STYLE: 60–80 words, dark cinematic, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9.
+STYLE: ${styleRules}
 Output only the prompt text.`,
   })
 
-  const result = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${sceneScript}"`)
+  const result = await callGemini(model, `${storyContext}
+
+SCENE TO VISUALIZE: "${sceneScript}"`)
   return result.response.text().trim()
 }
 

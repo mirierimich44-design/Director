@@ -46,7 +46,25 @@
       "Bash(python3 -c \":*)",
       "Bash(grep -l \"152-asset-comparison-slope\\\\|161-annotation-callout\" \"/c/Users/MICH/Desktop/Code Files/director/server/projects/\"*.json)",
       "Bash(grep -l \"152-asset\\\\|161-annotation\" \"/c/Users/MICH/Desktop/Code Files/director/server/projects/\"*.json)",
-      "Bash(grep -rl \"asset-comparison\\\\|annotation-callout\" '/c/Users/MICH/Desktop/Code Files/director/server/' --include=*.json)"
+      "Bash(grep -rl \"asset-comparison\\\\|annotation-callout\" '/c/Users/MICH/Desktop/Code Files/director/server/' --include=*.json)",
+      "Bash(grep -E \"^d|\\\\.js$|\\\\.json$\")",
+      "WebFetch(domain:www.remotion.dev)",
+      "WebFetch(domain:blog.logrocket.com)",
+      "Bash(ls server/templates/*.tsx)",
+      "Bash(find . -name .env* -type f)",
+      "Bash(grep -l \"map\\\\|mapbox\\\\|stadia\\\\|maplibre\" server/templates/*.tsx)",
+      "Bash(ls -1 server/templates/*map*.tsx)",
+      "Bash(npm install:*)",
+      "Bash(ls C:UsersMICHDesktopCode Filesdirectorserverschemas17*.json)",
+      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director\\\\server\\\\schemas' -name 17*.json)",
+      "Bash(grep -v \"//\" done)",
+      "Bash(do sed:*)",
+      "Bash(find 'C:\\\\Users\\\\MICH\\\\Desktop\\\\Code Files\\\\director/server/templates' -name *.tsx)",
+      "Bash(grep -l IMAGE_URL C:UsersMICHDesktopCode Filesdirector/server/templates/*.tsx)",
+      "Bash(find 'C:/Users/MICH/Desktop/Code Files/director' -name *.tsx)",
+      "Bash(find 'C:/Users/MICH/Desktop/Code Files/director/server/templates' -name 162-* -o -name veo*)",
+      "Bash(find /c/Users/MICH/Desktop/Code Files/director/server -type f \\\\\\(-name *.ts -o -name *.js \\\\\\))",
+      "Bash(grep -r \"routing_reason\\\\|directorNote\" /c/Users/MICH/Desktop/Code Files/director/server --include=*.ts --include=*.js -n)"
     ]
   }
 }
