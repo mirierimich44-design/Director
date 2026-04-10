@@ -755,16 +755,17 @@ export async function generateScenes(scriptText, generationSettings = null) {
       let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
 
       if (scene.theme === 'VORTEXIS') {
-        initialInstruction = "You NEVER describe people with details, but you ALLOW and ENCOURAGE completely featureless silhouettes.";
+        initialInstruction = "You NEVER describe people with realistic details, but you MUST describe them as featureless, solid-colored silhouettes.";
         styleRules = `• 60–80 words maximum
-• High contrast cinematic silhouette style
-• Featureless silhouettes of people are ALLOWED and ENCOURAGED, but they MUST be strictly featureless silhouettes.
-• Colors must be predominantly blue, black, and red.
-• Lighting must be light on the inside and dark on the edges (heavy vignette).
-• Deep shadows with single dramatic light source
-• No text, no labels, no UI elements on screens (blur or obscure them)
-• Shallow depth of field — hero object sharp, background soft
-• 16:9 cinematic framing`;
+• Unity 3D engine render style
+• True isometric orthographic camera angle
+• Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
+• People MUST be featureless, flat silhouettes colored exclusively in pure red, pure blue, or pure black
+• Exactly depict the literal objects and actions described in the script
+• Realistic real-world scenarios only — no glowing abstract data streams, floating holograms, or unrealistic digital visualizations
+• Clean, minimalist environments with smooth matte materials
+• NO text, NO labels, NO typography of any kind
+• 16:9 aspect ratio`;
       }
 
       const model = googleAI.getGenerativeModel({
@@ -833,8 +834,8 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
   let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
 
   if (theme === 'VORTEXIS') {
-    initialInstruction = "You NEVER describe people with details, but you ALLOW and ENCOURAGE completely featureless silhouettes.";
-    styleRules = `60–80 words, high contrast cinematic silhouette style, featureless silhouettes of people ALLOWED, blue/black/red colors, light inside and dark edges (vignette), no readable text on screens, shallow DOF, 16:9.`;
+    initialInstruction = "You NEVER describe people with realistic details, but you MUST describe them as featureless, solid-colored silhouettes.";
+    styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), people MUST be featureless flat silhouettes colored purely red/blue/black, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
   }
 
   const model = googleAI.getGenerativeModel({
