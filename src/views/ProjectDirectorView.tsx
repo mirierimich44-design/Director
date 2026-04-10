@@ -1264,6 +1264,7 @@ const ProjectDirectorView: React.FC = () => {
                                         <MenuItem value="TECHNICAL">TECHNICAL — dark green code</MenuItem>
                                         <MenuItem value="CLEAN">CLEAN — light, neutral</MenuItem>
                                         <MenuItem value="CREAM">CREAM — warm magazine</MenuItem>
+                                        <MenuItem value="VORTEXIS">VORTEXIS — dark silhouette style</MenuItem>
                                         <MenuItem value="custom">Custom Palette</MenuItem>
                                     </Select>
                                 </Grid>
