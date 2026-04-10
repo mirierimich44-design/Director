@@ -825,7 +825,8 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt', async
         console.log(`   🎨 Regenerating image prompt for Scene ${sceneIndex}...`);
 
         const { regenerateImagePrompt } = await import('./autoScene.js');
-        const newPrompt = await regenerateImagePrompt(scene.script, chapter.scriptText || scene.script, scene.theme);
+        const theme = scene.theme || project.settings?.colorScheme || 'THREAT';
+        const newPrompt = await regenerateImagePrompt(scene.script, chapter.scriptText || scene.script, theme);
 
         const result = await updateScene(pid, cid, sceneIndex, { prompt: newPrompt });
         res.json({ success: true, prompt: newPrompt, ...result });
