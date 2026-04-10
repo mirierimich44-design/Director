@@ -684,6 +684,7 @@ app.post('/api/projects/:id/chapters', async (req, res) => {
         try {
             let processedScenes = scenes;
             if (!processedScenes) {
+                const directorType = project?.settings?.director || 'standard';
                 const genSettings = { ...(project?.generationSettings || {}), _directorType: directorType };
                 console.log(`   🎬 Using director: ${directorType}`);
                 const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
