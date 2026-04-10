@@ -746,7 +746,8 @@ app.post('/api/projects/:pid/chapters/:cid/reanalyze', async (req, res) => {
         if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
         const directorType = project?.settings?.director || 'standard';
         const { generateScenes } = await import(directorType === 'fiscal-pal' ? './autoSceneFiscal.js' : './autoScene.js');
-        const scenes = await generateScenes(chapter.scriptText, project.generationSettings);
+        const genSettings = { ...(project?.generationSettings || {}), _directorType: directorType };
+        const scenes = await generateScenes(chapter.scriptText, genSettings);
         const result = updateChapterScenes(req.params.pid, req.params.cid, scenes);
         res.json({ success: true, ...result });
     } catch (err) {
@@ -828,7 +829,8 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt', async
 
         const { regenerateImagePrompt } = await import('./autoScene.js');
         const theme = scene.theme || project.settings?.colorScheme || 'THREAT';
-        const newPrompt = await regenerateImagePrompt(scene.script, chapter.scriptText || scene.script, theme);
+        const directorType = project.settings?.director || 'standard';
+        const newPrompt = await regenerateImagePrompt(scene.script, chapter.scriptText || scene.script, theme, directorType);
 
         const result = await updateScene(pid, cid, sceneIndex, { prompt: newPrompt });
         res.json({ success: true, prompt: newPrompt, ...result });
@@ -936,7 +938,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
             promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist.";
         }
 
-        console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : 'PHOTOREALISTIC'}`);
+        console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
 
         // Support for Gemini Image Models (Nano Banana)
         if (imageModel.startsWith('gemini-')) {

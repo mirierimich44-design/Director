@@ -599,6 +599,18 @@ const CATEGORY_THEMES = {
 // Track per-category usage so consecutive same-category scenes alternate themes
 const _categoryCounters = {}
 
+// Detects whether a scene script mentions a human subject (person performing an action)
+function sceneHasHumanSubject(script) {
+  const s = script.toLowerCase()
+  // Personal pronouns used as subject
+  if (/\b(he|she|they|we)\s+\w/.test(s)) return true
+  // Generic and role-based human nouns
+  if (/\b(person|people|man|woman|men|women|team|group|individual|ceo|executive|employee|officer|hacker|attacker|victim|user|customer|worker|staff|agent|analyst|suspect|whistleblower|director|manager|developer|engineer|lawyer|judge|politician|senator|president|official|investigator|journalist|reporter|founder|investor|trader|banker|criminal|defendant|plaintiff|witness|administrator|technician|researcher|scientist|soldier|detective|spy|informant|perpetrator)\b/.test(s)) return true
+  // Named person (capitalized name) followed by an action verb
+  if (/^[A-Z][a-z]+\s+(said|told|called|walked|sent|wrote|clicked|opened|signed|paid|met|replied|threatened|denied|ran|fled|sat|felt|saw|received|noticed|believed|realized|arrived|waited|began|started|decided|ordered|hired|fired|bought|sold|built|created|launched|admitted|confessed|escaped|hid|transferred|stole|leaked|hacked|accessed|breached|attacked|warned|blackmailed|bribed|deceived|convinced)/.test(script)) return true
+  return false
+}
+
 function assignSceneTheme(scene, userTheme) {
   // Scene already has a theme (e.g. coverage-check fallbacks) — keep it, but
   // validate it's a real theme name (not 'auto' or undefined).
@@ -746,27 +758,44 @@ export async function generateScenes(scriptText, generationSettings = null) {
       let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
       let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
       let styleRules = `• 60–80 words maximum
-• Dark, moody, cinematic color grading
-• Deep shadows with single dramatic light source
-• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood)
+• Dark, moody, cinematic color grading — vary the palette: cool blue steel, amber tungsten, sickly green fluorescent, harsh white institutional, blood-red neon
+• Lighting setup must differ from a generic "single dramatic spotlight" — use: overhead fluorescent wash, venetian blind shadow bars, backlit silhouette against a frosted window, emergency lighting, candlelight, monitor glow, golden-hour shaft through blinds
+• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood, glossy marble, cracked asphalt, laminate desk)
 • No humans, no faces, no hands, no body parts
 • No text, no labels, no UI elements on screens (blur or obscure them)
 • Shallow depth of field — hero object sharp, background soft
 • 16:9 cinematic framing`;
 
-      if (scene.theme === 'VORTEXIS') {
+      if (scene.theme === 'VORTEXIS' || generationSettings?._directorType === 'vortexis') {
+        const hasHuman = sceneHasHumanSubject(scene.script)
+        const SILHOUETTE_COLORS = ['pure red', 'pure blue', 'pure black'];
+        const assignedColor = SILHOUETTE_COLORS[i % SILHOUETTE_COLORS.length];
         cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
-        initialInstruction = "You MUST describe people as featureless, solid-colored silhouettes (red, blue, or black). NEVER use realistic details for humans.";
-        styleRules = `• 60–80 words maximum
+        if (hasHuman) {
+          initialInstruction = `This scene involves a human subject. Render them as a featureless, solid-colored silhouette — for this scene the color MUST be ${assignedColor}. NEVER use realistic human details.`;
+          styleRules = `• 60–80 words maximum
 • Unity 3D engine render style
 • True isometric orthographic camera angle
 • Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
-• People MUST be featureless, flat silhouettes colored exclusively in pure red, pure blue, or pure black
+• Human figures MUST be featureless, flat silhouettes in ${assignedColor}
 • Exactly depict the literal objects and actions described in the script
-• Realistic real-world scenarios only — no glowing abstract data streams, floating holograms, or unrealistic digital visualizations
+• Realistic real-world scenarios only — no abstract digital visualizations or holograms
 • Clean, minimalist environments with smooth matte materials
 • NO text, NO labels, NO typography of any kind
 • 16:9 aspect ratio`;
+        } else {
+          initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
+          styleRules = `• 60–80 words maximum
+• Unity 3D engine render style
+• True isometric orthographic camera angle
+• Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
+• NO people, NO silhouettes — objects and environments only
+• Exactly depict the literal objects described in the script
+• Realistic real-world scenarios only — no abstract digital visualizations or holograms
+• Clean, minimalist environments with smooth matte materials
+• NO text, NO labels, NO typography of any kind
+• 16:9 aspect ratio`;
+        }
       }
 
       const model = googleAI.getGenerativeModel({
@@ -774,35 +803,36 @@ export async function generateScenes(scriptText, generationSettings = null) {
         systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CRITICAL RULE — SPECIFICITY OVER GENERICS
+CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Your prompt MUST be SPECIFIC to THIS scene and THIS story.
-• Extract the exact location, objects, or technology named in the scene sentence.
-• If the scene mentions a specific company, country, device, or event — use it.
-• NEVER produce a generic "dark moody room" prompt that could belong to any scene.
-• The viewer should be able to guess what the story is just from seeing your image.
+Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
+• Your FIRST 5–8 words must name the specific subject (e.g. "Stack of printed bank statements", "Server rack in a dimly lit cage", "Courtroom bench with scattered folders").
+• NEVER open with mood, atmosphere, or setting ("A dark room...", "Dramatic lighting...", "Moody scene...").
+• BANNED DEFAULTS — NEVER show these unless the script explicitly names them: smartphone, mobile phone, laptop, computer screen, keyboard, tablet, monitor, generic office desk.
+• If the script says nothing about electronics, do NOT invent them. Use what IS in the script: physical spaces, documents, vehicles, furniture, machinery, signage, architecture.
+• If the scene mentions a specific company, country, device, or event — name it directly.
+• The viewer must be able to identify the story from the image alone.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 THREE-STEP METHOD (follow in order)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1 — SET THE ATMOSPHERE
-One emotional quality that fits THIS specific scene:
-tension, isolation, dread, secrecy, discovery, betrayal, urgency, quiet menace, hollow bureaucracy, digital coldness
+STEP 1 — NAME THE SUBJECT
+The ONE specific object, place, or silhouette from THIS scene. Make it concrete and named.
+This is your opening clause — begin the prompt here.
 
-STEP 2 — CHOOSE THE SYMBOLIC OBJECT / SUBJECT
-Find the ONE object or silhouette from THIS scene that carries the meaning.
-Use the STORY CONTEXT and KEY ENTITIES to make it specific.
+STEP 2 — DESCRIBE ITS STATE OR ACTION
+What is it doing, showing, or conveying? Be literal to the script.
 
-STEP 3 — DESCRIBE THE ENVIRONMENT
-Room type, lighting quality, depth of field, color temperature, surface materials, time of day.
-Match the environment to the story's world (government building, data center, suburban home, law firm, etc.)
+STEP 3 — SET THE ENVIRONMENT AND ATMOSPHERE
+Room type, lighting quality, depth of field, color temperature, surface materials.
+One emotional quality: tension, isolation, dread, secrecy, discovery, betrayal, urgency.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STYLE RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${styleRules}
 
-Output only the prompt text. No explanation. No preamble.`
+Output only the prompt text. No explanation. No preamble. Begin with the subject.`
       })
 
       const promptRes = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${scene.script}"`)
@@ -826,37 +856,44 @@ Output only the prompt text. No explanation. No preamble.`
 // Exported: Re-generate image prompt for a single 3D_RENDER scene
 // Called by POST /api/projects/:pid/chapters/:cid/scenes/:idx/regenerate-prompt
 // ─────────────────────────────────────────────
-export async function regenerateImagePrompt(sceneScript, chapterScriptText, theme = null) {
+export async function regenerateImagePrompt(sceneScript, chapterScriptText, theme = null, directorType = null) {
   const storyContext = buildStoryContext(chapterScriptText || sceneScript)
 
   let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
   let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
-  let styleRules = `60–80 words, dark cinematic, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9.`;
+  let styleRules = `60–80 words, dark cinematic, vary the lighting (fluorescent wash, venetian blind shadows, monitor glow, neon, golden-hour shaft), hyperrealistic textures, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9. NEVER default to smartphone/laptop/screen unless the script explicitly names one.`;
 
-  if (theme === 'VORTEXIS') {
+  if (theme === 'VORTEXIS' || directorType === 'vortexis') {
+    const hasHuman = sceneHasHumanSubject(sceneScript)
     cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
-    initialInstruction = "You MUST describe people as featureless, solid-colored silhouettes (red, blue, or black). NEVER use realistic details for humans.";
-    styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), people MUST be featureless flat silhouettes colored purely red/blue/black, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+    if (hasHuman) {
+      initialInstruction = "This scene involves a human subject. Render them as a featureless, solid-colored silhouette (pure red, pure blue, or pure black). NEVER use realistic human details.";
+      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+    } else {
+      initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
+      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), NO people or silhouettes — objects and environments only, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+    }
   }
 
   const model = googleAI.getGenerativeModel({
     model: getGEMINI_MODEL(),
     systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
-CRITICAL RULE — SPECIFICITY OVER GENERICS
-Your prompt MUST be SPECIFIC to THIS scene and THIS story.
-• Extract the exact location, objects, or technology named in the scene sentence.
-• If the scene mentions a specific company, country, device, or event — use it.
-• NEVER produce a generic "dark moody room" prompt that could belong to any scene.
-• The viewer should be able to guess what the story is just from seeing your image.
+CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
+Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
+• Your FIRST 5–8 words must name the specific subject (e.g. "Stack of printed bank statements", "Red silhouette hunched over a keyboard", "Server rack in a dimly lit cage").
+• NEVER open with mood, atmosphere, or setting ("A dark room...", "Dramatic lighting...", "Moody scene...").
+• NEVER default to a smartphone, laptop, or screen unless the scene script explicitly mentions one.
+• If the scene mentions a specific company, country, device, or event — name it directly.
+• The viewer must be able to identify the story from the image alone.
 
 THREE-STEP METHOD:
-1. ATMOSPHERE — one emotional quality (tension, dread, secrecy, discovery, urgency...)
-2. SYMBOLIC OBJECT / SUBJECT — the ONE object/silhouette from the scene that carries the meaning. Use story context to make it specific.
-3. ENVIRONMENT — room type, lighting, depth of field, color temperature, surface materials.
+1. SUBJECT — name the ONE specific object, place, or silhouette from the scene. Begin the prompt here.
+2. STATE / ACTION — what is it doing or showing? Be literal to the script.
+3. ENVIRONMENT — room type, lighting, depth of field, color temperature, surface materials + one emotional quality.
 
 STYLE: ${styleRules}
-Output only the prompt text.`,
+Output only the prompt text. Begin with the subject.`,
   })
 
   const result = await callGemini(model, `${storyContext}
