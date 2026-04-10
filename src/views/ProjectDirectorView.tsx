@@ -1033,6 +1033,7 @@ const ProjectDirectorView: React.FC = () => {
                                 >
                                     <MenuItem value="standard">Standard (Cinematic 3D)</MenuItem>
                                     <MenuItem value="fiscal-pal">Fiscal Pal (Editorial Illustration)</MenuItem>
+                                    <MenuItem value="vortexis">Vortexis (Dark Silhouette)</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth size="small" sx={{ mb: 2 }}>
@@ -1050,6 +1051,7 @@ const ProjectDirectorView: React.FC = () => {
                                     <MenuItem value="TECHNICAL">TECHNICAL — dark green code</MenuItem>
                                     <MenuItem value="CLEAN">CLEAN — light, neutral</MenuItem>
                                     <MenuItem value="CREAM">CREAM — warm magazine</MenuItem>
+                                    <MenuItem value="VORTEXIS">VORTEXIS — dark silhouette style</MenuItem>
                                 </Select>
                             </FormControl>
                             <Button
@@ -1295,6 +1297,7 @@ const ProjectDirectorView: React.FC = () => {
                                     >
                                         <MenuItem value="standard">Standard (Cinematic 3D)</MenuItem>
                                         <MenuItem value="fiscal-pal">Fiscal Pal (Editorial Illustration)</MenuItem>
+                                        <MenuItem value="vortexis">Vortexis (Dark Silhouette)</MenuItem>
                                     </Select>
                                 </Grid>
 
