@@ -778,8 +778,10 @@ export async function generateScenes(scriptText, generationSettings = null) {
 • True isometric orthographic camera angle
 • Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
 • Human figures MUST be featureless, flat silhouettes in ${assignedColor}
+• If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the chart/graph appears ON the monitor screen, not floating or projected on a wall
+• BANNED: floating screens, giant wall-mounted displays, oversized UI panels, holograms, screens leaning against walls — these are not real and must NEVER appear
+• All props must be real, physical, desk-sized objects in a believable room
 • Exactly depict the literal objects and actions described in the script
-• Realistic real-world scenarios only — no abstract digital visualizations or holograms
 • Clean, minimalist environments with smooth matte materials
 • NO text, NO labels, NO typography of any kind
 • 16:9 aspect ratio`;
@@ -790,8 +792,9 @@ export async function generateScenes(scriptText, generationSettings = null) {
 • True isometric orthographic camera angle
 • Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
 • NO people, NO silhouettes — objects and environments only
+• BANNED: floating screens, giant wall-mounted displays, oversized UI panels, holograms — these are not real and must NEVER appear
+• All objects must be physical, real-world, desk- or room-sized
 • Exactly depict the literal objects described in the script
-• Realistic real-world scenarios only — no abstract digital visualizations or holograms
 • Clean, minimalist environments with smooth matte materials
 • NO text, NO labels, NO typography of any kind
 • 16:9 aspect ratio`;
@@ -868,10 +871,10 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
     cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
     if (hasHuman) {
       initialInstruction = "This scene involves a human subject. Render them as a featureless, solid-colored silhouette (pure red, pure blue, or pure black). NEVER use realistic human details.";
-      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, if scene involves data or a computer the silhouette must be SEATED at a desk with a normal-sized monitor (chart appears ON screen — NOT floating or on a wall), BANNED: floating screens/giant wall displays/holograms/oversized UI panels, all props must be real physical desk-sized objects, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
     } else {
       initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
-      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), NO people or silhouettes — objects and environments only, EXACTLY depict objects from script, realistic real-world scenarios only (NO abstract digital data/holograms), clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), NO people or silhouettes — objects and environments only, BANNED: floating screens/giant wall displays/holograms/oversized UI panels, all objects must be physical real-world desk- or room-sized, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
     }
   }
 
