@@ -1379,6 +1379,7 @@ app.post('/api/voiceover/process', (req, res, next) => voiceoverUpload.single('a
             }
         };
 
+        options.originalName = req.file.originalname;
         const result = await processVoiceover(req.file.path, options);
         try { await fs.unlink(req.file.path); } catch (_) {}
         res.json({ success: true, ...result, originalFilename: req.file.originalname });
@@ -1408,7 +1409,10 @@ app.post('/api/voiceover/batch', (req, res, next) => voiceoverUpload.array('audi
             }
         };
 
-        const result = await processBatch(req.files.map(f => f.path), options);
+        const result = await processBatch(
+            req.files.map((f, i) => ({ path: f.path, originalName: f.originalname })),
+            options
+        );
         for (const f of req.files) { try { await fs.unlink(f.path); } catch (_) {} }
         result.results = result.results.map((r, i) => ({ ...r, originalFilename: req.files[i].originalname }));
         res.json(result);
@@ -1419,7 +1423,7 @@ app.post('/api/voiceover/batch', (req, res, next) => voiceoverUpload.array('audi
 
 app.post('/api/voiceover/concatenate', async (req, res) => {
     try {
-        const { files, speed } = req.body;
+        const { files, speed, name } = req.body;
         if (!files?.length) return res.status(400).json({ error: 'No files provided' });
 
         const inputPaths = files.map(url => join(publicDir, url.replace(/^\//, '')));
@@ -1442,12 +1446,21 @@ app.post('/api/voiceover/concatenate', async (req, res) => {
             }
         }
 
-        const outputPath = join(audioProcessedDir, `merged_${uuidv4()}.mp3`);
+        // Name the merged file after the provided name or the first source file
+        const mergeName = name
+            ? name.replace(/[^a-zA-Z0-9._\- ]/g, '').replace(/\s+/g, '_').slice(0, 80)
+            : basename(files[0]).replace(/(_cleaned|_randomized)(_[a-z0-9]+)?\.mp3$/i, '').replace(/\.mp3$/i, '');
+        let outputPath = join(audioProcessedDir, `${mergeName}_merged.mp3`);
+        try {
+            await fs.access(outputPath);
+            outputPath = join(audioProcessedDir, `${mergeName}_merged_${uuidv4().slice(0, 6)}.mp3`);
+        } catch (_) {}
+
         await concatenateAudio(filesToMerge, outputPath);
         for (const t of tempFiles) { try { await fs.unlink(t); } catch (_) {} }
 
         const outputUrl = `/audio/processed/${basename(outputPath)}`;
-        res.json({ success: true, outputUrl, message: `Merged ${files.length} files` });
+        res.json({ success: true, outputUrl, outputFilename: basename(outputPath), message: `Merged ${files.length} files` });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -1560,7 +1573,7 @@ app.post('/api/projects/:pid/assemble', async (req, res) => {
 
 app.post('/api/voiceover/randomize', async (req, res) => {
     try {
-        const { filePath } = req.body;
+        const { filePath, originalName } = req.body;
         if (!filePath) return res.status(400).json({ error: 'filePath is required' });
 
         // Resolve safely within the public directory
@@ -1568,7 +1581,7 @@ app.post('/api/voiceover/randomize', async (req, res) => {
         try { await fs.access(resolved); } catch { return res.status(404).json({ error: 'File not found' }); }
 
         console.log(`   🎲 Randomizing voice: ${filePath}`);
-        const result = await randomizeVoice(resolved);
+        const result = await randomizeVoice(resolved, originalName || null);
         res.json(result);
     } catch (err) {
         console.error('❌ randomize-voice error:', err.message);

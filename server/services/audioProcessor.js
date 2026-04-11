@@ -184,6 +184,16 @@ async function enhanceAudio(inputPath, outputPath, options = {}) {
 /**
  * Full processing pipeline: silence removal + enhancement
  */
+function sanitizeName(name) {
+    return name
+        .replace(/\.[^.]+$/, '')           // strip extension
+        .replace(/[^a-zA-Z0-9._\- ]/g, '') // remove special chars
+        .replace(/\s+/g, '_')              // spaces → underscores
+        .replace(/_+/g, '_')               // collapse repeated underscores
+        .slice(0, 80)                       // cap length
+        || 'audio';
+}
+
 export async function processVoiceover(inputPath, options = {}) {
     await ensureProcessedDir();
 
@@ -191,11 +201,12 @@ export async function processVoiceover(inputPath, options = {}) {
         removeSilences = true,
         enhance = true,
         silenceOptions = {},
-        enhanceOptions = {}
+        enhanceOptions = {},
+        originalName = null
     } = options;
 
-    const inputName = basename(inputPath, extname(inputPath));
-    const outputId = uuidv4();
+    const baseName = sanitizeName(originalName || basename(inputPath, extname(inputPath)));
+    const outputId = uuidv4().slice(0, 6); // short suffix only to avoid collisions
     let currentPath = inputPath;
     let tempFiles = [];
 
@@ -205,7 +216,7 @@ export async function processVoiceover(inputPath, options = {}) {
 
         // Step 1: Remove silence
         if (removeSilences) {
-            const silenceRemovedPath = join(processedDir, `${outputId}_nosilence.mp3`);
+            const silenceRemovedPath = join(processedDir, `${outputId}_tmp_nosilence.mp3`);
             await removeSilence(currentPath, silenceRemovedPath, silenceOptions);
             tempFiles.push(silenceRemovedPath);
             currentPath = silenceRemovedPath;
@@ -213,7 +224,7 @@ export async function processVoiceover(inputPath, options = {}) {
 
         // Step 2: Enhance audio
         if (enhance) {
-            const enhancedPath = join(processedDir, `${outputId}_enhanced.mp3`);
+            const enhancedPath = join(processedDir, `${outputId}_tmp_enhanced.mp3`);
             await enhanceAudio(currentPath, enhancedPath, enhanceOptions);
 
             // Clean up intermediate file if it exists
@@ -229,15 +240,21 @@ export async function processVoiceover(inputPath, options = {}) {
         // Get processed duration
         const processedDuration = await getAudioDuration(currentPath);
 
-        // Rename to final output
-        const finalPath = join(processedDir, `${inputName}_processed_${outputId}.mp3`);
-        await fs.rename(currentPath, finalPath);
+        // Output named after the original upload, not the temp uuid
+        const finalPath = join(processedDir, `${baseName}_cleaned.mp3`);
+        // If a file with this name already exists, add short suffix
+        let targetPath = finalPath;
+        try {
+            await fs.access(targetPath);
+            targetPath = join(processedDir, `${baseName}_cleaned_${outputId}.mp3`);
+        } catch (_) {}
+        await fs.rename(currentPath, targetPath);
 
         return {
             success: true,
             inputPath,
-            outputPath: finalPath,
-            outputUrl: `/audio/processed/${basename(finalPath)}`,
+            outputPath: targetPath,
+            outputUrl: `/audio/processed/${basename(targetPath)}`,
             originalDuration,
             processedDuration,
             silenceRemoved: originalDuration - processedDuration,
@@ -262,19 +279,19 @@ export async function processBatch(inputPaths, options = {}) {
     const results = [];
     const errors = [];
 
-    for (let i = 0; i < inputPaths.length; i++) {
-        const inputPath = inputPaths[i];
-        console.log(`🎵 Processing file ${i + 1}/${inputPaths.length}: ${basename(inputPath)}`);
+    // inputPaths can be strings or { path, originalName } objects
+    const entries = inputPaths.map(p => typeof p === 'string' ? { path: p, originalName: null } : p);
+
+    for (let i = 0; i < entries.length; i++) {
+        const { path: inputPath, originalName } = entries[i];
+        console.log(`🎵 Processing file ${i + 1}/${entries.length}: ${basename(inputPath)}`);
 
         try {
-            const result = await processVoiceover(inputPath, options);
+            const result = await processVoiceover(inputPath, { ...options, originalName });
             results.push(result);
         } catch (error) {
             console.error(`❌ Error processing ${inputPath}:`, error.message);
-            errors.push({
-                inputPath,
-                error: error.message
-            });
+            errors.push({ inputPath, error: error.message });
         }
     }
 
@@ -525,12 +542,17 @@ function generateRandomVoiceParams() {
  * Applies pitch shift, speed micro-variation, EQ character, optional room echo,
  * and a sub-threshold noise floor — each run produces a unique output.
  */
-export async function randomizeVoice(inputPath) {
+export async function randomizeVoice(inputPath, originalName = null) {
     await ensureProcessedDir();
 
-    const outputId = uuidv4();
-    const inputName = basename(inputPath, extname(inputPath));
-    const outputPath = join(processedDir, `${inputName}_randomized_${outputId}.mp3`);
+    const outputId = uuidv4().slice(0, 6);
+    const baseName = sanitizeName(originalName || basename(inputPath, extname(inputPath)));
+    let outputPath = join(processedDir, `${baseName}_randomized.mp3`);
+    // Avoid collision
+    try {
+        await fs.access(outputPath);
+        outputPath = join(processedDir, `${baseName}_randomized_${outputId}.mp3`);
+    } catch (_) {}
 
     const params = generateRandomVoiceParams();
     const filters = [];

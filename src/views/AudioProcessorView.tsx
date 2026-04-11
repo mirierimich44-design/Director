@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import {
     Box, Typography, Button, Stack, Paper,
-    LinearProgress, Slider, Switch, FormControlLabel,
+    LinearProgress, CircularProgress, Slider, Switch, FormControlLabel,
     Card, CardContent, IconButton, Tooltip, Chip,
     Dialog, DialogTitle, DialogContent, DialogActions,
     Alert, Divider
@@ -214,18 +214,21 @@ const AudioProcessorView: React.FC = () => {
     const randomizeFile = async (file: ProcessedFile) => {
         setRandomizingId(file.id);
         try {
+            const sourceName = (file.originalFilename || file.filename)
+                .replace(/(_cleaned|_randomized)(_[a-z0-9]+)?\.mp3$/i, '')
+                .replace(/\.mp3$/i, '');
             const response = await fetch('/api/voiceover/randomize', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filePath: file.url })
+                body: JSON.stringify({ filePath: file.url, originalName: sourceName })
             });
             const data = await response.json();
             if (data.success) {
-                const label = `pitch ${data.params.pitch} · ${data.params.eq} EQ · ${data.params.room} room`;
+                const displayName = data.outputUrl.split('/').pop()?.replace('.mp3', '') || sourceName;
                 setProcessedFiles(prev => [...prev, {
                     id: data.outputUrl,
                     filename: data.outputUrl.split('/').pop() || '',
-                    originalFilename: `${file.originalFilename || file.filename} [randomized: ${label}]`,
+                    originalFilename: displayName,
                     url: data.outputUrl,
                     status: 'completed'
                 }]);
@@ -267,22 +270,29 @@ const AudioProcessorView: React.FC = () => {
 
         setIsMerging(true);
         try {
+            // Derive a merged name from the source files
+            const firstName = (processedFiles[0]?.originalFilename || processedFiles[0]?.filename || 'audio')
+                .replace(/(_cleaned|_randomized)(_[a-z0-9]+)?\.mp3$/i, '')
+                .replace(/\.mp3$/i, '');
+            const mergedName = processedFiles.length > 1 ? `${firstName}_and_${processedFiles.length - 1}_more` : firstName;
+
             const response = await fetch('/api/voiceover/concatenate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     files: processedFiles.map(f => f.url),
-                    speed: speedMultiplier !== 1.0 ? speedMultiplier : undefined
+                    speed: speedMultiplier !== 1.0 ? speedMultiplier : undefined,
+                    name: mergedName
                 })
             });
 
             const data = await response.json();
             if (data.success) {
-                // Add concatenated file to merged files list (separate from processed)
+                const displayName = (data.outputFilename || data.outputUrl.split('/').pop() || mergedName).replace('.mp3', '');
                 setMergedFiles(prev => [...prev, {
                     id: data.outputUrl,
                     filename: data.outputUrl.split('/').pop() || '',
-                    originalFilename: `Merged Audio${data.speed && data.speed !== 1.0 ? ` (${data.speed}x speed)` : ''}`,
+                    originalFilename: displayName,
                     url: data.outputUrl,
                     duration: data.duration,
                     durationFormatted: data.durationFormatted,
@@ -646,19 +656,24 @@ const AudioProcessorView: React.FC = () => {
                                             >
                                                 {playingId === file.id ? <PauseIcon /> : <PlayIcon />}
                                             </IconButton>
-                                            <Tooltip title="Randomize voice — shifts pitch, EQ, room, and noise for a unique fingerprint">
+                                            <Tooltip title={randomizingId === file.id ? 'Randomizing…' : 'Randomize voice — unique pitch, EQ, room per export'}>
                                                 <span>
                                                     <IconButton
                                                         size="small"
                                                         onClick={() => randomizeFile(file)}
-                                                        disabled={randomizingId === file.id}
+                                                        disabled={randomizingId !== null}
                                                         sx={{
                                                             bgcolor: 'var(--bg-secondary)',
-                                                            color: randomizingId === file.id ? 'var(--text-secondary)' : 'var(--accent-gold)',
-                                                            '&:hover': { bgcolor: 'rgba(255,170,0,0.15)' }
+                                                            color: randomizingId === file.id ? 'var(--accent-gold)' : 'var(--accent-gold)',
+                                                            opacity: randomizingId !== null && randomizingId !== file.id ? 0.4 : 1,
+                                                            '&:hover': { bgcolor: 'rgba(255,170,0,0.15)' },
+                                                            position: 'relative'
                                                         }}
                                                     >
-                                                        <RandomizeIcon />
+                                                        {randomizingId === file.id
+                                                            ? <CircularProgress size={18} sx={{ color: 'var(--accent-gold)' }} />
+                                                            : <RandomizeIcon />
+                                                        }
                                                     </IconButton>
                                                 </span>
                                             </Tooltip>
