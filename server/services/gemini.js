@@ -12,6 +12,43 @@ const imagesDir = path.join(__dirname, '../../public/images');
  * Imagen models (imagen-*): use the generativelanguage :predict REST endpoint.
  * Gemini image models (gemini-*): use generateContent with responseModalities.
  */
+// Try a single Imagen model via the :predict REST endpoint.
+// Returns { success: true, url } or throws on failure.
+async function tryImagenModel(modelName, prompt, aspectRatio) {
+    const body = {
+        instances: [{ prompt }],
+        parameters: { sampleCount: 1, aspectRatio },
+    };
+    const response = await withGoogleKeyFallback(async (key) => {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:predict?key=${key}`;
+        const r = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            signal: AbortSignal.timeout(60_000),
+        });
+        if (r.status === 429) {
+            const t = await r.text();
+            const err = new Error(`Imagen API 429: ${t.substring(0, 200)}`);
+            err.status = 429;
+            throw err;
+        }
+        return r;
+    });
+
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Imagen API ${response.status}: ${errText.substring(0, 200)}`);
+    }
+
+    const data = await response.json();
+    const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) throw new Error('No image returned from Imagen API. Response: ' + JSON.stringify(data).substring(0, 200));
+
+    const url = await saveImage(b64, 'image/jpeg');
+    return { success: true, url };
+}
+
 export async function generateImage(prompt, options = {}) {
     try {
         const modelName = options.model || getIMAGE_MODEL() || 'imagen-4.0-generate-001';
@@ -22,43 +59,35 @@ export async function generateImage(prompt, options = {}) {
 
         // Imagen models use the :predict REST endpoint (different from Gemini generateContent)
         if (modelName.startsWith('imagen-')) {
-            const body = {
-                instances: [{ prompt }],
-                parameters: { sampleCount: 1, aspectRatio },
-            };
-            const response = await withGoogleKeyFallback(async (key) => {
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:predict?key=${key}`;
-                const r = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body),
-                    signal: AbortSignal.timeout(60_000),
-                });
-                if (r.status === 429) {
-                    const t = await r.text();
-                    const err = new Error(`Imagen API 429: ${t.substring(0, 200)}`);
-                    err.status = 429;
-                    throw err;
+            // Try the configured model first, then fall back through stable alternatives
+            const imagenFallbacks = ['imagen-3.0-generate-001', 'imagen-3.0-fast-generate-001'];
+            try {
+                return await tryImagenModel(modelName, prompt, aspectRatio);
+            } catch (primaryErr) {
+                console.warn(`   ⚠️ ${modelName} failed: ${primaryErr.message.substring(0, 120)}`);
+                // Try fallback Imagen models
+                for (const fallback of imagenFallbacks) {
+                    if (fallback === modelName) continue;
+                    try {
+                        console.log(`   🔄 Retrying with ${fallback}...`);
+                        const result = await tryImagenModel(fallback, prompt, aspectRatio);
+                        console.log(`   ✅ Fallback ${fallback} succeeded`);
+                        return result;
+                    } catch (fbErr) {
+                        console.warn(`   ⚠️ ${fallback} also failed: ${fbErr.message.substring(0, 80)}`);
+                    }
                 }
-                return r;
-            });
-
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(`Imagen API ${response.status}: ${errText.substring(0, 200)}`);
+                // All Imagen models failed — fall through to Gemini SDK below
+                console.warn(`   ⚠️ All Imagen models failed, trying Gemini image model...`);
             }
-
-            const data = await response.json();
-            const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
-            if (!b64) throw new Error('No image returned from Imagen API. Response: ' + JSON.stringify(data).substring(0, 200));
-
-            const url = await saveImage(b64, 'image/jpeg');
-            return { success: true, url };
         }
 
         // Gemini image models (e.g. gemini-2.0-flash-exp) use generateContent with responseModalities
+        // When falling through from a failed Imagen model, use a known Gemini image model instead
+        const geminiImageModel = modelName.startsWith('imagen-') ? 'gemini-2.0-flash-exp' : modelName;
+        console.log(`   🎨 Trying Gemini image model: ${geminiImageModel}`);
         const model = googleAI.getGenerativeModel({
-            model: modelName,
+            model: geminiImageModel,
             generationConfig: {
                 responseModalities: ['IMAGE', 'TEXT'],
             },
