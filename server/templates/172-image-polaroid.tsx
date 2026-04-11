@@ -51,7 +51,7 @@ const PolaroidCard: React.FC<{ src: string; caption: string; pos: { x: number; y
     const img = new window.Image();
     img.onload  = () => continueRender(handle.current);
     img.onerror = () => continueRender(handle.current);
-    img.src = src;
+    img.src = staticFile(src);
   }, [src]);
 
   if (frame < dropFrame) return null;
@@ -83,7 +83,7 @@ const PolaroidCard: React.FC<{ src: string; caption: string; pos: { x: number; y
       zIndex: 10,
     }}>
       <img
-        src={src}
+        src={staticFile(src)}
         style={{ width: '100%', height: IMG_H, objectFit: 'cover', display: 'block', borderRadius: 2 }}
       />
       {hasCaption && (

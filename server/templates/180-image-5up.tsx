@@ -63,7 +63,7 @@ const ImageCell: React.FC<{
     const img = new window.Image();
     img.onload  = () => continueRender(handle.current!);
     img.onerror = () => continueRender(handle.current!);
-    img.src = src;
+    img.src = staticFile(src);
   }, [src]);
 
   const rel   = Math.max(0, frame - delay);
@@ -81,7 +81,7 @@ const ImageCell: React.FC<{
         backgroundColor: CELL_BG,
       }}>
         {hasImg ? (
-          <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img src={staticFile(src)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, boxSizing: 'border-box', textAlign: 'center' }}>
             <div style={{ fontSize: 44, marginBottom: 12, opacity: 0.25 }}>🖼</div>

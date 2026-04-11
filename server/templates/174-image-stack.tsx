@@ -54,7 +54,7 @@ const StackCard: React.FC<{ src: string; caption: string; index: number; totalCa
     const img = new window.Image();
     img.onload  = () => continueRender(handle.current);
     img.onerror = () => continueRender(handle.current);
-    img.src = src;
+    img.src = staticFile(src);
   }, [src]);
 
   const hasCaption = caption && !caption.startsWith('CAPTION_');
@@ -85,7 +85,7 @@ const StackCard: React.FC<{ src: string; caption: string; index: number; totalCa
         overflow: 'hidden',
         zIndex: totalCards + index,
       }}>
-        <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src={staticFile(src)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
     );
   }
@@ -132,7 +132,7 @@ const StackCard: React.FC<{ src: string; caption: string; index: number; totalCa
         ? `0 40px 80px rgba(0,0,0,0.7), 0 0 0 3px ${accentColor}`
         : '0 20px 40px rgba(0,0,0,0.4)',
     }}>
-      <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <img src={staticFile(src)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 
       {hasCaption && (
         <div style={{

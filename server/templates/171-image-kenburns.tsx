@@ -49,7 +49,7 @@ const KBSlide: React.FC<{ src: string; caption: string; index: number; total: nu
     const img = new window.Image();
     img.onload  = () => continueRender(handle.current);
     img.onerror = () => continueRender(handle.current);
-    img.src = src;
+    img.src = staticFile(src);
   }, [src]);
 
   const pattern = KB_PATTERNS[index % KB_PATTERNS.length];
@@ -70,7 +70,7 @@ const KBSlide: React.FC<{ src: string; caption: string; index: number; total: nu
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', opacity }}>
       <img
-        src={src}
+        src={staticFile(src)}
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover',

@@ -60,7 +60,7 @@ const GridCell: React.FC<{
     const img = new window.Image();
     img.onload  = () => continueRender(handle.current);
     img.onerror = () => continueRender(handle.current);
-    img.src = src;
+    img.src = staticFile(src);
   }, [src]);
 
   const revealFrame = index * REVEAL_STAGGER;
@@ -84,7 +84,7 @@ const GridCell: React.FC<{
       borderRadius: 8,
       boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
     }}>
-      <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <img src={staticFile(src)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 
       {/* Scan line reveal */}
       <div style={{

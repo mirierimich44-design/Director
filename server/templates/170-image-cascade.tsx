@@ -41,7 +41,7 @@ const Slide: React.FC<{ src: string; caption: string; index: number; total: numb
     const img = new window.Image();
     img.onload  = () => continueRender(handle.current);
     img.onerror = () => continueRender(handle.current);
-    img.src = src;
+    img.src = staticFile(src);
   }, [src]);
 
   const enterP = interpolate(frame, [0, transitionFrames], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic) });
@@ -96,7 +96,7 @@ const Slide: React.FC<{ src: string; caption: string; index: number; total: numb
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', transform, opacity, clipPath }}>
       <img
-        src={src}
+        src={staticFile(src)}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
       />
 
