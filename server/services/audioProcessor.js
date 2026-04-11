@@ -478,6 +478,124 @@ export async function assembleChapterVideo(videoPaths, audioPath, outputPath, op
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Voice Randomizer — applies random pitch, EQ, room, and noise to a voiceover
+// so every export has a unique acoustic fingerprint
+// ─────────────────────────────────────────────────────────────────────────────
+
+function generateRandomVoiceParams() {
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    // Pitch: ±0.8–2.5 semitones, never 0
+    const pitchSign = Math.random() > 0.5 ? 1 : -1;
+    const pitchSemitones = pitchSign * rand(0.8, 2.5);
+
+    // Speed micro-variation ±1–4% (too subtle to hear, changes fingerprint)
+    const speedVariation = rand(0.97, 1.04);
+
+    // EQ character profiles — each gives the voice a distinct tonal identity
+    const eqProfiles = [
+        { name: 'warm',         lowShelfFreq: 200,  lowShelfGain: rand(2, 4),    midFreq: 500,   midGain: rand(1, 2),    highShelfFreq: 8000,  highShelfGain: rand(-2, -1) },
+        { name: 'bright',       lowShelfFreq: 200,  lowShelfGain: rand(-2, -1),  midFreq: 400,   midGain: rand(-1, 0),   highShelfFreq: 10000, highShelfGain: rand(2, 4)   },
+        { name: 'mid-forward',  lowShelfFreq: 150,  lowShelfGain: rand(-1, 0),   midFreq: 1500,  midGain: rand(2, 3),    highShelfFreq: 8000,  highShelfGain: rand(0, 2)   },
+        { name: 'dark',         lowShelfFreq: 300,  lowShelfGain: rand(2, 4),    midFreq: 3000,  midGain: rand(-2, -1),  highShelfFreq: 8000,  highShelfGain: rand(-4, -2) },
+        { name: 'airy',         lowShelfFreq: 200,  lowShelfGain: rand(0, 2),    midFreq: 2000,  midGain: rand(-1, 0),   highShelfFreq: 12000, highShelfGain: rand(3, 5)   },
+    ];
+    const eqProfile = pick(eqProfiles);
+
+    // Small room echo — none or subtle ambience
+    const roomProfiles = [
+        null,
+        { delays: '18', decay: '0.08' },
+        { delays: '28', decay: '0.10' },
+        { delays: '40', decay: '0.12' },
+        { delays: '55', decay: '0.14' },
+    ];
+    const room = pick(roomProfiles);
+
+    // Noise floor amplitude (~−60 to −55 dB) — imperceptible but breaks AI fingerprint
+    const noiseAmplitude = rand(0.0006, 0.0014);
+
+    return { pitchSemitones, speedVariation, eqProfile, room, noiseAmplitude };
+}
+
+/**
+ * Randomize a voiceover's acoustic fingerprint.
+ * Applies pitch shift, speed micro-variation, EQ character, optional room echo,
+ * and a sub-threshold noise floor — each run produces a unique output.
+ */
+export async function randomizeVoice(inputPath) {
+    await ensureProcessedDir();
+
+    const outputId = uuidv4();
+    const inputName = basename(inputPath, extname(inputPath));
+    const outputPath = join(processedDir, `${inputName}_randomized_${outputId}.mp3`);
+
+    const params = generateRandomVoiceParams();
+    const filters = [];
+
+    // 1. Pitch shift without changing duration:
+    //    asetrate pretends the file runs at a different sample rate (changes pitch),
+    //    aresample brings it back to 44100, atempo compensates the speed change.
+    const pitchFactor = Math.pow(2, params.pitchSemitones / 12);
+    const tempoCompensation = 1 / pitchFactor;
+    filters.push(`asetrate=44100*${pitchFactor.toFixed(6)}`);
+    filters.push(`aresample=44100`);
+    filters.push(`atempo=${tempoCompensation.toFixed(6)}`);
+
+    // 2. Speed micro-variation (separate from pitch, ±1–4%)
+    filters.push(`atempo=${params.speedVariation.toFixed(4)}`);
+
+    // 3. EQ character
+    const eq = params.eqProfile;
+    filters.push(`lowshelf=f=${eq.lowShelfFreq}:g=${eq.lowShelfGain.toFixed(1)}`);
+    filters.push(`equalizer=f=${eq.midFreq}:t=q:w=1.5:g=${eq.midGain.toFixed(1)}`);
+    filters.push(`highshelf=f=${eq.highShelfFreq}:g=${eq.highShelfGain.toFixed(1)}`);
+
+    // 4. Room echo (optional)
+    if (params.room) {
+        filters.push(`aecho=0.85:0.85:${params.room.delays}:${params.room.decay}`);
+    }
+
+    // 5. Normalise and protect output
+    filters.push('loudnorm=I=-16:TP=-1.5:LRA=11');
+    filters.push('alimiter=limit=0.95:attack=5:release=50');
+
+    const mainChain = filters.join(',');
+    const noiseAmp = params.noiseAmplitude.toFixed(6);
+
+    const args = [
+        '-y',
+        '-i', inputPath,
+        '-f', 'lavfi', '-i', `anoisesrc=r=44100:c=pink:a=${noiseAmp}`,
+        '-filter_complex',
+        `[0:a]${mainChain}[main];[1:a]volume=1[noise];[main][noise]amix=inputs=2:duration=first[out]`,
+        '-map', '[out]',
+        '-acodec', 'libmp3lame',
+        '-b:a', '192k',
+        outputPath
+    ];
+
+    await runFFmpeg(args);
+
+    const noiseDb = Math.round(20 * Math.log10(params.noiseAmplitude));
+
+    return {
+        success: true,
+        inputPath,
+        outputPath,
+        outputUrl: `/audio/processed/${basename(outputPath)}`,
+        params: {
+            pitch: `${params.pitchSemitones > 0 ? '+' : ''}${params.pitchSemitones.toFixed(1)} st`,
+            speed: `${params.speedVariation.toFixed(3)}x`,
+            eq: params.eqProfile.name,
+            room: params.room ? `${params.room.delays}ms` : 'dry',
+            noise: `${noiseDb} dB`
+        }
+    };
+}
+
 export { changeSpeed };
 
 export default {
@@ -488,5 +606,6 @@ export default {
     getAudioInfo,
     removeSilence,
     enhanceAudio,
-    changeSpeed
+    changeSpeed,
+    randomizeVoice
 };

@@ -17,7 +17,7 @@ import archiver from 'archiver';
 
 import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel, getVideoModel, withGoogleKeyFallback } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
-import { processVoiceover, processBatch, concatenateAudio, changeSpeed, assembleChapterVideo } from './services/audioProcessor.js';
+import { processVoiceover, processBatch, concatenateAudio, changeSpeed, assembleChapterVideo, randomizeVoice } from './services/audioProcessor.js';
 import { googleAI } from './services/llm.js';
 import { generateImage as generateGeminiImage } from './services/gemini.js';
 import { renderVideo as renderRemotion, warmupBundler, purgeOldTempDirs } from './engines/remotion/renderer.js';
@@ -935,7 +935,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         if (environment === 'editorial-illustration') {
             promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
         } else if (environment === 'vortexis') {
-            promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist.";
+            promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist. All objects MUST be proportional to the human figure — monitor is desktop-sized not room-sized, no oversized screens, no floating displays.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
@@ -1554,6 +1554,24 @@ app.post('/api/projects/:pid/assemble', async (req, res) => {
         res.json({ success: true, outputUrl });
     } catch (err) {
         console.error('❌ Project assembly error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/voiceover/randomize', async (req, res) => {
+    try {
+        const { filePath } = req.body;
+        if (!filePath) return res.status(400).json({ error: 'filePath is required' });
+
+        // Resolve safely within the public directory
+        const resolved = join(publicDir, filePath.replace(/^\//, ''));
+        try { await fs.access(resolved); } catch { return res.status(404).json({ error: 'File not found' }); }
+
+        console.log(`   🎲 Randomizing voice: ${filePath}`);
+        const result = await randomizeVoice(resolved);
+        res.json(result);
+    } catch (err) {
+        console.error('❌ randomize-voice error:', err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });

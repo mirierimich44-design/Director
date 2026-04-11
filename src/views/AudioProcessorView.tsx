@@ -20,7 +20,8 @@ import {
     Speed as SpeedIcon,
     GraphicEq as EqIcon,
     VolumeUp as VolumeIcon,
-    Refresh as RefreshIcon
+    Refresh as RefreshIcon,
+    Casino as RandomizeIcon
 } from '@mui/icons-material';
 import VoiceoverPanel, { type TtsResult } from '../components/VoiceoverPanel';
 
@@ -74,6 +75,7 @@ const AudioProcessorView: React.FC = () => {
     const [options, setOptions] = useState<ProcessingOptions>(defaultOptions);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [playingId, setPlayingId] = useState<string | null>(null);
+    const [randomizingId, setRandomizingId] = useState<string | null>(null);
     const [speedMultiplier, setSpeedMultiplier] = useState(1.0);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -206,6 +208,33 @@ const AudioProcessorView: React.FC = () => {
     // Delete a file from the queue
     const removeFile = (id: string) => {
         setFiles(prev => prev.filter(f => f.id !== id));
+    };
+
+    // Randomize a processed file's acoustic fingerprint
+    const randomizeFile = async (file: ProcessedFile) => {
+        setRandomizingId(file.id);
+        try {
+            const response = await fetch('/api/voiceover/randomize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filePath: file.url })
+            });
+            const data = await response.json();
+            if (data.success) {
+                const label = `pitch ${data.params.pitch} · ${data.params.eq} EQ · ${data.params.room} room`;
+                setProcessedFiles(prev => [...prev, {
+                    id: data.outputUrl,
+                    filename: data.outputUrl.split('/').pop() || '',
+                    originalFilename: `${file.originalFilename || file.filename} [randomized: ${label}]`,
+                    url: data.outputUrl,
+                    status: 'completed'
+                }]);
+            }
+        } catch (error) {
+            console.error('Randomize error:', error);
+        } finally {
+            setRandomizingId(null);
+        }
     };
 
     // Delete a processed file
@@ -617,6 +646,22 @@ const AudioProcessorView: React.FC = () => {
                                             >
                                                 {playingId === file.id ? <PauseIcon /> : <PlayIcon />}
                                             </IconButton>
+                                            <Tooltip title="Randomize voice — shifts pitch, EQ, room, and noise for a unique fingerprint">
+                                                <span>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => randomizeFile(file)}
+                                                        disabled={randomizingId === file.id}
+                                                        sx={{
+                                                            bgcolor: 'var(--bg-secondary)',
+                                                            color: randomizingId === file.id ? 'var(--text-secondary)' : 'var(--accent-gold)',
+                                                            '&:hover': { bgcolor: 'rgba(255,170,0,0.15)' }
+                                                        }}
+                                                    >
+                                                        <RandomizeIcon />
+                                                    </IconButton>
+                                                </span>
+                                            </Tooltip>
                                             <IconButton
                                                 size="small"
                                                 component="a"

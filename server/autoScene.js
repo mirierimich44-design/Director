@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url'
 import { fuzzyMapFields } from './templateSystem.js'
 import { fillTemplate, templateExists } from './templateFiller.js'
 import { googleAI, getGEMINI_MODEL } from './services/llm.js'
+import { generateImage } from './services/gemini.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const SCHEMAS_DIR = path.join(__dirname, 'schemas')
@@ -53,7 +54,7 @@ const TEMPLATE_CATEGORIES = {
     templates: ['07-comparisonchart-dual', '112-comparison-table', '99-before-after-split', '09-split-2panel', '10-split-3panel', '11-split-topbottom', '12-split-diagonal', '13-split-percentage', '64-split-quadrant', '65-split-spotlight', '66-split-overlay', '67-split-morph', '68-split-reveal-wipe', '152-asset-comparison-slope']
   },
   FINANCIAL: {
-    desc: 'Waterfall charts, profit/loss, earnings, dashboards',
+    desc: 'Corporate earnings reports, quarterly results (EPS/revenue beats), profit/loss waterfalls, KPI dashboards for legitimate businesses. DO NOT use for crime statistics, laundered amounts, fraud figures, or victim counts — those belong in STAT or DRAMATIC.',
     templates: ['08-waterfall-chart', '144-profit-loss-waterfall', '154-earnings-reveal', '145-kpi-financial-dashboard', '103-dashboard-summary', '147-inflation-erosion', '151-break-even-chart']
   },
   TIMELINE: {
@@ -142,7 +143,9 @@ export { TEMPLATE_CATEGORIES }
 // ─────────────────────────────────────────────
 function inferCategory(script) {
   const s = script.toLowerCase()
-  if (/\$|million|billion|revenue|profit|loss|cost|fund|earn|paid/.test(s))        return 'FINANCIAL'
+  // Corporate finance only — not crime/fraud money amounts
+  if (/revenue|profit|loss|earn|quarter|fiscal|eps|dividend|waterfall/.test(s) &&
+      !/launder|fraud|scheme|victim|illegal|stolen|corrupt|crime|criminal/.test(s)) return 'FINANCIAL'
   if (/country|countries|nation|region|world|global|continent|geographic/.test(s)) return 'MAP'
   if (/timeline|history|since|before|after|when|year|date|decade/.test(s))         return 'TIMELINE'
   if (/attack|exploit|malware|hack|breach|phish|inject|vulnerab|payload/.test(s))  return 'FLOW'
@@ -542,7 +545,9 @@ RULES:
 - Your JSON keys MUST match the field names EXACTLY as shown above — do not abbreviate or rename them.
 - Use ALL CAPS for labels, max 3 words.
 - Keep units ($4.5B, 44%).
-- If a field is not in the script, infer a logical value. Do not leave blank.
+- NEVER output 0, "0", "$0", or any zero placeholder. If the script contains a number ("four billion", "47 countries", "thousands"), extract it directly: "four billion" → "$4B", "forty-seven countries" → "47", "thousands of victims" → "THOUSANDS+".
+- If a stat field has no number in the script, write a SHORT descriptive word (e.g. "MILLIONS", "GLOBAL", "UNKNOWN") — never a bare zero.
+- For IMAGE_URL_* fields: leave the value exactly as the field name (e.g. "IMAGE_URL_1") — do not invent URLs.
 
 OUTPUT FORMAT (JSON object only, keys must be exact):
 ${exampleOutput}`
@@ -625,6 +630,45 @@ function assignSceneTheme(scene, userTheme) {
   const count = _categoryCounters[cat] || 0
   _categoryCounters[cat] = count + 1
   return pool[count % pool.length]
+}
+
+// ─────────────────────────────────────────────
+// Auto-generate images for IMAGE_SEQUENCE / IMAGE_GRID templates
+// Uses SUGGESTION_* values to prompt Gemini image generation,
+// then replaces IMAGE_URL_* placeholders with real saved URLs.
+// ─────────────────────────────────────────────
+async function generateImagesForTemplate(content, schema, sceneScript) {
+  const fields = schema?.fields || {}
+  const imageKeys = Object.keys(fields).filter(k => /^IMAGE_URL_\d+$/.test(k))
+  if (imageKeys.length === 0) return content
+
+  const updated = { ...content }
+
+  for (const imageKey of imageKeys) {
+    const idx = imageKey.replace('IMAGE_URL_', '')
+    const suggestion = content[`SUGGESTION_${idx}`]
+
+    // Skip if already a real URL (not a placeholder)
+    if (content[imageKey] && !/^IMAGE_URL_/.test(content[imageKey])) continue
+    // Skip empty suggestions
+    if (!suggestion || suggestion.trim() === '') continue
+
+    try {
+      console.log(`   🖼️ Generating image for slot ${idx}: ${suggestion.substring(0, 60)}...`)
+      const prompt = `Documentary-style photograph or illustration. ${suggestion}. Scene context: "${sceneScript.substring(0, 120)}". Realistic, high quality, 16:9 aspect ratio. No text overlays.`
+      const result = await generateImage(prompt, { aspectRatio: '16:9' })
+      if (result.success) {
+        updated[imageKey] = result.url
+        console.log(`   ✅ Slot ${idx} → ${result.url}`)
+      } else {
+        console.warn(`   ⚠️ Slot ${idx} image generation failed: ${result.error}`)
+      }
+    } catch (err) {
+      console.warn(`   ⚠️ Slot ${idx} error: ${err.message}`)
+    }
+  }
+
+  return updated
 }
 
 // ─────────────────────────────────────────────
@@ -721,6 +765,11 @@ export async function generateScenes(scriptText, generationSettings = null) {
         let content = await fillSceneFields(scene, templateName)
         if (schema?.fields) content = fuzzyMapFields(content, schema.fields)
 
+        // Auto-generate images for image template categories
+        if (scene.category === 'IMAGE_SEQUENCE' || scene.category === 'IMAGE_GRID') {
+          content = await generateImagesForTemplate(content, schema, scene.script)
+        }
+
         // Post-fill validation: count unfilled schema placeholders in generated code
         const candidateCode = fillTemplate(templateName, scene.theme, content)
         const schemaKeys = schema?.fields ? Object.keys(schema.fields) : []
@@ -778,9 +827,10 @@ export async function generateScenes(scriptText, generationSettings = null) {
 • True isometric orthographic camera angle
 • Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
 • Human figures MUST be featureless, flat silhouettes in ${assignedColor}
+• SCALE IS CRITICAL: all objects must be proportional to the human figure — a monitor is desktop-sized (roughly head-height), a desk is waist-height, a chair is seat-height. NEVER make any object larger than a real human would encounter it.
 • If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the chart/graph appears ON the monitor screen, not floating or projected on a wall
-• BANNED: floating screens, giant wall-mounted displays, oversized UI panels, holograms, screens leaning against walls — these are not real and must NEVER appear
-• All props must be real, physical, desk-sized objects in a believable room
+• BANNED: floating screens, giant wall-mounted displays, oversized monitors larger than the figure, UI panels projected on walls, holograms — these are not real and must NEVER appear
+• All props must be real, physical, correctly-scaled objects in a believable room
 • Exactly depict the literal objects and actions described in the script
 • Clean, minimalist environments with smooth matte materials
 • NO text, NO labels, NO typography of any kind
@@ -871,7 +921,7 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
     cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
     if (hasHuman) {
       initialInstruction = "This scene involves a human subject. Render them as a featureless, solid-colored silhouette (pure red, pure blue, or pure black). NEVER use realistic human details.";
-      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, if scene involves data or a computer the silhouette must be SEATED at a desk with a normal-sized monitor (chart appears ON screen — NOT floating or on a wall), BANNED: floating screens/giant wall displays/holograms/oversized UI panels, all props must be real physical desk-sized objects, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, SCALE IS CRITICAL — all objects must be proportional to the human figure (monitor is desktop-sized not room-sized, desk is waist-height, chair is seat-height), if scene involves data or a computer the silhouette must be SEATED at a desk with a normal-sized monitor (chart appears ON screen — NOT floating or on a wall), BANNED: floating screens/giant wall displays/holograms/oversized monitors larger than the figure/oversized UI panels, all props must be real physical correctly-scaled objects, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
     } else {
       initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
       styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), NO people or silhouettes — objects and environments only, BANNED: floating screens/giant wall displays/holograms/oversized UI panels, all objects must be physical real-world desk- or room-sized, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
