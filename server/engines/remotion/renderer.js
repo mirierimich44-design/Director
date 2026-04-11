@@ -8,6 +8,7 @@ import { existsSync } from 'fs';
 import os from 'os';
 import esbuild from 'esbuild';
 import cliProgress from 'cli-progress';
+import { getGoogleKey, getLanguageModel } from '../../settings.js';
 
 // Create a multibar instance for tracking concurrent progress
 const multibar = new cliProgress.MultiBar({
@@ -340,8 +341,14 @@ async function syntaxPreCheck(tsxCode) {
 async function geminiSyntaxFix(fullCode, preCheck) {
     try {
         const { GoogleGenerativeAI } = await import('@google/generative-ai');
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const apiKey = getGoogleKey();
+        if (!apiKey) {
+            console.warn('   ⚠️ geminiSyntaxFix: No Google AI API key found in settings or env');
+            return null;
+        }
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const modelName = getLanguageModel() || 'gemini-2.0-flash';
+        const model = genAI.getGenerativeModel({ model: modelName });
 
         const lines = fullCode.split('\n');
         const errorLine = preCheck.line || 1;

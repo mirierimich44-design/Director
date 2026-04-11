@@ -27,7 +27,8 @@ const TOP     = PAD + TITLE_H + GAP;
 const AVAIL_W = 1920 - PAD * 2;          // 1824
 const AVAIL_H = 1080 - TOP - PAD;        // varies
 const ROW_H_T = Math.floor(AVAIL_H * 0.48);  // top row  ~420
-const ROW_H_B = AVAIL_H - ROW_H_T - GAP;    // bottom row ~remainderconst CELL_W_2 = (AVAIL_W - GAP) / 2;                    // top row: 2 cells
+const ROW_H_B = AVAIL_H - ROW_H_T - GAP;    // bottom row ~remainder
+const CELL_W_2 = (AVAIL_W - GAP) / 2;                    // top row: 2 cells
 const CELL_W_3 = Math.floor((AVAIL_W - GAP * 2) / 3);   // bottom row: 3 cells
 
 const BLUE    = '#3b82f6';

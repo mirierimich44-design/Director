@@ -1820,7 +1820,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                                         <Box
                                                                                             onClick={() => !busy && (document.getElementById(`slide-input-${chapter.id}-${idx}-${n}`) as HTMLInputElement | null)?.click()}
                                                                                             sx={{
-                                                                                                width: 72, height: 56, borderRadius: 1.5, overflow: 'hidden', position: 'relative', cursor: busy ? 'default' : 'pointer',
+                                                                                                width: 52, height: 40, borderRadius: 1, overflow: 'hidden', position: 'relative', cursor: busy ? 'default' : 'pointer',
                                                                                                 border: hasImg ? '1px solid rgba(59,130,246,0.5)' : '1px dashed rgba(59,130,246,0.35)',
                                                                                                 bgcolor: 'rgba(8,18,50,0.8)',
                                                                                                 '&:hover': { borderColor: busy ? undefined : '#3b82f6', bgcolor: busy ? undefined : 'rgba(59,130,246,0.08)' },
@@ -1854,7 +1854,7 @@ const ProjectDirectorView: React.FC = () => {
                                                                                         )}
                                                                                         {/* Suggestion label */}
                                                                                         {hasSug && !hasImg && (
-                                                                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.52rem', maxWidth: 72, textAlign: 'center', lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                                                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.52rem', maxWidth: 52, textAlign: 'center', lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                                                                                                 {sug}
                                                                                             </Typography>
                                                                                         )}

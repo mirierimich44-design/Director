@@ -1,4 +1,5 @@
 import { googleAI, getIMAGE_MODEL } from './llm.js';
+import { withGoogleKeyFallback } from '../settings.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -7,18 +8,55 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const imagesDir = path.join(__dirname, '../../public/images');
 
 /**
- * Generate an image using Gemini native image models (Nano Banana).
- * These models use the standard generateContent endpoint with
- * responseModalities: ['IMAGE'] to produce inline image data.
+ * Generate an image using either Imagen (`:predict` endpoint) or Gemini image models.
+ * Imagen models (imagen-*): use the generativelanguage :predict REST endpoint.
+ * Gemini image models (gemini-*): use generateContent with responseModalities.
  */
 export async function generateImage(prompt, options = {}) {
     try {
-        const modelName = options.model || getIMAGE_MODEL() || 'gemini-2.0-flash-exp';
+        const modelName = options.model || getIMAGE_MODEL() || 'imagen-4.0-generate-001';
         const aspectRatio = options.aspectRatio || '16:9';
 
-        console.log(`   🎨 Gemini Image Gen: ${modelName} [${aspectRatio}]`);
+        console.log(`   🎨 Image Gen: ${modelName} [${aspectRatio}]`);
         console.log(`   📋 Prompt: ${prompt.substring(0, 100)}...`);
 
+        // Imagen models use the :predict REST endpoint (different from Gemini generateContent)
+        if (modelName.startsWith('imagen-')) {
+            const body = {
+                instances: [{ prompt }],
+                parameters: { sampleCount: 1, aspectRatio },
+            };
+            const response = await withGoogleKeyFallback(async (key) => {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:predict?key=${key}`;
+                const r = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                    signal: AbortSignal.timeout(60_000),
+                });
+                if (r.status === 429) {
+                    const t = await r.text();
+                    const err = new Error(`Imagen API 429: ${t.substring(0, 200)}`);
+                    err.status = 429;
+                    throw err;
+                }
+                return r;
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`Imagen API ${response.status}: ${errText.substring(0, 200)}`);
+            }
+
+            const data = await response.json();
+            const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+            if (!b64) throw new Error('No image returned from Imagen API. Response: ' + JSON.stringify(data).substring(0, 200));
+
+            const url = await saveImage(b64, 'image/jpeg');
+            return { success: true, url };
+        }
+
+        // Gemini image models (e.g. gemini-2.0-flash-exp) use generateContent with responseModalities
         const model = googleAI.getGenerativeModel({
             model: modelName,
             generationConfig: {
@@ -26,7 +64,6 @@ export async function generateImage(prompt, options = {}) {
             },
         });
 
-        // Pass aspect ratio via imageGenerationConfig so Gemini returns 16:9 instead of square
         const result = await model.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             generationConfig: {
@@ -37,13 +74,11 @@ export async function generateImage(prompt, options = {}) {
         const response = result.response;
         const candidate = response.candidates?.[0];
 
-        // Gemini image models return inline image data in parts
         const imagePart = candidate?.content?.parts?.find(
             p => p.inlineData && p.inlineData.mimeType?.startsWith('image/')
         );
 
         if (!imagePart?.inlineData?.data) {
-            // Log what we got back for debugging
             const parts = candidate?.content?.parts || [];
             const textPart = parts.find(p => p.text);
             if (textPart) {

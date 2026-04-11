@@ -4,7 +4,7 @@ import {
     LinearProgress, CircularProgress, Slider, Switch, FormControlLabel,
     Card, CardContent, IconButton, Tooltip, Chip,
     Dialog, DialogTitle, DialogContent, DialogActions,
-    Alert, Divider
+    Alert, Divider, Tabs, Tab, Badge
 } from '@mui/material';
 import {
     CloudUpload as UploadIcon,
@@ -69,6 +69,8 @@ const AudioProcessorView: React.FC = () => {
     const [files, setFiles] = useState<ProcessedFile[]>([]);
     const [processedFiles, setProcessedFiles] = useState<ProcessedFile[]>([]);
     const [mergedFiles, setMergedFiles] = useState<ProcessedFile[]>([]);
+    const [randomizedFiles, setRandomizedFiles] = useState<ProcessedFile[]>([]);
+    const [activeTab, setActiveTab] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isMerging, setIsMerging] = useState(false);
     const [processingProgress, setProcessingProgress] = useState(0);
@@ -225,7 +227,7 @@ const AudioProcessorView: React.FC = () => {
             const data = await response.json();
             if (data.success) {
                 const displayName = data.outputUrl.split('/').pop()?.replace('.mp3', '') || sourceName;
-                setProcessedFiles(prev => [...prev, {
+                setRandomizedFiles(prev => [...prev, {
                     id: data.outputUrl,
                     filename: data.outputUrl.split('/').pop() || '',
                     originalFilename: displayName,
@@ -313,6 +315,16 @@ const AudioProcessorView: React.FC = () => {
             setMergedFiles(prev => prev.filter(f => f.id !== id));
         } catch (error) {
             console.error('Error deleting merged file:', error);
+        }
+    };
+
+    // Delete a randomized file
+    const deleteRandomizedFile = async (filename: string, id: string) => {
+        try {
+            await fetch(`/api/voiceover/processed/${filename}`, { method: 'DELETE' });
+            setRandomizedFiles(prev => prev.filter(f => f.id !== id));
+        } catch (error) {
+            console.error('Error deleting randomized file:', error);
         }
     };
 

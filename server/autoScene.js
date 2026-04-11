@@ -527,13 +527,19 @@ export async function fillSceneFields(scene, templateName, priorityFields = null
     ? allEntries.filter(([name]) => priorityFields.includes(name))
     : allEntries
   const fieldList = schemaEntries
-    .map(([name, desc]) => `- ${name}: ${desc}`)
+    .map(([name, desc]) => {
+      const description = typeof desc === 'string' ? desc : (desc?.description || name)
+      return `- ${name}: ${description}`
+    })
     .join('\n')
 
   // Build an example output block using the exact key names so Gemini
   // never invents shortened variants like STAT_VAL instead of STAT_VALUE_1.
   const exampleOutput = '{' + schemaEntries
-    .map(([name]) => `"${name}": "..."`)
+    .map(([name, desc]) => {
+      const example = typeof desc === 'string' ? '...' : (desc?.example || '...')
+      return `"${name}": "${example}"`
+    })
     .join(', ') + '}'
 
   const systemPrompt = `You are an expert data extractor. Extract values from the script to fill the fields for the template "${templateName}".
@@ -654,8 +660,13 @@ async function generateImagesForTemplate(content, schema, sceneScript) {
     if (!suggestion || suggestion.trim() === '') continue
 
     try {
-      console.log(`   🖼️ Generating image for slot ${idx}: ${suggestion.substring(0, 60)}...`)
-      const prompt = `Documentary-style photograph or illustration. ${suggestion}. Scene context: "${sceneScript.substring(0, 120)}". Realistic, high quality, 16:9 aspect ratio. No text overlays.`
+      // Convert "Upload a screenshot of X" → "X" for image generation prompts
+      const visual = suggestion.trim()
+        .replace(/^(please\s+)?(upload|add|provide|attach|insert|use)\s+(an?\s+)?(screenshot|photo|photograph|picture|image|still)\s+(?:of|showing|depicting|displaying)\s+/i, '')
+        .replace(/^(please\s+)?(upload|add|provide|attach|insert|use)\s+/i, '')
+        .trim() || suggestion.trim()
+      console.log(`   🖼️ Generating image for slot ${idx}: ${visual.substring(0, 60)}...`)
+      const prompt = `Documentary-style photograph or illustration. ${visual}. Scene: "${sceneScript.substring(0, 100)}". Photorealistic, cinematic, 16:9 aspect ratio. No text overlays.`
       const result = await generateImage(prompt, { aspectRatio: '16:9' })
       if (result.success) {
         updated[imageKey] = result.url
