@@ -43,7 +43,7 @@ export function fillTemplate(templateName, themeName, contentJson) {
 
   // Inject Theme
   const theme = themes[themeName] || themes['DARK'];
-  Object.entries(theme).forEach(([k, v]) => { if (k !== 'name') code = code.split(k).join(v) });
+  Object.entries(theme).forEach(([k, v]) => { if (k !== 'name' && k !== 'description') code = code.split(k).join(v) });
   code = code.split('STADIA_API_KEY').join(getStadiaKey());
 
   // Inject Content — ONLY replace quoted placeholders, never bare identifiers.
