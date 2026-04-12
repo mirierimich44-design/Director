@@ -489,16 +489,17 @@ ${catalogSummary}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 COVERAGE AND RATIO REQUIREMENTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. YOU MUST COVER EVERY SENTENCE verbatim.
-2. Target ratio: ${ratio}% TEMPLATE, ${100 - ratio}% 3D_RENDER.
-3. POST-PROCESSING ENFORCER: After planning, count your totals. If TEMPLATE count is below ${ratio}%, scan [3D_RENDER] scenes that describe a mechanism or quantity and upgrade them to [TEMPLATE]. Never downgrade pure narrative action.
+1. YOU MUST COVER EVERY SENTENCE — output one JSON object per sentence, no exceptions.
+2. The "script" field MUST be a COPY-PASTE of the exact sentence from the input — do NOT paraphrase, summarize, merge, split, or add any words. Any deviation will corrupt the output.
+3. Target ratio: ${ratio}% TEMPLATE, ${100 - ratio}% 3D_RENDER.
+4. POST-PROCESSING ENFORCER: After planning, count your totals. If TEMPLATE count is below ${ratio}%, scan [3D_RENDER] scenes that describe a mechanism or quantity and upgrade them to [TEMPLATE]. Never downgrade pure narrative action.
 
 OUTPUT FORMAT (strict JSON array only):
 [
   {
     "type": "TEMPLATE" | "3D_RENDER",
     "category": "STAT" | "FLOW" | ... (TEMPLATE only),
-    "script": "original sentence verbatim",
+    "script": "<EXACT verbatim sentence copied character-for-character from the input>",
     "routing_reason": "One sentence: WHY this type was chosen"
   }
 ]`
@@ -552,7 +553,8 @@ RULES:
 - Use ALL CAPS for labels, max 3 words.
 - Keep units ($4.5B, 44%).
 - NEVER output 0, "0", "$0", or any zero placeholder. If the script contains a number ("four billion", "47 countries", "thousands"), extract it directly: "four billion" → "$4B", "forty-seven countries" → "47", "thousands of victims" → "THOUSANDS+".
-- If a stat field has no number in the script, write a SHORT descriptive word (e.g. "MILLIONS", "GLOBAL", "UNKNOWN") — never a bare zero.
+- NEVER invent statistics, figures, percentages, dollar amounts, or quantities that do not appear in the script. Every value you output must be traceable to a word or phrase in the script.
+- If a stat field has no corresponding number or quantity in the script, use a brief ALL-CAPS label extracted from the script topic (e.g. if the script says "budget agencies", use "BUDGET" — not an invented figure like "$85B" or "100%").
 - For IMAGE_URL_* fields: leave the value exactly as the field name (e.g. "IMAGE_URL_1") — do not invent URLs.
 
 OUTPUT FORMAT (JSON object only, keys must be exact):
@@ -723,7 +725,11 @@ export async function generateScenes(scriptText, generationSettings = null) {
   // --- COVERAGE CHECK ---
   const sentences = scriptText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 5)
   const llmContent = rawScenes.map(s => s.script).join(' ')
-  const missingSentences = sentences.filter(s => !llmContent.toLowerCase().includes(s.toLowerCase().substring(0, 20)))
+  // Use 40-char prefix (more reliable than 20) to detect sentences the LLM dropped or paraphrased
+  const missingSentences = sentences.filter(s => {
+    const needle = s.toLowerCase().substring(0, Math.min(40, s.length)).trim()
+    return !llmContent.toLowerCase().includes(needle)
+  })
 
   if (missingSentences.length > 0) {
     console.warn(`   ⚠️ LLM skipped ${missingSentences.length} sentences. Appending as fallback scenes.`)
