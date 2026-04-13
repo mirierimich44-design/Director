@@ -620,7 +620,13 @@ export function sceneHasHumanSubject(script) {
   // Personal pronouns used as subject
   if (/\b(he|she|they|we)\s+\w/.test(s)) return true
   // Generic and role-based human nouns
-  if (/\b(person|people|man|woman|men|women|team|group|individual|ceo|executive|employee|officer|hacker|attacker|victim|user|customer|worker|staff|agent|analyst|suspect|whistleblower|director|manager|developer|engineer|lawyer|judge|politician|senator|president|official|investigator|journalist|reporter|founder|investor|trader|banker|criminal|defendant|plaintiff|witness|administrator|technician|researcher|scientist|soldier|detective|spy|informant|perpetrator)\b/.test(s)) return true
+  if (/\b(person|people|man|woman|men|women|team|group|individual|ceo|executive|employee|officer|officers|hacker|attacker|victim|user|customer|worker|staff|agent|analyst|suspect|whistleblower|director|manager|developer|engineer|lawyer|judge|politician|senator|president|official|investigator|journalist|reporter|founder|investor|trader|banker|criminal|defendant|plaintiff|witness|administrator|technician|researcher|scientist|soldier|detective|spy|informant|perpetrator)\b/.test(s)) return true
+  // Law enforcement actions — always involve human agents
+  if (/\b(arrest|arrested|arrests|arresting|raid|raided|raiding|detained|detain|charged|indicted|convicted|sentenced|extradited|deported)\b/.test(s)) return true
+  // Law enforcement agencies — imply officers present
+  if (/\b(police|nca|fbi|cia|nsa|interpol|dea|mi5|mi6|gchq|swat|agency|forces|authorities|investigators|prosecutors|agents)\b/.test(s)) return true
+  // Human presence implied by movement/action verbs with no clear object
+  if (/\b(moved in|moved on|knocked on|broke down|burst in|stormed|surrounded|evacuated|fled|escaped|surrendered|handcuffed)\b/.test(s)) return true
   // Named person (capitalized name) followed by an action verb
   if (/^[A-Z][a-z]+\s+(said|told|called|walked|sent|wrote|clicked|opened|signed|paid|met|replied|threatened|denied|ran|fled|sat|felt|saw|received|noticed|believed|realized|arrived|waited|began|started|decided|ordered|hired|fired|bought|sold|built|created|launched|admitted|confessed|escaped|hid|transferred|stole|leaked|hacked|accessed|breached|attacked|warned|blackmailed|bribed|deceived|convinced)/.test(script)) return true
   return false

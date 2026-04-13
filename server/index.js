@@ -269,7 +269,7 @@ async function generateFallbackImage(prompt, environment = 'standard') {
     if (environment === 'editorial-illustration') {
         promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
     } else if (environment === 'vortexis') {
-        promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes in pure red ONLY, smooth matte materials, clean minimalist. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI — visible menus, spreadsheets, browser windows. NO floating text, NO overlay labels outside screens.";
+        promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes — police/law enforcement in PURE BLUE, suspects/criminals in PURE RED, civilians in BLACK. Smooth matte materials, clean minimalist. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI. NO floating text, NO overlay labels outside screens.";
     }
 
     // Support for Gemini Image Models (Nano Banana)
@@ -986,7 +986,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         } else if (environment === 'vortexis') {
             promptSuffix = objectOnly
                 ? ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, smooth matte materials, NO people, NO silhouettes, NO humans, objects and environments only, NO floating text, NO overlay labels, clean minimalist. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI. All objects MUST be correctly and realistically scaled."
-                : ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes in pure red ONLY, smooth matte materials, clean minimalist. All objects MUST be proportional to the human figure — monitor is desktop-sized not room-sized. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI — visible menus, spreadsheets, browser windows. NO floating text, NO overlay labels outside screens.";
+                : ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes — police/law enforcement in PURE BLUE, suspects/criminals in PURE RED, civilians in BLACK. Smooth matte materials, clean minimalist. All objects proportional to human figures. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI. NO floating text, NO overlay labels outside screens.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
@@ -1379,18 +1379,19 @@ app.post('/api/scene-studio/analyze-image', async (req, res) => {
         if (environment === 'vortexis') {
             cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
             if (hasHuman) {
-                initialInstruction = `This scene involves a human subject. Render them as a featureless, solid-colored silhouette — the color MUST be pure red. NEVER use blue, black, grey, or any other color for the human figure. NEVER use realistic human details.`;
+                initialInstruction = `This scene involves human subjects. Render ALL humans as featureless, solid-colored silhouettes — NEVER use realistic human details, faces, or textures. Use ROLE-BASED silhouette colors: law enforcement / police / agents / authorities = PURE BLUE silhouettes. Suspects / criminals / targets / victims = PURE RED silhouettes. Neutral civilians = BLACK silhouettes. If only one type of person is present, use the matching color for their role.`;
                 styleRules = `• 60–80 words maximum
 • Unity 3D engine render style
 • True isometric orthographic camera angle
 • Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
-• Human figures MUST be featureless, flat silhouettes in PURE RED — absolutely no blue, no black, no grey figures
-• SCALE IS CRITICAL: all objects must be proportional to the human figure — a monitor is desktop-sized (roughly head-height), a desk is waist-height, a chair is seat-height. NEVER make any object larger than a real human would encounter it.
-• If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the chart/graph or interface appears ON the monitor screen, not floating or projected on a wall
-• BANNED: floating screens, giant wall-mounted displays, oversized monitors larger than the figure, UI panels projected on walls, holograms — these are not real and must NEVER appear
-• Monitor and screen displays MUST show realistic Windows or Microsoft Office UI — visible windows, menus, spreadsheets, or browser interfaces rendered on the screen
+• ROLE-BASED silhouette colors — police/agents/law enforcement = PURE BLUE, suspects/criminals/targets = PURE RED, civilians = BLACK. Use the correct color for each figure's role
+• SCALE IS CRITICAL: all objects must be proportional to the human figures — a monitor is desktop-sized (roughly head-height), a desk is waist-height, a door is full standing-height. NEVER make any object larger than a real human would encounter it
+• If the scene involves an arrest, raid, or confrontation — show the blue officer figures physically restraining or approaching the red suspect figure
+• If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the interface appears ON the monitor screen
+• BANNED: floating screens, giant wall-mounted displays, oversized monitors, UI panels projected on walls, holograms
+• Monitor and screen displays MUST show realistic Windows or Microsoft Office UI — visible windows, menus, or browser interfaces
 • All props must be real, physical, correctly-scaled objects in a believable room
-• Exactly depict the literal objects and actions described in the script
+• Exactly depict the literal actions described in the script
 • Clean, minimalist environments with smooth matte materials
 • NO floating text, NO overlay labels, NO typography outside of screen displays
 • 16:9 aspect ratio`;
