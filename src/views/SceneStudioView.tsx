@@ -3,7 +3,8 @@ import {
     Box, Typography, Grid, Card, CardActionArea,
     Button, TextField, CircularProgress, Alert, IconButton,
     Stack, Paper, LinearProgress, MenuItem, Select,
-    FormControl, InputLabel, Tooltip, InputAdornment, Chip, Divider
+    FormControl, InputLabel, Tooltip, InputAdornment, Chip, Divider,
+    Tabs, Tab
 } from '@mui/material';
 import {
     Movie as MovieIcon,
@@ -14,7 +15,9 @@ import {
     Search as SearchIcon,
     AutoAwesome as AIIcon,
     List as ListIcon,
-    Clear as ClearIcon
+    Clear as ClearIcon,
+    Image as ImageIcon,
+    Download as DownloadIcon
 } from '@mui/icons-material';
 
 interface Template {
@@ -35,6 +38,12 @@ interface RenderJob {
     error?: string;
 }
 
+const IMAGE_STYLES = [
+    { id: '', label: 'ARXXIS', desc: 'Photorealistic cinematic documentary', color: '#4fc3f7' },
+    { id: 'vortexis', label: 'VORTEXIS', desc: 'Isometric Unity 3D silhouette style', color: '#ce93d8' },
+    { id: 'editorial-illustration', label: 'EDITORIAL', desc: 'Watercolor & ink newspaper style', color: '#ffb74d' },
+];
+
 const CATEGORY_COLORS: Record<string, string> = {
     charts: '#4fc3f7',
     timeline: '#81c784',
@@ -52,9 +61,19 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const SceneStudioView: React.FC = () => {
+    const [activeTab, setActiveTab] = useState(0);
     const [templates, setTemplates] = useState<Template[]>([]);
     const [themes, setThemes] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Image generation tab
+    const [imgScript, setImgScript] = useState('');
+    const [imgStyle, setImgStyle] = useState('');
+    const [imgTheme, setImgTheme] = useState('THREAT');
+    const [imgGenerating, setImgGenerating] = useState(false);
+    const [imgResult, setImgResult] = useState<string | null>(null);
+    const [imgError, setImgError] = useState<string | null>(null);
+    const [imgHistory, setImgHistory] = useState<{ url: string; style: string; theme: string; script: string }[]>([]);
 
     // Step 1
     const [script, setScript] = useState('');
@@ -91,6 +110,33 @@ const SceneStudioView: React.FC = () => {
     }, []);
 
     useEffect(() => () => { evtSrcRef.current?.close(); }, []);
+
+    const handleGenerateImage = async () => {
+        if (!imgScript.trim()) return;
+        setImgGenerating(true);
+        setImgError(null);
+        setImgResult(null);
+
+        // Build a prompt enriched with the selected theme
+        const themeHint = imgTheme ? ` Mood/theme: ${imgTheme.toLowerCase()}.` : '';
+        const prompt = `${imgScript.trim()}${themeHint}`;
+
+        try {
+            const res = await fetch('/api/auto-scene/render-3d', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, environment: imgStyle })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setImgResult(data.url);
+            setImgHistory(prev => [{ url: data.url, style: imgStyle, theme: imgTheme, script: imgScript.trim().substring(0, 80) }, ...prev].slice(0, 12));
+        } catch (err: any) {
+            setImgError(err.message);
+        } finally {
+            setImgGenerating(false);
+        }
+    };
 
     // Selecting a new template clears previous analysis
     const handleSelectTemplate = (t: Template) => {
@@ -185,7 +231,7 @@ const SceneStudioView: React.FC = () => {
 
     return (
         <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 3 }}>
                 <Typography variant="h4" sx={{ color: 'var(--accent-gold)', fontWeight: 'bold', mb: 0.5 }}>
                     SCENE STUDIO
                 </Typography>
@@ -194,9 +240,25 @@ const SceneStudioView: React.FC = () => {
                 </Typography>
             </Box>
 
+            <Tabs
+                value={activeTab}
+                onChange={(_, v) => setActiveTab(v)}
+                sx={{
+                    mb: 3,
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    '& .MuiTabs-indicator': { bgcolor: 'var(--accent-gold)', height: 2 },
+                    '& .MuiTab-root': { color: '#555', textTransform: 'none', fontWeight: 'bold', letterSpacing: 1, fontSize: '0.8rem', minHeight: 40, px: 2 },
+                    '& .Mui-selected': { color: 'var(--accent-gold) !important' },
+                }}
+            >
+                <Tab icon={<MovieIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="SCENE RENDER" />
+                <Tab icon={<ImageIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="IMAGE GENERATE" />
+            </Tabs>
+
             <Grid container spacing={3}>
                 {/* ── LEFT: Script + Template ── */}
                 <Grid size={{ xs: 12, lg: 7 }}>
+                {activeTab === 0 ? (<>
 
                     {/* Step 1: Script */}
                     <Paper sx={{ p: 3, mb: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
@@ -402,73 +464,249 @@ const SceneStudioView: React.FC = () => {
                             </Button>
                         </Paper>
                     )}
+                </>) : (
+                    /* ── IMAGE GENERATE TAB ── */
+                    <Box>
+                        {/* Script sentence */}
+                        <Paper sx={{ p: 3, mb: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                            <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, mb: 1.5, display: 'block' }}>
+                                1 — SCRIPT SENTENCE
+                            </Typography>
+                            <TextField
+                                fullWidth multiline minRows={3} maxRows={6}
+                                placeholder={`Paste a script line to generate an image from...\n\n"Surveillance cameras scanning a crowded city square at dusk"`}
+                                value={imgScript}
+                                onChange={e => { setImgScript(e.target.value); setImgError(null); }}
+                                InputProps={{
+                                    endAdornment: imgScript ? (
+                                        <InputAdornment position="end" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                                            <IconButton size="small" onClick={() => { setImgScript(''); setImgError(null); setImgResult(null); }} sx={{ color: '#666' }}>
+                                                <ClearIcon fontSize="small" />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ) : undefined
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        bgcolor: 'rgba(255,255,255,0.02)', color: '#fff', fontSize: '0.95rem', lineHeight: 1.6,
+                                        '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
+                                        '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+                                        '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' }
+                                    },
+                                    '& .MuiOutlinedInput-input::placeholder': { color: '#555', opacity: 1 }
+                                }}
+                            />
+                        </Paper>
+
+                        {/* Style + Theme */}
+                        <Paper sx={{ p: 3, mb: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                            <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, mb: 2, display: 'block' }}>
+                                2 — STYLE & THEME
+                            </Typography>
+
+                            <Typography variant="caption" sx={{ color: '#666', mb: 1, display: 'block', letterSpacing: 1, fontSize: '0.65rem' }}>IMAGE STYLE</Typography>
+                            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 3 }}>
+                                {IMAGE_STYLES.map(s => (
+                                    <Box
+                                        key={s.id}
+                                        onClick={() => setImgStyle(s.id)}
+                                        sx={{
+                                            flex: '1 1 120px', p: 1.5, borderRadius: 2, cursor: 'pointer',
+                                            border: `1px solid ${imgStyle === s.id ? s.color : 'rgba(255,255,255,0.06)'}`,
+                                            bgcolor: imgStyle === s.id ? `${s.color}12` : 'rgba(255,255,255,0.02)',
+                                            transition: 'all 0.15s',
+                                            '&:hover': { border: `1px solid ${s.color}88` }
+                                        }}
+                                    >
+                                        <Typography variant="body2" sx={{ color: s.color, fontWeight: 'bold', fontSize: '0.75rem', mb: 0.3 }}>{s.label}</Typography>
+                                        <Typography variant="caption" sx={{ color: '#666', fontSize: '0.62rem', lineHeight: 1.3, display: 'block' }}>{s.desc}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+
+                            <Typography variant="caption" sx={{ color: '#666', mb: 1, display: 'block', letterSpacing: 1, fontSize: '0.65rem' }}>THEME MOOD</Typography>
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {themes.map(th => (
+                                    <Chip
+                                        key={th} label={th} size="small"
+                                        onClick={() => setImgTheme(th)}
+                                        sx={{
+                                            bgcolor: imgTheme === th ? 'rgba(201,169,97,0.15)' : 'rgba(255,255,255,0.03)',
+                                            color: imgTheme === th ? 'var(--accent-gold)' : '#666',
+                                            border: `1px solid ${imgTheme === th ? 'var(--accent-gold)' : 'rgba(255,255,255,0.06)'}`,
+                                            fontSize: '0.65rem', cursor: 'pointer',
+                                            '&:hover': { bgcolor: 'rgba(201,169,97,0.08)' }
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        </Paper>
+
+                        {/* Generate button */}
+                        <Button
+                            fullWidth variant="contained" size="large"
+                            startIcon={imgGenerating ? <CircularProgress size={18} color="inherit" /> : <ImageIcon />}
+                            disabled={!imgScript.trim() || imgGenerating}
+                            onClick={handleGenerateImage}
+                            sx={{
+                                bgcolor: imgScript.trim() && !imgGenerating ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)',
+                                color: imgScript.trim() && !imgGenerating ? '#000' : '#444',
+                                fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: 1, py: 1.5,
+                                '&:hover': { bgcolor: imgScript.trim() && !imgGenerating ? '#fff' : undefined },
+                                '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.05)', color: '#444' }
+                            }}
+                        >
+                            {imgGenerating ? 'GENERATING IMAGE...' : 'GENERATE IMAGE'}
+                        </Button>
+
+                        {imgError && (
+                            <Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)', fontSize: '0.8rem' }}>
+                                {imgError}
+                            </Alert>
+                        )}
+                    </Box>
+                )}
                 </Grid>
 
                 {/* ── RIGHT: Preview + History ── */}
                 <Grid size={{ xs: 12, lg: 5 }}>
-                    <Paper sx={{ p: 0, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', overflow: 'hidden', minHeight: 260 }}>
-                        {renderJob?.url ? (
-                            <Box>
-                                <video src={renderJob.url} controls autoPlay loop style={{ width: '100%', display: 'block' }} />
-                                <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'rgba(76,175,80,0.08)', borderTop: '1px solid rgba(76,175,80,0.2)' }}>
-                                    <Box>
-                                        <Typography variant="caption" sx={{ color: '#4caf50', fontWeight: 'bold', display: 'block' }}>RENDER COMPLETE</Typography>
-                                        <Typography variant="caption" sx={{ color: '#666', fontFamily: 'monospace', fontSize: '0.65rem' }}>{renderJob.url}</Typography>
-                                    </Box>
-                                    <Tooltip title="Copy link">
-                                        <IconButton size="small" onClick={() => navigator.clipboard.writeText(window.location.origin + renderJob.url!)} sx={{ color: '#4caf50' }}>
-                                            <CopyIcon fontSize="small" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Box>
-                            </Box>
-                        ) : renderJob && renderJob.status !== 'error' ? (
-                            <Box sx={{ py: 8, px: 3, textAlign: 'center' }}>
-                                <CircularProgress size={48} sx={{ color: 'var(--accent-gold)', mb: 2 }} />
-                                <Typography variant="body2" sx={{ color: '#fff', mb: 0.5 }}>{renderJob.message}</Typography>
-                                <Typography variant="caption" sx={{ color: '#666' }}>{Math.round(renderJob.progress || 0)}%</Typography>
-                                <LinearProgress
-                                    variant="determinate" value={renderJob.progress || 0}
-                                    sx={{ width: '80%', mx: 'auto', mt: 2, height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }}
-                                />
-                            </Box>
-                        ) : renderJob?.status === 'error' ? (
-                            <Box sx={{ p: 3 }}>
-                                <Alert severity="error" sx={{ bgcolor: 'rgba(244,67,54,0.1)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)' }}>
-                                    {renderJob.error}
-                                </Alert>
-                            </Box>
-                        ) : (
-                            <Box sx={{ py: 10, textAlign: 'center', opacity: 0.15 }}>
-                                <MovieIcon sx={{ fontSize: 80, color: '#fff', mb: 1 }} />
-                                <Typography variant="body2" sx={{ color: '#fff' }}>Preview will appear here</Typography>
-                            </Box>
-                        )}
-                    </Paper>
-
-                    {renderHistory.length > 0 && (
-                        <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
-                            <Typography variant="overline" sx={{ color: '#666', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
-                                <ListIcon sx={{ fontSize: 12, mr: 0.5, verticalAlign: 'middle' }} />
-                                RECENT RENDERS
-                            </Typography>
-                            <Stack spacing={1}>
-                                {renderHistory.map((h, i) => (
-                                    <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 1.5, border: '1px solid rgba(255,255,255,0.04)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <DoneIcon sx={{ color: '#4caf50', fontSize: 14 }} />
-                                            <Box>
-                                                <Typography variant="caption" sx={{ color: '#fff', fontWeight: 'bold', display: 'block', fontSize: '0.7rem' }}>{h.template}</Typography>
-                                                <Typography variant="caption" sx={{ color: '#555', fontSize: '0.62rem' }}>{h.theme}</Typography>
-                                            </Box>
+                    {activeTab === 0 ? (
+                        /* Scene Render preview */
+                        <>
+                        <Paper sx={{ p: 0, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', overflow: 'hidden', minHeight: 260 }}>
+                            {renderJob?.url ? (
+                                <Box>
+                                    <video src={renderJob.url} controls autoPlay loop style={{ width: '100%', display: 'block' }} />
+                                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'rgba(76,175,80,0.08)', borderTop: '1px solid rgba(76,175,80,0.2)' }}>
+                                        <Box>
+                                            <Typography variant="caption" sx={{ color: '#4caf50', fontWeight: 'bold', display: 'block' }}>RENDER COMPLETE</Typography>
+                                            <Typography variant="caption" sx={{ color: '#666', fontFamily: 'monospace', fontSize: '0.65rem' }}>{renderJob.url}</Typography>
                                         </Box>
-                                        <Button size="small" onClick={() => setRenderJob(h.job)} sx={{ color: 'var(--accent-gold)', fontSize: '0.65rem', minWidth: 0, px: 1 }}>
-                                            View
-                                        </Button>
+                                        <Tooltip title="Copy link">
+                                            <IconButton size="small" onClick={() => navigator.clipboard.writeText(window.location.origin + renderJob.url!)} sx={{ color: '#4caf50' }}>
+                                                <CopyIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
                                     </Box>
-                                ))}
-                            </Stack>
+                                </Box>
+                            ) : renderJob && renderJob.status !== 'error' ? (
+                                <Box sx={{ py: 8, px: 3, textAlign: 'center' }}>
+                                    <CircularProgress size={48} sx={{ color: 'var(--accent-gold)', mb: 2 }} />
+                                    <Typography variant="body2" sx={{ color: '#fff', mb: 0.5 }}>{renderJob.message}</Typography>
+                                    <Typography variant="caption" sx={{ color: '#666' }}>{Math.round(renderJob.progress || 0)}%</Typography>
+                                    <LinearProgress
+                                        variant="determinate" value={renderJob.progress || 0}
+                                        sx={{ width: '80%', mx: 'auto', mt: 2, height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { bgcolor: 'var(--accent-gold)' } }}
+                                    />
+                                </Box>
+                            ) : renderJob?.status === 'error' ? (
+                                <Box sx={{ p: 3 }}>
+                                    <Alert severity="error" sx={{ bgcolor: 'rgba(244,67,54,0.1)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)' }}>
+                                        {renderJob.error}
+                                    </Alert>
+                                </Box>
+                            ) : (
+                                <Box sx={{ py: 10, textAlign: 'center', opacity: 0.15 }}>
+                                    <MovieIcon sx={{ fontSize: 80, color: '#fff', mb: 1 }} />
+                                    <Typography variant="body2" sx={{ color: '#fff' }}>Preview will appear here</Typography>
+                                </Box>
+                            )}
                         </Paper>
+
+                        {renderHistory.length > 0 && (
+                            <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                                <Typography variant="overline" sx={{ color: '#666', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
+                                    <ListIcon sx={{ fontSize: 12, mr: 0.5, verticalAlign: 'middle' }} />
+                                    RECENT RENDERS
+                                </Typography>
+                                <Stack spacing={1}>
+                                    {renderHistory.map((h, i) => (
+                                        <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 1.5, border: '1px solid rgba(255,255,255,0.04)' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <DoneIcon sx={{ color: '#4caf50', fontSize: 14 }} />
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ color: '#fff', fontWeight: 'bold', display: 'block', fontSize: '0.7rem' }}>{h.template}</Typography>
+                                                    <Typography variant="caption" sx={{ color: '#555', fontSize: '0.62rem' }}>{h.theme}</Typography>
+                                                </Box>
+                                            </Box>
+                                            <Button size="small" onClick={() => setRenderJob(h.job)} sx={{ color: 'var(--accent-gold)', fontSize: '0.65rem', minWidth: 0, px: 1 }}>
+                                                View
+                                            </Button>
+                                        </Box>
+                                    ))}
+                                </Stack>
+                            </Paper>
+                        )}
+                        </>
+                    ) : (
+                        /* Image Generate preview */
+                        <>
+                        <Paper sx={{ p: 0, bgcolor: '#000', borderRadius: 3, border: '1px solid var(--border-color)', overflow: 'hidden', minHeight: 260 }}>
+                            {imgGenerating ? (
+                                <Box sx={{ py: 10, px: 3, textAlign: 'center' }}>
+                                    <CircularProgress size={48} sx={{ color: 'var(--accent-gold)', mb: 2 }} />
+                                    <Typography variant="body2" sx={{ color: '#fff', mb: 0.5 }}>Generating image...</Typography>
+                                    <Typography variant="caption" sx={{ color: '#666' }}>
+                                        {IMAGE_STYLES.find(s => s.id === imgStyle)?.label || 'ARXXIS'} · {imgTheme}
+                                    </Typography>
+                                </Box>
+                            ) : imgResult ? (
+                                <Box>
+                                    <img src={imgResult} alt="Generated" style={{ width: '100%', display: 'block' }} />
+                                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'rgba(76,175,80,0.08)', borderTop: '1px solid rgba(76,175,80,0.2)' }}>
+                                        <Box>
+                                            <Typography variant="caption" sx={{ color: '#4caf50', fontWeight: 'bold', display: 'block' }}>IMAGE READY</Typography>
+                                            <Typography variant="caption" sx={{ color: '#666', fontFamily: 'monospace', fontSize: '0.62rem' }}>
+                                                {IMAGE_STYLES.find(s => s.id === imgStyle)?.label || 'ARXXIS'} · {imgTheme}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                            <Tooltip title="Copy URL">
+                                                <IconButton size="small" onClick={() => navigator.clipboard.writeText(window.location.origin + imgResult)} sx={{ color: '#4caf50' }}>
+                                                    <CopyIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Download">
+                                                <IconButton size="small" component="a" href={imgResult} download sx={{ color: '#4caf50' }}>
+                                                    <DownloadIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            ) : (
+                                <Box sx={{ py: 10, textAlign: 'center', opacity: 0.15 }}>
+                                    <ImageIcon sx={{ fontSize: 80, color: '#fff', mb: 1 }} />
+                                    <Typography variant="body2" sx={{ color: '#fff' }}>Generated image will appear here</Typography>
+                                </Box>
+                            )}
+                        </Paper>
+
+                        {imgHistory.length > 0 && (
+                            <Paper sx={{ p: 2.5, mt: 2, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
+                                <Typography variant="overline" sx={{ color: '#666', letterSpacing: 2, fontSize: '0.65rem', display: 'block', mb: 1.5 }}>
+                                    <ListIcon sx={{ fontSize: 12, mr: 0.5, verticalAlign: 'middle' }} />
+                                    RECENT IMAGES
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                    {imgHistory.map((h, i) => (
+                                        <Box
+                                            key={i}
+                                            onClick={() => setImgResult(h.url)}
+                                            sx={{
+                                                width: 72, height: 56, borderRadius: 1.5, overflow: 'hidden', cursor: 'pointer',
+                                                border: imgResult === h.url ? '2px solid var(--accent-gold)' : '2px solid rgba(255,255,255,0.06)',
+                                                transition: 'border 0.15s', flexShrink: 0,
+                                                '&:hover': { border: '2px solid rgba(201,169,97,0.5)' }
+                                            }}
+                                        >
+                                            <img src={h.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </Paper>
+                        )}
+                        </>
                     )}
                 </Grid>
             </Grid>
