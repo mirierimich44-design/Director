@@ -935,7 +935,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         if (environment === 'editorial-illustration') {
             promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
         } else if (environment === 'vortexis') {
-            promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist. All objects MUST be proportional to the human figure — monitor is desktop-sized not room-sized, no oversized screens, no floating displays.";
+            promptSuffix = ". Isometric 3D render, true orthographic camera angle, pitch-black background, dramatic neon red and deep blue rim lighting casting colored shadows across the scene, smooth matte low-poly 3D objects with subtle surface shading, semi-stylized human figures with simple rounded forms, FULL BODY always visible and fully within frame — never cropped or cut off, wide enough shot so the entire scene including all figures fits completely inside the image, heavy vignette darkening edges, cinematic red-blue duotone color grade, NO text, NO labels, NO photorealism, proportionally correct objects.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
