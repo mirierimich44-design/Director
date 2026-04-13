@@ -959,7 +959,7 @@ Rules:
 // Generate an AI image from a 3D render prompt using Google Imagen
 app.post('/api/auto-scene/render-3d', async (req, res) => {
     try {
-        const { prompt, environment, camera, objectOnly } = req.body;
+        const { prompt, environment, camera } = req.body;
         if (!prompt) return res.status(400).json({ error: 'prompt is required' });
 
         if (!getGoogleKey()) {
@@ -970,6 +970,14 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         const imageModel = getImageModel() || 'imagen-4.0-generate-001';
 
         const visualPrompt = prompt;
+
+        // For Vortexis: auto-detect whether the scene has a human subject from the prompt text
+        // This means callers don't need to pass objectOnly explicitly — the server figures it out
+        let objectOnly = req.body.objectOnly;
+        if (environment === 'vortexis' && objectOnly === undefined) {
+            const { sceneHasHumanSubject } = await import('./autoScene.js');
+            objectOnly = !sceneHasHumanSubject(prompt);
+        }
 
         // Choose prompt suffix based on environment
         let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
