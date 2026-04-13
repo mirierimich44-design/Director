@@ -70,6 +70,9 @@ const SceneStudioView: React.FC = () => {
     const [imgScript, setImgScript] = useState('');
     const [imgStyle, setImgStyle] = useState('');
     const [imgTheme, setImgTheme] = useState('THREAT');
+    const [imgAnalyzing, setImgAnalyzing] = useState(false);
+    const [imgPrompt, setImgPrompt] = useState<string | null>(null);
+    const [imgAnalyzeError, setImgAnalyzeError] = useState<string | null>(null);
     const [imgGenerating, setImgGenerating] = useState(false);
     const [imgResult, setImgResult] = useState<string | null>(null);
     const [imgError, setImgError] = useState<string | null>(null);
@@ -111,21 +114,39 @@ const SceneStudioView: React.FC = () => {
 
     useEffect(() => () => { evtSrcRef.current?.close(); }, []);
 
-    const handleGenerateImage = async () => {
+    const handleAnalyzeImage = async () => {
         if (!imgScript.trim()) return;
+        setImgAnalyzing(true);
+        setImgAnalyzeError(null);
+        setImgPrompt(null);
+        setImgResult(null);
+        setImgError(null);
+        try {
+            const res = await fetch('/api/scene-studio/analyze-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ script: imgScript.trim(), environment: imgStyle, theme: imgTheme })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setImgPrompt(data.imagePrompt);
+        } catch (err: any) {
+            setImgAnalyzeError(err.message);
+        } finally {
+            setImgAnalyzing(false);
+        }
+    };
+
+    const handleGenerateImage = async () => {
+        if (!imgPrompt?.trim()) return;
         setImgGenerating(true);
         setImgError(null);
         setImgResult(null);
-
-        // Build a prompt enriched with the selected theme
-        const themeHint = imgTheme ? ` Mood/theme: ${imgTheme.toLowerCase()}.` : '';
-        const prompt = `${imgScript.trim()}${themeHint}`;
-
         try {
             const res = await fetch('/api/auto-scene/render-3d', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt, environment: imgStyle })
+                body: JSON.stringify({ prompt: imgPrompt.trim(), environment: imgStyle })
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
@@ -467,26 +488,28 @@ const SceneStudioView: React.FC = () => {
                 </>) : (
                     /* ── IMAGE GENERATE TAB ── */
                     <Box>
-                        {/* Script sentence */}
+                        {/* Step 1: Script + Style + Theme */}
                         <Paper sx={{ p: 3, mb: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
                             <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, mb: 1.5, display: 'block' }}>
-                                1 — SCRIPT SENTENCE
+                                1 — SCRIPT & STYLE
                             </Typography>
+
                             <TextField
                                 fullWidth multiline minRows={3} maxRows={6}
-                                placeholder={`Paste a script line to generate an image from...\n\n"Surveillance cameras scanning a crowded city square at dusk"`}
+                                placeholder={`Paste a script line...\n\n"A phone rings. Twice. Someone picks up."`}
                                 value={imgScript}
-                                onChange={e => { setImgScript(e.target.value); setImgError(null); }}
+                                onChange={e => { setImgScript(e.target.value); setImgPrompt(null); setImgAnalyzeError(null); setImgError(null); }}
                                 InputProps={{
                                     endAdornment: imgScript ? (
                                         <InputAdornment position="end" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                                            <IconButton size="small" onClick={() => { setImgScript(''); setImgError(null); setImgResult(null); }} sx={{ color: '#666' }}>
+                                            <IconButton size="small" onClick={() => { setImgScript(''); setImgPrompt(null); setImgResult(null); }} sx={{ color: '#666' }}>
                                                 <ClearIcon fontSize="small" />
                                             </IconButton>
                                         </InputAdornment>
                                     ) : undefined
                                 }}
                                 sx={{
+                                    mb: 2.5,
                                     '& .MuiOutlinedInput-root': {
                                         bgcolor: 'rgba(255,255,255,0.02)', color: '#fff', fontSize: '0.95rem', lineHeight: 1.6,
                                         '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
@@ -496,22 +519,15 @@ const SceneStudioView: React.FC = () => {
                                     '& .MuiOutlinedInput-input::placeholder': { color: '#555', opacity: 1 }
                                 }}
                             />
-                        </Paper>
-
-                        {/* Style + Theme */}
-                        <Paper sx={{ p: 3, mb: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid var(--border-color)' }}>
-                            <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2, mb: 2, display: 'block' }}>
-                                2 — STYLE & THEME
-                            </Typography>
 
                             <Typography variant="caption" sx={{ color: '#666', mb: 1, display: 'block', letterSpacing: 1, fontSize: '0.65rem' }}>IMAGE STYLE</Typography>
-                            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 3 }}>
+                            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 2.5 }}>
                                 {IMAGE_STYLES.map(s => (
                                     <Box
                                         key={s.id}
-                                        onClick={() => setImgStyle(s.id)}
+                                        onClick={() => { setImgStyle(s.id); setImgPrompt(null); }}
                                         sx={{
-                                            flex: '1 1 120px', p: 1.5, borderRadius: 2, cursor: 'pointer',
+                                            flex: '1 1 100px', p: 1.5, borderRadius: 2, cursor: 'pointer',
                                             border: `1px solid ${imgStyle === s.id ? s.color : 'rgba(255,255,255,0.06)'}`,
                                             bgcolor: imgStyle === s.id ? `${s.color}12` : 'rgba(255,255,255,0.02)',
                                             transition: 'all 0.15s',
@@ -525,11 +541,11 @@ const SceneStudioView: React.FC = () => {
                             </Box>
 
                             <Typography variant="caption" sx={{ color: '#666', mb: 1, display: 'block', letterSpacing: 1, fontSize: '0.65rem' }}>THEME MOOD</Typography>
-                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2.5 }}>
                                 {themes.map(th => (
                                     <Chip
                                         key={th} label={th} size="small"
-                                        onClick={() => setImgTheme(th)}
+                                        onClick={() => { setImgTheme(th); setImgPrompt(null); }}
                                         sx={{
                                             bgcolor: imgTheme === th ? 'rgba(201,169,97,0.15)' : 'rgba(255,255,255,0.03)',
                                             color: imgTheme === th ? 'var(--accent-gold)' : '#666',
@@ -540,29 +556,84 @@ const SceneStudioView: React.FC = () => {
                                     />
                                 ))}
                             </Box>
+
+                            <Button
+                                fullWidth variant="outlined" size="large"
+                                startIcon={imgAnalyzing ? <CircularProgress size={18} color="inherit" /> : <AIIcon />}
+                                disabled={!imgScript.trim() || imgAnalyzing}
+                                onClick={handleAnalyzeImage}
+                                sx={{
+                                    borderColor: imgScript.trim() ? 'var(--accent-gold)' : 'rgba(255,255,255,0.08)',
+                                    color: imgScript.trim() ? 'var(--accent-gold)' : '#444',
+                                    fontWeight: 'bold', letterSpacing: 1,
+                                    '&:hover': { bgcolor: 'rgba(201,169,97,0.08)', borderColor: 'var(--accent-gold)' },
+                                    '&.Mui-disabled': { borderColor: 'rgba(255,255,255,0.05)', color: '#444' }
+                                }}
+                            >
+                                {imgAnalyzing ? 'ANALYZING...' : 'ANALYZE WITH GEMINI'}
+                            </Button>
+
+                            {imgAnalyzeError && (
+                                <Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)', fontSize: '0.8rem' }}>
+                                    {imgAnalyzeError}
+                                </Alert>
+                            )}
                         </Paper>
 
-                        {/* Generate button */}
-                        <Button
-                            fullWidth variant="contained" size="large"
-                            startIcon={imgGenerating ? <CircularProgress size={18} color="inherit" /> : <ImageIcon />}
-                            disabled={!imgScript.trim() || imgGenerating}
-                            onClick={handleGenerateImage}
-                            sx={{
-                                bgcolor: imgScript.trim() && !imgGenerating ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)',
-                                color: imgScript.trim() && !imgGenerating ? '#000' : '#444',
-                                fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: 1, py: 1.5,
-                                '&:hover': { bgcolor: imgScript.trim() && !imgGenerating ? '#fff' : undefined },
-                                '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.05)', color: '#444' }
-                            }}
-                        >
-                            {imgGenerating ? 'GENERATING IMAGE...' : 'GENERATE IMAGE'}
-                        </Button>
+                        {/* Step 2: Review & Generate */}
+                        {imgPrompt !== null && (
+                            <Paper sx={{ p: 3, bgcolor: 'var(--bg-secondary)', borderRadius: 3, border: '1px solid rgba(201,169,97,0.25)' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                    <Typography variant="overline" sx={{ color: 'var(--accent-gold)', letterSpacing: 2 }}>
+                                        2 — REVIEW & GENERATE
+                                    </Typography>
+                                    <Chip
+                                        icon={<AIIcon sx={{ fontSize: '14px !important' }} />}
+                                        label="Written by Gemini"
+                                        size="small"
+                                        sx={{ bgcolor: 'rgba(201,169,97,0.1)', color: 'var(--accent-gold)', border: '1px solid rgba(201,169,97,0.3)', fontSize: '0.65rem' }}
+                                    />
+                                </Box>
 
-                        {imgError && (
-                            <Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)', fontSize: '0.8rem' }}>
-                                {imgError}
-                            </Alert>
+                                <TextField
+                                    fullWidth multiline minRows={3} maxRows={8}
+                                    value={imgPrompt}
+                                    onChange={e => setImgPrompt(e.target.value)}
+                                    sx={{
+                                        mb: 2.5,
+                                        '& .MuiOutlinedInput-root': {
+                                            bgcolor: 'rgba(255,255,255,0.03)', color: '#fff', fontSize: '0.88rem', lineHeight: 1.6,
+                                            '& fieldset': { borderColor: 'rgba(201,169,97,0.2)' },
+                                            '&:hover fieldset': { borderColor: 'rgba(201,169,97,0.4)' },
+                                            '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' }
+                                        }
+                                    }}
+                                />
+
+                                <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)', mb: 2.5 }} />
+
+                                <Button
+                                    fullWidth variant="contained" size="large"
+                                    startIcon={imgGenerating ? <CircularProgress size={18} color="inherit" /> : <ImageIcon />}
+                                    disabled={!imgPrompt.trim() || imgGenerating}
+                                    onClick={handleGenerateImage}
+                                    sx={{
+                                        bgcolor: !imgGenerating ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)',
+                                        color: !imgGenerating ? '#000' : '#444',
+                                        fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: 1, py: 1.5,
+                                        '&:hover': { bgcolor: !imgGenerating ? '#fff' : undefined },
+                                        '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.05)', color: '#444' }
+                                    }}
+                                >
+                                    {imgGenerating ? 'GENERATING IMAGE...' : 'GENERATE IMAGE'}
+                                </Button>
+
+                                {imgError && (
+                                    <Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(244,67,54,0.08)', color: '#f44336', border: '1px solid rgba(244,67,54,0.2)', fontSize: '0.8rem' }}>
+                                        {imgError}
+                                    </Alert>
+                                )}
+                            </Paper>
                         )}
                     </Box>
                 )}

@@ -1334,6 +1334,88 @@ app.post('/api/scene-studio/generate', async (req, res) => {
     }
 });
 
+// Step: Generate a Gemini image prompt from a script sentence (Scene Studio Image tab)
+app.post('/api/scene-studio/analyze-image', async (req, res) => {
+    try {
+        const { script, environment, theme } = req.body;
+        if (!script) return res.status(400).json({ success: false, error: 'script is required' });
+
+        const { sceneHasHumanSubject } = await import('./autoScene.js');
+        const hasHuman = sceneHasHumanSubject(script);
+
+        let cinematographerIdentity, initialInstruction, styleRules;
+
+        if (environment === 'vortexis') {
+            cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist isometric 3D renders.";
+            if (hasHuman) {
+                initialInstruction = "This scene involves a human subject. Render them as a featureless, solid-colored red silhouette. NEVER use realistic human details.";
+                styleRules = `• 25–40 words maximum
+• Isometric orthographic camera angle, pitch-black background
+• Dark square platform with neon edge lines (red left, blue right)
+• Human figures are featureless matte red silhouettes
+• All objects proportional and correctly scaled
+• Smooth low-poly matte materials, no textures
+• NO text, NO labels`;
+            } else {
+                initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects from the script — no people, no silhouettes.";
+                styleRules = `• 25–40 words maximum
+• Isometric orthographic camera angle, pitch-black background
+• Dark square platform with neon edge lines (red left, blue right)
+• Objects and environments only — NO people, NO silhouettes
+• All objects proportional and correctly scaled
+• Smooth low-poly matte materials, no textures
+• NO text, NO labels`;
+            }
+        } else if (environment === 'editorial-illustration') {
+            cinematographerIdentity = "You are an editorial illustration director. You write image prompts for newspaper-style watercolor and ink illustrations.";
+            initialInstruction = "Describe a scene in editorial illustration style — watercolor and ink, no photorealism.";
+            styleRules = `• 25–40 words maximum
+• Watercolor and ink on parchment style
+• No photorealism, no 3D effects
+• Editorial, journalistic composition
+• NO text, NO letters, NO writing`;
+        } else {
+            cinematographerIdentity = "You are a cinematic documentary director. You write image prompts for photorealistic 16:9 documentary-style images.";
+            initialInstruction = "Describe a photorealistic documentary scene — no people, focus on objects and environments.";
+            styleRules = `• 25–40 words maximum
+• Cinematic 16:9 framing, photorealistic
+• Dark moody documentary style
+• Hyperrealistic surfaces and textures
+• No humans, no text overlays`;
+        }
+
+        const themeHint = theme ? ` The overall mood is: ${theme.toLowerCase()}.` : '';
+
+        const model = googleAI.getGenerativeModel({
+            model: getGEMINI_MODEL(),
+            systemInstruction: `${cinematographerIdentity} ${initialInstruction}
+
+CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
+Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or figure named in the script.
+• First 5–8 words must name the specific subject.
+• NEVER open with mood, atmosphere, or setting.
+• BANNED DEFAULTS (unless script explicitly names them): smartphone, laptop, computer screen, generic office desk.
+• The viewer must identify the story from the image alone.
+
+STYLE RULES
+${styleRules}
+
+Output only the prompt text. No explanation. No preamble. Begin with the subject.`
+        });
+
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: `SCENE: "${script}"${themeHint}\n\nWrite the image generation prompt.` }] }]
+        });
+        const imagePrompt = result.response.text().trim();
+
+        console.log(`   🎨 Scene Studio image prompt: "${imagePrompt.substring(0, 80)}..."`);
+        res.json({ success: true, imagePrompt });
+    } catch (err) {
+        console.error('❌ scene-studio/analyze-image error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // ── RENDER JOBS ───────────────────────────────────────────────────────────────
 app.post('/api/manual-render-job', async (req, res) => {
     try {

@@ -613,7 +613,7 @@ const CATEGORY_THEMES = {
 const _categoryCounters = {}
 
 // Detects whether a scene script mentions a human subject (person performing an action)
-function sceneHasHumanSubject(script) {
+export function sceneHasHumanSubject(script) {
   const s = script.toLowerCase()
   // Personal pronouns used as subject
   if (/\b(he|she|they|we)\s+\w/.test(s)) return true
