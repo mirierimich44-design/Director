@@ -72,6 +72,7 @@ const SceneStudioView: React.FC = () => {
     const [imgTheme, setImgTheme] = useState('THREAT');
     const [imgAnalyzing, setImgAnalyzing] = useState(false);
     const [imgPrompt, setImgPrompt] = useState<string | null>(null);
+    const [imgHasHuman, setImgHasHuman] = useState(false);
     const [imgAnalyzeError, setImgAnalyzeError] = useState<string | null>(null);
     const [imgGenerating, setImgGenerating] = useState(false);
     const [imgResult, setImgResult] = useState<string | null>(null);
@@ -130,6 +131,7 @@ const SceneStudioView: React.FC = () => {
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
             setImgPrompt(data.imagePrompt);
+            setImgHasHuman(data.hasHuman ?? false);
         } catch (err: any) {
             setImgAnalyzeError(err.message);
         } finally {
@@ -146,7 +148,7 @@ const SceneStudioView: React.FC = () => {
             const res = await fetch('/api/auto-scene/render-3d', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: imgPrompt.trim(), environment: imgStyle })
+                body: JSON.stringify({ prompt: imgPrompt.trim(), environment: imgStyle, objectOnly: imgStyle === 'vortexis' && !imgHasHuman })
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);

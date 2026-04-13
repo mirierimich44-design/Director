@@ -555,6 +555,7 @@ RULES:
 - NEVER output 0, "0", "$0", or any zero placeholder. If the script contains a number ("four billion", "47 countries", "thousands"), extract it directly: "four billion" → "$4B", "forty-seven countries" → "47", "thousands of victims" → "THOUSANDS+".
 - NEVER invent statistics, figures, percentages, dollar amounts, or quantities that do not appear in the script. Every value you output must be traceable to a word or phrase in the script.
 - If a stat field has no corresponding number or quantity in the script, use a brief ALL-CAPS label extracted from the script topic (e.g. if the script says "budget agencies", use "BUDGET" — not an invented figure like "$85B" or "100%").
+- NEVER output "NOT SPECIFIED", "N/A", "UNKNOWN", or any placeholder that signals missing data. Instead, infer the most contextually appropriate short label from the script (e.g. for a CVE field with no ID → "UNDISCLOSED", for a CVSS with no score → "CRITICAL", for patch status with no info → "UNPATCHED", for exploit status → "ACTIVE EXPLOIT").
 - For IMAGE_URL_* fields: leave the value exactly as the field name (e.g. "IMAGE_URL_1") — do not invent URLs.
 
 OUTPUT FORMAT (JSON object only, keys must be exact):

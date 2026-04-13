@@ -269,7 +269,7 @@ async function generateFallbackImage(prompt, environment = 'standard') {
     if (environment === 'editorial-illustration') {
         promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
     } else if (environment === 'vortexis') {
-        promptSuffix = ". Isometric 3D render, true orthographic camera angle, pitch-black void background, flat dark square platform as the ground, neon glowing edge lines along the platform rim (red on left side, blue on right side), all human figures are faceless matte 3D silhouettes colored only in deep red or dark near-black, dramatic single-source red side lighting casting soft shadows, smooth low-poly matte materials with no texture detail, ALL figures and objects FULLY within frame — never cropped, wide enough framing so every element is completely visible, NO text, NO labels, NO photorealism, NO surface textures.";
+        promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist.";
     }
 
     // Support for Gemini Image Models (Nano Banana)
@@ -920,7 +920,7 @@ Rules:
 // Generate an AI image from a 3D render prompt using Google Imagen
 app.post('/api/auto-scene/render-3d', async (req, res) => {
     try {
-        const { prompt, environment, camera } = req.body;
+        const { prompt, environment, camera, objectOnly } = req.body;
         if (!prompt) return res.status(400).json({ error: 'prompt is required' });
 
         if (!getGoogleKey()) {
@@ -930,42 +930,16 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
 
         const imageModel = getImageModel() || 'imagen-4.0-generate-001';
 
-        // For Vortexis: rewrite the raw script sentence into a proper visual description
-        // so object-focused scripts (e.g. "A phone rings") don't generate unwanted figures.
-        let visualPrompt = prompt;
-        if (environment === 'vortexis') {
-            try {
-                const rewriteModel = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() });
-                const rewriteResult = await rewriteModel.generateContent({
-                    contents: [{ role: 'user', parts: [{ text: `You are a visual director writing image prompts for isometric 3D renders.
-
-Script: "${prompt}"
-
-Write a single concise visual description (max 25 words) of what should appear in the image.
-RULES:
-- Focus on the PRIMARY OBJECT in the scene, not on people
-- Only include a human figure if a named or clearly described person is the explicit subject
-- If the action is "someone picks up", "a person walks by", etc. — show ONLY the object, not the person
-- Describe the object, its placement, and any relevant props
-- No adjectives about style or lighting — just the scene content
-- Reply with ONLY the visual description, nothing else.` }] }]
-                });
-                const rewritten = rewriteResult.response.text().trim();
-                if (rewritten) {
-                    console.log(`   ✏️ Vortexis prompt rewrite: "${prompt.substring(0, 60)}" → "${rewritten.substring(0, 80)}"`);
-                    visualPrompt = rewritten;
-                }
-            } catch (rewriteErr) {
-                console.warn(`   ⚠️ Vortexis prompt rewrite failed, using raw prompt: ${rewriteErr.message}`);
-            }
-        }
+        const visualPrompt = prompt;
 
         // Choose prompt suffix based on environment
         let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
         if (environment === 'editorial-illustration') {
             promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
         } else if (environment === 'vortexis') {
-            promptSuffix = ". Isometric 3D render, true orthographic camera angle, pitch-black void background, flat dark square platform as the ground, neon glowing edge lines along the platform rim (red on left side, blue on right side), all human figures are faceless matte 3D silhouettes colored only in deep red or dark near-black, dramatic single-source red side lighting casting soft shadows, smooth low-poly matte materials with no texture detail, ALL figures and objects FULLY within frame — never cropped, wide enough framing so every element is completely visible, NO text, NO labels, NO photorealism, NO surface textures.";
+            promptSuffix = objectOnly
+                ? ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, smooth matte materials, NO people, NO silhouettes, NO humans, objects and environments only, NO text, NO labels, clean minimalist. All objects MUST be correctly and realistically scaled."
+                : ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist. All objects MUST be proportional to the human figure — monitor is desktop-sized not room-sized, no oversized screens, no floating displays.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
@@ -1343,73 +1317,105 @@ app.post('/api/scene-studio/analyze-image', async (req, res) => {
         const { sceneHasHumanSubject } = await import('./autoScene.js');
         const hasHuman = sceneHasHumanSubject(script);
 
-        let cinematographerIdentity, initialInstruction, styleRules;
+        // Use the exact same cinematographer identity, instructions, and style rules as Project Director
+        let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
+        let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
+        let styleRules = `• 60–80 words maximum
+• Dark, moody, cinematic color grading — vary the palette: cool blue steel, amber tungsten, sickly green fluorescent, harsh white institutional, blood-red neon
+• Lighting setup must differ from a generic "single dramatic spotlight" — use: overhead fluorescent wash, venetian blind shadow bars, backlit silhouette against a frosted window, emergency lighting, candlelight, monitor glow, golden-hour shaft through blinds
+• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood, glossy marble, cracked asphalt, laminate desk)
+• No humans, no faces, no hands, no body parts
+• No text, no labels, no UI elements on screens (blur or obscure them)
+• Shallow depth of field — hero object sharp, background soft
+• 16:9 cinematic framing`;
 
         if (environment === 'vortexis') {
-            cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist isometric 3D renders.";
+            cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
             if (hasHuman) {
-                initialInstruction = "This scene involves a human subject. Render them as a featureless, solid-colored red silhouette. NEVER use realistic human details.";
-                styleRules = `• 25–40 words maximum
-• Isometric orthographic camera angle, pitch-black background
-• Dark square platform with neon edge lines (red left, blue right)
-• Human figures are featureless matte red silhouettes
-• All objects proportional and correctly scaled
-• Smooth low-poly matte materials, no textures
-• NO text, NO labels`;
+                initialInstruction = `This scene involves a human subject. Render them as a featureless, solid-colored silhouette — the color MUST be pure red. NEVER use realistic human details.`;
+                styleRules = `• 60–80 words maximum
+• Unity 3D engine render style
+• True isometric orthographic camera angle
+• Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
+• Human figures MUST be featureless, flat silhouettes in pure red
+• SCALE IS CRITICAL: all objects must be proportional to the human figure — a monitor is desktop-sized (roughly head-height), a desk is waist-height, a chair is seat-height. NEVER make any object larger than a real human would encounter it.
+• If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the chart/graph appears ON the monitor screen, not floating or projected on a wall
+• BANNED: floating screens, giant wall-mounted displays, oversized monitors larger than the figure, UI panels projected on walls, holograms — these are not real and must NEVER appear
+• All props must be real, physical, correctly-scaled objects in a believable room
+• Exactly depict the literal objects and actions described in the script
+• Clean, minimalist environments with smooth matte materials
+• NO text, NO labels, NO typography of any kind
+• 16:9 aspect ratio`;
             } else {
-                initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects from the script — no people, no silhouettes.";
-                styleRules = `• 25–40 words maximum
-• Isometric orthographic camera angle, pitch-black background
-• Dark square platform with neon edge lines (red left, blue right)
-• Objects and environments only — NO people, NO silhouettes
-• All objects proportional and correctly scaled
-• Smooth low-poly matte materials, no textures
-• NO text, NO labels`;
+                initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
+                styleRules = `• 60–80 words maximum
+• Unity 3D engine render style
+• True isometric orthographic camera angle
+• Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
+• NO people, NO silhouettes — objects and environments only
+• BANNED: floating screens, giant wall-mounted displays, oversized UI panels, holograms — these are not real and must NEVER appear
+• All objects must be physical, real-world, desk- or room-sized
+• Exactly depict the literal objects described in the script
+• Clean, minimalist environments with smooth matte materials
+• NO text, NO labels, NO typography of any kind
+• 16:9 aspect ratio`;
             }
         } else if (environment === 'editorial-illustration') {
             cinematographerIdentity = "You are an editorial illustration director. You write image prompts for newspaper-style watercolor and ink illustrations.";
             initialInstruction = "Describe a scene in editorial illustration style — watercolor and ink, no photorealism.";
-            styleRules = `• 25–40 words maximum
-• Watercolor and ink on parchment style
+            styleRules = `• 60–80 words maximum
+• Watercolor and ink on parchment paper, visible textures
 • No photorealism, no 3D effects
 • Editorial, journalistic composition
-• NO text, NO letters, NO writing`;
-        } else {
-            cinematographerIdentity = "You are a cinematic documentary director. You write image prompts for photorealistic 16:9 documentary-style images.";
-            initialInstruction = "Describe a photorealistic documentary scene — no people, focus on objects and environments.";
-            styleRules = `• 25–40 words maximum
-• Cinematic 16:9 framing, photorealistic
-• Dark moody documentary style
-• Hyperrealistic surfaces and textures
-• No humans, no text overlays`;
+• No text, no letters, no writing of any kind`;
         }
 
-        const themeHint = theme ? ` The overall mood is: ${theme.toLowerCase()}.` : '';
+        const themeHint = theme ? ` The overall mood/theme is: ${theme.toLowerCase()}.` : '';
 
         const model = googleAI.getGenerativeModel({
             model: getGEMINI_MODEL(),
             systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
-Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or figure named in the script.
-• First 5–8 words must name the specific subject.
-• NEVER open with mood, atmosphere, or setting.
-• BANNED DEFAULTS (unless script explicitly names them): smartphone, laptop, computer screen, generic office desk.
-• The viewer must identify the story from the image alone.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
+• Your FIRST 5–8 words must name the specific subject (e.g. "Stack of printed bank statements", "Server rack in a dimly lit cage", "Courtroom bench with scattered folders").
+• NEVER open with mood, atmosphere, or setting ("A dark room...", "Dramatic lighting...", "Moody scene...").
+• BANNED DEFAULTS — NEVER show these unless the script explicitly names them: smartphone, mobile phone, laptop, computer screen, keyboard, tablet, monitor, generic office desk.
+• If the script says nothing about electronics, do NOT invent them. Use what IS in the script: physical spaces, documents, vehicles, furniture, machinery, signage, architecture.
+• If the scene mentions a specific company, country, device, or event — name it directly.
+• The viewer must be able to identify the story from the image alone.
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+THREE-STEP METHOD (follow in order)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — NAME THE SUBJECT
+The ONE specific object, place, or silhouette from THIS scene. Make it concrete and named.
+This is your opening clause — begin the prompt here.
+
+STEP 2 — DESCRIBE ITS STATE OR ACTION
+What is it doing, showing, or conveying? Be literal to the script.
+
+STEP 3 — SET THE ENVIRONMENT AND ATMOSPHERE
+Room type, lighting quality, depth of field, color temperature, surface materials.
+One emotional quality: tension, isolation, dread, secrecy, discovery, betrayal, urgency.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STYLE RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${styleRules}
 
 Output only the prompt text. No explanation. No preamble. Begin with the subject.`
         });
 
         const result = await model.generateContent({
-            contents: [{ role: 'user', parts: [{ text: `SCENE: "${script}"${themeHint}\n\nWrite the image generation prompt.` }] }]
+            contents: [{ role: 'user', parts: [{ text: `SCENE TO VISUALIZE: "${script}"${themeHint}\n\nWrite the image generation prompt.` }] }]
         });
         const imagePrompt = result.response.text().trim();
 
         console.log(`   🎨 Scene Studio image prompt: "${imagePrompt.substring(0, 80)}..."`);
-        res.json({ success: true, imagePrompt });
+        res.json({ success: true, imagePrompt, hasHuman });
     } catch (err) {
         console.error('❌ scene-studio/analyze-image error:', err.message);
         res.status(500).json({ success: false, error: err.message });
