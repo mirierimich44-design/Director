@@ -269,7 +269,7 @@ async function generateFallbackImage(prompt, environment = 'standard') {
     if (environment === 'editorial-illustration') {
         promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
     } else if (environment === 'vortexis') {
-        promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes purely red blue or black, smooth matte materials, NO text, NO labels, clean minimalist.";
+        promptSuffix = ". Isometric 3D render, true orthographic camera angle, pitch-black void background, flat dark square platform as the ground, neon glowing edge lines along the platform rim (red on left side, blue on right side), all human figures are faceless matte 3D silhouettes colored only in deep red or dark near-black, dramatic single-source red side lighting casting soft shadows, smooth low-poly matte materials with no texture detail, ALL figures and objects FULLY within frame — never cropped, wide enough framing so every element is completely visible, NO text, NO labels, NO photorealism, NO surface textures.";
     }
 
     // Support for Gemini Image Models (Nano Banana)
@@ -935,7 +935,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         if (environment === 'editorial-illustration') {
             promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
         } else if (environment === 'vortexis') {
-            promptSuffix = ". Isometric 3D render, true orthographic camera angle, pitch-black background, dramatic neon red and deep blue rim lighting casting colored shadows across the scene, smooth matte low-poly 3D objects with subtle surface shading, semi-stylized human figures with simple rounded forms, FULL BODY always visible and fully within frame — never cropped or cut off, wide enough shot so the entire scene including all figures fits completely inside the image, heavy vignette darkening edges, cinematic red-blue duotone color grade, NO text, NO labels, NO photorealism, proportionally correct objects.";
+            promptSuffix = ". Isometric 3D render, true orthographic camera angle, pitch-black void background, flat dark square platform as the ground, neon glowing edge lines along the platform rim (red on left side, blue on right side), all human figures are faceless matte 3D silhouettes colored only in deep red or dark near-black, dramatic single-source red side lighting casting soft shadows, smooth low-poly matte materials with no texture detail, ALL figures and objects FULLY within frame — never cropped, wide enough framing so every element is completely visible, NO text, NO labels, NO photorealism, NO surface textures.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
