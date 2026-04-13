@@ -18,6 +18,7 @@ import {
     Palette as PaletteIcon,
     Edit as EditIcon,
     ImageSearch as ReanalyzePromptIcon,
+    SwapHoriz as SwapTemplateIcon,
 } from '@mui/icons-material';
 
 interface Scene {
@@ -175,6 +176,9 @@ const ProjectDirectorView: React.FC = () => {
         renderAbortedRef.current = true;
         setBatchState(prev => prev ? { ...prev, message: 'Stopping after current scene...' } : null);
     };
+
+    const [templateSwap, setTemplateSwap] = useState<{ chapterId: string; sceneIndex: number; current: string; alternative: string | null } | null>(null);
+    const [templateSwapping, setTemplateSwapping] = useState(false);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState('');
@@ -824,6 +828,26 @@ const ProjectDirectorView: React.FC = () => {
             renderScene(chapterId, sceneIndex);
         } catch (err: any) {
             setSceneRenderStatus(chapterId, sceneIndex, 'error', err.message);
+        }
+    };
+
+    const handleChangeTemplate = async (chapterId: string, sceneIndex: number, templateId: string) => {
+        if (!selectedProject) return;
+        setTemplateSwapping(true);
+        try {
+            const res = await fetch(
+                `/api/projects/${selectedProject.id}/chapters/${chapterId}/scenes/${sceneIndex}/change-template`,
+                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ templateId }) }
+            );
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setTemplateSwap(null);
+            await loadProjectDetails(selectedProject.id);
+            renderScene(chapterId, sceneIndex);
+        } catch (err: any) {
+            setSceneRenderStatus(chapterId, sceneIndex, 'error', err.message);
+        } finally {
+            setTemplateSwapping(false);
         }
     };
 
@@ -1653,7 +1677,27 @@ const ProjectDirectorView: React.FC = () => {
                                                                             fontWeight: scene.type === 'ILLUSTRATION' ? 900 : 400
                                                                         }} 
                                                                     />
-                                                                    {scene.template && <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{scene.template}</Typography>}
+                                                                    {scene.template && (
+                                                                        <Tooltip title="Change template">
+                                                                            <Chip
+                                                                                size="small"
+                                                                                label={scene.template}
+                                                                                icon={<SwapTemplateIcon sx={{ fontSize: '12px !important' }} />}
+                                                                                onClick={() => !isLocked && setTemplateSwap({ chapterId: chapter.id, sceneIndex: idx, current: scene.template!, alternative: (scene as any).alternativeTemplate ?? null })}
+                                                                                sx={{ fontSize: '0.62rem', fontFamily: 'monospace', bgcolor: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', cursor: isLocked ? 'default' : 'pointer', '&:hover': { bgcolor: isLocked ? undefined : 'rgba(201,169,97,0.12)', color: isLocked ? undefined : 'var(--accent-gold)' } }}
+                                                                            />
+                                                                        </Tooltip>
+                                                                    )}
+                                                                    {(scene as any).alternativeTemplate && (
+                                                                        <Tooltip title={`Gemini's alternative: ${(scene as any).alternativeTemplate}`}>
+                                                                            <Chip
+                                                                                size="small"
+                                                                                label={`alt: ${(scene as any).alternativeTemplate}`}
+                                                                                onClick={() => !isLocked && handleChangeTemplate(chapter.id, idx, (scene as any).alternativeTemplate)}
+                                                                                sx={{ fontSize: '0.58rem', fontFamily: 'monospace', bgcolor: 'rgba(201,169,97,0.07)', color: '#888', cursor: isLocked ? 'default' : 'pointer', border: '1px dashed rgba(201,169,97,0.3)', '&:hover': { bgcolor: isLocked ? undefined : 'rgba(201,169,97,0.15)', color: isLocked ? undefined : 'var(--accent-gold)' } }}
+                                                                            />
+                                                                        </Tooltip>
+                                                                    )}
                                                                     {needsImages(scene) && (
                                                                         <Chip size="small" label="⚠ Needs Images" sx={{ ml: 1, bgcolor: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid #f59e0b', fontWeight: 700, fontSize: '0.65rem' }} />
                                                                     )}
@@ -1991,6 +2035,59 @@ const ProjectDirectorView: React.FC = () => {
                     )}
                     <Button onClick={handleDialogConfirm} variant="contained" sx={{ bgcolor: 'var(--accent-gold)', color: '#000', '&:hover': { bgcolor: '#fff' } }}>
                         {dialogConfirmText}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Template Swap Dialog */}
+            <Dialog
+                open={!!templateSwap}
+                onClose={() => !templateSwapping && setTemplateSwap(null)}
+                PaperProps={{ sx: { bgcolor: 'var(--bg-secondary)', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 2, minWidth: 420 } }}
+            >
+                <DialogTitle sx={{ color: 'var(--accent-gold)', pb: 1 }}>Change Template</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 2 }}>
+                        Current: <span style={{ color: '#fff', fontFamily: 'monospace', fontSize: '0.8rem' }}>{templateSwap?.current}</span>
+                    </Typography>
+                    {templateSwap?.alternative && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 1, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.65rem' }}>
+                                Gemini's Alternative
+                            </Typography>
+                            <Chip
+                                label={templateSwap.alternative}
+                                onClick={() => !templateSwapping && handleChangeTemplate(templateSwap.chapterId, templateSwap.sceneIndex, templateSwap.alternative!)}
+                                sx={{ fontFamily: 'monospace', fontSize: '0.75rem', bgcolor: 'rgba(201,169,97,0.1)', color: 'var(--accent-gold)', border: '1px solid var(--accent-gold)', cursor: 'pointer', '&:hover': { bgcolor: 'rgba(201,169,97,0.2)' } }}
+                            />
+                        </Box>
+                    )}
+                    <Divider sx={{ borderColor: 'rgba(255,255,255,0.07)', my: 2 }} />
+                    <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 1, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.65rem' }}>
+                        Enter Template ID Manually
+                    </Typography>
+                    <TextField
+                        fullWidth size="small"
+                        placeholder="e.g. 101-stat-single"
+                        defaultValue=""
+                        id="manual-template-input"
+                        sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(255,255,255,0.03)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&.Mui-focused fieldset': { borderColor: 'var(--accent-gold)' } } }}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ p: 2, gap: 1 }}>
+                    <Button onClick={() => setTemplateSwap(null)} sx={{ color: '#888' }} disabled={templateSwapping}>Cancel</Button>
+                    <Button
+                        variant="contained"
+                        disabled={templateSwapping}
+                        startIcon={templateSwapping ? <CircularProgress size={14} color="inherit" /> : <SwapTemplateIcon />}
+                        onClick={() => {
+                            const input = document.getElementById('manual-template-input') as HTMLInputElement;
+                            const val = input?.value?.trim();
+                            if (val && templateSwap) handleChangeTemplate(templateSwap.chapterId, templateSwap.sceneIndex, val);
+                        }}
+                        sx={{ bgcolor: 'var(--accent-gold)', color: '#000', '&:hover': { bgcolor: '#fff' } }}
+                    >
+                        {templateSwapping ? 'Switching...' : 'Apply & Re-analyze'}
                     </Button>
                 </DialogActions>
             </Dialog>

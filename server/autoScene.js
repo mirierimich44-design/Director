@@ -773,7 +773,13 @@ export async function generateScenes(scriptText, generationSettings = null) {
       scene.template = templateName
       usedTemplates.add(templateName)
 
-      console.log(`   🛠️ Scene ${scene.index}: Category ${scene.category} → ${templateName}`)
+      // Pick the next available template in category as alternative suggestion
+      const allCatTemplates = catInfo.templates
+      const primaryIdx = allCatTemplates.indexOf(templateName)
+      const altChoices = allCatTemplates.filter(t => t !== templateName)
+      scene.alternativeTemplate = altChoices.length > 0 ? altChoices[primaryIdx % altChoices.length] : null
+
+      console.log(`   🛠️ Scene ${scene.index}: Category ${scene.category} → ${templateName} (alt: ${scene.alternativeTemplate})`)
 
       // --- PASS 2: FIELD FILLING ---
       try {

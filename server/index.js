@@ -875,6 +875,45 @@ app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/retry', async (req, res) 
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+// Change the template for a scene, re-fill fields, and update code
+app.post('/api/projects/:pid/chapters/:cid/scenes/:idx/change-template', async (req, res) => {
+    try {
+        const { pid, cid, idx } = req.params;
+        const { templateId } = req.body;
+        if (!templateId) return res.status(400).json({ error: 'templateId is required' });
+
+        const project = getProject(pid);
+        if (!project) return res.status(404).json({ error: 'Project not found' });
+        const chapter = project.chapters.find(c => c.id === cid);
+        if (!chapter) return res.status(404).json({ error: 'Chapter not found' });
+        const sceneIndex = parseInt(idx);
+        const scene = chapter.scenes[sceneIndex];
+        if (!scene) return res.status(404).json({ error: 'Scene not found' });
+
+        const { fillSceneFields, loadSchema } = await import('./autoScene.js');
+        const { fillTemplate } = await import('./templateFiller.js');
+        const { fuzzyMapFields } = await import('./templateSystem.js');
+
+        const content = await fillSceneFields({ ...scene, template: templateId }, templateId);
+        const schema = loadSchema(templateId);
+        const processedContent = schema?.fields ? fuzzyMapFields(content, schema.fields) : content;
+        const code = fillTemplate(templateId, scene.theme || 'DARK', processedContent);
+
+        const result = await updateScene(pid, cid, sceneIndex, {
+            template: templateId,
+            content: processedContent,
+            code,
+            renderStatus: 'idle'
+        });
+        console.log(`   🔄 Scene ${sceneIndex} template changed to ${templateId}`);
+        res.json({ success: true, ...result });
+    } catch (err) {
+        console.error('❌ change-template error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // Suggest a reference image for the Director's Note based on script text
 app.post('/api/auto-scene/suggest-reference-image', async (req, res) => {
     try {

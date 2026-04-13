@@ -11,10 +11,10 @@
                  "report"
              ],
     "fields":  {
-                   "QUARTER_LABEL":  "e.g. Q3 2023 EARNINGS",
-                   "EPS_ACTUAL":  "e.g. $1.42",
-                   "EPS_ESTIMATE":  "e.g. $1.35",
-                   "REVENUE_BEAT":  "e.g. +$450M BEAT",
-                   "GUIDANCE_TEXT":  "Short outlook statement"
+                   "QUARTER_LABEL":  "Period or event label, e.g. Q3 2023 EARNINGS or M&S MARKET WIPEOUT",
+                   "EPS_ACTUAL":  "Primary financial figure from the script, e.g. -£1B or $1.42",
+                   "EPS_ESTIMATE":  "Secondary or comparison figure, e.g. ESTIMATE or $1.35",
+                   "REVENUE_BEAT":  "Revenue or impact figure with direction, e.g. -£1B ERASED or +$450M BEAT",
+                   "GUIDANCE_TEXT":  "One-line summary of the financial outcome described in the script"
                }
 }
