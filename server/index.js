@@ -269,7 +269,7 @@ async function generateFallbackImage(prompt, environment = 'standard') {
     if (environment === 'editorial-illustration') {
         promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects.";
     } else if (environment === 'vortexis') {
-        promptSuffix = ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes — police/law enforcement in PURE BLUE, suspects/criminals in PURE RED, civilians in BLACK. Smooth matte materials, clean minimalist. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI. NO floating text, NO overlay labels outside screens.";
+        promptSuffix = ". Unity 3D isometric render, Se7en meets Tron Legacy aesthetic, smooth matte silhouette figures — police/law enforcement SOLID BLUE, suspects/criminals SOLID RED, civilians SOLID BLACK, no faces no texture, single named light source creating natural edge darkness, monitor screens show realistic Windows UI, no floating text outside screens, 16:9.";
     }
 
     // Support for Gemini Image Models (Nano Banana)
@@ -985,8 +985,8 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
             promptSuffix = ". Editorial financial newspaper illustration style, watercolor and ink on parchment paper, visible textures, no photorealism, no 3D effects, NO TEXT, NO WRITING, NO LETTERS, clean background.";
         } else if (environment === 'vortexis') {
             promptSuffix = objectOnly
-                ? ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, smooth matte materials, NO people, NO silhouettes, NO humans, objects and environments only, NO floating text, NO overlay labels, clean minimalist. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI. All objects MUST be correctly and realistically scaled."
-                : ". Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette, featureless solid-colored silhouettes — police/law enforcement in PURE BLUE, suspects/criminals in PURE RED, civilians in BLACK. Smooth matte materials, clean minimalist. All objects proportional to human figures. Monitor and screen displays MUST show realistic Windows or Microsoft Office UI. NO floating text, NO overlay labels outside screens.";
+                ? ". Unity 3D isometric render, Se7en meets Tron Legacy aesthetic, smooth matte surfaces, pitch-black edges from a single named light source, no people, no silhouettes, objects only, monitor screens show realistic Windows UI, no floating text outside screens, 16:9."
+                : ". Unity 3D isometric render, Se7en meets Tron Legacy aesthetic, smooth matte silhouette figures — police/law enforcement SOLID BLUE, suspects/criminals SOLID RED, civilians SOLID BLACK, no faces no texture, single named light source creating natural edge darkness, monitor screens show realistic Windows UI, no floating text outside screens, 16:9.";
         }
 
         console.log(`   🎨 Suffix: ${environment === 'editorial-illustration' ? 'ILLUSTRATION' : environment === 'vortexis' ? 'VORTEXIS' : 'PHOTOREALISTIC'}`);
@@ -1377,38 +1377,59 @@ app.post('/api/scene-studio/analyze-image', async (req, res) => {
 • 16:9 cinematic framing`;
 
         if (environment === 'vortexis') {
-            cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
+            cinematographerIdentity = `You are the VORTEXIS visual director. Your aesthetic is the love child of Se7en (1995) and Tron Legacy — crime documentary precision meets cold digital minimalism. Every frame you design is a Unity 3D isometric render: matte plastic surfaces, pitch-black edges, a single pool of cool white or amber light illuminating the center of the scene. No faces. No textures. Pure geometry and color telling the story.`;
+
             if (hasHuman) {
-                initialInstruction = `This scene involves human subjects. Render ALL humans as featureless, solid-colored silhouettes — NEVER use realistic human details, faces, or textures. Use ROLE-BASED silhouette colors: law enforcement / police / agents / authorities = PURE BLUE silhouettes. Suspects / criminals / targets / victims = PURE RED silhouettes. Neutral civilians = BLACK silhouettes. If only one type of person is present, use the matching color for their role.`;
-                styleRules = `• 60–80 words maximum
-• Unity 3D engine render style
-• True isometric orthographic camera angle
-• Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
-• ROLE-BASED silhouette colors — police/agents/law enforcement = PURE BLUE, suspects/criminals/targets = PURE RED, civilians = BLACK. Use the correct color for each figure's role
-• SCALE IS CRITICAL: all objects must be proportional to the human figures — a monitor is desktop-sized (roughly head-height), a desk is waist-height, a door is full standing-height. NEVER make any object larger than a real human would encounter it
-• If the scene involves an arrest, raid, or confrontation — show the blue officer figures physically restraining or approaching the red suspect figure
-• If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the interface appears ON the monitor screen
-• BANNED: floating screens, giant wall-mounted displays, oversized monitors, UI panels projected on walls, holograms
-• Monitor and screen displays MUST show realistic Windows or Microsoft Office UI — visible windows, menus, or browser interfaces
-• All props must be real, physical, correctly-scaled objects in a believable room
-• Exactly depict the literal actions described in the script
-• Clean, minimalist environments with smooth matte materials
-• NO floating text, NO overlay labels, NO typography outside of screen displays
-• 16:9 aspect ratio`;
+                initialInstruction = `This scene has human subjects. Every human is a smooth, featureless, solid-colored matte 3D silhouette — no faces, no clothing detail, no texture. Silhouette color encodes role: law enforcement / police / agents / authorities = SOLID BLUE. Suspects / criminals / targets = SOLID RED. Neutral civilians = SOLID BLACK. Describe each figure's exact position in the frame — foreground left, background right, centre doorway — so the color is locked to a specific spatial location.`;
+
+                styleRules = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CAMERA ANGLE — choose the ONE angle that best serves the power dynamic of this scene:
+• STREET-LEVEL WIDE — camera low and far back, full building facade, figures small near a door or vehicle. Use for: raids, arrests, arrivals, departures.
+• HIGH OBLIQUE — camera elevated 65°, pulled back, entire room visible from above and to the side. Use for: surveillance, tracking, large operations, server rooms.
+• TRUE ISOMETRIC — camera at 45° horizontal, 35° elevation, orthographic. Use for: desk work, data, single person in a controlled space.
+• GOD'S EYE TOP-DOWN — camera directly overhead 90°. Use for: maps, movement paths, territory, scale of operation.
+• DIORAMA WIDE — camera at 25° elevation looking into the open face of the room like a cut-open dollhouse. Use for: isolation, one figure in a large empty space.
+• THREE-QUARTER WIDE — ground-level, figures facing camera symmetrically. Use for: confrontations, lineups, formal settings, courtrooms.
+• SURVEILLANCE CORNER — camera pushed into a high corner of the room, wide diagonal view. Use for: interrogations, back-room deals, anything that should feel watched.
+Never go closer than a mid-shot. Never frame tighter than two figures and their immediate environment.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LIGHTING — describe the light source, not the effect:
+Name one specific light source that creates natural darkness at the edges: overhead work lamp casting a pool on the desk, single bare bulb in a hallway, pre-dawn grey light through frosted glass, sodium street lamp through a window. The darkness at the edges is a consequence of the light source, not a separate instruction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCALE — all objects proportional to human figures:
+A door reaches a figure's full height. A desk reaches a figure's waist. A monitor sits at a seated figure's eye level. A chair is seat-height. Name specific real-world objects at their correct size — this is the only scale instruction needed.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCREEN DISPLAYS — if a computer monitor appears in the scene:
+Describe its screen content specifically: a Windows desktop with open spreadsheet, a browser showing a news article, a file explorer with folder tree. This is the only text permitted in the frame.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WORD COUNT: 80–110 words. Spend them on: shot type + figure positions + colors + physical action + one named light source + two named room surfaces. No adjectives that don't add spatial information.`;
+
             } else {
-                initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
-                styleRules = `• 60–80 words maximum
-• Unity 3D engine render style
-• True isometric orthographic camera angle
-• Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
-• NO people, NO silhouettes — objects and environments only
-• BANNED: floating screens, giant wall-mounted displays, oversized UI panels, holograms — these are not real and must NEVER appear
-• All objects must be physical, real-world, desk- or room-sized
-• Monitor and screen displays MUST show realistic Windows or Microsoft Office UI — visible windows, menus, spreadsheets, or browser interfaces rendered on the screen
-• Exactly depict the literal objects described in the script
-• Clean, minimalist environments with smooth matte materials
-• NO floating text, NO overlay labels, NO typography outside of screen displays
-• 16:9 aspect ratio`;
+                initialInstruction = `This scene has no human subjects — describe only the specific physical objects and environment from the script. No people, no silhouettes of any kind.`;
+
+                styleRules = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CAMERA ANGLE — choose the ONE angle that best reveals the objects and their story:
+• TRUE ISOMETRIC — camera 45° horizontal, 35° elevation, orthographic. Use for: single hero object on a desk or surface, documents, devices.
+• HIGH OBLIQUE WIDE — camera elevated 65°, full room visible. Use for: rooms with multiple objects, crime scenes, server rooms.
+• DIORAMA WIDE — camera 25° elevation, open-face room. Use for: empty spaces, architecture, isolation.
+• GOD'S EYE TOP-DOWN — camera directly overhead. Use for: spread of documents, evidence laid out, maps, multiple objects arranged on a surface.
+• STREET-LEVEL WIDE — camera low and far, full exterior. Use for: buildings, vehicles, outdoor locations.
+Never frame tighter than the object and its immediate environment together.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LIGHTING — describe the light source, not the effect:
+Name one specific light source: desk lamp casting warm amber on a document, overhead fluorescent tube washing a room in cool white, daylight through venetian blinds laying shadow bars across the floor, red LED indicator light in a dark server rack. The darkness comes from the light source being specific.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCREEN DISPLAYS — if a monitor appears:
+Describe its screen content specifically: a Windows desktop, a spreadsheet, a browser window. Name what is on the screen. This is the only text permitted in the frame.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WORD COUNT: 50–70 words. Spend them on: shot type + hero object description + its state or contents + one named light source + two named room surfaces. No filler adjectives.`;
             }
         } else if (environment === 'editorial-illustration') {
             cinematographerIdentity = "You are an editorial illustration director. You write image prompts for newspaper-style watercolor and ink illustrations.";
@@ -1438,18 +1459,21 @@ Your prompt MUST open with the EXACT subject from the scene — the specific obj
 • The viewer must be able to identify the story from the image alone.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-THREE-STEP METHOD (follow in order)
+FOUR-STEP METHOD (follow in order — this is your sentence structure)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1 — NAME THE SUBJECT
-The ONE specific object, place, or silhouette from THIS scene. Make it concrete and named.
-This is your opening clause — begin the prompt here.
+STEP 1 — DECLARE THE SHOT TYPE
+Open with the camera angle name and framing. This is your first clause.
+Example: "Street-level wide shot:" or "High oblique aerial view:" or "True isometric orthographic:"
 
-STEP 2 — DESCRIBE ITS STATE OR ACTION
-What is it doing, showing, or conveying? Be literal to the script.
+STEP 2 — PLACE THE SUBJECT(S) IN THE FRAME
+Name every key figure or object with its exact position: "two blue officer silhouettes in the foreground left", "one red silhouette standing in the centre doorway", "a wooden desk in the lower-right quadrant". Position = story.
 
-STEP 3 — SET THE ENVIRONMENT AND ATMOSPHERE
-Room type, lighting quality, depth of field, color temperature, surface materials.
-One emotional quality: tension, isolation, dread, secrecy, discovery, betrayal, urgency.
+STEP 3 — STATE THE ACTION OR CONDITION
+What is happening, physically and literally. "blue figures gripping the arms of the red figure", "red silhouette seated facing a monitor showing a Windows spreadsheet", "documents spread across the floor surface".
+
+STEP 4 — LIGHT SOURCE AND TWO SURFACES
+Name one real light source and two named room surfaces. The darkness is a consequence of the light.
+Example: "pre-dawn grey light through frosted glass panel beside the door, laminate floor, painted plaster walls".
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STYLE RULES
