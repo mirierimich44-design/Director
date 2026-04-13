@@ -1688,16 +1688,6 @@ const ProjectDirectorView: React.FC = () => {
                                                                             />
                                                                         </Tooltip>
                                                                     )}
-                                                                    {(scene as any).alternativeTemplate && (
-                                                                        <Tooltip title={`Gemini's alternative: ${(scene as any).alternativeTemplate}`}>
-                                                                            <Chip
-                                                                                size="small"
-                                                                                label={`alt: ${(scene as any).alternativeTemplate}`}
-                                                                                onClick={() => !isLocked && handleChangeTemplate(chapter.id, idx, (scene as any).alternativeTemplate)}
-                                                                                sx={{ fontSize: '0.58rem', fontFamily: 'monospace', bgcolor: 'rgba(201,169,97,0.07)', color: '#888', cursor: isLocked ? 'default' : 'pointer', border: '1px dashed rgba(201,169,97,0.3)', '&:hover': { bgcolor: isLocked ? undefined : 'rgba(201,169,97,0.15)', color: isLocked ? undefined : 'var(--accent-gold)' } }}
-                                                                            />
-                                                                        </Tooltip>
-                                                                    )}
                                                                     {needsImages(scene) && (
                                                                         <Chip size="small" label="⚠ Needs Images" sx={{ ml: 1, bgcolor: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid #f59e0b', fontWeight: 700, fontSize: '0.65rem' }} />
                                                                     )}
@@ -1714,6 +1704,29 @@ const ProjectDirectorView: React.FC = () => {
                                                                         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic', fontSize: '0.75rem', lineHeight: 1.2 }}>
                                                                             {(scene as any).routing_reason}
                                                                         </Typography>
+                                                                    </Box>
+                                                                )}
+
+                                                                {scene.type === 'TEMPLATE' && (scene as any).alternativeTemplate && !isLocked && (
+                                                                    <Box sx={{ mb: 1, p: 1.5, bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, border: '1px dashed rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                                                                        <Box>
+                                                                            <Typography variant="caption" sx={{ color: '#666', display: 'block', fontWeight: 'bold', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: 1, mb: 0.3 }}>
+                                                                                Gemini's Alternative Template
+                                                                            </Typography>
+                                                                            <Typography variant="caption" sx={{ color: '#aaa', fontFamily: 'monospace', fontSize: '0.72rem' }}>
+                                                                                {(scene as any).alternativeTemplate}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                        <Button
+                                                                            size="small"
+                                                                            variant="outlined"
+                                                                            startIcon={<SwapTemplateIcon />}
+                                                                            onClick={() => handleChangeTemplate(chapter.id, idx, (scene as any).alternativeTemplate)}
+                                                                            disabled={scene.renderStatus === 'rendering'}
+                                                                            sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap', color: '#aaa', borderColor: 'rgba(255,255,255,0.15)', '&:hover': { borderColor: 'var(--accent-gold)', color: 'var(--accent-gold)' } }}
+                                                                        >
+                                                                            Use This
+                                                                        </Button>
                                                                     </Box>
                                                                 )}
 

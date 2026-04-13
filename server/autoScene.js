@@ -54,7 +54,7 @@ const TEMPLATE_CATEGORIES = {
     templates: ['07-comparisonchart-dual', '112-comparison-table', '99-before-after-split', '09-split-2panel', '10-split-3panel', '11-split-topbottom', '12-split-diagonal', '13-split-percentage', '64-split-quadrant', '65-split-spotlight', '66-split-overlay', '67-split-morph', '68-split-reveal-wipe', '152-asset-comparison-slope']
   },
   FINANCIAL: {
-    desc: 'Corporate earnings reports, quarterly results (EPS/revenue beats), profit/loss waterfalls, KPI dashboards for legitimate businesses. DO NOT use for crime statistics, laundered amounts, fraud figures, or victim counts — those belong in STAT or DRAMATIC.',
+    desc: 'Corporate earnings reports, quarterly results (EPS/revenue beats), profit/loss waterfalls, KPI dashboards for legitimate businesses. DO NOT use for crime statistics, laundered amounts, fraud figures, victim counts, market cap losses, regulatory fines, impact statements, or any sentence describing money being erased/wiped/lost — those belong in STAT or DRAMATIC.',
     templates: ['08-waterfall-chart', '144-profit-loss-waterfall', '154-earnings-reveal', '145-kpi-financial-dashboard', '103-dashboard-summary', '147-inflation-erosion', '151-break-even-chart']
   },
   TIMELINE: {
@@ -143,9 +143,10 @@ export { TEMPLATE_CATEGORIES }
 // ─────────────────────────────────────────────
 function inferCategory(script) {
   const s = script.toLowerCase()
-  // Corporate finance only — not crime/fraud money amounts
+  // Corporate finance only — not crime/fraud money amounts, market cap losses, or impact statements
   if (/revenue|profit|loss|earn|quarter|fiscal|eps|dividend|waterfall/.test(s) &&
-      !/launder|fraud|scheme|victim|illegal|stolen|corrupt|crime|criminal/.test(s)) return 'FINANCIAL'
+      !/launder|fraud|scheme|victim|illegal|stolen|corrupt|crime|criminal/.test(s) &&
+      !/wipe|erase|erased|wiped|market cap|market value|regulatory fine|penalty|compensation|impact/.test(s)) return 'FINANCIAL'
   if (/country|countries|nation|region|world|global|continent|geographic/.test(s)) return 'MAP'
   if (/timeline|history|since|before|after|when|year|date|decade/.test(s))         return 'TIMELINE'
   if (/attack|exploit|malware|hack|breach|phish|inject|vulnerab|payload/.test(s))  return 'FLOW'
