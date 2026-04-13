@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useCurrentFrame, interpolate } from 'remotion'
 
 export const AnimationComponent = () => {
