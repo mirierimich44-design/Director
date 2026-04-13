@@ -12,114 +12,106 @@ const sub2 = "SUB_2"
 const sub3 = "SUB_3"
 const verdict = "VERDICT_TEXT"
 
+// Auto-scale font size based on text length so nothing clips
+function statFontSize(text: string): number {
+  if (text.length <= 4) return 88
+  if (text.length <= 8) return 72
+  if (text.length <= 12) return 56
+  return 44
+}
+
 export const AnimationComponent = () => {
   const frame = useCurrentFrame()
 
-  const op1 = interpolate(frame, [0, 30], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  const op1 = interpolate(frame, [0, 25], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const op2 = interpolate(frame, [30, 55], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const op3 = interpolate(frame, [60, 85], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const opConn1 = interpolate(frame, [50, 65], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const opConn2 = interpolate(frame, [80, 95], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const op4 = interpolate(frame, [100, 130], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const ty4 = interpolate(frame, [100, 130], [20, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
-  const op2 = interpolate(frame, [35, 65], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  // Box layout: 3 boxes of 500px with 90px connectors, centered in 1920
+  // Total: 3×500 + 2×90 = 1680, margin = (1920-1680)/2 = 120
+  const BOX_W = 500
+  const CONN_W = 90
+  const LEFT = 120
+  const box1x = LEFT
+  const conn1x = LEFT + BOX_W
+  const box2x = conn1x + CONN_W
+  const conn2x = box2x + BOX_W
+  const box3x = conn2x + CONN_W
+  const BOX_H = 310
+  const BOX_TOP = 200
 
-  const op3 = interpolate(frame, [70, 100], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const opConn1 = interpolate(frame, [63, 78], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const opConn2 = interpolate(frame, [93, 108], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const op4 = interpolate(frame, [115, 140], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const ty4 = interpolate(frame, [115, 140], [20, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
+  const boxStyle = (borderColor: string, opacity: number): React.CSSProperties => ({
+    position: 'absolute',
+    top: BOX_TOP,
+    width: BOX_W,
+    height: BOX_H,
+    backgroundColor: 'rgba(12, 20, 44, 0.95)',
+    backdropFilter: 'blur(20px)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderTop: `4px solid ${borderColor}`,
+    borderRadius: 14,
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
+    opacity,
   })
 
   return (
     <div style={{
       position: 'absolute',
-      top: 0,
-      left: 0,
-      width: 1920,
-      height: 1080,
+      top: 0, left: 0,
+      width: 1920, height: 1080,
       overflow: 'hidden',
       backgroundColor: 'BACKGROUND_COLOR',
     }}>
 
       {/* BOX 1 */}
-      <div style={{
-        position: 'absolute',
-        top: 180,
-        left: 120,
-        width: 480,
-        height: 300,
-        backgroundColor: 'rgba(20, 30, 55, 0.92)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderTop: '3px solid PRIMARY_COLOR',
-        borderRadius: 16,
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-        opacity: op1,
-      }}>
+      <div style={{ ...boxStyle('PRIMARY_COLOR', op1), left: box1x }}>
         <div style={{
           position: 'absolute',
-          top: 48,
-          left: 40,
-          width: 400,
-          height: 120,
+          top: 36, left: 36,
+          width: BOX_W - 72,
+          minHeight: 140,
           color: 'PRIMARY_COLOR',
-          fontSize: 80,
+          fontSize: statFontSize(stat1),
           fontWeight: 900,
-          whiteSpace: 'nowrap',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          lineHeight: 1.05,
           fontFamily: 'monospace',
-          overflow: 'hidden',
+          letterSpacing: '-0.02em',
         }}>
           {stat1}
         </div>
         <div style={{
           position: 'absolute',
-          top: 196,
-          left: 40,
-          width: 400,
-          height: 40,
+          top: 204, left: 36,
+          width: BOX_W - 72,
           color: '#ffffff',
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: 700,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           opacity: 0.9,
         }}>
           {label1}
         </div>
         <div style={{
           position: 'absolute',
-          top: 244,
-          left: 40,
-          width: 400,
-          height: 36,
+          top: 254, left: 36,
+          width: BOX_W - 72,
           color: 'SUPPORT_COLOR',
-          fontSize: 18,
+          fontSize: 15,
           fontWeight: 500,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          opacity: 0.8,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          opacity: 0.75,
         }}>
           {sub1}
         </div>
@@ -128,73 +120,57 @@ export const AnimationComponent = () => {
       {/* CONNECTOR 1 */}
       <div style={{
         position: 'absolute',
-        top: 326,
-        left: 600,
-        width: 120,
-        height: 4,
+        top: BOX_TOP + BOX_H / 2 - 2,
+        left: conn1x,
+        width: CONN_W,
+        height: 3,
         backgroundColor: 'SUPPORT_COLOR',
         opacity: opConn1,
       }} />
 
       {/* BOX 2 */}
-      <div style={{
-        position: 'absolute',
-        top: 180,
-        left: 720,
-        width: 480,
-        height: 300,
-        backgroundColor: 'rgba(20, 30, 55, 0.92)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderTop: '3px solid SECONDARY_COLOR',
-        borderRadius: 16,
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-        opacity: op2,
-      }}>
+      <div style={{ ...boxStyle('SECONDARY_COLOR', op2), left: box2x }}>
         <div style={{
           position: 'absolute',
-          top: 48,
-          left: 40,
-          width: 400,
-          height: 120,
+          top: 36, left: 36,
+          width: BOX_W - 72,
+          minHeight: 140,
           color: 'SECONDARY_COLOR',
-          fontSize: 80,
+          fontSize: statFontSize(stat2),
           fontWeight: 900,
-          whiteSpace: 'nowrap',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          lineHeight: 1.05,
           fontFamily: 'monospace',
-          overflow: 'hidden',
+          letterSpacing: '-0.02em',
         }}>
           {stat2}
         </div>
         <div style={{
           position: 'absolute',
-          top: 196,
-          left: 40,
-          width: 400,
-          height: 40,
+          top: 204, left: 36,
+          width: BOX_W - 72,
           color: '#ffffff',
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: 700,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           opacity: 0.9,
         }}>
           {label2}
         </div>
         <div style={{
           position: 'absolute',
-          top: 244,
-          left: 40,
-          width: 400,
-          height: 36,
+          top: 254, left: 36,
+          width: BOX_W - 72,
           color: 'SUPPORT_COLOR',
-          fontSize: 18,
+          fontSize: 15,
           fontWeight: 500,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          opacity: 0.8,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          opacity: 0.75,
         }}>
           {sub2}
         </div>
@@ -203,73 +179,57 @@ export const AnimationComponent = () => {
       {/* CONNECTOR 2 */}
       <div style={{
         position: 'absolute',
-        top: 326,
-        left: 1200,
-        width: 120,
-        height: 4,
+        top: BOX_TOP + BOX_H / 2 - 2,
+        left: conn2x,
+        width: CONN_W,
+        height: 3,
         backgroundColor: 'SUPPORT_COLOR',
         opacity: opConn2,
       }} />
 
       {/* BOX 3 */}
-      <div style={{
-        position: 'absolute',
-        top: 180,
-        left: 1320,
-        width: 480,
-        height: 300,
-        backgroundColor: 'rgba(20, 30, 55, 0.92)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderTop: '3px solid ACCENT_COLOR',
-        borderRadius: 16,
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-        opacity: op3,
-      }}>
+      <div style={{ ...boxStyle('ACCENT_COLOR', op3), left: box3x }}>
         <div style={{
           position: 'absolute',
-          top: 48,
-          left: 40,
-          width: 400,
-          height: 120,
+          top: 36, left: 36,
+          width: BOX_W - 72,
+          minHeight: 140,
           color: 'ACCENT_COLOR',
-          fontSize: 80,
+          fontSize: statFontSize(stat3),
           fontWeight: 900,
-          whiteSpace: 'nowrap',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          lineHeight: 1.05,
           fontFamily: 'monospace',
-          overflow: 'hidden',
+          letterSpacing: '-0.02em',
         }}>
           {stat3}
         </div>
         <div style={{
           position: 'absolute',
-          top: 196,
-          left: 40,
-          width: 400,
-          height: 40,
+          top: 204, left: 36,
+          width: BOX_W - 72,
           color: '#ffffff',
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: 700,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           opacity: 0.9,
         }}>
           {label3}
         </div>
         <div style={{
           position: 'absolute',
-          top: 244,
-          left: 40,
-          width: 400,
-          height: 36,
+          top: 254, left: 36,
+          width: BOX_W - 72,
           color: 'SUPPORT_COLOR',
-          fontSize: 18,
+          fontSize: 15,
           fontWeight: 500,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          opacity: 0.8,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+          opacity: 0.75,
         }}>
           {sub3}
         </div>
@@ -278,22 +238,23 @@ export const AnimationComponent = () => {
       {/* VERDICT BOX */}
       <div style={{
         position: 'absolute',
-        top: 600,
+        top: 620,
         left: 120,
         width: 1680,
-        height: 72,
-        backgroundColor: 'rgba(20, 30, 55, 0.92)',
+        backgroundColor: 'rgba(12, 20, 44, 0.95)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.15)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderLeft: '4px solid PRIMARY_COLOR',
         color: '#ffffff',
-        borderRadius: 16,
-        padding: '20px 40px',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        borderRadius: 14,
+        padding: '22px 44px',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
         boxSizing: 'border-box',
-        fontSize: 28,
-        fontWeight: 900,
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
+        fontSize: 26,
+        fontWeight: 600,
+        lineHeight: 1.5,
+        whiteSpace: 'normal',
+        wordBreak: 'break-word',
         opacity: op4,
         transform: `translateY(${ty4}px)`,
       }}>
