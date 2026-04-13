@@ -500,39 +500,48 @@ export async function assembleChapterVideo(videoPaths, audioPath, outputPath, op
 // so every export has a unique acoustic fingerprint
 // ─────────────────────────────────────────────────────────────────────────────
 
-function generateRandomVoiceParams() {
+const EQ_PROFILES = {
+    warm:          (rand) => ({ name: 'warm',        lowShelfFreq: 200, lowShelfGain: rand(2, 4),   midFreq: 500,  midGain: rand(1, 2),   highShelfFreq: 8000,  highShelfGain: rand(-2, -1) }),
+    bright:        (rand) => ({ name: 'bright',       lowShelfFreq: 200, lowShelfGain: rand(-2, -1), midFreq: 400,  midGain: rand(-1, 0),  highShelfFreq: 10000, highShelfGain: rand(2, 4)   }),
+    'mid-forward': (rand) => ({ name: 'mid-forward',  lowShelfFreq: 150, lowShelfGain: rand(-1, 0),  midFreq: 1500, midGain: rand(2, 3),   highShelfFreq: 8000,  highShelfGain: rand(0, 2)   }),
+    dark:          (rand) => ({ name: 'dark',         lowShelfFreq: 300, lowShelfGain: rand(2, 4),   midFreq: 3000, midGain: rand(-2, -1), highShelfFreq: 8000,  highShelfGain: rand(-4, -2) }),
+    airy:          (rand) => ({ name: 'airy',         lowShelfFreq: 200, lowShelfGain: rand(0, 2),   midFreq: 2000, midGain: rand(-1, 0),  highShelfFreq: 12000, highShelfGain: rand(3, 5)   }),
+};
+
+const ROOM_PRESETS = {
+    none:   null,
+    subtle: { delays: '18', decay: '0.08' },
+    medium: { delays: '35', decay: '0.11' },
+    large:  { delays: '55', decay: '0.14' },
+};
+
+function generateRandomVoiceParams(settings = {}) {
     const rand = (min, max) => min + Math.random() * (max - min);
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
-    // Pitch: ±0.8–2.5 semitones, never 0
-    const pitchSign = Math.random() > 0.5 ? 1 : -1;
-    const pitchSemitones = pitchSign * rand(0.8, 2.5);
+    // Pitch: configurable range and direction
+    const pitchMin = settings.pitchMin ?? 0.8;
+    const pitchMax = settings.pitchMax ?? 2.5;
+    const dir = settings.pitchDirection || 'random';
+    const pitchSign = dir === 'up' ? 1 : dir === 'down' ? -1 : (Math.random() > 0.5 ? 1 : -1);
+    const pitchSemitones = pitchSign * rand(pitchMin, pitchMax);
 
-    // Speed micro-variation ±1–4% (too subtle to hear, changes fingerprint)
+    // Speed micro-variation
     const speedVariation = rand(0.97, 1.04);
 
-    // EQ character profiles — each gives the voice a distinct tonal identity
-    const eqProfiles = [
-        { name: 'warm',         lowShelfFreq: 200,  lowShelfGain: rand(2, 4),    midFreq: 500,   midGain: rand(1, 2),    highShelfFreq: 8000,  highShelfGain: rand(-2, -1) },
-        { name: 'bright',       lowShelfFreq: 200,  lowShelfGain: rand(-2, -1),  midFreq: 400,   midGain: rand(-1, 0),   highShelfFreq: 10000, highShelfGain: rand(2, 4)   },
-        { name: 'mid-forward',  lowShelfFreq: 150,  lowShelfGain: rand(-1, 0),   midFreq: 1500,  midGain: rand(2, 3),    highShelfFreq: 8000,  highShelfGain: rand(0, 2)   },
-        { name: 'dark',         lowShelfFreq: 300,  lowShelfGain: rand(2, 4),    midFreq: 3000,  midGain: rand(-2, -1),  highShelfFreq: 8000,  highShelfGain: rand(-4, -2) },
-        { name: 'airy',         lowShelfFreq: 200,  lowShelfGain: rand(0, 2),    midFreq: 2000,  midGain: rand(-1, 0),   highShelfFreq: 12000, highShelfGain: rand(3, 5)   },
-    ];
-    const eqProfile = pick(eqProfiles);
+    // EQ profile — pinned or random
+    const eqKey = settings.eqProfile && settings.eqProfile !== 'random' ? settings.eqProfile : pick(Object.keys(EQ_PROFILES));
+    const eqProfile = EQ_PROFILES[eqKey] ? EQ_PROFILES[eqKey](rand) : EQ_PROFILES.warm(rand);
 
-    // Small room echo — none or subtle ambience
-    const roomProfiles = [
-        null,
-        { delays: '18', decay: '0.08' },
-        { delays: '28', decay: '0.10' },
-        { delays: '40', decay: '0.12' },
-        { delays: '55', decay: '0.14' },
-    ];
-    const room = pick(roomProfiles);
+    // Room echo — pinned or random
+    const roomKey = settings.roomEcho && settings.roomEcho !== 'random'
+        ? settings.roomEcho
+        : pick(['none', 'none', 'subtle', 'medium', 'large']); // weight toward drier sound
+    const room = ROOM_PRESETS[roomKey] ?? null;
 
-    // Noise floor amplitude (~−60 to −55 dB) — imperceptible but breaks AI fingerprint
-    const noiseAmplitude = rand(0.0006, 0.0014);
+    // Noise floor: configurable in dB (-65 to -50), default ~-57 dB
+    const noiseDb = settings.noiseDb ?? -57;
+    const noiseAmplitude = Math.pow(10, noiseDb / 20);
 
     return { pitchSemitones, speedVariation, eqProfile, room, noiseAmplitude };
 }
@@ -541,8 +550,11 @@ function generateRandomVoiceParams() {
  * Randomize a voiceover's acoustic fingerprint.
  * Applies pitch shift, speed micro-variation, EQ character, optional room echo,
  * and a sub-threshold noise floor — each run produces a unique output.
+ * @param {string} inputPath
+ * @param {string|null} originalName
+ * @param {object} settings  Optional overrides: pitchMin, pitchMax, pitchDirection, eqProfile, roomEcho, noiseDb
  */
-export async function randomizeVoice(inputPath, originalName = null) {
+export async function randomizeVoice(inputPath, originalName = null, settings = {}) {
     await ensureProcessedDir();
 
     const outputId = uuidv4().slice(0, 6);
@@ -554,7 +566,7 @@ export async function randomizeVoice(inputPath, originalName = null) {
         outputPath = join(processedDir, `${baseName}_randomized_${outputId}.mp3`);
     } catch (_) {}
 
-    const params = generateRandomVoiceParams();
+    const params = generateRandomVoiceParams(settings);
     const filters = [];
 
     // 1. Pitch shift without changing duration:

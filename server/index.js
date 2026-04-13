@@ -1573,7 +1573,7 @@ app.post('/api/projects/:pid/assemble', async (req, res) => {
 
 app.post('/api/voiceover/randomize', async (req, res) => {
     try {
-        const { filePath, originalName } = req.body;
+        const { filePath, originalName, settings } = req.body;
         if (!filePath) return res.status(400).json({ error: 'filePath is required' });
 
         // Resolve safely within the public directory
@@ -1581,7 +1581,7 @@ app.post('/api/voiceover/randomize', async (req, res) => {
         try { await fs.access(resolved); } catch { return res.status(404).json({ error: 'File not found' }); }
 
         console.log(`   🎲 Randomizing voice: ${filePath}`);
-        const result = await randomizeVoice(resolved, originalName || null);
+        const result = await randomizeVoice(resolved, originalName || null, settings || {});
         res.json(result);
     } catch (err) {
         console.error('❌ randomize-voice error:', err.message);

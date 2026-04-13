@@ -4,7 +4,7 @@ import {
     LinearProgress, CircularProgress, Slider, Switch, FormControlLabel,
     Card, CardContent, IconButton, Tooltip, Chip,
     Dialog, DialogTitle, DialogContent, DialogActions,
-    Alert, Divider, Tabs, Tab, Badge
+    Alert, Divider, Tabs, Tab, Badge, Select, MenuItem
 } from '@mui/material';
 import {
     CloudUpload as UploadIcon,
@@ -39,6 +39,7 @@ interface ProcessedFile {
     silenceRemovedPercent?: string;
     status: 'pending' | 'processing' | 'completed' | 'error';
     error?: string;
+    randomParams?: { pitch: string; speed: string; eq: string; room: string; noise: string };
 }
 
 interface ProcessingOptions {
@@ -53,6 +54,15 @@ interface ProcessingOptions {
     deEss: boolean;
 }
 
+interface RandomizeSettings {
+    pitchMin: number;       // semitones (0–5)
+    pitchMax: number;       // semitones (0–5)
+    pitchDirection: 'up' | 'down' | 'random';
+    eqProfile: 'warm' | 'bright' | 'mid-forward' | 'dark' | 'airy' | 'random';
+    roomEcho: 'none' | 'subtle' | 'medium' | 'large' | 'random';
+    noiseDb: number;        // noise floor dB (-65 to -50)
+}
+
 const defaultOptions: ProcessingOptions = {
     removeSilences: true,
     enhance: true,
@@ -65,6 +75,15 @@ const defaultOptions: ProcessingOptions = {
     deEss: true
 };
 
+const defaultRandomizeSettings: RandomizeSettings = {
+    pitchMin: 0.8,
+    pitchMax: 2.5,
+    pitchDirection: 'random',
+    eqProfile: 'random',
+    roomEcho: 'random',
+    noiseDb: -57,
+};
+
 const AudioProcessorView: React.FC = () => {
     const [files, setFiles] = useState<ProcessedFile[]>([]);
     const [processedFiles, setProcessedFiles] = useState<ProcessedFile[]>([]);
@@ -75,6 +94,7 @@ const AudioProcessorView: React.FC = () => {
     const [isMerging, setIsMerging] = useState(false);
     const [processingProgress, setProcessingProgress] = useState(0);
     const [options, setOptions] = useState<ProcessingOptions>(defaultOptions);
+    const [randomizeSettings, setRandomizeSettings] = useState<RandomizeSettings>(defaultRandomizeSettings);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [playingId, setPlayingId] = useState<string | null>(null);
     const [randomizingId, setRandomizingId] = useState<string | null>(null);
@@ -222,7 +242,7 @@ const AudioProcessorView: React.FC = () => {
             const response = await fetch('/api/voiceover/randomize', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filePath: file.url, originalName: sourceName })
+                body: JSON.stringify({ filePath: file.url, originalName: sourceName, settings: randomizeSettings })
             });
             const data = await response.json();
             if (data.success) {
@@ -232,7 +252,8 @@ const AudioProcessorView: React.FC = () => {
                     filename: data.outputUrl.split('/').pop() || '',
                     originalFilename: displayName,
                     url: data.outputUrl,
-                    status: 'completed'
+                    status: 'completed',
+                    randomParams: data.params,
                 }]);
             }
         } catch (error) {
@@ -770,6 +791,26 @@ const AudioProcessorView: React.FC = () => {
                                             >
                                                 {playingId === file.id ? <PauseIcon /> : <PlayIcon />}
                                             </IconButton>
+                                            <Tooltip title={randomizingId === file.id ? 'Randomizing…' : 'Randomize — unique pitch, EQ & room'}>
+                                                <span>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => randomizeFile(file)}
+                                                        disabled={randomizingId !== null}
+                                                        sx={{
+                                                            bgcolor: 'var(--bg-secondary)',
+                                                            color: 'var(--accent-gold)',
+                                                            opacity: randomizingId !== null && randomizingId !== file.id ? 0.4 : 1,
+                                                            '&:hover': { bgcolor: 'rgba(255,170,0,0.15)' }
+                                                        }}
+                                                    >
+                                                        {randomizingId === file.id
+                                                            ? <CircularProgress size={18} sx={{ color: 'var(--accent-gold)' }} />
+                                                            : <RandomizeIcon />
+                                                        }
+                                                    </IconButton>
+                                                </span>
+                                            </Tooltip>
                                             <IconButton
                                                 size="small"
                                                 component="a"
@@ -784,6 +825,54 @@ const AudioProcessorView: React.FC = () => {
                                                 onClick={() => deleteMergedFile(file.filename, file.id)}
                                                 sx={{ bgcolor: 'var(--bg-secondary)', color: '#f44336' }}
                                             >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+            )}
+
+            {/* Randomized Exports Section */}
+            {randomizedFiles.length > 0 && (
+                <Paper sx={{ p: 3, mt: 4, bgcolor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+                        <Typography variant="h6" sx={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <RandomizeIcon sx={{ color: 'var(--accent-gold)' }} />
+                            Randomized Exports ({randomizedFiles.length})
+                        </Typography>
+                    </Stack>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 2 }}>
+                        {randomizedFiles.map(file => (
+                            <Box key={file.id}>
+                                <Card sx={{ bgcolor: 'var(--bg-primary)', border: '1px solid var(--border-color)', '&:hover': { borderColor: 'var(--accent-gold)' } }}>
+                                    <CardContent>
+                                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                                            <RandomizeIcon sx={{ color: 'var(--accent-gold)', fontSize: 18 }} />
+                                            <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexGrow: 1 }}>
+                                                {file.originalFilename || file.filename}
+                                            </Typography>
+                                        </Stack>
+                                        {file.randomParams && (
+                                            <Box sx={{ mb: 1.5, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                <Chip size="small" label={`pitch ${file.randomParams.pitch}`} sx={{ bgcolor: 'rgba(59,130,246,0.1)', color: '#60a5fa', fontSize: '0.65rem', height: 20 }} />
+                                                <Chip size="small" label={`EQ ${file.randomParams.eq}`} sx={{ bgcolor: 'rgba(201,169,97,0.1)', color: 'var(--accent-gold)', fontSize: '0.65rem', height: 20 }} />
+                                                <Chip size="small" label={`room ${file.randomParams.room}`} sx={{ bgcolor: 'rgba(74,222,128,0.1)', color: '#4ade80', fontSize: '0.65rem', height: 20 }} />
+                                                <Chip size="small" label={`noise ${file.randomParams.noise}`} sx={{ bgcolor: 'rgba(148,163,184,0.1)', color: '#94a3b8', fontSize: '0.65rem', height: 20 }} />
+                                            </Box>
+                                        )}
+                                        <Stack direction="row" spacing={1}>
+                                            <IconButton size="small" onClick={() => togglePlay(file.url, file.id)}
+                                                sx={{ bgcolor: playingId === file.id ? 'var(--accent-gold)' : 'var(--bg-secondary)', color: playingId === file.id ? '#000' : 'var(--text-primary)', '&:hover': { bgcolor: 'var(--accent-gold)', color: '#000' } }}>
+                                                {playingId === file.id ? <PauseIcon /> : <PlayIcon />}
+                                            </IconButton>
+                                            <IconButton size="small" component="a" href={file.url} download sx={{ bgcolor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                                                <DownloadIcon />
+                                            </IconButton>
+                                            <IconButton size="small" onClick={() => deleteRandomizedFile(file.filename, file.id)} sx={{ bgcolor: 'var(--bg-secondary)', color: '#f44336' }}>
                                                 <DeleteIcon />
                                             </IconButton>
                                         </Stack>
@@ -936,13 +1025,113 @@ const AudioProcessorView: React.FC = () => {
                             )}
                         </Box>
 
+                        <Divider sx={{ borderColor: 'var(--border-color)' }} />
+
+                        {/* Randomizer Settings */}
+                        <Box>
+                            <Typography variant="subtitle2" sx={{ color: 'var(--accent-gold)', fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <RandomizeIcon sx={{ fontSize: 16 }} /> Voice Randomizer
+                            </Typography>
+
+                            {/* Pitch */}
+                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 0.5 }}>
+                                Pitch Range: {randomizeSettings.pitchMin.toFixed(1)} – {randomizeSettings.pitchMax.toFixed(1)} semitones
+                            </Typography>
+                            <Slider
+                                value={[randomizeSettings.pitchMin, randomizeSettings.pitchMax]}
+                                onChange={(_, v) => {
+                                    const [min, max] = v as number[];
+                                    setRandomizeSettings(s => ({ ...s, pitchMin: min, pitchMax: max }));
+                                }}
+                                min={0.1}
+                                max={5}
+                                step={0.1}
+                                sx={{ color: 'var(--accent-gold)', mb: 1 }}
+                            />
+                            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', mr: 1 }}>Direction:</Typography>
+                                {(['random', 'up', 'down'] as const).map(d => (
+                                    <Chip
+                                        key={d}
+                                        label={d}
+                                        size="small"
+                                        onClick={() => setRandomizeSettings(s => ({ ...s, pitchDirection: d }))}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            bgcolor: randomizeSettings.pitchDirection === d ? 'var(--accent-gold)' : 'var(--bg-secondary)',
+                                            color: randomizeSettings.pitchDirection === d ? '#000' : 'var(--text-secondary)',
+                                            fontWeight: randomizeSettings.pitchDirection === d ? 700 : 400,
+                                            border: '1px solid var(--border-color)',
+                                        }}
+                                    />
+                                ))}
+                            </Stack>
+
+                            {/* EQ Profile */}
+                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 1 }}>EQ Profile</Typography>
+                            <Stack direction="row" spacing={0.5} flexWrap="wrap" sx={{ mb: 2, gap: 0.5 }}>
+                                {(['random', 'warm', 'bright', 'mid-forward', 'dark', 'airy'] as const).map(p => (
+                                    <Chip
+                                        key={p}
+                                        label={p}
+                                        size="small"
+                                        onClick={() => setRandomizeSettings(s => ({ ...s, eqProfile: p }))}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            bgcolor: randomizeSettings.eqProfile === p ? 'var(--accent-gold)' : 'var(--bg-secondary)',
+                                            color: randomizeSettings.eqProfile === p ? '#000' : 'var(--text-secondary)',
+                                            fontWeight: randomizeSettings.eqProfile === p ? 700 : 400,
+                                            border: '1px solid var(--border-color)',
+                                        }}
+                                    />
+                                ))}
+                            </Stack>
+
+                            {/* Room Echo */}
+                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 1 }}>Room Echo</Typography>
+                            <Stack direction="row" spacing={0.5} sx={{ mb: 2 }}>
+                                {(['random', 'none', 'subtle', 'medium', 'large'] as const).map(r => (
+                                    <Chip
+                                        key={r}
+                                        label={r}
+                                        size="small"
+                                        onClick={() => setRandomizeSettings(s => ({ ...s, roomEcho: r }))}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            bgcolor: randomizeSettings.roomEcho === r ? 'var(--accent-gold)' : 'var(--bg-secondary)',
+                                            color: randomizeSettings.roomEcho === r ? '#000' : 'var(--text-secondary)',
+                                            fontWeight: randomizeSettings.roomEcho === r ? 700 : 400,
+                                            border: '1px solid var(--border-color)',
+                                        }}
+                                    />
+                                ))}
+                            </Stack>
+
+                            {/* Noise Floor */}
+                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 0.5 }}>
+                                Noise Floor: {randomizeSettings.noiseDb} dB
+                            </Typography>
+                            <Slider
+                                value={randomizeSettings.noiseDb}
+                                onChange={(_, v) => setRandomizeSettings(s => ({ ...s, noiseDb: v as number }))}
+                                min={-65}
+                                max={-50}
+                                step={1}
+                                marks={[{ value: -65, label: '-65 dB' }, { value: -57, label: '-57' }, { value: -50, label: '-50 dB' }]}
+                                sx={{
+                                    color: 'var(--accent-gold)',
+                                    '& .MuiSlider-markLabel': { color: 'var(--text-secondary)', fontSize: 10 }
+                                }}
+                            />
+                        </Box>
+
                         <Alert severity="info" sx={{ bgcolor: 'var(--bg-secondary)' }}>
                             FFmpeg must be installed on the server for audio processing to work.
                         </Alert>
                     </Stack>
                 </DialogContent>
                 <DialogActions sx={{ bgcolor: 'var(--bg-secondary)', p: 2 }}>
-                    <Button onClick={() => setOptions(defaultOptions)} sx={{ color: 'var(--text-secondary)' }}>
+                    <Button onClick={() => { setOptions(defaultOptions); setRandomizeSettings(defaultRandomizeSettings); }} sx={{ color: 'var(--text-secondary)' }}>
                         Reset to Defaults
                     </Button>
                     <Button
