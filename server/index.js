@@ -18,7 +18,7 @@ import archiver from 'archiver';
 import { getSettings, updateSettings, getRawSettings, MODEL_OPTIONS, getGoogleKey, getImageModel, getVideoModel, withGoogleKeyFallback } from './settings.js';
 import videoGeneratorRouter from './videoGenerator.js';
 import { processVoiceover, processBatch, concatenateAudio, changeSpeed, assembleChapterVideo, randomizeVoice } from './services/audioProcessor.js';
-import { googleAI } from './services/llm.js';
+import { googleAI, getGEMINI_MODEL } from './services/llm.js';
 import { generateImage as generateGeminiImage } from './services/gemini.js';
 import { renderVideo as renderRemotion, warmupBundler, purgeOldTempDirs } from './engines/remotion/renderer.js';
 import {
@@ -930,6 +930,36 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
 
         const imageModel = getImageModel() || 'imagen-4.0-generate-001';
 
+        // For Vortexis: rewrite the raw script sentence into a proper visual description
+        // so object-focused scripts (e.g. "A phone rings") don't generate unwanted figures.
+        let visualPrompt = prompt;
+        if (environment === 'vortexis') {
+            try {
+                const rewriteModel = googleAI.getGenerativeModel({ model: getGEMINI_MODEL() });
+                const rewriteResult = await rewriteModel.generateContent({
+                    contents: [{ role: 'user', parts: [{ text: `You are a visual director writing image prompts for isometric 3D renders.
+
+Script: "${prompt}"
+
+Write a single concise visual description (max 25 words) of what should appear in the image.
+RULES:
+- Focus on the PRIMARY OBJECT in the scene, not on people
+- Only include a human figure if a named or clearly described person is the explicit subject
+- If the action is "someone picks up", "a person walks by", etc. — show ONLY the object, not the person
+- Describe the object, its placement, and any relevant props
+- No adjectives about style or lighting — just the scene content
+- Reply with ONLY the visual description, nothing else.` }] }]
+                });
+                const rewritten = rewriteResult.response.text().trim();
+                if (rewritten) {
+                    console.log(`   ✏️ Vortexis prompt rewrite: "${prompt.substring(0, 60)}" → "${rewritten.substring(0, 80)}"`);
+                    visualPrompt = rewritten;
+                }
+            } catch (rewriteErr) {
+                console.warn(`   ⚠️ Vortexis prompt rewrite failed, using raw prompt: ${rewriteErr.message}`);
+            }
+        }
+
         // Choose prompt suffix based on environment
         let promptSuffix = ". Cinematic 16:9 documentary style, photorealistic, no humans, no text overlays.";
         if (environment === 'editorial-illustration') {
@@ -942,7 +972,7 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
 
         // Support for Gemini Image Models (Nano Banana)
         if (imageModel.startsWith('gemini-')) {
-            const imgResult = await generateGeminiImage(`${prompt}${promptSuffix}`, { model: imageModel });
+            const imgResult = await generateGeminiImage(`${visualPrompt}${promptSuffix}`, { model: imageModel });
             if (imgResult.success) {
                 return res.json({ success: true, url: imgResult.url });
             }
@@ -950,12 +980,12 @@ app.post('/api/auto-scene/render-3d', async (req, res) => {
         }
 
         const imgBody = {
-            instances: [{ prompt: `${prompt}${promptSuffix}` }],
+            instances: [{ prompt: `${visualPrompt}${promptSuffix}` }],
             parameters: { sampleCount: 1, aspectRatio: '16:9' },
         };
 
         console.log(`   📡 Calling Imagen API: ${imageModel}`);
-        console.log(`   📋 Prompt: ${prompt.substring(0, 100)}...`);
+        console.log(`   📋 Prompt: ${visualPrompt.substring(0, 100)}...`);
 
         let response;
         let lastError;
