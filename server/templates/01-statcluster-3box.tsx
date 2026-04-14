@@ -49,14 +49,14 @@ export const AnimationComponent = () => {
     top: BOX_TOP,
     width: BOX_W,
     height: BOX_H,
-    backgroundColor: 'rgba(12, 20, 44, 0.95)',
+    backgroundColor: 'CARD_BG',
     backdropFilter: 'blur(20px)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    border: '1px solid CARD_BORDER',
     borderTop: `4px solid ${borderColor}`,
     borderRadius: 14,
     overflow: 'hidden',
     boxSizing: 'border-box',
-    boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
+    boxShadow: '0 24px 60px SHADOW_COLOR',
     opacity,
   })
 
@@ -91,7 +91,7 @@ export const AnimationComponent = () => {
           position: 'absolute',
           top: 204, left: 36,
           width: BOX_W - 72,
-          color: '#ffffff',
+          color: 'TEXT_COLOR',
           fontSize: 18,
           fontWeight: 700,
           whiteSpace: 'normal',
@@ -129,13 +129,13 @@ export const AnimationComponent = () => {
       }} />
 
       {/* BOX 2 */}
-      <div style={{ ...boxStyle('SECONDARY_COLOR', op2), left: box2x }}>
+      <div style={{ ...boxStyle('PRIMARY_COLOR', op2), left: box2x }}>
         <div style={{
           position: 'absolute',
           top: 36, left: 36,
           width: BOX_W - 72,
           minHeight: 140,
-          color: 'SECONDARY_COLOR',
+          color: 'TEXT_COLOR',
           fontSize: statFontSize(stat2),
           fontWeight: 900,
           whiteSpace: 'normal',
@@ -150,7 +150,7 @@ export const AnimationComponent = () => {
           position: 'absolute',
           top: 204, left: 36,
           width: BOX_W - 72,
-          color: '#ffffff',
+          color: 'TEXT_COLOR',
           fontSize: 18,
           fontWeight: 700,
           whiteSpace: 'normal',
@@ -188,13 +188,13 @@ export const AnimationComponent = () => {
       }} />
 
       {/* BOX 3 */}
-      <div style={{ ...boxStyle('ACCENT_COLOR', op3), left: box3x }}>
+      <div style={{ ...boxStyle('PRIMARY_COLOR', op3), left: box3x }}>
         <div style={{
           position: 'absolute',
           top: 36, left: 36,
           width: BOX_W - 72,
           minHeight: 140,
-          color: 'ACCENT_COLOR',
+          color: 'PRIMARY_COLOR',
           fontSize: statFontSize(stat3),
           fontWeight: 900,
           whiteSpace: 'normal',
@@ -209,7 +209,7 @@ export const AnimationComponent = () => {
           position: 'absolute',
           top: 204, left: 36,
           width: BOX_W - 72,
-          color: '#ffffff',
+          color: 'TEXT_COLOR',
           fontSize: 18,
           fontWeight: 700,
           whiteSpace: 'normal',
@@ -241,14 +241,14 @@ export const AnimationComponent = () => {
         top: 620,
         left: 120,
         width: 1680,
-        backgroundColor: 'rgba(12, 20, 44, 0.95)',
+        backgroundColor: 'CARD_BG',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '1px solid CARD_BORDER',
         borderLeft: '4px solid PRIMARY_COLOR',
-        color: '#ffffff',
+        color: 'TEXT_COLOR',
         borderRadius: 14,
         padding: '22px 44px',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+        boxShadow: '0 20px 50px SHADOW_COLOR',
         boxSizing: 'border-box',
         fontSize: 26,
         fontWeight: 600,

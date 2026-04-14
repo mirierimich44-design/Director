@@ -32,7 +32,7 @@ export const AnimationComponent = () => {
         <div style={{ opacity: headerOp, marginBottom: 40 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 8 }}>
              <div style={{ width: 8, height: 40, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4 }} />
-             <div style={{ fontSize: 44, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{title}</div>
+             <div style={{ fontSize: 44, fontWeight: 900, color: 'TEXT_COLOR', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{title}</div>
           </div>
           <div style={{ color: 'SUPPORT_COLOR', fontSize: 18, fontWeight: 700, letterSpacing: '0.1em', marginLeft: 28, opacity: 0.5 }}>EXECUTIVE_SUMMARY_DASHBOARD</div>
         </div>
@@ -41,8 +41,8 @@ export const AnimationComponent = () => {
         <div style={{ display: 'flex', gap: 32, marginBottom: 32 }}>
           {/* KPI 1 */}
           <div style={{
-            flex: 1, height: 220, backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(20px)',
-            borderRadius: 24, border: '1px solid rgba(255,255,255,0.08)', borderTop: '4px solid PRIMARY_COLOR',
+            flex: 1, height: 220, backgroundColor: 'CARD_BG', backdropFilter: 'blur(20px)',
+            borderRadius: 24, border: '1px solid CARD_BORDER', borderTop: '4px solid PRIMARY_COLOR',
             padding: '32px 40px', opacity: kpi1Op, display: 'flex', flexDirection: 'column', justifyContent: 'center'
           }}>
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 8, opacity: 0.6 }}>{kpi1Label}</div>
@@ -51,23 +51,23 @@ export const AnimationComponent = () => {
 
           {/* KPI 2 */}
           <div style={{
-            flex: 1, height: 220, backgroundColor: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(20px)',
-            borderRadius: 24, border: '1px solid rgba(255,255,255,0.08)', borderTop: '4px solid ACCENT_COLOR',
+            flex: 1, height: 220, backgroundColor: 'CARD_BG', backdropFilter: 'blur(20px)',
+            borderRadius: 24, border: '1px solid CARD_BORDER', borderTop: '4px solid PRIMARY_COLOR',
             padding: '32px 40px', opacity: kpi2Op, display: 'flex', flexDirection: 'column', justifyContent: 'center'
           }}>
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 8, opacity: 0.6 }}>{kpi2Label}</div>
-             <div style={{ color: 'ACCENT_COLOR', fontSize: 72, fontWeight: 900, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{kpi2Value}</div>
+             <div style={{ color: 'PRIMARY_COLOR', fontSize: 72, fontWeight: 900, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1 }}>{kpi2Value}</div>
           </div>
         </div>
 
         {/* Summary Content Block */}
         <div style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.02)', backdropFilter: 'blur(20px)',
-          borderRadius: 24, border: '1px solid rgba(255,255,255,0.05)', borderLeft: '8px solid PRIMARY_COLOR',
+          backgroundColor: 'CARD_BG', backdropFilter: 'blur(20px)',
+          borderRadius: 24, border: '1px solid CARD_BORDER', borderLeft: '8px solid PRIMARY_COLOR',
           padding: '48px', opacity: summaryOp, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'
         }}>
            <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20, opacity: 0.8 }}>SYSTEM_ANALYSIS_DEBRIEF</div>
-           <div style={{ color: '#fff', fontSize: 26, fontWeight: 500, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
+           <div style={{ color: 'TEXT_COLOR', fontSize: 26, fontWeight: 500, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
               {summary}
            </div>
         </div>
