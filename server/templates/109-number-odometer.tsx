@@ -36,13 +36,11 @@ export const AnimationComponent = () => {
       {/* Center card */}
       <div style={{
         width: 1080,
-        backgroundColor: 'CARD_BG',
-        backdropFilter: 'blur(24px)',
+        backgroundColor: 'PANEL_RIGHT_BG',
         borderRadius: 20,
-        border: '1px solid CARD_BORDER',
+        border: '1px solid CHART_BORDER',
         borderTop: '5px solid PRIMARY_COLOR',
         padding: '72px 80px 64px',
-        boxShadow: '0 32px 80px SHADOW_COLOR',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -101,7 +99,7 @@ export const AnimationComponent = () => {
           <div style={{
             fontSize: 42,
             fontWeight: 700,
-            color: '#ffffff',
+            color: 'PRIMARY_COLOR',
             fontFamily: 'sans-serif',
             letterSpacing: '0.06em',
             textTransform: 'uppercase',

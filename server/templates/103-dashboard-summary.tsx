@@ -41,8 +41,8 @@ export const AnimationComponent = () => {
         <div style={{ display: 'flex', gap: 32, marginBottom: 32 }}>
           {/* KPI 1 */}
           <div style={{
-            flex: 1, height: 220, backgroundColor: 'CARD_BG', backdropFilter: 'blur(20px)',
-            borderRadius: 24, border: '1px solid CARD_BORDER', borderTop: '4px solid PRIMARY_COLOR',
+            flex: 1, height: 220, backgroundColor: 'PANEL_RIGHT_BG',
+            borderRadius: 24, border: '1px solid CHART_BORDER', borderTop: '4px solid PRIMARY_COLOR',
             padding: '32px 40px', opacity: kpi1Op, display: 'flex', flexDirection: 'column', justifyContent: 'center'
           }}>
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 8, opacity: 0.6 }}>{kpi1Label}</div>
@@ -51,8 +51,8 @@ export const AnimationComponent = () => {
 
           {/* KPI 2 */}
           <div style={{
-            flex: 1, height: 220, backgroundColor: 'CARD_BG', backdropFilter: 'blur(20px)',
-            borderRadius: 24, border: '1px solid CARD_BORDER', borderTop: '4px solid PRIMARY_COLOR',
+            flex: 1, height: 220, backgroundColor: 'PANEL_RIGHT_BG',
+            borderRadius: 24, border: '1px solid CHART_BORDER', borderTop: '4px solid PRIMARY_COLOR',
             padding: '32px 40px', opacity: kpi2Op, display: 'flex', flexDirection: 'column', justifyContent: 'center'
           }}>
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 8, opacity: 0.6 }}>{kpi2Label}</div>
@@ -62,12 +62,12 @@ export const AnimationComponent = () => {
 
         {/* Summary Content Block */}
         <div style={{
-          backgroundColor: 'CARD_BG', backdropFilter: 'blur(20px)',
-          borderRadius: 24, border: '1px solid CARD_BORDER', borderLeft: '8px solid PRIMARY_COLOR',
+          backgroundColor: 'PANEL_RIGHT_BG',
+          borderRadius: 24, border: '1px solid CHART_BORDER', borderLeft: '8px solid PRIMARY_COLOR',
           padding: '48px', opacity: summaryOp, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'
         }}>
            <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20, opacity: 0.8 }}>SYSTEM_ANALYSIS_DEBRIEF</div>
-           <div style={{ color: 'TEXT_COLOR', fontSize: 26, fontWeight: 500, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
+           <div style={{ color: 'PRIMARY_COLOR', fontSize: 26, fontWeight: 500, lineHeight: 1.5, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 8, WebkitBoxOrient: 'vertical' }}>
               {summary}
            </div>
         </div>
