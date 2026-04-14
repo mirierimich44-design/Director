@@ -12,35 +12,6 @@ function hexLuminance(hex) {
     return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
-// Shift every channel of a hex color by `amount` (positive = brighter, negative = darker)
-function adjustBrightness(hex, amount) {
-    const r = Math.min(255, Math.max(0, parseInt(hex.slice(1, 3), 16) + amount));
-    const g = Math.min(255, Math.max(0, parseInt(hex.slice(3, 5), 16) + amount));
-    const b = Math.min(255, Math.max(0, parseInt(hex.slice(5, 7), 16) + amount));
-    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-}
-
-// Derive CARD_BG, CARD_BORDER, TEXT_COLOR from existing theme values.
-// These replace hardcoded rgba() values in templates so every theme renders correctly.
-function computeDerivedTokens(theme) {
-    const isDark = hexLuminance(theme.BACKGROUND_COLOR) < 0.15;
-
-    // Card/panel background: slightly above the page background
-    const CARD_BG = isDark
-        ? adjustBrightness(theme.BACKGROUND_COLOR, 15)   // lift dark bg slightly
-        : theme.CHART_BG;                                 // light themes already have white CHART_BG
-
-    // Card border: re-use the per-theme chart border (already tuned per theme)
-    const CARD_BORDER = theme.CHART_BORDER;
-
-    // Main readable text inside cards
-    const TEXT_COLOR = isDark ? '#ffffff' : theme.PRIMARY_COLOR;
-
-    // Box-shadow alpha: heavier on dark, subtle on light
-    const SHADOW_COLOR = isDark ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.12)';
-
-    return { CARD_BG, CARD_BORDER, TEXT_COLOR, SHADOW_COLOR };
-}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -71,11 +42,9 @@ export function fillTemplate(templateName, themeName, contentJson) {
 
   let code = fs.readFileSync(path.join(__dirname, `templates/${resolvedName}.tsx`), 'utf8');
 
-  // Inject Theme (base tokens + computed derived tokens)
+  // Inject Theme
   const theme = themes[themeName] || themes['DARK'];
-  const derived = computeDerivedTokens(theme);
-  const fullTheme = { ...theme, ...derived };
-  Object.entries(fullTheme).forEach(([k, v]) => { if (k !== 'name' && k !== 'description') code = code.split(k).join(v) });
+  Object.entries(theme).forEach(([k, v]) => { if (k !== 'name' && k !== 'description') code = code.split(k).join(v) });
   code = code.split('STADIA_API_KEY').join(getStadiaKey());
 
   // Inject Content — ONLY replace quoted placeholders, never bare identifiers.

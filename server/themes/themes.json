@@ -17,7 +17,11 @@
     "LINE_STROKE": "#888888",
     "GRID_LINE": "#CCCCCC",
     "CHART_BG": "#FFFFFF",
-    "CHART_BORDER": "#DDDDDD"
+    "CHART_BORDER": "#DDDDDD",
+    "CARD_BG": "#FFFFFF",
+    "CARD_BORDER": "#CCCCCC",
+    "TEXT_COLOR": "#0D1B2A",
+    "SHADOW_COLOR": "rgba(0,0,0,0.10)"
   },
   "THREAT": {
     "name": "Threat",
@@ -37,7 +41,11 @@
     "LINE_STROKE": "#FF2222",
     "GRID_LINE": "#FFCCCC",
     "CHART_BG": "#FFFFFF",
-    "CHART_BORDER": "#FFBBBB"
+    "CHART_BORDER": "#FFBBBB",
+    "CARD_BG": "#FFFFFF",
+    "CARD_BORDER": "#FFBBBB",
+    "TEXT_COLOR": "#1A0404",
+    "SHADOW_COLOR": "rgba(180,0,0,0.10)"
   },
   "COLD": {
     "name": "Cold",
@@ -57,7 +65,11 @@
     "LINE_STROKE": "#00CCEE",
     "GRID_LINE": "#BBCCE0",
     "CHART_BG": "#FFFFFF",
-    "CHART_BORDER": "#BBCCE0"
+    "CHART_BORDER": "#BBCCE0",
+    "CARD_BG": "#FFFFFF",
+    "CARD_BORDER": "#BBCCE0",
+    "TEXT_COLOR": "#0D1B2A",
+    "SHADOW_COLOR": "rgba(0,30,60,0.10)"
   },
   "DARK": {
     "name": "Dark",
@@ -77,7 +89,11 @@
     "LINE_STROKE": "#FFCC00",
     "GRID_LINE": "#222233",
     "CHART_BG": "#12121E",
-    "CHART_BORDER": "#333344"
+    "CHART_BORDER": "#333344",
+    "CARD_BG": "#12121E",
+    "CARD_BORDER": "#2A2A3E",
+    "TEXT_COLOR": "#FFFFFF",
+    "SHADOW_COLOR": "rgba(0,0,0,0.70)"
   },
   "INTEL": {
     "name": "Intel",
@@ -97,7 +113,11 @@
     "LINE_STROKE": "#7766AA",
     "GRID_LINE": "#CCBBEE",
     "CHART_BG": "#FFFFFF",
-    "CHART_BORDER": "#CCBBEE"
+    "CHART_BORDER": "#CCBBEE",
+    "CARD_BG": "#FFFFFF",
+    "CARD_BORDER": "#CCBBEE",
+    "TEXT_COLOR": "#1C1C14",
+    "SHADOW_COLOR": "rgba(30,0,60,0.10)"
   },
   "TECHNICAL": {
     "name": "Technical",
@@ -117,7 +137,11 @@
     "LINE_STROKE": "#00CCEE",
     "GRID_LINE": "#333333",
     "CHART_BG": "#F5F5F0",
-    "CHART_BORDER": "#CCCCCC"
+    "CHART_BORDER": "#CCCCCC",
+    "CARD_BG": "#222222",
+    "CARD_BORDER": "#333333",
+    "TEXT_COLOR": "#FFFFFF",
+    "SHADOW_COLOR": "rgba(0,0,0,0.70)"
   },
   "CREAM": {
     "name": "Cream Magazine",
@@ -137,7 +161,11 @@
     "LINE_STROKE": "#1A2B44",
     "GRID_LINE": "#E5E1D3",
     "CHART_BG": "#F9F7F0",
-    "CHART_BORDER": "#DED9C4"
+    "CHART_BORDER": "#DED9C4",
+    "CARD_BG": "#F9F7F0",
+    "CARD_BORDER": "#DED9C4",
+    "TEXT_COLOR": "#1A2B44",
+    "SHADOW_COLOR": "rgba(0,0,0,0.08)"
   },
   "VORTEXIS": {
     "name": "Vortexis",
@@ -157,6 +185,10 @@
     "LINE_STROKE": "#FFFFFF",
     "GRID_LINE": "#222222",
     "CHART_BG": "#050505",
-    "CHART_BORDER": "#333333"
+    "CHART_BORDER": "#333333",
+    "CARD_BG": "#0D0D0D",
+    "CARD_BORDER": "#2A2A2A",
+    "TEXT_COLOR": "#FFFFFF",
+    "SHADOW_COLOR": "rgba(0,0,0,0.85)"
   }
 }
