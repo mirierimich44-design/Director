@@ -43,7 +43,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 70, left: 120, opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 10 }}>
           <div style={{ width: 10, height: 44, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, boxShadow: '0 0 20px PRIMARY_COLOR' }} />
-          <div style={{ fontSize: 52, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{title}</div>
+          <div style={{ fontSize: 52, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{title}</div>
         </div>
         <div style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.1em', marginLeft: 30 }}>
           CURRENCY_EROSION_INDEX // PURCHASING_POWER_DECAY
@@ -101,7 +101,7 @@ export const AnimationComponent = () => {
       {/* Footer */}
       <div style={{ position: 'absolute', bottom: 36, left: 120, display: 'flex', alignItems: 'center', gap: 16, opacity: 0.25 }}>
         <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#fff' }} />
-        <div style={{ color: '#fff', fontSize: 16, fontWeight: 500 }}>{desc}</div>
+        <div style={{ color: 'PRIMARY_COLOR', fontSize: 16, fontWeight: 500 }}>{desc}</div>
       </div>
     </div>
   );

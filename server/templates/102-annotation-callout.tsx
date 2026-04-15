@@ -50,7 +50,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 80, left: 100, opacity: entryOp }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <div style={{ width: 12, height: 40, backgroundColor: 'PRIMARY_COLOR', boxShadow: '0 0 15px PRIMARY_COLOR' }} />
-          <div style={{ fontSize: 40, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
+          <div style={{ fontSize: 40, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{title}</div>
         </div>
         <div style={{ fontSize: 24, color: 'SUPPORT_COLOR', marginLeft: 32, marginTop: 4, fontWeight: 600 }}>{subtitle}</div>
       </div>
@@ -105,7 +105,7 @@ export const AnimationComponent = () => {
 
       {/* Technical Flair */}
       <div style={{ position: 'absolute', bottom: 60, right: 80, opacity: 0.2, textAlign: 'right' }}>
-        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14 }}>
+        <div style={{ color: 'PRIMARY_COLOR', fontFamily: 'monospace', fontSize: 14 }}>
           REF_PT: {px},{py}<br />
           Z_INDEX: OVERLAY<br />
           LAYER: FORENSIC_04

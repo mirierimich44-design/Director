@@ -84,7 +84,7 @@ export const AnimationComponent = () => {
 
         {/* Subtext and Date */}
         <div style={{ marginTop: 60, textAlign: 'center', opacity: contentOp }}>
-           <div style={{ fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: 12, maxWidth: 1000 }}>{subText}</div>
+           <div style={{ fontSize: 32, fontWeight: 700, color: 'PRIMARY_COLOR', marginBottom: 12, maxWidth: 1000 }}>{subText}</div>
            <div style={{ height: 2, width: 60, backgroundColor: 'ACCENT_COLOR', margin: '0 auto 20px' }} />
            <div style={{ color: 'SUPPORT_COLOR', fontSize: 20, fontWeight: 600, fontFamily: 'monospace', letterSpacing: 2, opacity: 0.6 }}>
               TIMESTAMP: {dateText}
@@ -93,7 +93,7 @@ export const AnimationComponent = () => {
 
         {/* System info */}
         <div style={{ position: 'absolute', bottom: 40, right: 40, opacity: 0.2 }}>
-           <div style={{ color: '#fff', fontSize: 10, fontFamily: 'monospace', textAlign: 'right', letterSpacing: 1 }}>
+           <div style={{ color: 'PRIMARY_COLOR', fontSize: 10, fontFamily: 'monospace', textAlign: 'right', letterSpacing: 1 }}>
               PROTOCOL: AUTO_STAMP_v4<br />
               VERIFIED BY DIRECTOR_AI
            </div>

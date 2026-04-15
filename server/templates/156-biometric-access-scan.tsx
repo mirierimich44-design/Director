@@ -121,7 +121,7 @@ export const AnimationComponent = () => {
 
       {/* Forensic detail */}
       <div style={{ position: 'absolute', bottom: 40, right: 40, opacity: 0.2 }}>
-         <div style={{ color: '#fff', fontSize: 14, fontFamily: 'monospace' }}>AUTH_NODE: DC-SERVER-04 // SECURITY_LEVEL: OMEGA</div>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontFamily: 'monospace' }}>AUTH_NODE: DC-SERVER-04 // SECURITY_LEVEL: OMEGA</div>
       </div>
 
     </div>

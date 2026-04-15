@@ -102,7 +102,7 @@ export const AnimationComponent = () => {
 
       {/* Forensic Tag */}
       <div style={{ position: 'absolute', bottom: 40, left: 40, opacity: 0.2 }}>
-         <div style={{ color: '#fff', fontSize: 14, fontFamily: 'monospace' }}>SOURCE_INTEL: SOCIAL_ANALYSIS_NODE_7</div>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontFamily: 'monospace' }}>SOURCE_INTEL: SOCIAL_ANALYSIS_NODE_7</div>
       </div>
 
     </div>

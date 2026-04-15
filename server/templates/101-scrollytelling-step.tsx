@@ -49,7 +49,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 60, left: 100, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <div style={{ width: 8, height: 40, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, boxShadow: '0 0 15px PRIMARY_COLOR' }} />
-            <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>PROCESS_WORKFLOW</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.1em', textTransform: 'uppercase' }}>PROCESS_WORKFLOW</div>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ export const AnimationComponent = () => {
 
       {/* Forensic Detail */}
       <div style={{ position: 'absolute', bottom: 40, right: 60, opacity: 0.2, textAlign: 'right' }}>
-         <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace' }}>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 12, fontFamily: 'monospace' }}>
             NARRATIVE_FLOW: ACTIVE<br />
             STEPS_MAPPED: {activeSteps.length}<br />
             STATUS: REALTIME_UPDATE

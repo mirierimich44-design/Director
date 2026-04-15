@@ -111,7 +111,7 @@ export const AnimationComponent = () => {
 
       {/* Constant UI HUD elements */}
       <div style={{ position: 'absolute', bottom: 40, left: 60, opacity: 0.3 }}>
-        <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace' }}>
+        <div style={{ color: 'PRIMARY_COLOR', fontSize: 12, fontFamily: 'monospace' }}>
             ZOOM_COORD: {zoom.toFixed(2)}x // {panX.toFixed(0)},{panY.toFixed(0)}<br />
             STATUS: TARGET_LOCKED
         </div>

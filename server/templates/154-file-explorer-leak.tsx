@@ -125,7 +125,7 @@ export const AnimationComponent = () => {
 
       {/* Technical Detail */}
       <div style={{ position: 'absolute', bottom: 40, left: 40, opacity: 0.2 }}>
-         <div style={{ color: '#fff', fontSize: 14, fontFamily: 'monospace' }}>VOLUME_SERIAL: 0x4421-B // SECURE_MOUNT: TRUE</div>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontFamily: 'monospace' }}>VOLUME_SERIAL: 0x4421-B // SECURE_MOUNT: TRUE</div>
       </div>
 
     </div>

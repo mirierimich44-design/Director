@@ -142,8 +142,8 @@ export const AnimationComponent = () => {
 
       {/* Security Banner top right */}
       <div style={{ position: 'absolute', top: 40, right: 40, display: 'flex', alignItems: 'center', gap: 12, opacity: 0.2 }}>
-         <div style={{ width: 14, height: 14, border: '2px solid #fff', borderRadius: 2 }} />
-         <div style={{ fontSize: 14, color: '#fff', fontWeight: 800, letterSpacing: '0.1em' }}>E2EE_ACTIVE</div>
+         <div style={{ width: 14, height: 14, border: '2px solid CHART_BORDER', borderRadius: 2 }} />
+         <div style={{ fontSize: 14, color: 'PRIMARY_COLOR', fontWeight: 800, letterSpacing: '0.1em' }}>E2EE_ACTIVE</div>
       </div>
 
     </div>

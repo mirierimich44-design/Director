@@ -51,7 +51,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 80, left: 100, opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div style={{ width: 12, height: 48, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, boxShadow: '0 0 20px PRIMARY_COLOR' }} />
-          <div style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 48, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
             {title}
           </div>
         </div>

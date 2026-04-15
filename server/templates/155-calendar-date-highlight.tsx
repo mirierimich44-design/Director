@@ -119,7 +119,7 @@ export const AnimationComponent = () => {
 
       {/* Forensic detail */}
       <div style={{ position: 'absolute', bottom: 40, right: 40, opacity: 0.2 }}>
-         <div style={{ color: '#fff', fontSize: 14, fontFamily: 'monospace' }}>CLOCK_SYNC: UTC+0 // STRATUM_1_VERIFIED</div>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontFamily: 'monospace' }}>CLOCK_SYNC: UTC+0 // STRATUM_1_VERIFIED</div>
       </div>
 
     </div>

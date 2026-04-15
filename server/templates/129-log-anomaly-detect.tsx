@@ -119,7 +119,7 @@ export const AnimationComponent = () => {
       {/* Header UI */}
       <div style={{ position: 'absolute', top: 80, left: 100, display: 'flex', alignItems: 'center', gap: 20 }}>
         <div style={{ width: 8, height: 40, backgroundColor: isFrozen ? '#e63946' : 'PRIMARY_COLOR', boxShadow: `0 0 15px ${isFrozen ? '#e63946' : 'PRIMARY_COLOR'}` }} />
-        <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>FORENSIC_ANALYSIS_SUBSYSTEM</div>
+        <div style={{ fontSize: 32, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.1em' }}>FORENSIC_ANALYSIS_SUBSYSTEM</div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ export const AnimationComponent = () => {
       {/* Header UI */}
       <div style={{ position: 'absolute', top: 80, left: 100, display: 'flex', alignItems: 'center', gap: 20, zIndex: 10 }}>
           <div style={{ width: 12, height: 40, backgroundColor: 'PRIMARY_COLOR', boxShadow: '0 0 15px PRIMARY_COLOR' }} />
-          <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>PACKET_CAPTURE_SUBSYSTEM</div>
+          <div style={{ fontSize: 32, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.1em' }}>PACKET_CAPTURE_SUBSYSTEM</div>
           <div style={{ marginLeft: 40, padding: '4px 12px', border: '1px solid #2a9d5c', borderRadius: 4, color: '#2a9d5c', fontSize: 14 }}>LIVE_FEED: ACTIVE</div>
       </div>
 

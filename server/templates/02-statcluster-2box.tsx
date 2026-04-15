@@ -20,10 +20,10 @@ export const AnimationComponent = () => {
 
   const cardStyle = {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: 'PANEL_RIGHT_BG',
     backdropFilter: 'blur(20px)',
     borderRadius: 24,
-    border: '1px solid rgba(255,255,255,0.08)',
+    border: '1px solid CHART_BORDER',
     padding: '48px',
     display: 'flex',
     flexDirection: 'column' as const,
@@ -64,7 +64,7 @@ export const AnimationComponent = () => {
             opacity: leftOp,
           }}>
              <div style={{ color: 'PRIMARY_COLOR', fontSize: 110, fontWeight: 900, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1, letterSpacing: '-0.05em', marginBottom: 16 }}>{stat1}</div>
-             <div style={{ color: '#fff', fontSize: 32, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: 10, opacity: contentOp }}>{label1}</div>
+             <div style={{ color: 'PRIMARY_COLOR', fontSize: 32, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: 10, opacity: contentOp }}>{label1}</div>
              <div style={{ height: 1, width: 50, backgroundColor: 'rgba(255,255,255,0.1)', marginBottom: 16, opacity: contentOp }} />
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 20, fontWeight: 500, lineHeight: 1.4, opacity: contentOp }}>{sub1}</div>
           </div>
@@ -76,7 +76,7 @@ export const AnimationComponent = () => {
             opacity: rightOp
           }}>
              <div style={{ color: 'ACCENT_COLOR', fontSize: 110, fontWeight: 900, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1, letterSpacing: '-0.05em', marginBottom: 16 }}>{stat2}</div>
-             <div style={{ color: '#fff', fontSize: 32, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: 10, opacity: contentOp }}>{label2}</div>
+             <div style={{ color: 'PRIMARY_COLOR', fontSize: 32, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: 10, opacity: contentOp }}>{label2}</div>
              <div style={{ height: 1, width: 50, backgroundColor: 'rgba(255,255,255,0.1)', marginBottom: 16, opacity: contentOp }} />
              <div style={{ color: 'SUPPORT_COLOR', fontSize: 20, fontWeight: 500, lineHeight: 1.4, opacity: contentOp }}>{sub2}</div>
           </div>

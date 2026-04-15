@@ -130,7 +130,7 @@ export const AnimationComponent = () => {
 
       {/* Decorative Technical Flair outside the card */}
       <div style={{ position: 'absolute', top: 60, right: 80, textAlign: 'right', opacity: 0.2 }}>
-        <div style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14 }}>
+        <div style={{ color: 'PRIMARY_COLOR', fontFamily: 'monospace', fontSize: 14 }}>
           COUNT_BUFFER_OVERFLOW: FALSE<br />
           STREAM_INTEGRITY: VERIFIED<br />
           NODE_ID: 0x44A2

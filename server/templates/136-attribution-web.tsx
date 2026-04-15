@@ -46,7 +46,7 @@ export const AnimationComponent = () => {
       {/* Header */}
       <div style={{ position: 'absolute', top: 60, left: 80, display: 'flex', alignItems: 'center', gap: 20 }}>
         <div style={{ width: 12, height: 40, backgroundColor: 'PRIMARY_COLOR', boxShadow: '0 0 15px PRIMARY_COLOR' }} />
-        <div style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '0.15em' }}>ATTRIBUTION_GRAPH_v2.0</div>
+        <div style={{ fontSize: 32, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.15em' }}>ATTRIBUTION_GRAPH_v2.0</div>
       </div>
 
       {/* Connections Layer */}
@@ -124,11 +124,11 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', bottom: 60, left: 80, display: 'flex', gap: 40, opacity: 0.4 }}>
          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'PRIMARY_COLOR' }} />
-            <div style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>VERIFIED_LINK</div>
+            <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 700 }}>VERIFIED_LINK</div>
          </div>
          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#e63946' }} />
-            <div style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>CONFIRMED_ORIGIN</div>
+            <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 700 }}>CONFIRMED_ORIGIN</div>
          </div>
       </div>
     </div>

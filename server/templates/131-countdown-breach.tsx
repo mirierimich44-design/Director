@@ -124,7 +124,7 @@ export const AnimationComponent = () => {
 
       {/* Decorative Sidebar Metadata */}
       <div style={{ position: 'absolute', left: 80, top: '50%', transform: 'translateY(-50%)', opacity: 0.2 }}>
-         <div style={{ color: '#fff', fontSize: 14, fontFamily: 'monospace', writingMode: 'vertical-rl', letterSpacing: '0.5em' }}>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontFamily: 'monospace', writingMode: 'vertical-rl', letterSpacing: '0.5em' }}>
            SYSTEM_CLOCK_LOCKED // UTC_SYNC_VERIFIED // MODE: SECURITY_ALERT
          </div>
       </div>

@@ -62,7 +62,7 @@ export const AnimationComponent = () => {
         {/* Header */}
         <div style={{ position: 'absolute', top: 40, left: 40, opacity: titleOp }}>
           <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 900, letterSpacing: 6, marginBottom: 8, textTransform: 'uppercase' }}>METRIC_DISTRIBUTION</div>
-          <div style={{ color: '#fff', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{title}</div>
+          <div style={{ color: 'PRIMARY_COLOR', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{title}</div>
         </div>
 
         <svg width={1600} height={900} style={{ position: 'absolute', top: 0, left: 0 }}>
@@ -74,7 +74,7 @@ export const AnimationComponent = () => {
                 key={i}
                 x1={startX - 40} y1={y}
                 x2={startX + totalBarsW + 40} y2={y}
-                stroke="rgba(255,255,255,0.1)" strokeWidth={1}
+                stroke="GRID_LINE" strokeWidth={1}
                 strokeDasharray="4 4"
                 opacity={gridOp}
               />
@@ -125,7 +125,7 @@ export const AnimationComponent = () => {
                 <span style={{
                   fontSize: 24,
                   fontWeight: 900,
-                  color: i === itemCount - 1 ? 'ACCENT_COLOR' : '#fff',
+                  color: i === itemCount - 1 ? 'ACCENT_COLOR' : 'PRIMARY_COLOR',
                   fontFamily: 'JetBrains Mono, monospace',
                   letterSpacing: -1
                 }}>

@@ -55,7 +55,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 80, left: 120, opacity: entryOp, transform: `translateY(${entryTy}px)`, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div style={{ width: 16, height: 16, borderRadius: '50%', backgroundColor: '#e63946', boxShadow: '0 0 20px #e63946' }} />
-          <div style={{ fontSize: 40, fontWeight: 900, color: '#fff', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 40, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
             INTELLIGENCE_FEED
           </div>
         </div>

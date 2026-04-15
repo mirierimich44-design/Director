@@ -146,7 +146,7 @@ export const AnimationComponent = () => {
             <span style={{
             fontSize: heroFontSize,
             fontWeight: 900,
-            color: '#fff',
+            color: 'PRIMARY_COLOR',
             lineHeight: 1,
             letterSpacing: -2,
             textTransform: 'uppercase',
@@ -192,7 +192,7 @@ export const AnimationComponent = () => {
         <div style={{
           fontSize: 20,
           fontWeight: 700,
-          color: '#fff',
+          color: 'PRIMARY_COLOR',
           fontFamily: 'monospace',
           letterSpacing: 2,
           textTransform: 'uppercase',

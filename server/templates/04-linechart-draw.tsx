@@ -97,7 +97,7 @@ export const AnimationComponent = () => {
           <div style={{ color: 'PRIMARY_COLOR', fontSize: 22, fontWeight: 900, letterSpacing: 6, marginBottom: 8 }}>
             DATA STREAM ANALYSIS
           </div>
-          <div style={{ color: '#fff', fontSize: 52, fontWeight: 900, textTransform: 'uppercase' }}>{title}</div>
+          <div style={{ color: 'PRIMARY_COLOR', fontSize: 52, fontWeight: 900, textTransform: 'uppercase' }}>{title}</div>
         </div>
 
         <svg width={1600} height={900} style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}>
@@ -107,7 +107,7 @@ export const AnimationComponent = () => {
             <line key={`h-${i}`}
               x1={chartLeft} y1={chartBottom - r * chartH}
               x2={chartRight} y2={chartBottom - r * chartH}
-              stroke="rgba(255,255,255,0.12)" strokeWidth={2}
+              stroke="GRID_LINE" strokeWidth={2}
               strokeDasharray="6 4" opacity={gridOp}
             />
           ))}
@@ -117,7 +117,7 @@ export const AnimationComponent = () => {
             <line key={`v-${i}`}
               x1={p.x} y1={chartTop}
               x2={p.x} y2={chartBottom}
-              stroke="rgba(255,255,255,0.06)" strokeWidth={1} opacity={gridOp}
+              stroke="GRID_LINE" strokeWidth={1} opacity={gridOp}
             />
           ))}
 
