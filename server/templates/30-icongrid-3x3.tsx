@@ -96,7 +96,7 @@ export const AnimationComponent = () => {
               {/* Explicit Text Label */}
               <div style={{
                 fontSize: 18, fontWeight: isHighlight ? 800 : 600,
-                color: isHighlight ? 'BACKGROUND_COLOR' : '#fff',
+                color: isHighlight ? 'BACKGROUND_COLOR' : 'PRIMARY_COLOR',
                 textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1,
                 padding: '0 20px'
               }}>

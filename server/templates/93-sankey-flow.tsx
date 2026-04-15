@@ -34,13 +34,13 @@ export const AnimationComponent = () => {
         {/* Source Side Label */}
         <div style={{ position: 'absolute', top: 50, left: 50, textAlign: 'left' }}>
            <div style={{ color: 'PRIMARY_COLOR', fontSize: 14, fontWeight: 900, letterSpacing: 4, marginBottom: 8 }}>SOURCE_NODE</div>
-           <div style={{ color: '#fff', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{source}</div>
+           <div style={{ color: 'PRIMARY_COLOR', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{source}</div>
         </div>
 
         {/* Target Side Label */}
         <div style={{ position: 'absolute', top: 50, right: 50, textAlign: 'right' }}>
            <div style={{ color: 'ACCENT_COLOR', fontSize: 14, fontWeight: 900, letterSpacing: 4, marginBottom: 8 }}>TARGET_DESTINATION</div>
-           <div style={{ color: '#fff', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{target}</div>
+           <div style={{ color: 'PRIMARY_COLOR', fontSize: 32, fontWeight: 900, textTransform: 'uppercase' }}>{target}</div>
         </div>
 
         <svg width={1600} height={900} style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible' }}>

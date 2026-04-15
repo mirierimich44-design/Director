@@ -58,7 +58,7 @@ export const AnimationComponent = () => {
 
       {/* Spotlight center — main label */}
       <div style={{ position: 'absolute', top: sy - 160, left: sx - 320, width: 640, textAlign: 'center', opacity: titleOp, transform: `translateY(${titleTy}px)` }}>
-        <span style={{ fontSize: 72, fontWeight: 900, color: '#fff', fontFamily: 'sans-serif', lineHeight: 1 }}>{label1}</span>
+        <span style={{ fontSize: 72, fontWeight: 900, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', lineHeight: 1 }}>{label1}</span>
       </div>
 
       {/* Tag / category — bright ACCENT_COLOR */}
@@ -68,10 +68,10 @@ export const AnimationComponent = () => {
 
       {/* Sub-labels */}
       <div style={{ position: 'absolute', top: sy + 16, left: sx - 320, width: 640, textAlign: 'center', opacity: subOp, transform: `translateY(${subTy}px)` }}>
-        <span style={{ fontSize: 26, fontWeight: 600, color: '#fff', fontFamily: 'sans-serif', opacity: 0.9 }}>{label2}</span>
+        <span style={{ fontSize: 26, fontWeight: 600, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', opacity: 0.9 }}>{label2}</span>
       </div>
       <div style={{ position: 'absolute', top: sy + 66, left: sx - 320, width: 640, textAlign: 'center', opacity: subOp }}>
-        <span style={{ fontSize: 24, fontWeight: 400, color: '#fff', fontFamily: 'sans-serif', opacity: 0.8 }}>{label3}</span>
+        <span style={{ fontSize: 24, fontWeight: 400, color: 'PRIMARY_COLOR', fontFamily: 'sans-serif', opacity: 0.8 }}>{label3}</span>
       </div>
 
       {/* Right panel */}

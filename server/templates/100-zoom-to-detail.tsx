@@ -80,7 +80,7 @@ export const AnimationComponent = () => {
       <div style={{ position: 'absolute', top: 80, left: 100, right: 100, opacity: titleOp, transform: `translateY(${titleTy}px)`, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <div style={{ width: 8, height: 48, backgroundColor: 'PRIMARY_COLOR', borderRadius: 4, flexShrink: 0 }} />
-            <div style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', wordBreak: 'break-word' }}>{title}</div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: 'PRIMARY_COLOR', letterSpacing: '0.05em', textTransform: 'uppercase', wordBreak: 'break-word' }}>{title}</div>
         </div>
         <div style={{ fontSize: 22, color: 'SUPPORT_COLOR', marginLeft: 28, marginTop: 4, fontWeight: 500, wordBreak: 'break-word' }}>{subtitle}</div>
       </div>

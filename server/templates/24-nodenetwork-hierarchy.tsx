@@ -206,7 +206,7 @@ export const AnimationComponent = () => {
 
       {/* Forensic detail */}
       <div style={{ position: 'absolute', bottom: 40, right: 60, opacity: 0.3, textAlign: 'right' }}>
-         <div style={{ color: '#fff', fontSize: 12, fontFamily: 'monospace' }}>
+         <div style={{ color: 'PRIMARY_COLOR', fontSize: 12, fontFamily: 'monospace' }}>
             SYSTEM_TREE_DECODED: TRUE<br />
             NODES_MAPPED: {leafNodes.length}<br />
             PROTOCOL: ARXXIS_v9

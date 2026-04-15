@@ -106,7 +106,7 @@ export const AnimationComponent = () => {
         {arcPath && <path d={arcPath} fill="none" stroke="url(#gaugeGradient)" strokeWidth={strokeW} strokeLinecap="round" filter="drop-shadow(0 0 10px rgba(0,0,0,0.5))" />}
         
         {/* Needle */}
-        <line x1={cx} y1={cy} x2={needleX} y2={needleY} stroke="#fff" strokeWidth={6} strokeLinecap="round" opacity={gaugeProgress} />
+        <line x1={cx} y1={cy} x2={needleX} y2={needleY} stroke="PRIMARY_COLOR" strokeWidth={6} strokeLinecap="round" opacity={gaugeProgress} />
         <circle cx={cx} cy={cy} r={22} fill="BACKGROUND_COLOR" stroke="PRIMARY_COLOR" strokeWidth={4} opacity={gaugeProgress} />
         
         {/* Min/Max labels */}
@@ -119,7 +119,7 @@ export const AnimationComponent = () => {
         overflow: 'hidden', opacity: valueOp, transform: `translateY(${valueTy}px)`, 
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' 
       }}>
-        <span style={{ fontSize: 120, fontWeight: 900, color: '#fff', lineHeight: 1, letterSpacing: -4 }}>{percentValue}</span>
+        <span style={{ fontSize: 120, fontWeight: 900, color: 'PRIMARY_COLOR', lineHeight: 1, letterSpacing: -4 }}>{percentValue}</span>
         <span style={{ fontSize: 22, fontWeight: 700, color: 'PRIMARY_COLOR', textTransform: 'uppercase', letterSpacing: 4, marginTop: 10 }}>{percentLabel}</span>
       </div>
 
