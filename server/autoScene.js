@@ -229,6 +229,122 @@ function enforceRatio(scenes, targetRatio) {
 }
 
 // ─────────────────────────────────────────────
+// Scene Archetype Prop Vocabulary
+// Each archetype has mandatory physical props that replace generic tech defaults.
+// The classifier picks one archetype per scene; the prop list is injected into
+// the image-prompt system instruction so Gemini cannot default to laptops/screens.
+// ─────────────────────────────────────────────
+const PROP_VOCABULARY = {
+  FINANCIAL_CRIME: {
+    label: 'Financial Crime / Money Movement',
+    keywords: ['million', 'billion', 'cash', 'fund', 'account', 'wire', 'transfer', 'bank', 'payment', 'laundering', 'currency', 'fraud', 'bribe', 'ransom', 'extort', 'invoice', 'tax', 'profit', 'revenue', 'debt', 'loan', 'credit', 'invest', 'hedge', 'portfolio', 'dividend', 'asset', 'wealth'],
+    props: ['stacked banded currency bundles on a metal shelf', 'leather briefcase packed with cash', 'wire transfer printout with routing numbers', 'safety deposit box open in a vault', 'ledger book with handwritten figures', 'foreign bank statement documents', 'coin-counting machine on a desk', 'paper bag of cash sealed with tape'],
+  },
+  SURVEILLANCE_INTEL: {
+    label: 'Surveillance / Intelligence / Monitoring',
+    keywords: ['surveillance', 'monitor', 'track', 'watch', 'observe', 'intel', 'spy', 'eavesdrop', 'wiretap', 'intercept', 'photograph', 'photo', 'image', 'footage', 'record', 'dossier', 'profile', 'suspect', 'target', 'shadow', 'follow', 'tail', 'CIA', 'NSA', 'FBI', 'intelligence'],
+    props: ['CCTV operator console with rows of small screens showing feeds', 'printed surveillance photographs spread on a table', 'physical dossier folder with red TOP SECRET stamp', 'binoculars resting on a window ledge', 'filing cabinet drawer open with hanging folders', 'Polaroid photographs pinned to a corkboard', 'zoom-lens camera on a tripod aimed at a window'],
+  },
+  DIGITAL_BREACH: {
+    label: 'Digital Breach / Hacking / Malware',
+    keywords: ['hack', 'breach', 'malware', 'ransomware', 'exploit', 'zero-day', 'phish', 'credential', 'password', 'encrypt', 'decrypt', 'backdoor', 'botnet', 'C2', 'command', 'inject', 'vulnerability', 'patch', 'firewall', 'intrusion', 'DDoS', 'payload', 'trojan', 'worm', 'virus', 'root', 'privilege', 'server', 'network'],
+    props: ['physical server rack with blinking indicator lights in a dim cage', 'tangled ethernet cable patch panel on a wall', 'power surge strip with multiple cables plugged in', 'open server chassis exposing circuit boards and drives', 'row of hard drives stacked on a wire shelf', 'network switch with blinking port lights', 'UPS battery backup unit connected to rack equipment'],
+  },
+  INVESTIGATION: {
+    label: 'Investigation / Evidence / Case Files',
+    keywords: ['investigat', 'evidence', 'case', 'clue', 'suspect', 'detective', 'probe', 'inquiry', 'forensic', 'witness', 'testimony', 'reveal', 'discover', 'uncover', 'expose', 'report', 'journalist', 'whistleblow', 'leak', 'source', 'document', 'file', 'record', 'paper'],
+    props: ['evidence board covered with photographs connected by red string', 'manila folder overflowing with printed documents', 'evidence bag labelled with case number', 'cardboard archive box stamped CONFIDENTIAL', 'printed case file open on a table with yellow highlights', 'desk scattered with photographs, notes, and sticky tabs', 'photocopy machine mid-print on a document'],
+  },
+  LEGAL_JUDICIAL: {
+    label: 'Legal / Judicial / Court',
+    keywords: ['court', 'judge', 'trial', 'verdict', 'sentence', 'indict', 'charge', 'arrest', 'sue', 'lawsuit', 'attorney', 'lawyer', 'counsel', 'prosecutor', 'defendant', 'plea', 'acquit', 'convict', 'bail', 'prison', 'sanction', 'fine', 'penalty', 'regulation', 'compliance', 'law', 'legal', 'SEC', 'DOJ', 'justice'],
+    props: ['wooden courtroom bench with gavel resting on block', 'stacked law books with colour-coded tabs', 'legal brief tied with ribbon on a clerk desk', 'sealed envelope marked SUBPOENA', 'scales of justice figurine on a polished desk', 'court stenographer machine on a stand', 'official seal stamp and ink pad on a document'],
+  },
+  CORPORATE_POWER: {
+    label: 'Corporate / Executive / Boardroom',
+    keywords: ['CEO', 'executive', 'board', 'director', 'chairman', 'company', 'corporate', 'merger', 'acqui', 'IPO', 'shareholder', 'meeting', 'strategy', 'deal', 'contract', 'partner', 'office', 'headquarter', 'enterprise', 'organisation', 'brand', 'product', 'launch'],
+    props: ['long boardroom table with leather chairs and name placards', 'glass-walled executive office at night with city lights behind', 'signed contract document with fountain pen resting on it', 'branded corporate lobby with logo on marble wall', 'stack of printed annual reports on a conference table', 'corner office desk with framed certificates on the wall', 'briefcase open beside a signed non-disclosure agreement'],
+  },
+  TRANSPORT_LOGISTICS: {
+    label: 'Transport / Shipping / Supply Chain',
+    keywords: ['ship', 'cargo', 'container', 'port', 'freight', 'transport', 'logistic', 'supply', 'warehouse', 'truck', 'drone', 'aircraft', 'train', 'vehicle', 'route', 'deliver', 'import', 'export', 'smuggle', 'border', 'customs', 'intercept'],
+    props: ['row of stacked shipping containers at a dark port', 'loading dock with pallets under fluorescent lights', 'cargo manifest clipboard with numbered entries', 'forklift in an empty warehouse aisle at night', 'steel freight container doors open revealing interior', 'customs inspection table with open packages', 'air freight on an airport tarmac under floodlights'],
+  },
+  IDENTITY_DOCUMENTS: {
+    label: 'Identity / Forged Documents / Personal Data',
+    keywords: ['identity', 'passport', 'ID', 'document', 'fake', 'forge', 'counterfeit', 'steal', 'personal', 'data', 'record', 'birth', 'social security', 'credential', 'licence', 'visa', 'permit', 'name', 'alias', 'profile'],
+    props: ['spread of passports and identity documents on a table', 'stack of official-looking ID cards fanned out', 'forged document with official stamps and seals', 'printing press mid-run on identity paper stock', 'photographic ID printout trimming station', 'sealed envelope with personal records inside', 'birth certificate with notary seal on aged paper'],
+  },
+  STREET_FIELD: {
+    label: 'Street / Field / Physical Exchange',
+    keywords: ['street', 'alley', 'meet', 'exchange', 'hand', 'parking', 'car', 'outside', 'outdoor', 'public', 'crowd', 'neighbourhood', 'city', 'building', 'approach', 'leave', 'walk', 'run', 'escape', 'flee', 'chase', 'border', 'checkpoint'],
+    props: ['rain-slicked urban alley with distant streetlight glow', 'parking garage at night — concrete pillars, sparse lighting', 'briefcase mid-exchange between two figures in silhouette', 'street corner with neon sign reflected in puddles', 'border checkpoint barrier under harsh white floodlights', 'unmarked van parked on a dark residential street', 'rooftop overlooking a city at night'],
+  },
+  COMMUNICATIONS: {
+    label: 'Communications / Signals / Broadcast',
+    keywords: ['communicat', 'broadcast', 'signal', 'transmit', 'radio', 'satellite', 'antenna', 'intercept', 'call', 'phone', 'message', 'email', 'leak', 'publish', 'press', 'media', 'news', 'report', 'journalist', 'source', 'cable', 'wire', 'telegraph'],
+    props: ['satellite dish silhouetted against a dark sky', 'telephone exchange room with rows of patch cables', 'radio tower with blinking red warning light at night', 'broadcast control room with mixing desk and no visible screens', 'coaxial cable reel on a concrete floor', 'fax machine mid-print in a low-lit office', 'shortwave radio transceiver on a wooden desk'],
+  },
+  INFRASTRUCTURE: {
+    label: 'Infrastructure / Industrial / Critical Systems',
+    keywords: ['infrastructure', 'power', 'grid', 'plant', 'facility', 'pipeline', 'dam', 'reactor', 'factory', 'industrial', 'water', 'gas', 'electric', 'energy', 'rail', 'bridge', 'tower', 'critical', 'attack', 'sabotage', 'disrupt'],
+    props: ['industrial control panel with analog dials and switches', 'power substation with transformer units at dusk', 'pipeline corridor inside a facility with yellow safety markings', 'cooling tower emitting steam against a dark sky', 'blast door to a secure underground facility', 'overhead crane in a dark industrial warehouse', 'valve manifold with pressure gauges in a pump room'],
+  },
+  ABSTRACT_DATA: {
+    label: 'Abstract Data / Statistics / Reports',
+    keywords: ['percent', 'statistic', 'figure', 'data', 'number', 'chart', 'graph', 'report', 'analysis', 'finding', 'result', 'metric', 'measure', 'record', 'index', 'rate', 'total', 'sum', 'average', 'compare', 'rank', 'survey', 'study', 'research'],
+    props: ['printed spreadsheet pages fanned out on a desk', 'bar chart drawn on a whiteboard with marker', 'stack of printed research reports with sticky notes', 'physical scale model of a graph made of blocks', 'report binder open to a page of figures', 'hand-drawn flow diagram on drafting paper', 'printed pie chart annotated with red pen circles'],
+  },
+}
+
+// Keyword-based archetype classifier — no Gemini call, instant
+// Returns the archetype key (e.g. 'FINANCIAL_CRIME') or null
+function classifySceneArchetype(script) {
+  const lower = script.toLowerCase()
+  let bestKey = null
+  let bestScore = 0
+
+  for (const [key, vocab] of Object.entries(PROP_VOCABULARY)) {
+    let score = 0
+    for (const kw of vocab.keywords) {
+      if (lower.includes(kw.toLowerCase())) score++
+    }
+    if (score > bestScore) {
+      bestScore = score
+      bestKey = key
+    }
+  }
+
+  // Require at least 1 keyword match to classify (otherwise leave as null → no injection)
+  return bestScore >= 1 ? bestKey : null
+}
+
+// Build the archetype injection clause for the system instruction
+// Returns a string to prepend as STEP 0
+function buildArchetypeClause(script) {
+  const archetypeKey = classifySceneArchetype(script)
+  if (!archetypeKey) return ''
+
+  const vocab = PROP_VOCABULARY[archetypeKey]
+  // Pick 3 random props from the list so the model has variety each run
+  const shuffled = [...vocab.props].sort(() => Math.random() - 0.5).slice(0, 3)
+
+  return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 0 — SCENE ARCHETYPE: ${vocab.label.toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This scene belongs to the ${vocab.label} archetype.
+You MUST feature at least ONE of these physical props as the hero subject:
+  • ${shuffled[0]}
+  • ${shuffled[1]}
+  • ${shuffled[2]}
+These are the ONLY valid visual anchors for this scene.
+ABSOLUTE BAN for this scene: laptop, computer, smartphone, keyboard, tablet, generic monitor, generic office desk.
+Do NOT show electronics unless the script explicitly names a specific device.
+
+`
+}
+
+// ─────────────────────────────────────────────
 // Helper: Build story context for image prompts
 // Gives the cinematographer the who/where/when of the full chapter
 // ─────────────────────────────────────────────
@@ -834,14 +950,19 @@ export async function generateScenes(scriptText, generationSettings = null) {
     } else {
       // 3D Render Prompt Generation — THREE-STEP CINEMATOGRAPHY METHOD
       console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`);
-      
-      let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
-      let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
+
+      // Classify archetype for prop vocabulary injection (both ARXXIS and Vortexis)
+      const archetypeClause = buildArchetypeClause(scene.script)
+      const archetypeKey = classifySceneArchetype(scene.script)
+      console.log(`   🗂️  Scene ${scene.index}: archetype → ${archetypeKey || 'UNCLASSIFIED'}`)
+
+      let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
+      let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
       let styleRules = `• 60–80 words maximum
 • Dark, moody, cinematic color grading — vary the palette: cool blue steel, amber tungsten, sickly green fluorescent, harsh white institutional, blood-red neon
-• Lighting setup must differ from a generic "single dramatic spotlight" — use: overhead fluorescent wash, venetian blind shadow bars, backlit silhouette against a frosted window, emergency lighting, candlelight, monitor glow, golden-hour shaft through blinds
-• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood, glossy marble, cracked asphalt, laminate desk)
-• No humans, no faces, no hands, no body parts
+• Lighting setup must differ from a generic "single dramatic spotlight" — use: overhead fluorescent wash, venetian blind shadow bars, backlit object against a frosted window, emergency lighting, candlelight, golden-hour shaft through blinds
+• Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood, glossy marble, cracked asphalt, laminate)
+• ABSOLUTELY NO humans, faces, hands, body parts, or silhouettes of any kind
 • No text, no labels, no UI elements on screens (blur or obscure them)
 • Shallow depth of field — hero object sharp, background soft
 • 16:9 cinematic framing`;
@@ -859,7 +980,6 @@ export async function generateScenes(scriptText, generationSettings = null) {
 • Heavy vignette: bright spotlight illuminating the center, fading into pitch-black edges
 • Human figures MUST be featureless, flat silhouettes in ${assignedColor}
 • SCALE IS CRITICAL: all objects must be proportional to the human figure — a monitor is desktop-sized (roughly head-height), a desk is waist-height, a chair is seat-height. NEVER make any object larger than a real human would encounter it.
-• If the scene involves data, charts, or a computer — silhouette must be SEATED at a desk facing a normal-sized monitor; the chart/graph appears ON the monitor screen, not floating or projected on a wall
 • BANNED: floating screens, giant wall-mounted displays, oversized monitors larger than the figure, UI panels projected on walls, holograms — these are not real and must NEVER appear
 • All props must be real, physical, correctly-scaled objects in a believable room
 • Exactly depict the literal objects and actions described in the script
@@ -886,7 +1006,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
         model: getGEMINI_MODEL(),
         systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${archetypeClause}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
@@ -943,16 +1063,21 @@ Output only the prompt text. No explanation. No preamble. Begin with the subject
 export async function regenerateImagePrompt(sceneScript, chapterScriptText, theme = null, directorType = null) {
   const storyContext = buildStoryContext(chapterScriptText || sceneScript)
 
-  let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes.";
-  let initialInstruction = "You NEVER describe people — only environments, objects, and atmosphere.";
-  let styleRules = `60–80 words, dark cinematic, vary the lighting (fluorescent wash, venetian blind shadows, monitor glow, neon, golden-hour shaft), hyperrealistic textures, no humans/faces/hands, no readable text on screens, shallow DOF, 16:9. NEVER default to smartphone/laptop/screen unless the script explicitly names one.`;
+  // Archetype injection
+  const archetypeClause = buildArchetypeClause(sceneScript)
+  const archetypeKey = classifySceneArchetype(sceneScript)
+  console.log(`   🗂️  regenerate: archetype → ${archetypeKey || 'UNCLASSIFIED'}`)
+
+  let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
+  let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
+  let styleRules = `60–80 words, dark cinematic, vary the lighting (overhead fluorescent wash, venetian blind shadows, neon, golden-hour shaft, emergency lighting), hyperrealistic textures, ABSOLUTELY NO humans/faces/hands/body parts/silhouettes, no readable text on screens, shallow DOF, 16:9. NEVER default to smartphone/laptop/screen unless the script explicitly names one.`;
 
   if (theme === 'VORTEXIS' || directorType === 'vortexis') {
     const hasHuman = sceneHasHumanSubject(sceneScript)
     cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
     if (hasHuman) {
       initialInstruction = "This scene involves a human subject. Render them as a featureless, solid-colored silhouette (pure red, pure blue, or pure black). NEVER use realistic human details.";
-      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, SCALE IS CRITICAL — all objects must be proportional to the human figure (monitor is desktop-sized not room-sized, desk is waist-height, chair is seat-height), if scene involves data or a computer the silhouette must be SEATED at a desk with a normal-sized monitor (chart appears ON screen — NOT floating or on a wall), BANNED: floating screens/giant wall displays/holograms/oversized monitors larger than the figure/oversized UI panels, all props must be real physical correctly-scaled objects, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
+      styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), human figures MUST be featureless flat silhouettes in pure red/blue/black, SCALE IS CRITICAL — all objects must be proportional to the human figure (monitor is desktop-sized not room-sized, desk is waist-height, chair is seat-height), BANNED: floating screens/giant wall displays/holograms/oversized monitors larger than the figure/oversized UI panels, all props must be real physical correctly-scaled objects, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
     } else {
       initialInstruction = "This scene has NO human subjects. Describe ONLY the specific objects, spaces, and environments from the script. No people, no silhouettes.";
       styleRules = `60–80 words, Unity 3D engine render style, true isometric orthographic camera angle, heavy vignette (bright center, pitch-black edges), NO people or silhouettes — objects and environments only, BANNED: floating screens/giant wall displays/holograms/oversized UI panels, all objects must be physical real-world desk- or room-sized, EXACTLY depict objects from script, clean minimalist environments with smooth matte materials, NO text/labels, 16:9 aspect ratio.`;
@@ -963,11 +1088,12 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
     model: getGEMINI_MODEL(),
     systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
-CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
+${archetypeClause}CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
 Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
-• Your FIRST 5–8 words must name the specific subject (e.g. "Stack of printed bank statements", "Red silhouette hunched over a keyboard", "Server rack in a dimly lit cage").
+• Your FIRST 5–8 words must name the specific subject (e.g. "Stack of printed bank statements", "Server rack in a dimly lit cage", "Courtroom bench with scattered folders").
 • NEVER open with mood, atmosphere, or setting ("A dark room...", "Dramatic lighting...", "Moody scene...").
-• NEVER default to a smartphone, laptop, or screen unless the scene script explicitly mentions one.
+• BANNED DEFAULTS — NEVER show these unless the script explicitly names them: smartphone, mobile phone, laptop, computer screen, keyboard, tablet, monitor, generic office desk.
+• If the script says nothing about electronics, do NOT invent them. Use what IS in the script: physical spaces, documents, vehicles, furniture, machinery, signage, architecture.
 • If the scene mentions a specific company, country, device, or event — name it directly.
 • The viewer must be able to identify the story from the image alone.
 
