@@ -44,11 +44,33 @@ const ORPHEUS_VOICES = [
 ];
 
 const GEMINI_VOICES = [
-    { id: 'Aoede', label: 'Aoede', group: 'Gemini' },
-    { id: 'Charon', label: 'Charon', group: 'Gemini' },
-    { id: 'Kore', label: 'Kore', group: 'Gemini' },
-    { id: 'Puck', label: 'Puck', group: 'Gemini' },
+    { id: 'Fenrir', label: 'Fenrir (Excitable)', group: 'Gemini' },
+    { id: 'Aoede', label: 'Aoede (Breezy)', group: 'Gemini' },
+    { id: 'Charon', label: 'Charon (Calm)', group: 'Gemini' },
+    { id: 'Kore', label: 'Kore (Firm)', group: 'Gemini' },
+    { id: 'Puck', label: 'Puck (Upbeat)', group: 'Gemini' },
     { id: 'Rheia', label: 'Rheia', group: 'Gemini' },
+    { id: 'Zephyr', label: 'Zephyr (Bright)', group: 'Gemini' },
+    { id: 'Leda', label: 'Leda (Warm)', group: 'Gemini' },
+    { id: 'Enceladus', label: 'Enceladus (Authoritative)', group: 'Gemini' },
+    { id: 'Vindemiatrix', label: 'Vindemiatrix (Dramatic)', group: 'Gemini' },
+    { id: 'Callirrhoe', label: 'Callirrhoe (Professional)', group: 'Gemini' },
+    { id: 'Achernar', label: 'Achernar', group: 'Gemini' },
+    { id: 'Zubenelgenubi', label: 'Zubenelgenubi (Deep)', group: 'Gemini' },
+    { id: 'Despina', label: 'Despina', group: 'Gemini' },
+    { id: 'Gacrux', label: 'Gacrux', group: 'Gemini' },
+    { id: 'Umbriel', label: 'Umbriel', group: 'Gemini' },
+    { id: 'Achird', label: 'Achird', group: 'Gemini' },
+    { id: 'Algenib', label: 'Algenib', group: 'Gemini' },
+    { id: 'Alnilam', label: 'Alnilam', group: 'Gemini' },
+    { id: 'Autonoe', label: 'Autonoe', group: 'Gemini' },
+    { id: 'Erinome', label: 'Erinome', group: 'Gemini' },
+    { id: 'Pulcherrima', label: 'Pulcherrima', group: 'Gemini' },
+    { id: 'Rasalgethi', label: 'Rasalgethi', group: 'Gemini' },
+    { id: 'Sadachbia', label: 'Sadachbia', group: 'Gemini' },
+    { id: 'Sadaltager', label: 'Sadaltager', group: 'Gemini' },
+    { id: 'Schedar', label: 'Schedar', group: 'Gemini' },
+    { id: 'Sulafat', label: 'Sulafat', group: 'Gemini' },
 ];
 
 const EMOTION_TAGS = ['<laugh>', '<chuckle>', '<sigh>', '<gasp>', '<cough>', '<sniffle>', '<groan>', '<yawn>'];
@@ -169,7 +191,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
         setError('');
         if (val === 'kokoro') setVoice('af_heart');
         else if (val === 'orpheus') setVoice('tara');
-        else if (val === 'gemini') setVoice('Aoede');
+        else if (val === 'gemini') setVoice('Fenrir');
     };
 
     const insertTag = (tag: string) => {

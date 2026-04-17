@@ -55,7 +55,14 @@ KOKORO_VOICE_IDS = [
 
 ORPHEUS_VOICE_IDS = ["tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"]
 
-GEMINI_VOICE_IDS = ["Aoede", "Charon", "Kore", "Puck", "Rheia"]
+GEMINI_VOICE_IDS = [
+    "Aoede", "Charon", "Kore", "Puck", "Rheia",
+    "Fenrir", "Zephyr", "Enceladus", "Leda", "Vindemiatrix",
+    "Callirrhoe", "Achernar", "Zubenelgenubi", "Despina", "Gacrux",
+    "Umbriel", "Achird", "Algenib", "Alnilam", "Autonoe",
+    "Erinome", "Pulcherrima", "Rasalgethi", "Sadachbia", "Sadaltager",
+    "Schedar", "Sulafat"
+]
 
 # ── Lazy model instances ──────────────────────────────────────────────────────
 _kokoro  = None
