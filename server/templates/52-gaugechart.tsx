@@ -61,7 +61,7 @@ export const AnimationComponent = () => {
       {/* Background Decor */}
       <div style={{ 
         position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%', 
-        border: '1px solid rgba(255,255,255,0.03)', borderRadius: '50%', opacity: 0.5 
+        border: '1px solid CHART_BORDER', borderRadius: '50%', opacity: 0.5
       }} />
 
       <div style={{ position: 'absolute', top: 0, left: 0, width: 1920, height: 5, overflow: 'hidden', backgroundColor: 'PRIMARY_COLOR', opacity: titleOp }} />
@@ -79,7 +79,7 @@ export const AnimationComponent = () => {
       <div style={{
         position: 'absolute', top: cy - 450, left: cx - 500, width: 1000, height: 600,
         backgroundColor: 'rgba(255,255,255,0.01)', backdropFilter: 'blur(10px)',
-        borderRadius: '40px 40px 0 0', border: '1px solid rgba(255,255,255,0.05)',
+        borderRadius: '40px 40px 0 0', border: '1px solid CHART_BORDER',
         borderBottom: 'none', opacity: titleOp
       }} />
 
@@ -124,7 +124,7 @@ export const AnimationComponent = () => {
       </div>
 
       <div style={{ position: 'absolute', top: cy + 120, left: 0, width: 1920, height: 50, overflow: 'hidden', opacity: labelOp, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ padding: '8px 24px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 100, border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ padding: '8px 24px', backgroundColor: 'CHART_BG', borderRadius: 100, border: '1px solid CHART_BORDER' }}>
           <span style={{ fontSize: 20, fontWeight: 500, color: 'SUPPORT_COLOR', letterSpacing: 1 }}>{contextText}</span>
         </div>
       </div>

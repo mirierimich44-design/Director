@@ -35,7 +35,7 @@ export const AnimationComponent = () => {
       {/* Background grid */}
       <div style={{
         position: 'absolute', width: '100%', height: '100%',
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(GRID_LINE 1px, transparent 1px), linear-gradient(90deg, GRID_LINE 1px, transparent 1px)',
         backgroundSize: '100px 100px', opacity: 0.5,
       }} />
 
