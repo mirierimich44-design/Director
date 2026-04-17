@@ -8,8 +8,8 @@ for arg in "$@"; do
     [[ "$arg" == "--with-orpheus" ]] && WITH_ORPHEUS=true
 done
 
-echo "📦 Installing Kokoro dependencies..."
-pip3 install fastapi uvicorn "kokoro-onnx>=0.4.0" soundfile "numpy>=1.24.0"
+echo "📦 Installing TTS dependencies..."
+pip3 install fastapi uvicorn "kokoro-onnx>=0.4.0" soundfile "numpy>=1.24.0" google-genai python-dotenv
 
 echo ""
 echo "📥 Downloading Kokoro model files (into server/)..."

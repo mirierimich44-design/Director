@@ -38,7 +38,7 @@ const DEFAULTS = {
       claudeFast: 'claude-haiku-4-0',                      // Claude fast
     },
     tts: {
-      engine: 'kokoro',                        // 'kokoro', 'orpheus', or 'heygen'
+      engine: 'kokoro',                        // 'kokoro', 'orpheus', 'heygen', or 'gemini'
     },
     image: {
       primary: 'imagen-4.0-generate-001',      // Image generation

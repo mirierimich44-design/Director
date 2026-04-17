@@ -4,6 +4,8 @@ uvicorn>=0.24.0
 kokoro-onnx>=0.4.0
 soundfile>=0.12.1
 numpy>=1.24.0
+google-genai>=0.1.0
+python-dotenv>=1.0.0
 
 # Orpheus TTS (CPU via llama.cpp, slower but richer voices)
 # Install separately after confirming you want it:

@@ -15,6 +15,7 @@ import os
 import uuid
 import logging
 import struct
+import traceback
 from pathlib import Path
 from typing import Optional, Literal
 
@@ -23,11 +24,15 @@ import soundfile as sf
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
+from dotenv import load_dotenv
+
+# Load .env from project root
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Director TTS Service", version="2.0.0")
+app = FastAPI(title="Director TTS Service", version="2.1.0")
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 SERVICE_DIR   = Path(__file__).parent
@@ -50,10 +55,29 @@ KOKORO_VOICE_IDS = [
 
 ORPHEUS_VOICE_IDS = ["tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"]
 
+GEMINI_VOICE_IDS = ["Aoede", "Charon", "Kore", "Puck", "Rheia"]
+
 # ── Lazy model instances ──────────────────────────────────────────────────────
 _kokoro  = None
 _orpheus = None
+_gemini_client = None
 
+def get_gemini_client():
+    global _gemini_client
+    if _gemini_client is not None:
+        return _gemini_client
+    
+    api_key = os.environ.get("GOOGLE_AI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GOOGLE_AI_API_KEY not found in environment or .env file")
+    
+    try:
+        from google import genai
+        _gemini_client = genai.Client(api_key=api_key)
+        logger.info("Gemini client initialized.")
+        return _gemini_client
+    except ImportError:
+        raise RuntimeError("google-genai not installed. Run: pip install google-genai")
 
 def get_kokoro():
     global _kokoro
@@ -108,7 +132,7 @@ class GenerateRequest(BaseModel):
     text: str
     voice: str = "af_heart"
     speed: float = 1.0
-    engine: Literal["kokoro", "orpheus"] = "kokoro"
+    engine: Literal["kokoro", "orpheus", "gemini"] = "kokoro"
     output_filename: Optional[str] = None
 
 
@@ -129,6 +153,7 @@ def health():
         "kokoro_model_ready": KOKORO_MODEL.exists() and KOKORO_VOICES.exists(),
         "kokoro_loaded": _kokoro is not None,
         "orpheus_loaded": _orpheus is not None,
+        "gemini_ready": os.environ.get("GOOGLE_AI_API_KEY") is not None,
     }
 
 
@@ -137,6 +162,7 @@ def list_voices():
     return {
         "kokoro": KOKORO_VOICE_IDS,
         "orpheus": ORPHEUS_VOICE_IDS,
+        "gemini": GEMINI_VOICE_IDS,
     }
 
 
@@ -153,8 +179,70 @@ def generate(req: GenerateRequest):
         filename += ".wav"
     output_path = AUDIO_TTS_DIR / filename
 
+    # ── Gemini ────────────────────────────────────────────────────────────────
+    if req.engine == "gemini":
+        voice = req.voice if req.voice in GEMINI_VOICE_IDS else "Aoede"
+        try:
+            from google.genai import types
+            client = get_gemini_client()
+            
+            # Primary choice is 3.1-flash-tts as requested by user
+            # Fallback to 2.5/2.0 if 3.1 is not yet available in the specific region/API
+            models_to_try = ["gemini-3.1-flash-tts", "gemini-2.0-flash-tts"]
+            
+            response = None
+            last_err = None
+            
+            for model_id in models_to_try:
+                try:
+                    logger.info(f"Attempting Gemini TTS with model: {model_id}")
+                    response = client.models.generate_content(
+                        model=model_id,
+                        contents=req.text,
+                        config=types.GenerateContentConfig(
+                            response_modalities=["AUDIO"],
+                            speech_config=types.SpeechConfig(
+                                voice_config=types.VoiceConfig(
+                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                        voice_name=voice
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    break # Success
+                except Exception as e:
+                    last_err = e
+                    logger.warning(f"Model {model_id} failed: {e}")
+                    continue
+            
+            if not response:
+                raise last_err or RuntimeError("All Gemini models failed")
+            
+            # Extract audio data
+            audio_data = None
+            for part in response.candidates[0].content.parts:
+                if part.inline_data:
+                    audio_data = part.inline_data.data
+                    break
+            
+            if not audio_data:
+                raise RuntimeError("No audio data returned from Gemini")
+            
+            with open(output_path, "wb") as f:
+                f.write(audio_data)
+            
+            # Get duration (using soundfile to read it back)
+            info = sf.info(str(output_path))
+            duration = round(info.duration, 2)
+
+        except Exception as e:
+            logger.error(f"Gemini error: {e}")
+            logger.error(traceback.format_exc())
+            raise HTTPException(status_code=500, detail=f"Gemini failed: {e}")
+
     # ── Kokoro ────────────────────────────────────────────────────────────────
-    if req.engine == "kokoro":
+    elif req.engine == "kokoro":
         voice = req.voice if req.voice in KOKORO_VOICE_IDS else "af_heart"
         try:
             kokoro = get_kokoro()

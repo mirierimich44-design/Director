@@ -43,6 +43,14 @@ const ORPHEUS_VOICES = [
     { id: 'zac',  label: 'Zac',  group: 'Male'   },
 ];
 
+const GEMINI_VOICES = [
+    { id: 'Aoede', label: 'Aoede', group: 'Gemini' },
+    { id: 'Charon', label: 'Charon', group: 'Gemini' },
+    { id: 'Kore', label: 'Kore', group: 'Gemini' },
+    { id: 'Puck', label: 'Puck', group: 'Gemini' },
+    { id: 'Rheia', label: 'Rheia', group: 'Gemini' },
+];
+
 const EMOTION_TAGS = ['<laugh>', '<chuckle>', '<sigh>', '<gasp>', '<cough>', '<sniffle>', '<groan>', '<yawn>'];
 
 const VOICES_PER_PAGE = 10;
@@ -67,7 +75,7 @@ interface VoiceoverPanelProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
-    const [engine, setEngine] = useState<'kokoro' | 'orpheus' | 'heygen'>('kokoro');
+    const [engine, setEngine] = useState<'kokoro' | 'orpheus' | 'heygen' | 'gemini'>('kokoro');
     const [text, setText] = useState('');
     const [voice, setVoice] = useState('af_heart');
     const [speed, setSpeed] = useState(1.0);
@@ -90,6 +98,8 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
 
     const staticVoices: DynVoice[] = engine === 'kokoro'
         ? KOKORO_VOICES.map(v => ({ id: v.id, label: v.label, group: v.group }))
+        : engine === 'gemini'
+        ? GEMINI_VOICES.map(v => ({ id: v.id, label: v.label, group: v.group }))
         : ORPHEUS_VOICES.map(v => ({ id: v.id, label: v.label, group: v.group }));
 
     const filteredHeygenVoices = voiceSearch.trim()
@@ -151,7 +161,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 
-    const handleEngineChange = (_: React.MouseEvent, val: 'kokoro' | 'orpheus' | 'heygen' | null) => {
+    const handleEngineChange = (_: React.MouseEvent, val: 'kokoro' | 'orpheus' | 'heygen' | 'gemini' | null) => {
         if (!val) return;
         setEngine(val);
         setVoiceSearch('');
@@ -159,6 +169,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
         setError('');
         if (val === 'kokoro') setVoice('af_heart');
         else if (val === 'orpheus') setVoice('tara');
+        else if (val === 'gemini') setVoice('Aoede');
     };
 
     const insertTag = (tag: string) => {
@@ -256,10 +267,12 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                 }}>
                     <ToggleButton value="kokoro">Kokoro</ToggleButton>
                     <ToggleButton value="orpheus">Orpheus</ToggleButton>
+                    <ToggleButton value="gemini">Gemini</ToggleButton>
                     <ToggleButton value="heygen">HeyGen</ToggleButton>
                 </ToggleButtonGroup>
                 {engine === 'kokoro'  && <Chip size="small" label="Fast · CPU"        sx={{ bgcolor: 'rgba(76,175,80,0.12)',  color: '#81c784', fontSize: '0.65rem', height: 20 }} />}
                 {engine === 'orpheus' && <Chip size="small" label="Rich · Slow on CPU" sx={{ bgcolor: 'rgba(255,152,0,0.12)',  color: '#ffb74d', fontSize: '0.65rem', height: 20 }} />}
+                {engine === 'gemini'  && <Chip size="small" label="Native · Controllable" sx={{ bgcolor: 'rgba(156,39,176,0.12)', color: '#ce93d8', fontSize: '0.65rem', height: 20 }} />}
                 {engine === 'heygen'  && <Chip size="small" label="Premium · API"      sx={{ bgcolor: 'rgba(33,150,243,0.12)', color: '#90caf9', fontSize: '0.65rem', height: 20 }} />}
             </Stack>
 
@@ -267,6 +280,13 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
             {engine === 'orpheus' && (
                 <Alert severity="info" sx={{ mb: 2, bgcolor: 'rgba(33,150,243,0.08)', color: '#90caf9', '& .MuiAlert-icon': { color: '#90caf9' }, fontSize: '0.8rem' }}>
                     Orpheus runs via llama.cpp on CPU — expect 2–5 min per clip. Supports emotion tags below.
+                </Alert>
+            )}
+
+            {/* Gemini info */}
+            {engine === 'gemini' && (
+                <Alert severity="info" sx={{ mb: 2, bgcolor: 'rgba(156,39,176,0.08)', color: '#ce93d8', '& .MuiAlert-icon': { color: '#ce93d8' }, fontSize: '0.8rem' }}>
+                    Gemini 3.1 TTS supports expressive tags like [whispers], [happy], [excited], [serious], [fast], [slow].
                 </Alert>
             )}
 

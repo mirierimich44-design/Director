@@ -42,7 +42,7 @@ interface Settings {
             claudeFast: string;
         };
         tts: {
-            engine: 'kokoro' | 'orpheus' | 'heygen';
+            engine: 'kokoro' | 'orpheus' | 'heygen' | 'gemini';
         };
         image: {
             primary: string;
@@ -478,6 +478,7 @@ const SettingsView: React.FC = () => {
                             <MenuItem value="kokoro">Kokoro (Fast, CPU)</MenuItem>
                             <MenuItem value="orpheus">Orpheus (Rich, slow on CPU)</MenuItem>
                             <MenuItem value="heygen">HeyGen (Premium, API)</MenuItem>
+                            <MenuItem value="gemini">Gemini 3.1 TTS (AI-native, controllable)</MenuItem>
                         </Select>
                     </FormControl>
                 </CardContent>
