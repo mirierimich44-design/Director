@@ -193,6 +193,14 @@ def generate(req: GenerateRequest):
             from google.genai import types
             client = get_gemini_client()
             
+            # Handle speed via text tags if necessary
+            # Gemini 3.1 TTS supports [fast], [slow] tags
+            processed_text = req.text
+            if speed > 1.2:
+                processed_text = f"[fast] {processed_text}"
+            elif speed < 0.8:
+                processed_text = f"[slow] {processed_text}"
+            
             # Primary choice is 3.1-flash-tts as requested by user
             # Fallback to 2.5/2.0 if 3.1 is not yet available in the specific region/API
             models_to_try = ["gemini-3.1-flash-tts", "gemini-2.0-flash-tts"]
@@ -205,7 +213,7 @@ def generate(req: GenerateRequest):
                     logger.info(f"Attempting Gemini TTS with model: {model_id}")
                     response = client.models.generate_content(
                         model=model_id,
-                        contents=req.text,
+                        contents=processed_text,
                         config=types.GenerateContentConfig(
                             response_modalities=["AUDIO"],
                             speech_config=types.SpeechConfig(

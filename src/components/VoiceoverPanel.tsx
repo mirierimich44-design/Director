@@ -44,33 +44,33 @@ const ORPHEUS_VOICES = [
 ];
 
 const GEMINI_VOICES = [
-    { id: 'Fenrir', label: 'Fenrir (Excitable)', group: 'Gemini' },
-    { id: 'Aoede', label: 'Aoede (Breezy)', group: 'Gemini' },
-    { id: 'Charon', label: 'Charon (Calm)', group: 'Gemini' },
-    { id: 'Kore', label: 'Kore (Firm)', group: 'Gemini' },
-    { id: 'Puck', label: 'Puck (Upbeat)', group: 'Gemini' },
-    { id: 'Rheia', label: 'Rheia', group: 'Gemini' },
-    { id: 'Zephyr', label: 'Zephyr (Bright)', group: 'Gemini' },
-    { id: 'Leda', label: 'Leda (Warm)', group: 'Gemini' },
-    { id: 'Enceladus', label: 'Enceladus (Authoritative)', group: 'Gemini' },
-    { id: 'Vindemiatrix', label: 'Vindemiatrix (Dramatic)', group: 'Gemini' },
-    { id: 'Callirrhoe', label: 'Callirrhoe (Professional)', group: 'Gemini' },
-    { id: 'Achernar', label: 'Achernar', group: 'Gemini' },
-    { id: 'Zubenelgenubi', label: 'Zubenelgenubi (Deep)', group: 'Gemini' },
-    { id: 'Despina', label: 'Despina', group: 'Gemini' },
-    { id: 'Gacrux', label: 'Gacrux', group: 'Gemini' },
-    { id: 'Umbriel', label: 'Umbriel', group: 'Gemini' },
-    { id: 'Achird', label: 'Achird', group: 'Gemini' },
-    { id: 'Algenib', label: 'Algenib', group: 'Gemini' },
-    { id: 'Alnilam', label: 'Alnilam', group: 'Gemini' },
-    { id: 'Autonoe', label: 'Autonoe', group: 'Gemini' },
-    { id: 'Erinome', label: 'Erinome', group: 'Gemini' },
-    { id: 'Pulcherrima', label: 'Pulcherrima', group: 'Gemini' },
-    { id: 'Rasalgethi', label: 'Rasalgethi', group: 'Gemini' },
-    { id: 'Sadachbia', label: 'Sadachbia', group: 'Gemini' },
-    { id: 'Sadaltager', label: 'Sadaltager', group: 'Gemini' },
-    { id: 'Schedar', label: 'Schedar', group: 'Gemini' },
-    { id: 'Sulafat', label: 'Sulafat', group: 'Gemini' },
+    { id: 'Fenrir', label: 'Fenrir (Energetic)', group: 'Gemini Male' },
+    { id: 'Aoede', label: 'Aoede (Breezy)', group: 'Gemini Female' },
+    { id: 'Charon', label: 'Charon (Calm)', group: 'Gemini Male' },
+    { id: 'Kore', label: 'Kore (Firm)', group: 'Gemini Female' },
+    { id: 'Puck', label: 'Puck (Upbeat)', group: 'Gemini Male' },
+    { id: 'Rheia', label: 'Rheia', group: 'Gemini Female' },
+    { id: 'Zephyr', label: 'Zephyr (Bright)', group: 'Gemini Female' },
+    { id: 'Leda', label: 'Leda (Warm)', group: 'Gemini Female' },
+    { id: 'Enceladus', label: 'Enceladus (Authoritative)', group: 'Gemini Male' },
+    { id: 'Vindemiatrix', label: 'Vindemiatrix (Dramatic)', group: 'Gemini Female' },
+    { id: 'Callirrhoe', label: 'Callirrhoe (Professional)', group: 'Gemini Female' },
+    { id: 'Achernar', label: 'Achernar', group: 'Gemini Male' },
+    { id: 'Zubenelgenubi', label: 'Zubenelgenubi (Deep)', group: 'Gemini Male' },
+    { id: 'Despina', label: 'Despina', group: 'Gemini Female' },
+    { id: 'Gacrux', label: 'Gacrux', group: 'Gemini Male' },
+    { id: 'Umbriel', label: 'Umbriel', group: 'Gemini Male' },
+    { id: 'Achird', label: 'Achird', group: 'Gemini Female' },
+    { id: 'Algenib', label: 'Algenib', group: 'Gemini Male' },
+    { id: 'Alnilam', label: 'Alnilam', group: 'Gemini Female' },
+    { id: 'Autonoe', label: 'Autonoe', group: 'Gemini Female' },
+    { id: 'Erinome', label: 'Erinome', group: 'Gemini Female' },
+    { id: 'Pulcherrima', label: 'Pulcherrima', group: 'Gemini Female' },
+    { id: 'Rasalgethi', label: 'Rasalgethi', group: 'Gemini Male' },
+    { id: 'Sadachbia', label: 'Sadachbia', group: 'Gemini Female' },
+    { id: 'Sadaltager', label: 'Sadaltager', group: 'Gemini Male' },
+    { id: 'Schedar', label: 'Schedar', group: 'Gemini Female' },
+    { id: 'Sulafat', label: 'Sulafat', group: 'Gemini Female' },
 ];
 
 const EMOTION_TAGS = ['<laugh>', '<chuckle>', '<sigh>', '<gasp>', '<cough>', '<sniffle>', '<groan>', '<yawn>'];
@@ -142,7 +142,7 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
         ? heygenVoices.find(v => v.id === voice)?.label ?? voice
         : staticVoices.find(v => v.id === voice)?.label ?? voice;
 
-    const isOfflineBlocked = engine !== 'heygen' && serviceStatus === 'offline';
+    const isOfflineBlocked = (engine === 'kokoro' || engine === 'orpheus') && serviceStatus === 'offline';
     const statusColor = serviceStatus === 'online' ? '#4CAF50' : serviceStatus === 'offline' ? '#f44336' : '#888';
 
     // ── Side effects ──────────────────────────────────────────────────────────
@@ -449,8 +449,8 @@ const VoiceoverPanel: React.FC<VoiceoverPanelProps> = ({ onGenerated }) => {
                     )}
                 </Box>
 
-                {/* Speed (Kokoro only) */}
-                {engine === 'kokoro' && (
+                {/* Speed (Kokoro and Gemini) */}
+                {(engine === 'kokoro' || engine === 'gemini') && (
                     <Box sx={{ flex: 1, minWidth: 130 }}>
                         <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 0.5 }}>Speed: {speed.toFixed(1)}×</Typography>
                         <Slider value={speed} onChange={(_, v) => setSpeed(v as number)} min={0.5} max={2.0} step={0.1} size="small"
