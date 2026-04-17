@@ -94,8 +94,8 @@ const TEMPLATE_CATEGORIES = {
     templates: ['152-search-engine-reveal', '151-knowledge-card', '100-zoom-to-detail', '101-scrollytelling-step', '102-annotation-callout', '105-zoom-to-detail', '106-word-highlight-scan', '160-word-highlight-scan', '161-annotation-callout']
   },
   SOCIAL: {
-    desc: 'Chat interfaces, social media, dark web listings',
-    templates: ['153-social-media-impact', '150-mobile-chat-ui', '156-biometric-access-scan', '138-dark-web-chatter', '116-dark-web-listing']
+    desc: 'Chat interfaces, social media posts, dark web listings, content spreading across platforms (LinkedIn → Slack → GitHub → email), branded channel propagation chains',
+    templates: ['153-social-media-impact', '150-mobile-chat-ui', '156-biometric-access-scan', '138-dark-web-chatter', '116-dark-web-listing', '186-channel-cascade']
   },
   DATE: {
     desc: 'Calendars, countdowns, breach counters, alerts',

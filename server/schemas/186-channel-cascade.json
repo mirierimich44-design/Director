@@ -1,0 +1,20 @@
+{
+  "template": "186-channel-cascade",
+  "description": "A branded platform propagation chain. Shows a post/content card at top, then a horizontal sequence of social/communication platform nodes (with real brand colors) linked by animated flow particles. Use when a story shows content spreading across channels — LinkedIn → Slack → GitHub → email, etc. Supports up to 5 channels.",
+  "fields": {
+    "TITLE_TEXT": "Title above the template, e.g. 'HOW THE LIE SPREAD'",
+    "POST_AUTHOR": "Author line shown on the content card, e.g. 'Sarah K. — Senior Engineer at Stripe'",
+    "POST_TEXT": "Excerpt of the post or message being shared, e.g. 'Just updated our axios dep — the new version fixes the memory leak we've been chasing. Clean install, no issues.'",
+    "SPREAD_LABEL": "Bottom badge label, e.g. 'APPEARED ORGANIC' or 'LOOKED LEGITIMATE'",
+    "CHANNEL_1": "First platform in the chain. Use exact names: LINKEDIN, TWITTER, X, GITHUB, SLACK, DISCORD, EMAIL, REDDIT, TELEGRAM, WHATSAPP, NPM, PYPI, HACKERNEWS, MEDIUM — e.g. 'LINKEDIN'",
+    "METRIC_1": "Stat or descriptor for channel 1, e.g. '14 colleagues shared'",
+    "CHANNEL_2": "Second platform, e.g. 'SLACK'",
+    "METRIC_2": "Stat for channel 2, e.g. 'posted in 3 dev channels'",
+    "CHANNEL_3": "Third platform, e.g. 'GITHUB'",
+    "METRIC_3": "Stat for channel 3, e.g. 'referenced in 8 PRs'",
+    "CHANNEL_4": "Fourth platform (leave blank if fewer than 4), e.g. 'EMAIL'",
+    "METRIC_4": "Stat for channel 4, e.g. 'forwarded to team leads'",
+    "CHANNEL_5": "Fifth platform (leave blank if fewer than 5), e.g. ''",
+    "METRIC_5": "Stat for channel 5, e.g. ''"
+  }
+}
