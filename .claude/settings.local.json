@@ -64,7 +64,16 @@
       "Bash(find 'C:/Users/MICH/Desktop/Code Files/director' -name *.tsx)",
       "Bash(find 'C:/Users/MICH/Desktop/Code Files/director/server/templates' -name 162-* -o -name veo*)",
       "Bash(find /c/Users/MICH/Desktop/Code Files/director/server -type f \\\\\\(-name *.ts -o -name *.js \\\\\\))",
-      "Bash(grep -r \"routing_reason\\\\|directorNote\" /c/Users/MICH/Desktop/Code Files/director/server --include=*.ts --include=*.js -n)"
+      "Bash(grep -r \"routing_reason\\\\|directorNote\" /c/Users/MICH/Desktop/Code Files/director/server --include=*.ts --include=*.js -n)",
+      "Bash(gh pr create --title 'fix: overhaul Vortexis and ARXXIS image prompt generation' --body ':*)",
+      "Bash(winget list:*)",
+      "Bash(grep -l \"FACT\\\\|STAT\\\\|list\\\\|multi\" *.json)",
+      "Bash(ssh root@vmi3192363 \"pm2 list && ls ~/.pm2/logs/\")",
+      "Bash(gh pr create --title 'fix: image generation pipeline, staticFile rendering, and template injection' --body ':*)",
+      "Bash(gh pr create --title 'feat: image template Imagen fix, box card resize, and voiceover randomizer improvements' --body ':*)",
+      "Bash(npx tsc:*)",
+      "Bash(gh pr create --title 'feat: template swap UI, vulnerability card redesign, routing fixes, and image gen improvements' --body ':*)",
+      "Bash(winpty gh pr create --title 'feat: template swap UI, vulnerability card redesign, routing fixes, and image gen improvements' --body ':*)"
     ]
   }
 }
