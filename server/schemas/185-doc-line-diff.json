@@ -1,0 +1,15 @@
+{
+  "template": "185-doc-line-diff",
+  "description": "Before/after document diff showing a single highlighted line insertion or change. Left panel shows the file before (with optional removed line struck through), right panel shows the file after (with added line glowing green). Use when a story mentions a single-line change to a config file, manifest, or script.",
+  "fields": {
+    "TITLE_TEXT": "Title above the diff, e.g. 'ONE LINE CHANGED EVERYTHING'",
+    "DOC_TITLE": "Document/file name shown in panel headers, e.g. 'package.json'",
+    "FILE_PATH": "Full file path shown in panel corner, e.g. 'axios/package.json'",
+    "CHANGE_LABEL": "Bottom center badge, e.g. 'ONE LINE ADDED' or 'MANIFEST POISONED'",
+    "CONTEXT_LINE_1": "Surrounding unchanged line 1 (for context), e.g. '  \"name\": \"axios\",'",
+    "CONTEXT_LINE_2": "Surrounding unchanged line 2, e.g. '  \"version\": \"1.8.4\",'",
+    "CONTEXT_LINE_3": "Surrounding unchanged line 3 (leave blank if fewer than 3 context lines), e.g. '  \"description\": \"Promise based HTTP client\",'",
+    "REMOVED_LINE": "The line that was removed (leave blank for pure insertion), e.g. '  \"postinstall\": \"\"'",
+    "ADDED_LINE": "The new/added line (shown highlighted in green), e.g. '  \"postinstall\": \"node steal.js\"'"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "template": "183-dependency-depth",
+  "description": "Stacked nested layers showing dependency depth in a software/trust chain. Each layer insets inward, the deepest layer is highlighted as the infection/compromise point. Use for supply chain attacks, call stacks, trust hierarchies. Supports 2–5 layers.",
+  "fields": {
+    "TITLE_TEXT": "Title above the diagram, e.g. 'HOW DEEP THE POISON WENT'",
+    "DEPTH_LABEL": "Bottom-right badge showing depth, e.g. '4 LAYERS DEEP'",
+    "ACCENT_LABEL": "Label above depth badge, e.g. 'INFECTION POINT'",
+    "LAYER_LABEL_1": "Name of layer 1 (outermost / most trusted), e.g. 'YOUR APPLICATION'",
+    "LAYER_DESC_1": "Description of layer 1, e.g. 'The app your team wrote and shipped'",
+    "LAYER_LABEL_2": "Name of layer 2, e.g. 'AXIOS (DIRECT DEP)'",
+    "LAYER_DESC_2": "Description of layer 2, e.g. 'Popular HTTP client — 1.5B weekly downloads'",
+    "LAYER_LABEL_3": "Name of layer 3, e.g. 'FOLLOW-REDIRECTS'",
+    "LAYER_DESC_3": "Description of layer 3, e.g. 'Transitive dependency — handles HTTP redirects'",
+    "LAYER_LABEL_4": "Name of layer 4 (deepest / compromised), e.g. 'MALICIOUS SCRIPT'",
+    "LAYER_DESC_4": "Description of layer 4, e.g. 'postInstall hook stealing environment variables'",
+    "LAYER_LABEL_5": "Name of layer 5 (leave blank if fewer than 5), e.g. ''",
+    "LAYER_DESC_5": "Description of layer 5 (leave blank if fewer than 5), e.g. ''"
+  }
+}

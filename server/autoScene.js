@@ -50,24 +50,24 @@ const TEMPLATE_CATEGORIES = {
     templates: ['05-donutchart-fill', '143-portfolio-allocation', '50-treemap', '148-market-cap-treemap', '94-marimekko-mosaic']
   },
   COMPARISON: {
-    desc: 'Side-by-side comparisons, tables, split panels',
-    templates: ['07-comparisonchart-dual', '112-comparison-table', '99-before-after-split', '09-split-2panel', '10-split-3panel', '11-split-topbottom', '12-split-diagonal', '13-split-percentage', '64-split-quadrant', '65-split-spotlight', '66-split-overlay', '67-split-morph', '68-split-reveal-wipe', '152-asset-comparison-slope']
+    desc: 'Side-by-side comparisons, tables, split panels, two simultaneous parallel events happening at the same time',
+    templates: ['07-comparisonchart-dual', '112-comparison-table', '99-before-after-split', '09-split-2panel', '10-split-3panel', '11-split-topbottom', '12-split-diagonal', '13-split-percentage', '64-split-quadrant', '65-split-spotlight', '66-split-overlay', '67-split-morph', '68-split-reveal-wipe', '152-asset-comparison-slope', '184-parallel-events']
   },
   FINANCIAL: {
     desc: 'Corporate earnings reports, quarterly results (EPS/revenue beats), profit/loss waterfalls, KPI dashboards for legitimate businesses. DO NOT use for crime statistics, laundered amounts, fraud figures, victim counts, market cap losses, regulatory fines, impact statements, or any sentence describing money being erased/wiped/lost — those belong in STAT or DRAMATIC.',
     templates: ['08-waterfall-chart', '144-profit-loss-waterfall', '154-earnings-reveal', '145-kpi-financial-dashboard', '103-dashboard-summary', '147-inflation-erosion', '151-break-even-chart']
   },
   TIMELINE: {
-    desc: 'Dated events, sequence of history, escalations',
-    templates: ['14-timeline-horizontal', '15-timeline-vertical', '16-timeline-escalation', '59-timeline-comparison', '60-timeline-gantt', '61-timeline-circular', '79-timeline-incident', '135-threat-actor-timeline', '153-debt-payoff-timeline', '162-threat-actor-timeline']
+    desc: 'Dated events, sequence of history, escalations, minute-precision intra-day attack timelines with clock times (AM/PM)',
+    templates: ['14-timeline-horizontal', '15-timeline-vertical', '16-timeline-escalation', '59-timeline-comparison', '60-timeline-gantt', '61-timeline-circular', '79-timeline-incident', '135-threat-actor-timeline', '153-debt-payoff-timeline', '162-threat-actor-timeline', '182-timeline-clock-events']
   },
   FLOW: {
     desc: 'Process diagrams, attack chains, kill chains, exploit flows',
     templates: ['57-flowdiagram-linear', '58-flowdiagram-branching', '119-kill-chain-steps', '121-exploit-chain', '120-lateral-movement', '17-phase-horizontal', '18-phase-circular', '62-phase-vertical', '63-phase-numbered']
   },
   NETWORK: {
-    desc: 'Relationships, connections, attack networks, attribution webs',
-    templates: ['19-nodenetwork-centered', '20-nodenetwork-flow', '21-nodenetwork-attack', '24-nodenetwork-hierarchy', '53-nodenetwork-bipartite', '54-nodenetwork-timeline', '55-nodenetwork-cluster', '136-attribution-web']
+    desc: 'Relationships, connections, attack networks, attribution webs, dependency chains, nested layers, supply chain depth',
+    templates: ['19-nodenetwork-centered', '20-nodenetwork-flow', '21-nodenetwork-attack', '24-nodenetwork-hierarchy', '53-nodenetwork-bipartite', '54-nodenetwork-timeline', '55-nodenetwork-cluster', '136-attribution-web', '183-dependency-depth']
   },
   MAP: {
     desc: 'Geography, country highlights, trade routes, heatmaps, conflict zones, migration, supply chains',
@@ -86,8 +86,8 @@ const TEMPLATE_CATEGORIES = {
     templates: ['30-icongrid-3x3', '31-icongrid-4x4', '32-icongrid-scatter', '33-icongrid-spotlight', '133-ioc-list-stream']
   },
   EVIDENCE: {
-    desc: 'Documents, classified reports, newspaper archives, redactions',
-    templates: ['78-evidence-item', '157-archive-newspaper-reel', '107-redacted-reveal', '108-stamped-verdict', '115-wanted-poster', '118-classified-stamp', '130-news-article-highlight', '111-magazine-cover', '137-vulnerability-card', '154-file-explorer-leak']
+    desc: 'Documents, classified reports, newspaper archives, redactions, file diffs, single-line code or manifest changes',
+    templates: ['78-evidence-item', '157-archive-newspaper-reel', '107-redacted-reveal', '108-stamped-verdict', '115-wanted-poster', '118-classified-stamp', '130-news-article-highlight', '111-magazine-cover', '137-vulnerability-card', '154-file-explorer-leak', '185-doc-line-diff']
   },
   KNOWLEDGE: {
     desc: 'Web search, knowledge cards, annotations',

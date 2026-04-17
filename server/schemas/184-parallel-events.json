@@ -1,0 +1,18 @@
+{
+  "template": "184-parallel-events",
+  "description": "Two simultaneous event tracks shown side-by-side with a connecting timeline spine. Use for coordinated attacks, dual-branch releases, parallel operations happening at the same moment. Each track shows up to 2 events.",
+  "fields": {
+    "TITLE_TEXT": "Title above both tracks, e.g. 'SIMULTANEOUS ATTACK'",
+    "SYNC_LABEL": "Center badge label, e.g. 'SAME MOMENT' or 'COORDINATED'",
+    "TRACK_LABEL_1": "Name of left track, e.g. 'CURRENT BRANCH (v1.x)'",
+    "TRACK_LABEL_2": "Name of right track, e.g. 'LEGACY BRANCH (v0.x)'",
+    "EVENT_TIME_1": "Time/date for left track event 1, e.g. '11:59 PM'",
+    "EVENT_LABEL_1": "Description of left track event 1, e.g. 'axios@1.8.4 pushed with malicious postInstall'",
+    "EVENT_TIME_2": "Time/date for left track event 2 (leave blank if only 1 event), e.g. ''",
+    "EVENT_LABEL_2": "Description of left track event 2 (leave blank if only 1 event), e.g. ''",
+    "EVENT_TIME_3": "Time/date for right track event 1, e.g. '12:01 AM'",
+    "EVENT_LABEL_3": "Description of right track event 1, e.g. 'axios@0.29.0 poisoned — legacy users also hit'",
+    "EVENT_TIME_4": "Time/date for right track event 2 (leave blank if only 1 event), e.g. ''",
+    "EVENT_LABEL_4": "Description of right track event 2 (leave blank if only 1 event), e.g. ''"
+  }
+}

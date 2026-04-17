@@ -1,0 +1,20 @@
+{
+  "template": "182-timeline-clock-events",
+  "description": "Minute-precision intra-day attack timeline. Events alternate left/right of a central spine. Use for stories with specific clock times (5:58AM, 11:59PM, 12:07AM). Supports up to 6 events.",
+  "fields": {
+    "TITLE_TEXT": "Title above the timeline, e.g. 'NIGHT OF THE ATTACK'",
+    "DATE_LABEL": "The date this timeline covers, e.g. 'MARCH 30–31, 2026'",
+    "TIME_LABEL_1": "Clock time for event 1, e.g. '5:58 AM'",
+    "EVENT_LABEL_1": "Description of event 1, e.g. 'Malicious package first published to npm registry'",
+    "TIME_LABEL_2": "Clock time for event 2, e.g. '11:59 PM'",
+    "EVENT_LABEL_2": "Description of event 2, e.g. 'Axios publishes v1.8.4 — current branch poisoned'",
+    "TIME_LABEL_3": "Clock time for event 3, e.g. '12:01 AM'",
+    "EVENT_LABEL_3": "Description of event 3, e.g. 'Legacy v0.x branch also poisoned — both versions compromised'",
+    "TIME_LABEL_4": "Clock time for event 4, e.g. '12:07 AM'",
+    "EVENT_LABEL_4": "Description of event 4, e.g. 'First developer reports suspicious behavior on GitHub'",
+    "TIME_LABEL_5": "Clock time for event 5, e.g. '3:01 AM'",
+    "EVENT_LABEL_5": "Description of event 5, e.g. 'Axios team pulls both poisoned versions from npm'",
+    "TIME_LABEL_6": "Clock time for event 6 (leave blank if fewer than 6 events), e.g. ''",
+    "EVENT_LABEL_6": "Description of event 6 (leave blank if fewer than 6 events), e.g. ''"
+  }
+}
