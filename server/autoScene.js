@@ -345,6 +345,318 @@ Do NOT show electronics unless the script explicitly names a specific device.
 }
 
 // ─────────────────────────────────────────────
+// 1. TECH CONCEPT → PHYSICAL METAPHOR DICTIONARY
+// Translates abstract tech/story concepts into physical world objects
+// before Gemini writes the image prompt. Story-agnostic at the core;
+// domain packs extend it for specific subject areas.
+// ─────────────────────────────────────────────
+const METAPHOR_DICTIONARY = {
+  // ── Software / Package ecosystem ──────────────────────────────────────────
+  'npm registry':           'vast warehouse interior — floor-to-ceiling shelving, thousands of identical sealed boxes, single forklift light in the distance',
+  'package manager':        'vast warehouse interior — floor-to-ceiling shelving, thousands of identical sealed boxes',
+  'software package':       'sealed cardboard box on a warehouse shelf with a printed label',
+  'dependency chain':       'set of nested industrial containers — each one opened to reveal a smaller container inside',
+  'dependency':             'nested Russian dolls on a shelf, each one smaller inside the last',
+  'open-source':            'community workbench — multiple sets of worn tools, shared equipment, a sign-in log',
+  'maintainer':             'solitary workbench with well-worn tools, one lamp, a handwritten log book',
+  'post-install hook':      'spring-loaded mechanical mousetrap set on a bare wooden floor, bait in place',
+  'supply chain':           'industrial assembly line corridor at night — unmanned, still running, lights blinking',
+  'version':                'two near-identical sealed boxes side by side — one with a barely different label',
+  'update':                 'revised document with one paragraph crossed out and new text written in the margin',
+  'patch':                  'fabric patch being sewn over a torn section of industrial canvas',
+  'build pipeline':         'automated assembly line with conveyor belts and robotic arms, no workers present',
+  'deployment':             'sealed crate on a loading dock, ready to ship, manifest attached',
+
+  // ── Credentials / Access / Identity ───────────────────────────────────────
+  'credentials':            'physical keyring with multiple labelled keys on a metal hook',
+  'api key':                'single brass key in a labelled envelope on a desk',
+  'api token':              'single brass key in a labelled envelope on a desk',
+  'ssh key':                'ornate skeleton key inside a locked wooden box',
+  'access token':           'laminated access badge on a desk beside a keycard reader',
+  'password':               'combination lock with numbers partially dialled',
+  'authentication':         'security checkpoint with a turnstile and ID scanner',
+  'two-factor':             'safe with both a key lock and a combination dial',
+  'certificate':            'official wax-sealed document on a table with a stamp and ribbon',
+  'code signing':           'wax seal being pressed onto an official document',
+  'revoke':                 'document torn cleanly in two — one half crumpled, one half blank',
+  'rotate credentials':     'old key beside a new one — the old one scored with a file mark',
+
+  // ── Malware / Attacks ──────────────────────────────────────────────────────
+  'malware':                'mechanical tripwire strung across a corridor, barely visible in low light',
+  'trojan':                 'sealed official-looking package — one corner slightly open, contents unknown',
+  'ransomware':             'padlocked filing cabinet with a handwritten ransom note taped to the front',
+  'payload':                'sealed metal canister in an equipment case, three units, each labelled',
+  'exploit':                'crowbar inserted into a door frame — the gap just wide enough',
+  'zero-day':               'unmarked door in a secure wall — no handle, no keypad, slightly ajar',
+  'backdoor':               'hidden door behind a bookshelf, barely visible in a panelled wall',
+  'post-install':           'triggered mousetrap — sprung, bait gone, no other trace',
+  'remote access':          'telephone operator switchboard with cables plugged in',
+  'command and control':    'military radio transceiver on a wooden desk with a coiled antenna wire',
+  'c2':                     'military radio transceiver on a wooden desk with a coiled antenna wire',
+  'self-destruct':          'ash pile on a desk — grey residue where documents were burned, blank paper beside it',
+  'erase':                  'blank sheet of paper where a document used to be, ash at one edge',
+  'social engineering':     'stack of official-looking envelopes on a table — subtle variations in each header',
+  'phishing':               'two near-identical letterheads side by side, one a convincing forgery',
+  'counterfeit':            'two identical objects side by side — one genuine, one a perfect replica with one small flaw',
+  'impersonation':          'two identical business cards, side by side, one slightly off in font weight',
+
+  // ── Scale / Reach / Impact ────────────────────────────────────────────────
+  'million downloads':      'water reservoir at dusk — dam wall, pipes running out in every direction',
+  'hundred million':        'vast reservoir seen from above — enormous, quiet, feeding countless pipes below',
+  'eighty percent':         'water treatment plant — most of the flow going through one central pipe',
+  'ubiquitous':             'water main beneath a city street — the pipe everything else connects to',
+  'widespread':             'aerial view of a river delta — one source branching into countless streams',
+  'ecosystem':              'dense root system beneath a forest floor — interconnected, invisible from above',
+  'blast radius':           'concentric rings spreading outward from a central point on a physical map',
+  'cascade':                'row of dominos mid-fall, each one striking the next',
+  'six hundred thousand':   'filing cabinet wall — floor to ceiling, every drawer open, folders pulled out',
+
+  // ── Detection / Response / Remediation ────────────────────────────────────
+  'detected':               'red warning light on an industrial control panel, just switched on',
+  'alert':                  'physical alarm bell mounted on a wall, clapper mid-strike',
+  'scanner':                'security X-ray conveyor belt with a single flagged item',
+  'anomaly':                'one out-of-place item on an otherwise orderly shelf',
+  'six minutes':            'clock face at 00:06, second hand just past the mark',
+  'three hours':            'three hourglasses in a row — all running simultaneously, sand nearly spent',
+  'pulled from registry':   'empty shelf space where a box used to sit — dust outline still visible',
+  'incident response':      'emergency operations table — printed runbooks, landline phones, yellow notepads',
+
+  // ── Trust / Infrastructure / Systems ──────────────────────────────────────
+  'trust':                  'stone bridge over dark water — structurally intact but showing hairline cracks',
+  'infrastructure':         'industrial pipe manifold — valves, pressure gauges, everything connected',
+  'foundational':           'cornerstone of a building — massive, load-bearing, partially buried',
+  'critical':               'master valve in a utility tunnel — one turn shuts everything off',
+  'fragile':                'bridge with a hairline crack running through a support pillar',
+  'gap':                    'single physical switch on a control panel — flipped to the wrong position',
+  'default setting':        'factory-set combination lock still at 0-0-0-0, never changed',
+
+  // ── Nation-state / Espionage ───────────────────────────────────────────────
+  'nation-state':           'intelligence wall — physical map with red pins and string connecting locations across continents',
+  'north korea':            'intelligence wall with geographic map, red pins, string lines, printed profiles',
+  'state actor':            'official government seal embossed on a classified document',
+  'regime':                 'rows of identical file folders in a government archive room',
+  'operation':              'military-style planning table — printed mission documents, marked maps',
+  'unc1069':                'classified operational dossier — tabbed, stamped, partially redacted',
+
+  // ── Human moment / Individual ─────────────────────────────────────────────
+  'single click':           'a single envelope on a desk — just opened, contents partially visible',
+  'download':               'a printed document sliding out of a fax machine onto a desk',
+  'joined the call':        'empty conference table with name placards on chairs, one seat recently pushed back',
+  'error message':          'printed warning notice under a harsh desk lamp — red ink, official-looking',
+  'developer':              'worn workbench — coffee cup, annotated notebooks, charging cables, no person',
+  'maintainer':             'solitary workbench — well-used tools, a handwritten log, one lamp',
+  'individual':             'single wooden chair under a spotlight in an otherwise empty room',
+
+  // ── Finance / Money ───────────────────────────────────────────────────────
+  'financial':              'stacked banded currency bundles on a metal shelf in a vault',
+  'cryptocurrency':         'physical coin press — dies, blanks, finished coins in a tray',
+  'wallet':                 'leather wallet open on a table — cards and currency visible',
+  'ransom':                 'sealed envelope with a typed demand letter, placed on a bare table',
+
+  // ── Reckoning / Structural truth ──────────────────────────────────────────
+  'structural':             'architectural cross-section drawing showing hidden load-bearing elements',
+  'reckoning':              'physical balance scale — one side heavy, one side nearly empty',
+  'accountability':         'notarised chain-of-custody document with sequential witness signatures',
+  'unprotected':            'stone well in an open courtyard — water clear, rope clean, no lock on the cover',
+  'next target':            'empty branded office being assembled in darkness — furniture half-placed, signage being hung',
+}
+
+// Extract the strongest matching metaphor from a script sentence
+// Returns { concept, metaphor } or null
+function extractMetaphor(script) {
+  const lower = script.toLowerCase()
+  // Sort by key length descending — prefer longer, more specific matches
+  const sorted = Object.keys(METAPHOR_DICTIONARY).sort((a, b) => b.length - a.length)
+  for (const concept of sorted) {
+    if (lower.includes(concept.toLowerCase())) {
+      return { concept, metaphor: METAPHOR_DICTIONARY[concept] }
+    }
+  }
+  return null
+}
+
+// ─────────────────────────────────────────────
+// 2. NARRATIVE ROLE CLASSIFIER
+// Determines what the scene is DOING in the story (not just what it's about).
+// Each role maps to a distinct visual grammar — framing, scale, lighting logic.
+// ─────────────────────────────────────────────
+const NARRATIVE_ROLES = {
+  ESTABLISH: {
+    label: 'Establishing — introduce scale or concept',
+    keywords: ['is a', 'are the', 'think of', 'known as', 'considered', 'understand', 'what is', 'what are', 'called', 'refers to', 'describes', 'defined as', 'present in', 'used by', 'relied on', 'downloaded', 'installed', 'runs on', 'built on', 'sits inside', 'sits at'],
+    composition: 'Wide architectural shot. Vast, deep space. The hero object is small relative to its environment — this communicates scale and context. Use negative space. Slow, stable framing. The viewer is being oriented.',
+  },
+  INTIMATE: {
+    label: 'Intimate — a single human moment or action',
+    keywords: ['he ', 'she ', 'they ', 'him ', 'her ', 'his ', 'joined', 'clicked', 'downloaded', 'opened', 'signed', 'called', 'sent', 'received', 'read', 'wrote', 'typed', 'sat', 'walked', 'decided', 'realised', 'noticed', 'believed', 'suspected', 'felt', 'said', 'replied', 'did'],
+    composition: 'Close-up on a single object — the thing they touched, left behind, or are about to encounter. Human traces only: worn edges, personal items, recently used objects. No person. Tight framing. The viewer is in the moment with them.',
+  },
+  REVEAL: {
+    label: 'Reveal — expose a hidden truth or turning point',
+    keywords: ['but', 'however', 'except', 'unknown', 'hidden', 'secret', 'concealed', 'disguised', 'buried', 'beneath', 'inside', 'actually', 'in fact', 'the real', 'the truth', 'exposed', 'revealed', 'discovered', 'found', 'turns out', 'had been', 'was actually', 'what they', 'critical gap'],
+    composition: 'One lit object in a dark room. High contrast — the subject emerges from near-total darkness. Shallow depth of field. The environment almost disappears. The single object carries everything.',
+  },
+  MECHANISM: {
+    label: 'Mechanism — explain how something works',
+    keywords: ['works by', 'operates', 'executes', 'runs', 'process', 'step', 'first', 'then', 'next', 'after', 'before', 'when a', 'once', 'automatically', 'triggered', 'designed to', 'built to', 'checks', 'selects', 'resolves', 'fetches', 'handles', 'maps', 'scans', 'collects', 'transmits'],
+    composition: 'Mid-shot showing a physical process in motion — a mechanism, a sequence, cause and effect made visible. Gears, pipes, chains, traps mid-trigger. The object is doing something, not just sitting. Action implied or frozen mid-step.',
+  },
+  SCALE: {
+    label: 'Scale — show scope, volume, or mass impact',
+    keywords: ['million', 'billion', 'thousand', 'hundred', 'percent', 'majority', 'most', 'every', 'all', 'countless', 'vast', 'enormous', 'widespread', 'global', 'worldwide', 'across', 'throughout', 'each', 'any', 'organisations', 'companies', 'systems', 'machines', 'pipelines', 'environments'],
+    composition: 'Repetition at architectural scale. Rows, stacks, walls of identical objects that go to the horizon or ceiling. The individual unit is visible but the mass is overwhelming. Use depth of field to blur the far rows into infinity.',
+  },
+  TENSION: {
+    label: 'Tension — build dread, suspense, or threat',
+    keywords: ['set', 'trap', 'wait', 'planted', 'staged', 'prepared', 'ready', 'aimed', 'targeted', 'hunting', 'watching', 'timing', 'patient', 'precise', 'deliberate', 'timed', 'planned', 'calculated', 'bait', 'lure', 'poised', 'threat', 'dangerous', 'malicious', 'attack'],
+    composition: 'The trap is set but has not yet triggered. Show readiness and threat — a mousetrap with bait still intact, a wire under tension, a door ajar. Cold, still lighting. The danger is present but not yet released. Viewer holds their breath.',
+  },
+  CONSEQUENCE: {
+    label: 'Consequence — aftermath, damage, or loss',
+    keywords: ['compromised', 'infected', 'stolen', 'exposed', 'exfiltrated', 'extracted', 'breached', 'corrupted', 'destroyed', 'removed', 'revoked', 'erased', 'lost', 'aftermath', 'result', 'impact', 'damage', 'harm', 'victim', 'affected', 'caught', 'hit', 'struck', 'suffered', 'cost'],
+    composition: 'Depleted, broken, or emptied environment. What was full is now empty. What was sealed is now open. What was clean now has ash or debris. Show the after-state — the shelf with the missing box, the open lockbox, the torn document.',
+  },
+  RECKONING: {
+    label: 'Reckoning — structural truth, reflection, or warning',
+    keywords: ['but the', 'this is', 'the real', 'what this', 'what the', 'deeper', 'structural', 'fundamental', 'systemic', 'pattern', 'lesson', 'warning', 'question', 'problem', 'challenge', 'reality', 'truth', 'reckoning', 'reflects', 'exposes', 'reveals', 'forces', 'cannot', 'should not', 'must', 'next'],
+    composition: 'Solitary, worn, or asymmetric objects that carry symbolic weight. A balance scale tipped heavily to one side. A lone workbench. A cracked bridge. The environment is quiet and still. This is reflection, not action. Let the symbol breathe.',
+  },
+}
+
+// Keyword-based narrative role classifier — no Gemini call
+function classifyNarrativeRole(script) {
+  const lower = script.toLowerCase()
+  let bestKey = null
+  let bestScore = 0
+
+  for (const [key, role] of Object.entries(NARRATIVE_ROLES)) {
+    let score = 0
+    for (const kw of role.keywords) {
+      if (lower.includes(kw.toLowerCase())) score++
+    }
+    if (score > bestScore) {
+      bestScore = score
+      bestKey = key
+    }
+  }
+
+  // Default to ESTABLISH if nothing strong matches
+  return bestKey || 'ESTABLISH'
+}
+
+// Build the narrative role injection clause
+function buildNarrativeRoleClause(script) {
+  const roleKey = classifyNarrativeRole(script)
+  const role = NARRATIVE_ROLES[roleKey]
+  return {
+    roleKey,
+    clause: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NARRATIVE ROLE: ${role.label.toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMPOSITION DIRECTIVE: ${role.composition}
+
+`,
+  }
+}
+
+// ─────────────────────────────────────────────
+// 3. HUMAN TRACES RULE (ARXXIS only)
+// When a script describes a human action, ARXXIS scenes should show
+// what they left behind or are about to encounter — not the person.
+// ─────────────────────────────────────────────
+const HUMAN_ACTION_VERBS = [
+  'he ', 'she ', 'they ', 'his ', 'her ', 'him ',
+  'joined', 'clicked', 'downloaded', 'opened', 'signed', 'called',
+  'sent', 'received', 'read', 'wrote', 'typed', 'sat', 'walked',
+  'entered', 'left', 'arrived', 'departed', 'decided', 'chose',
+  'realised', 'noticed', 'believed', 'suspected', 'felt', 'said',
+  'replied', 'asked', 'met', 'agreed', 'refused', 'ran', 'fled',
+  'paid', 'took', 'gave', 'handed', 'pressed', 'pulled', 'pushed',
+]
+
+const HUMAN_TRACES_VOCABULARY = [
+  'a coffee cup still warm, beside an open notebook with handwritten notes',
+  'a chair recently pushed back from a desk — the seat still slightly compressed',
+  'a worn notebook open to a page of handwritten annotations, pen resting across it',
+  'a name placard on an otherwise empty conference chair',
+  'a desk lamp still on, casting a cone of light over scattered papers',
+  'a coat hanging on a hook beside a door — pockets turned out',
+  'a half-eaten meal on a desk beside printed documents',
+  'a personal mug with a company logo, placed next to a ring-bound manual',
+  'a lanyard with an access badge draped over a monitor stand',
+  'a sticky note pressed to a surface — handwriting partially visible',
+  'an open padded envelope on a desk, contents removed',
+  'a phone charger still plugged in, cable coiled, device absent',
+]
+
+function sceneHasHumanAction(script) {
+  const lower = script.toLowerCase()
+  return HUMAN_ACTION_VERBS.some(v => lower.includes(v.toLowerCase()))
+}
+
+function buildHumanTracesClause(script, isArxxis) {
+  if (!isArxxis) return ''
+  if (!sceneHasHumanAction(script)) return ''
+
+  // Pick 2 random traces
+  const shuffled = [...HUMAN_TRACES_VOCABULARY].sort(() => Math.random() - 0.5).slice(0, 2)
+
+  return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HUMAN TRACES RULE (ARXXIS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This scene describes a human action. Do NOT show the person.
+Instead: show what they left behind, what they are about to encounter, or the physical aftermath.
+Suggested traces to consider:
+  • ${shuffled[0]}
+  • ${shuffled[1]}
+These details ground the human story without showing any body.
+
+`
+}
+
+// ─────────────────────────────────────────────
+// 4. SCENE VARIETY GUARD
+// Tracks environment types used across a chapter.
+// Passes the last N as a hard exclusion list to prevent repetition.
+// ─────────────────────────────────────────────
+
+// Environment fingerprint — extract a short tag from a generated prompt
+// so we can track what was used. Called after prompt is written.
+const ENVIRONMENT_TAGS = [
+  'warehouse', 'server rack', 'server room', 'office desk', 'boardroom',
+  'filing cabinet', 'vault', 'courtroom', 'alley', 'parking garage',
+  'rooftop', 'loading dock', 'control panel', 'workbench', 'conference table',
+  'evidence board', 'intelligence wall', 'assembly line', 'corridor',
+  'reservoir', 'dam', 'pipeline', 'bridge', 'well', 'street', 'tarmac',
+  'reception desk', 'archive room', 'utility tunnel', 'equipment case',
+  'desk lamp', 'empty room', 'dark room',
+]
+
+function fingerprintEnvironment(promptText) {
+  if (!promptText) return null
+  const lower = promptText.toLowerCase()
+  for (const tag of ENVIRONMENT_TAGS) {
+    if (lower.includes(tag)) return tag
+  }
+  return null
+}
+
+function buildVarietyGuardClause(usedEnvironments) {
+  const recent = usedEnvironments.filter(Boolean).slice(-4)
+  if (recent.length === 0) return ''
+
+  const unique = [...new Set(recent)]
+  return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCENE VARIETY GUARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The previous scenes already used these environments: ${unique.map(e => `"${e}"`).join(', ')}.
+You MUST choose a completely different environment and setting.
+Do not reuse any of the above — the viewer needs visual variety.
+
+`
+}
+
+// ─────────────────────────────────────────────
 // Helper: Build story context for image prompts
 // Gives the cinematographer the who/where/when of the full chapter
 // ─────────────────────────────────────────────
@@ -877,6 +1189,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
   const processed = []
   const usedTemplates = new Set()
   const maxReuse = generationSettings?.maxTemplateReuse ?? 1
+  const usedEnvironments = [] // Variety guard: tracks environment tags of rendered 3D scenes
 
   for (let i = 0; i < rawScenes.length; i++) {
     const scene = rawScenes[i]
@@ -948,13 +1261,32 @@ export async function generateScenes(scriptText, generationSettings = null) {
         scene.error = err.message
       }
     } else {
-      // 3D Render Prompt Generation — THREE-STEP CINEMATOGRAPHY METHOD
+      // 3D Render Prompt Generation — FOUR-SYSTEM CINEMATOGRAPHY ENGINE
       console.log(`   🖼️ Scene ${scene.index}: Generating cinematic 3D prompt...`);
 
-      // Classify archetype for prop vocabulary injection (both ARXXIS and Vortexis)
+      const isVortexis = scene.theme === 'VORTEXIS' || generationSettings?._directorType === 'vortexis'
+      const isArxxis = !isVortexis
+
+      // ── System 1: Archetype prop vocabulary ─────────────────────────────
       const archetypeClause = buildArchetypeClause(scene.script)
       const archetypeKey = classifySceneArchetype(scene.script)
-      console.log(`   🗂️  Scene ${scene.index}: archetype → ${archetypeKey || 'UNCLASSIFIED'}`)
+
+      // ── System 2: Narrative role ─────────────────────────────────────────
+      const { roleKey, clause: roleClause } = buildNarrativeRoleClause(scene.script)
+
+      // ── System 3: Metaphor translation ──────────────────────────────────
+      const metaphorMatch = extractMetaphor(scene.script)
+      const metaphorClause = metaphorMatch
+        ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMETAPHOR TRANSLATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nThe concept "${metaphorMatch.concept}" is best visualised as: ${metaphorMatch.metaphor}\nUse this as your primary visual reference if the archetype props do not apply.\n\n`
+        : ''
+
+      // ── System 4: Human traces (ARXXIS only) ────────────────────────────
+      const humanTracesClause = buildHumanTracesClause(scene.script, isArxxis)
+
+      // ── System 5: Variety guard ──────────────────────────────────────────
+      const varietyClause = buildVarietyGuardClause(usedEnvironments)
+
+      console.log(`   🗂️  Scene ${scene.index}: archetype=${archetypeKey || 'none'} role=${roleKey} metaphor=${metaphorMatch?.concept || 'none'}`)
 
       let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
       let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
@@ -967,7 +1299,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
 • Shallow depth of field — hero object sharp, background soft
 • 16:9 cinematic framing`;
 
-      if (scene.theme === 'VORTEXIS' || generationSettings?._directorType === 'vortexis') {
+      if (isVortexis) {
         const hasHuman = sceneHasHumanSubject(scene.script)
         const SILHOUETTE_COLORS = ['pure red', 'pure blue', 'pure black'];
         const assignedColor = SILHOUETTE_COLORS[i % SILHOUETTE_COLORS.length];
@@ -1006,7 +1338,7 @@ export async function generateScenes(scriptText, generationSettings = null) {
         model: getGEMINI_MODEL(),
         systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
-${archetypeClause}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${archetypeClause}${roleClause}${metaphorClause}${humanTracesClause}${varietyClause}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
@@ -1041,8 +1373,10 @@ Output only the prompt text. No explanation. No preamble. Begin with the subject
 
       const promptRes = await callGemini(model, `${storyContext}\n\nSCENE TO VISUALIZE: "${scene.script}"`)
       scene.prompt = promptRes.response.text().trim()
-      
-      const isVortexis = scene.theme === 'VORTEXIS' || generationSettings?._directorType === 'vortexis';
+
+      // Track environment for variety guard (next scenes in this chapter)
+      usedEnvironments.push(fingerprintEnvironment(scene.prompt))
+
       scene.environment = isVortexis ? 'vortexis' : 'infrastructure'
       scene.camera = 'cinematic'
       scene.lower_third = { text: scene.script.substring(0, 50) + '...', attribution: '', tone: '#FFAA00' }
@@ -1063,16 +1397,26 @@ Output only the prompt text. No explanation. No preamble. Begin with the subject
 export async function regenerateImagePrompt(sceneScript, chapterScriptText, theme = null, directorType = null) {
   const storyContext = buildStoryContext(chapterScriptText || sceneScript)
 
-  // Archetype injection
+  const isVortexis = theme === 'VORTEXIS' || directorType === 'vortexis'
+  const isArxxis = !isVortexis
+
+  // ── All four systems ──────────────────────────────────────────────────────
   const archetypeClause = buildArchetypeClause(sceneScript)
   const archetypeKey = classifySceneArchetype(sceneScript)
-  console.log(`   🗂️  regenerate: archetype → ${archetypeKey || 'UNCLASSIFIED'}`)
+  const { roleKey, clause: roleClause } = buildNarrativeRoleClause(sceneScript)
+  const metaphorMatch = extractMetaphor(sceneScript)
+  const metaphorClause = metaphorMatch
+    ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMETAPHOR TRANSLATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nThe concept "${metaphorMatch.concept}" is best visualised as: ${metaphorMatch.metaphor}\nUse this as your primary visual reference if the archetype props do not apply.\n\n`
+    : ''
+  const humanTracesClause = buildHumanTracesClause(sceneScript, isArxxis)
+
+  console.log(`   🗂️  regenerate: archetype=${archetypeKey || 'none'} role=${roleKey} metaphor=${metaphorMatch?.concept || 'none'}`)
 
   let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
   let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
   let styleRules = `60–80 words, dark cinematic, vary the lighting (overhead fluorescent wash, venetian blind shadows, neon, golden-hour shaft, emergency lighting), hyperrealistic textures, ABSOLUTELY NO humans/faces/hands/body parts/silhouettes, no readable text on screens, shallow DOF, 16:9. NEVER default to smartphone/laptop/screen unless the script explicitly names one.`;
 
-  if (theme === 'VORTEXIS' || directorType === 'vortexis') {
+  if (isVortexis) {
     const hasHuman = sceneHasHumanSubject(sceneScript)
     cinematographerIdentity = "You are the VORTEXIS stylistic director. You write image generation prompts for highly stylized, minimalist Unity 3D engine renders.";
     if (hasHuman) {
@@ -1088,7 +1432,7 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
     model: getGEMINI_MODEL(),
     systemInstruction: `${cinematographerIdentity} ${initialInstruction}
 
-${archetypeClause}CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
+${archetypeClause}${roleClause}${metaphorClause}${humanTracesClause}CRITICAL RULE — SUBJECT FIRST, SPECIFIC ALWAYS
 Your prompt MUST open with the EXACT subject from the scene — the specific object, device, place, or silhouette named in the script.
 • Your FIRST 5–8 words must name the specific subject (e.g. "Stack of printed bank statements", "Server rack in a dimly lit cage", "Courtroom bench with scattered folders").
 • NEVER open with mood, atmosphere, or setting ("A dark room...", "Dramatic lighting...", "Moody scene...").
