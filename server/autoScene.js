@@ -438,6 +438,19 @@ const METAPHOR_DICTIONARY = {
   'operation':              'military-style planning table — printed mission documents, marked maps',
   'unc1069':                'classified operational dossier — tabbed, stamped, partially redacted',
 
+  // ── Platform / Workspace / Brand identity ─────────────────────────────────
+  'slack workspace':        'empty open-plan office at night — company-branded frosted glass partitions, desk signage lit from above, no people',
+  'slack':                  'company-branded internal communications board — channel names printed on card slots, mounted on a dark wall',
+  'properly branded':       'corporate logo engraved in brushed aluminium on a reception desk fascia, backlit from below',
+  'legitimate company':     'company letterhead stack on a reception desk — logo crisp, paper fresh, front sheet face-up',
+  'real company':           'glass-fronted company directory board in a corporate lobby — names printed, backlit, mounted on dark marble',
+  'workspace':              'empty open-plan office floor at night — desk signage and nameplates visible under low ceiling lights',
+  'communicating through':  'telephone patch bay with company-labelled ports — cables run neatly, a few disconnected, labels printed',
+  'looked exactly right':   'two near-identical sealed envelopes side by side — one genuine, one a near-perfect forgery, one small detail off',
+  'appeared legitimate':    'forged corporate letterhead under a desk lamp — logo near-perfect, paper weight wrong, edge slightly soft',
+  'founder':                'framed company founding document on a dark wall — signatures at the bottom, official seal pressed into paper',
+  'colleague':              'two name placards on adjacent conference chairs — both facing the same direction, one seat slightly pulled out',
+
   // ── Human moment / Individual ─────────────────────────────────────────────
   'single click':           'a single envelope on a desk — just opened, contents partially visible',
   'download':               'a printed document sliding out of a fax machine onto a desk',
@@ -575,18 +588,20 @@ const HUMAN_ACTION_VERBS = [
 ]
 
 const HUMAN_TRACES_VOCABULARY = [
-  'a coffee cup still warm, beside an open notebook with handwritten notes',
+  'a coffee cup still warm, steam faintly rising, beside an open notebook with handwritten notes',
   'a chair recently pushed back from a desk — the seat still slightly compressed',
-  'a worn notebook open to a page of handwritten annotations, pen resting across it',
+  'a worn notebook open to a page of handwritten annotations, pen resting across the binding',
   'a name placard on an otherwise empty conference chair',
-  'a desk lamp still on, casting a cone of light over scattered papers',
-  'a coat hanging on a hook beside a door — pockets turned out',
-  'a half-eaten meal on a desk beside printed documents',
-  'a personal mug with a company logo, placed next to a ring-bound manual',
-  'a lanyard with an access badge draped over a monitor stand',
-  'a sticky note pressed to a surface — handwriting partially visible',
-  'an open padded envelope on a desk, contents removed',
-  'a phone charger still plugged in, cable coiled, device absent',
+  'a desk lamp still on, casting a tight cone of light over scattered printed documents',
+  'a coat hanging on a hook beside a door — pockets turned out, badge visible',
+  'a lanyard with a photo access badge draped over a monitor stand, ID facing outward',
+  'a sticky note pressed to a glass partition — handwriting partially visible, arrow drawn',
+  'an open padded envelope on a desk, contents removed, packing slip beside it',
+  'a phone charger still plugged into a wall socket, cable coiled, device absent',
+  'a printed boarding pass and hotel keycard on a desk, side by side',
+  'a legal pad covered in handwritten notes — last line underlined twice, pen laid beside it',
+  'a company-branded coffee sleeve collapsed on a desk beside a folded business card',
+  'a set of keys on a desk — two keys and a company fob, still attached to a lanyard clip',
 ]
 
 function sceneHasHumanAction(script) {
@@ -871,7 +886,7 @@ async function callGemini(model, prompt, maxRetries = 3) {
 // ─────────────────────────────────────────────
 async function routeScenes(scriptText, settings) {
   const ratio = settings?.templateRatio ?? 60
-  const theme = settings?.colorScheme || 'THREAT'
+  const theme = (settings?.colorScheme?.toUpperCase?.() ?? settings?.colorScheme) || 'THREAT'
 
   const catalogSummary = Object.entries(TEMPLATE_CATEGORIES)
     .map(([cat, info]) => `${cat}: ${info.desc}`)
@@ -1131,7 +1146,8 @@ export async function generateScenes(scriptText, generationSettings = null) {
   // Reset per-run category counters so every generation gets fresh variety
   Object.keys(_categoryCounters).forEach(k => delete _categoryCounters[k])
 
-  const userTheme = generationSettings?.colorScheme
+  // Normalise to uppercase so 'dark' === 'DARK' — frontend may send either casing
+  const userTheme = generationSettings?.colorScheme?.toUpperCase?.() ?? generationSettings?.colorScheme
   const fixedTheme = userTheme && VALID_THEMES.has(userTheme) ? userTheme : null
 
   // Build story context once — used by all image prompt calls
@@ -1291,12 +1307,13 @@ export async function generateScenes(scriptText, generationSettings = null) {
       let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
       let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
       let styleRules = `• 60–80 words maximum
-• Dark, moody, cinematic color grading — vary the palette: cool blue steel, amber tungsten, sickly green fluorescent, harsh white institutional, blood-red neon
-• Lighting setup must differ from a generic "single dramatic spotlight" — use: overhead fluorescent wash, venetian blind shadow bars, backlit object against a frosted window, emergency lighting, candlelight, golden-hour shaft through blinds
+• BACKGROUNDS MUST BE DARK — the dominant color of the scene must be dark: near-black, deep navy, dark charcoal, dark slate, or dark industrial grey. NO white walls, NO cream surfaces, NO bright rooms, NO airy open spaces. If in doubt, make it darker.
+• Color accent palette (pick one per scene, vary across scenes): cool blue steel, amber tungsten glow, sickly green fluorescent, blood-red neon, deep purple backlight, cold white strip light against dark walls
+• Lighting: overhead fluorescent wash on dark walls, venetian blind shadow bars across a surface, backlit object against a frosted dark window, emergency red lighting, narrow golden shaft through closed blinds, single bare bulb in a dark room
 • Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood, glossy marble, cracked asphalt, laminate)
 • ABSOLUTELY NO humans, faces, hands, body parts, or silhouettes of any kind
-• No text, no labels, no UI elements on screens (blur or obscure them)
-• Shallow depth of field — hero object sharp, background soft
+• No text, no labels, no UI elements on screens (blur or obscure any screens entirely)
+• Shallow depth of field — hero object sharp, background soft and dark
 • 16:9 cinematic framing`;
 
       if (isVortexis) {
@@ -1414,7 +1431,7 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
 
   let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
   let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
-  let styleRules = `60–80 words, dark cinematic, vary the lighting (overhead fluorescent wash, venetian blind shadows, neon, golden-hour shaft, emergency lighting), hyperrealistic textures, ABSOLUTELY NO humans/faces/hands/body parts/silhouettes, no readable text on screens, shallow DOF, 16:9. NEVER default to smartphone/laptop/screen unless the script explicitly names one.`;
+  let styleRules = `60–80 words. BACKGROUNDS MUST BE DARK — dominant color must be near-black, deep navy, dark charcoal, or dark slate. NO white walls, NO cream surfaces, NO bright rooms. Color accent (pick one): cool blue steel, amber tungsten, sickly green fluorescent, blood-red neon, deep purple backlight. Varied lighting: overhead fluorescent on dark walls, venetian blind shadows, emergency red lighting, narrow shaft through closed blinds. Hyperrealistic textures. ABSOLUTELY NO humans/faces/hands/body parts/silhouettes. No readable text on screens (blur them). Shallow DOF, hero object sharp against dark background. 16:9. NEVER default to smartphone/laptop/screen unless explicitly named in the script.`;
 
   if (isVortexis) {
     const hasHuman = sceneHasHumanSubject(sceneScript)
