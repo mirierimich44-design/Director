@@ -15,6 +15,7 @@ import os
 import uuid
 import logging
 import struct
+import base64
 import traceback
 from pathlib import Path
 from typing import Optional, Literal
@@ -61,8 +62,24 @@ GEMINI_VOICE_IDS = [
     "Callirrhoe", "Achernar", "Zubenelgenubi", "Despina", "Gacrux",
     "Umbriel", "Achird", "Algenib", "Alnilam", "Autonoe",
     "Erinome", "Pulcherrima", "Rasalgethi", "Sadachbia", "Sadaltager",
-    "Schedar", "Sulafat"
+    "Schedar", "Sulafat", "Algieba"
 ]
+
+# Best voices for documentary narration (calm, authoritative, informative)
+DOCUMENTARY_VOICES = ["Charon", "Fenrir", "Enceladus", "Schedar"]
+DOCUMENTARY_DEFAULT = "Charon"  # "Informative" — best match for documentary style
+
+
+def pcm_to_wav(pcm_bytes: bytes, sample_rate: int = 24000, channels: int = 1, bits: int = 16) -> bytes:
+    """Wrap raw Gemini PCM output in a valid WAV container."""
+    byte_rate   = sample_rate * channels * bits // 8
+    block_align = channels * bits // 8
+    data_size   = len(pcm_bytes)
+    header = struct.pack('<4sI4s', b'RIFF', 36 + data_size, b'WAVE')
+    fmt    = struct.pack('<4sIHHIIHH', b'fmt ', 16, 1, channels,
+                         sample_rate, byte_rate, block_align, bits)
+    data   = struct.pack('<4sI', b'data', data_size)
+    return header + fmt + data + pcm_bytes
 
 # ── Lazy model instances ──────────────────────────────────────────────────────
 _kokoro  = None
@@ -141,6 +158,7 @@ class GenerateRequest(BaseModel):
     speed: float = 1.0
     engine: Literal["kokoro", "orpheus", "gemini"] = "kokoro"
     output_filename: Optional[str] = None
+    style: str = "documentary"   # "documentary" | "neutral" | "custom"
 
 
 class GenerateResponse(BaseModel):
@@ -188,32 +206,52 @@ def generate(req: GenerateRequest):
 
     # ── Gemini ────────────────────────────────────────────────────────────────
     if req.engine == "gemini":
-        voice = req.voice if req.voice in GEMINI_VOICE_IDS else "Aoede"
+        # Default to Charon for documentary style — most "informative" voice
+        voice = req.voice if req.voice in GEMINI_VOICE_IDS else DOCUMENTARY_DEFAULT
         try:
             from google.genai import types
             client = get_gemini_client()
-            
-            # Handle speed via text tags if necessary
-            # Gemini 3.1 TTS supports [fast], [slow] tags
-            processed_text = req.text
+
+            # ── Style prefix ─────────────────────────────────────────────────
+            # Gemini TTS uses the text content itself as the style guide.
+            # Prepending a narration instruction keeps voice consistent across
+            # all scenes in a documentary.
+            if req.style == "documentary":
+                style_prefix = (
+                    "Read the following as a professional documentary narrator. "
+                    "Calm, measured, authoritative delivery. Clear diction. "
+                    "No dramatic emphasis, no excitement — informative and composed: "
+                )
+            else:
+                style_prefix = ""
+
+            # Speed tags (supported in 2.5+ models)
+            pace_tag = ""
             if speed > 1.2:
-                processed_text = f"[fast] {processed_text}"
+                pace_tag = "[speaking quickly] "
             elif speed < 0.8:
-                processed_text = f"[slow] {processed_text}"
-            
-            # Primary choice is 3.1-flash-tts as requested by user
-            # Fallback to 2.5/2.0 if 3.1 is not yet available in the specific region/API
-            models_to_try = ["gemini-3.1-flash-tts", "gemini-2.0-flash-tts"]
-            
+                pace_tag = "[speaking slowly] "
+
+            final_text = f"{pace_tag}{style_prefix}{req.text}"
+
+            # ── Model priority list ──────────────────────────────────────────
+            # Correct model names as of April 2026
+            # Source: ai.google.dev/gemini-api/docs/models/
+            models_to_try = [
+                "gemini-3.1-flash-tts-preview",  # latest — fastest, lowest latency
+                "gemini-2.5-pro-preview-tts",    # best quality, long-form narration
+                "gemini-2.5-flash-preview-tts",  # fast fallback
+            ]
+
             response = None
             last_err = None
-            
+
             for model_id in models_to_try:
                 try:
-                    logger.info(f"Attempting Gemini TTS with model: {model_id}")
+                    logger.info(f"Attempting Gemini TTS: model={model_id} voice={voice}")
                     response = client.models.generate_content(
                         model=model_id,
-                        contents=processed_text,
+                        contents=final_text,
                         config=types.GenerateContentConfig(
                             response_modalities=["AUDIO"],
                             speech_config=types.SpeechConfig(
@@ -225,36 +263,52 @@ def generate(req: GenerateRequest):
                             )
                         )
                     )
-                    break # Success
+                    logger.info(f"Gemini TTS success: model={model_id}")
+                    break
                 except Exception as e:
                     last_err = e
                     logger.warning(f"Model {model_id} failed: {e}")
                     continue
-            
+
             if not response:
-                raise last_err or RuntimeError("All Gemini models failed")
-            
-            # Extract audio data
-            audio_data = None
+                raise last_err or RuntimeError("All Gemini TTS models failed")
+
+            # ── Extract and decode audio ─────────────────────────────────────
+            # Gemini returns raw PCM: 24 kHz, 16-bit, mono — no WAV header.
+            # inline_data.data may be bytes (SDK-decoded) or base64 string.
+            raw_data = None
             for part in response.candidates[0].content.parts:
                 if part.inline_data:
-                    audio_data = part.inline_data.data
+                    raw_data = part.inline_data.data
                     break
-            
-            if not audio_data:
-                raise RuntimeError("No audio data returned from Gemini")
-            
+
+            if not raw_data:
+                raise RuntimeError("No audio data in Gemini response")
+
+            # Normalise to bytes
+            if isinstance(raw_data, str):
+                pcm_bytes = base64.b64decode(raw_data)
+            elif isinstance(raw_data, (bytes, bytearray)):
+                pcm_bytes = bytes(raw_data)
+            else:
+                # Some SDK versions wrap in a memoryview or similar
+                pcm_bytes = bytes(raw_data)
+
+            # Wrap PCM in a valid WAV container (24 kHz, 16-bit, mono)
+            wav_bytes = pcm_to_wav(pcm_bytes, sample_rate=24000, channels=1, bits=16)
+
             with open(output_path, "wb") as f:
-                f.write(audio_data)
-            
-            # Get duration (using soundfile to read it back)
-            info = sf.info(str(output_path))
-            duration = round(info.duration, 2)
+                f.write(wav_bytes)
+
+            # Calculate duration from sample count (avoids re-reading the file)
+            num_samples = len(pcm_bytes) // 2  # 16-bit = 2 bytes per sample
+            duration = round(num_samples / 24000, 2)
+            logger.info(f"Gemini TTS: {len(pcm_bytes)} PCM bytes → {duration}s WAV")
 
         except Exception as e:
-            logger.error(f"Gemini error: {e}")
+            logger.error(f"Gemini TTS error: {e}")
             logger.error(traceback.format_exc())
-            raise HTTPException(status_code=500, detail=f"Gemini failed: {e}")
+            raise HTTPException(status_code=500, detail=f"Gemini TTS failed: {e}")
 
     # ── Kokoro ────────────────────────────────────────────────────────────────
     elif req.engine == "kokoro":

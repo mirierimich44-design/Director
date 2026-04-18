@@ -1307,12 +1307,13 @@ export async function generateScenes(scriptText, generationSettings = null) {
       let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
       let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
       let styleRules = `• 60–80 words maximum
+• ONE OBJECT RULE — the scene must be built around ONE hero object, maximum TWO objects total. Do not pile up props. Choose the single most powerful physical object that tells the story. Everything else is background environment.
 • BACKGROUNDS MUST BE DARK — the dominant color of the scene must be dark: near-black, deep navy, dark charcoal, dark slate, or dark industrial grey. NO white walls, NO cream surfaces, NO bright rooms, NO airy open spaces. If in doubt, make it darker.
 • Color accent palette (pick one per scene, vary across scenes): cool blue steel, amber tungsten glow, sickly green fluorescent, blood-red neon, deep purple backlight, cold white strip light against dark walls
 • Lighting: overhead fluorescent wash on dark walls, venetian blind shadow bars across a surface, backlit object against a frosted dark window, emergency red lighting, narrow golden shaft through closed blinds, single bare bulb in a dark room
 • Hyperrealistic surface textures (brushed metal, worn leather, glass, concrete, aged wood, glossy marble, cracked asphalt, laminate)
 • ABSOLUTELY NO humans, faces, hands, body parts, or silhouettes of any kind
-• No text, no labels, no UI elements on screens (blur or obscure any screens entirely)
+• NO READABLE TEXT ANYWHERE — no legible words on books, documents, labels, signs, packaging, screens, walls, or any other surface. Any text must be blurred, turned away, or out of focus. This is a hard rule with zero exceptions.
 • Shallow depth of field — hero object sharp, background soft and dark
 • 16:9 cinematic framing`;
 
@@ -1431,7 +1432,7 @@ export async function regenerateImagePrompt(sceneScript, chapterScriptText, them
 
   let cinematographerIdentity = "You are the ARXXIS cinematographer. You write image generation prompts for photorealistic 3D documentary scenes. There are NO people, NO human figures, NO silhouettes, NO hands, NO faces in ANY ARXXIS scene — ever.";
   let initialInstruction = "ARXXIS scenes contain ZERO humans. Show only physical objects, spaces, and environments. If you describe a person in any way you have failed.";
-  let styleRules = `60–80 words. BACKGROUNDS MUST BE DARK — dominant color must be near-black, deep navy, dark charcoal, or dark slate. NO white walls, NO cream surfaces, NO bright rooms. Color accent (pick one): cool blue steel, amber tungsten, sickly green fluorescent, blood-red neon, deep purple backlight. Varied lighting: overhead fluorescent on dark walls, venetian blind shadows, emergency red lighting, narrow shaft through closed blinds. Hyperrealistic textures. ABSOLUTELY NO humans/faces/hands/body parts/silhouettes. No readable text on screens (blur them). Shallow DOF, hero object sharp against dark background. 16:9. NEVER default to smartphone/laptop/screen unless explicitly named in the script.`;
+  let styleRules = `60–80 words. ONE OBJECT RULE — one hero object, two maximum. Choose the single most powerful physical object that tells the story. Do not pile props. BACKGROUNDS MUST BE DARK — near-black, deep navy, dark charcoal, dark slate. NO white walls, NO cream surfaces, NO bright rooms. Color accent (pick one): cool blue steel, amber tungsten, sickly green fluorescent, blood-red neon, deep purple backlight. Varied lighting: overhead fluorescent on dark walls, venetian blind shadows, emergency red, narrow shaft through blinds. Hyperrealistic textures. ABSOLUTELY NO humans/faces/hands/body parts/silhouettes. NO READABLE TEXT ANYWHERE — blur all books, documents, labels, signs, screens, packaging — no legible words on any surface. Shallow DOF, hero object sharp against dark background. 16:9. NEVER default to smartphone/laptop/screen unless explicitly named in the script.`;
 
   if (isVortexis) {
     const hasHuman = sceneHasHumanSubject(sceneScript)
